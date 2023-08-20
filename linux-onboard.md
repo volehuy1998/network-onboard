@@ -1,6 +1,7 @@
 # Worklog 19/08/2023 - Lịch sử hình thành và phát triển Linux
 ## Năm 1969
 <div style="text-align:center"><img src="images/dennis_ritchie_and_ken_thompson.jpg" /></div>
+
 Hiện tại các hệ điều hành ngày nay đều có nguồn gốc vào năm 1969 khi `Dennis Richie` và `Ken Thomson` phát triển ngôn ngữ C và hệ điều hành `Unix` tại phòng thí nghiệm `Bell AT&T`, họ đã chia sẻ mã nguồn với thế giới. Vào năm 1975, khi `AT&T` bắt đầu thương mại hóa `Unix` và trong đó có hơn một nửa được phát triển bởi người khác vì vậy `AT&T` đã gặp rất nhiều những phản ứng gay gắt, kết quả của sự đấu tranh này đã tạo ra 2 phiên bản: `AT&T Unix` và `BSD Unix` miễn phí.
 
 Sau đó `BSD` đã cho ra đời các thế hệ như: FreeBSD, OpenBSD, NetBSD, Dragon Fly BSD và PC-BSD vẫn còn hiện hành cho tới ngày nay.
@@ -44,6 +45,7 @@ Bản phân phối `Linux` hay `Linux distribution` là một tập các phần 
 ## Giấy phép lưu hành
 <div style="text-align:center"><img src="images/software_license.png" /></div>
 Có 2 loại giấy phép lưu hành chiếm đa số là `Free and Opens Source Software(FOSS)` và `Proprietary Software` - phần mềm độc quyền nói chung và `Closed Source Proprietary Software(CSPS)` độc quyền mã nguồn đóng nói riêng. Tiêu chí để phân biệt sự tiếp cận này dựa trên sự kiểm soát đối với phần mềm. Với phần mềm độc quyền thì sự kiểm soát có xu hướng phần nhiều nằm ở phía nhà cung cấp trong khi `FOSS` có xu hướng được coi trọng góp ý từ cộng đồng người dùng. Mặc dù có các mô hình khác nhau nhưng đều sử dụng chung luật `copyright`(luật bản quyền hay diễn giải chủ yếu về quyền của hành vi sao chép) giống nhau để vừa đạt được vừa thực thi được mục đích riêng của mình. Từ góc độ pháp lý thì `FOSS` có thể được coi là phần mềm mà người dùng được nhiều quyền lợi hơn so với phần mềm độc quyền.
+
 <div style="text-align:center"><img src="images/copy_logo.jpg" /></div>
 Lý thuyết pháp lý nói rằng tác giả của `FOSS` trái ngược so với tác giả của phần mềm `public domain` - cộng đồng, vì họ không được phép từ bỏ quyền của mình đối với sản phẩm của mình. Trở lại với phần mềm độc quyền như `AIX` từ `IBM`, `HP-UX` từ `Hewlett Packard` và `Oracle Database 11g`, rằng người dùng không được phép cài đặt sử dụng mà không trả phí, không được phép chỉnh sửa và phân phối bản sao.
 
