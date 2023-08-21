@@ -25,6 +25,9 @@ Những thập niên 1980, các công ty nở rộ lên xu hướng phát triể
     - Chuẩn hóa thêm cấu hình.
 
 Các công cụ quản trị mạng trên `Linux` được lấy từ mã nguồn `BSD v4.3`, sau đó các công cụ phát sinh trên `BSD` hay gần đây trên `FreeBSD` đều lấy từ `Linux`.
+
+<div style="text-align:center"><img src="images/linux_history.png" /></div>
+
 ## Năm 2015
 Hơn `97%` các siêu máy tính trên thế giới bao gồm `top 10`, hơn `80%` các thiết bị thông minh và hơn `70%` tất cả các máy chủ web, ... đều chạy trên nền tảng `Linux`. Vì thế nó là hệ điều hành được sử dụng phổ biến nhất thế giới.
 
@@ -68,3 +71,9 @@ Hiện tại các thuật ngữ `free`, `open` hay `FOSS` thường bị ngườ
 `GNU GPL v3` - người dùng có thể sử dụng phần mềm với giấy phép này mà không cần thỏa bất kỳ điều kiện nào, thậm chí nếu chỉ đơn thuần là `run` phần mềm bạn cũng không cần phải chấp nhận các điều khoản, ngược lại nếu người dùng muốn sửa đổi mã nguồn hoặc phân phối lại chúng thì bắt buộc chấp nhận điều khoản. Phiên bản giấy phép này mô tả thêm trường hợp người dùng sử dụng phần mềm trong nội bộ, họ có thể sửa đổi phần mềm mà không bị bắt buộc phải phân phối lại cho người khác, nếu như sử dụng ngoài mục đích nội bộ thì hành động này được gọi là phân phối.
 
 `BSD License` - viết tắt của `Berkeley Software Distribution`. Loại `license` này đặt trọng tâm vào những hạn chế tối thiểu ở việc phân phối phần mềm, điều này làm trái ngược lại với `GNU GPL`. Sự khác biệt này ít quan trọng khi người dùng chỉ sử dụng phần mềm một cách đơn thuần.
+
+# Worklog 21/08/2023 - Tổng quan về kiến trúc Linux
+## Hệ thống tệp tin
+Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhánh, khởi đầu và khuynh hướng luôn là `/` - còn được gọi là `forward slash`, cái mà ngược lại với `\` hay `back slash` của `Microsoft Windows`.
+
+<div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /></div>
