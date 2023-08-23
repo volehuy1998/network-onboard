@@ -1,6 +1,6 @@
 # Worklog 19/08/2023 - Lịch sử hình thành và phát triển Linux
 ## Năm 1969
-<div style="text-align:center"><img src="images/dennis_ritchie_and_ken_thompson.jpg" /><p><i>Lập trình viên Dennis Richie và Ken Thomson.</i></p></div>
+<div style="text-align:center"><img src="images/dennis_ritchie_and_ken_thompson.jpg" alt/></div>
 
 Hiện tại các hệ điều hành ngày nay đều có nguồn gốc vào năm 1969 khi `Dennis Richie` và `Ken Thomson` phát triển ngôn ngữ C và hệ điều hành `Unix` tại phòng thí nghiệm `Bell AT&T`, họ đã chia sẻ mã nguồn với thế giới. Vào năm 1975, khi `AT&T` bắt đầu thương mại hóa `Unix` và trong đó có hơn một nửa được phát triển bởi người khác vì vậy `AT&T` đã gặp rất nhiều những phản ứng gay gắt, kết quả của sự đấu tranh này đã tạo ra 2 phiên bản: `AT&T Unix` và `BSD Unix` miễn phí.
 
@@ -26,7 +26,7 @@ Những thập niên 1980, các công ty nở rộ lên xu hướng phát triể
 
 Các công cụ quản trị mạng trên `Linux` được lấy từ mã nguồn `BSD v4.3`, sau đó các công cụ phát sinh trên `BSD` hay gần đây trên `FreeBSD` đều lấy từ `Linux`.
 
-<div style="text-align:center"><img src="images/linux_history.png" /><p><i>Các phiên bản lịch sử về Linux chi tiết qua mốc thời gian.</i></p></div>
+<div style="text-align:center"><img src="images/linux_history.png" /></div>
 
 ## Năm 2015
 Hơn `97%` các siêu máy tính trên thế giới bao gồm `top 10`, hơn `80%` các thiết bị thông minh và hơn `70%` tất cả các máy chủ web, ... đều chạy trên nền tảng `Linux`. Vì thế nó là hệ điều hành được sử dụng phổ biến nhất thế giới.
@@ -46,11 +46,11 @@ Bản phân phối `Linux` hay `Linux distribution` là một tập các phần 
 `Other` - ngoài 3 `distro` phổ biến kể trên còn có `CentOS`, `Oracle Enterprise Linux` và `Scientific Linux` đều dựa trên `RHEL`, chúng chia sẻ các nguyên tắc, cuối cùng là thư mục và các kỹ thuật quản trị hệ thống đều giống nhau. Ví dụ như `LinuxMint`, `Edubuntu` hay rất nhiều `distro` khác hậu tố `*buntu` đều dựa trên `Ubuntu`. Ngoài ra còn có hàng trăm `Linux distro` khác như Arch, Kali, ...
 
 ## Giấy phép lưu hành
-<div style="text-align:center"><img src="images/software_license.png" /><p><i>Các loại phần mềm.</i></p></div>
+<div style="text-align:center"><img src="images/software_license.png" /></div>
 
 Có 2 loại giấy phép lưu hành chiếm đa số là `Free and Opens Source Software(FOSS)` và `Proprietary Software` - phần mềm độc quyền nói chung và `Closed Source Proprietary Software(CSPS)` độc quyền mã nguồn đóng nói riêng. Tiêu chí để phân biệt sự tiếp cận này dựa trên sự kiểm soát đối với phần mềm. Với phần mềm độc quyền thì sự kiểm soát có xu hướng phần nhiều nằm ở phía nhà cung cấp trong khi `FOSS` có xu hướng được coi trọng góp ý từ cộng đồng người dùng. Mặc dù có các mô hình khác nhau nhưng đều sử dụng chung luật `copyright`(luật bản quyền hay diễn giải chủ yếu về quyền của hành vi sao chép) giống nhau để vừa đạt được vừa thực thi được mục đích riêng của mình. Từ góc độ pháp lý thì `FOSS` có thể được coi là phần mềm mà người dùng được nhiều quyền lợi hơn so với phần mềm độc quyền.
 
-<div style="text-align:center"><img src="images/copy_logo.jpg" /><p><i>Logo của copyright và copyleft.</i></p></div>
+<div style="text-align:center"><img src="images/copy_logo.jpg" /></div>
 
 Lý thuyết pháp lý nói rằng tác giả của `FOSS` trái ngược so với tác giả của phần mềm `public domain` - cộng đồng, vì họ không được phép từ bỏ quyền của mình đối với sản phẩm của mình. Trở lại với phần mềm độc quyền như `AIX` từ `IBM`, `HP-UX` từ `Hewlett Packard` và `Oracle Database 11g`, rằng người dùng không được phép cài đặt sử dụng mà không trả phí, không được phép chỉnh sửa và phân phối bản sao.
 
@@ -102,7 +102,7 @@ Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng d
 ## Hệ thống tệp tin
 Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhánh, khởi đầu và khuynh hướng luôn là `/` - còn được gọi là `forward slash`, cái mà ngược lại với `\` hay `back slash` của `Microsoft Windows`.
 
-<div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /><p><i>Sơ đồ phân cấp hệ thống tệp tin.</i></p></div>
+<div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /></div>
 
 - Các thư mục thông dụng trong `Linux`:
     - `/bin`: các chương trình cơ bản
@@ -221,7 +221,7 @@ Phân tích `kernel rpm` thấy được như sau:
 ```
 ## Các trạng thái của `Linux process`
 
-<div style="text-align:center"><img src="images/linux_process_states.png"/><p><i>Các trạng thái của tiến trình.</i></p></div>
+<div style="text-align:center"><img src="images/linux_process_states.png"/></div>
 
 - Gồm có 5 trạng thái:
     - Đạng chạy `Running` hoặc có thể chạy `Runnable`.
@@ -229,4 +229,4 @@ Phân tích `kernel rpm` thấy được như sau:
     - `Interruptable Sleep`: có thể gián đoạn việc ngủ đông, trạng thái này nói rằng nó đang chờ một khoảng thời gian cụ thể hoặc một sự kiện `signal` xảy ra để `wake up` nó.
     - `Stopped` hay `Terminated`: tiến trình có thể kết thúc vòng đời khi chúng gọi `exit` hoặc nhận được một SIGTERM - termination signal. Khi tiến trình gọi `exit`, nó sẽ giải phóng tất cả `data struct` trong ngôn ngữ `C` cụ thể là `task_struct`, ... mà nó đang sử dụng, nhưng nó không bị mất khỏi bảng tiến trình vì đây là trách nhiệm của `parent process`, lý do cho điều này là vì vị trí trong bảng tiến trình được sử dụng làm `ID` để kết thúc tiến trình và chúng được thiết kế để tiến trình cha kiểm tra được nó có thực sự hiện những gì nó phải làm hay không hoặc liệu nó có đang gặp sự cố. Tiến trình con sẽ gửi một tín hiệu là `SIGCHLD` đến tiến trình cha, trong khoảng thời gian chờ nó kết thúc thì nó được gắn mác trạng thái `ZOMBIE` và không nhận `signal`, mọi chuyện sẽ ổn nếu như tiến trình cha không chết trước khi giải phóng nó và khi đó, nó sẽ trở thành `ZOMBIE` mãi mãi chỉ có thể kết thúc nó bằng cách khởi động lại hệ thống.
 
-<div style="text-align:center"><img src="images/process_struct.png" /><p><i>Các cấu trúc mà tiến trình sử dụng.</i></p></div>
+<div style="text-align:center"><img src="images/process_struct.png" /></div>
