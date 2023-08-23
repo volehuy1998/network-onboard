@@ -100,10 +100,116 @@ Khi `kernel` được triển khai đúng cách thì nó phải nằm trong tr�
 
 Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng dụng `File Explorer` - dĩ nhiên đây là ứng dụng nằm ở phía `user mode`, ứng dụng này sẽ gửi một yêu cầu `I/O` đến ứng dụng loại `File System Filter Driver` được chạy ở phía `kernel mode`, tại đây `File System Filter Driver` sẽ là một bộ lọc cho phép `File Explorer` lấy dữ liệu từ ổ cứng, ngược lại có quyền không cho phép nếu như nội dung hoặc một phần nhỏ trong nội dung nằm trong danh sách không thỏa được bị lập trình viên `driver` thiết kế. Đây là một chức năng nằm trong sản phẩm `File Defender` của tập đoàn chuyên làm phần mềm bảo mật `Plott Ltd` Nhật Bản.
 
+<i>Tham khỏa thêm tại https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_monitoring_and_updating_the_kernel/index#what-the-kernel-is_assembly_the-linux-kernel</i>
 ## Hệ thống tệp tin
 Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhánh, khởi đầu và khuynh hướng luôn là `/` - còn được gọi là `forward slash`, cái mà ngược lại với `\` hay `back slash` của `Microsoft Windows`.
 
 <div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /></div>
 
-## Gói RPM
-`RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống).
+## RPM package và phân loại
+- `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
+    - Những tệp tin.
+    - Tiêu đề `RPM` hay `RPM header`, `metadata` của gói chứa tại đây.
+    - Người quản lý gói `RPM` sử dụng `metadata` để xác định những thành phần phụ thuộc, nơi chứa các tệp cài đặt và các thông tin khác.
+- Có 2 loại `RPM package`, và tất cả chúng đều chia sẻ định dạng và công cụ nhưng có những nội dung khác nhau để phục vụ các mục đích khác nhau:
+    - Nguồn của `RPM package` viết tắt `SRPM`, thông tin này chứa mã nguồn và cấu hình tệp nơi mà mô tả làm thế nào để xây dựng được gói `RPM binary`. Thêm vào đó `SRPM` có thông tin các bản vá lỗi cho đoạn mã được bao gồm.
+    - Tệp `RPM binary` chứa tệp `binary` được xây dựng từ mã nguồn.
+## Tổng quan về `RPM package` của `Linux kernel`
+`Kernel RPM` là loại `RPM` đặc biệt, nó không chứa bất kỳ tệp nào nhưng nó bắt buộc các gói phụ thuộc phải được cài đặt đúng cách. `Kernel core` chứa các mẫu `binary` hay `binary image` của `kernel`, tất cả các đối tượng liên quan đến `initramfs` khởi động cùng hệ thống, số lượng `kernel-module` tối thiểu để đảm bảo chức năng cốt lõi. `Kernel modules` chứa những `kernel modules` còn lại không nằm trong `kernel core`.
+
+- Một nhóm nhỏ các gói phụ thuộc của `kernel` bên trên nhằm mục đích cung cấp công cụ, môi trường để quản trị viên bảo trì, đặc biệt trong môi trường ảo hóa. Các `kernel package` được tùy chọn thêm gồm có:
+    - `kernel-modules-extra` chứa các `kernel module` dành cho các loại phần cứng đặc biệt, hiếm gặp hoặc các `module` bị vô hiệu hóa theo mặc định.
+    - `kernel-debug` chứa các chức năng `debug` được kích hoạt để chuẩn đoán lỗi nhưng điều này làm giảm hiệu suất.
+    - `kernel-tools` chứa các công cụ để thao tác với `Linux kernel` và hỗ trợ tài liệu.
+    - `kernel-devel` chứa các `kernel header` và `makefiles` dành cho các lập trình viên phát triển xây dựng `module` dựa trên `kernel package`.
+    - `kernel-abi-stablelists` chứa các thông tin liên quan đến `ABI kernel` dành riêng cho `RHEL`.
+    - `kernel-headers` chứa các `header` của ngôn ngữ C mô tả cách thức giao tiếp giữa `Linux kernel` và thư viện dành cho `user space`. Các tệp `header` này đã được định nghĩa nhiều cấu trúc `struct` và các hằng số `const` cần thiết để lập trình viên phát triển các ứng dụng.
+
+Cài đặt `vim` để liệt kê các `rpm` phụ thuộc như sau:
+```shell
+[root@huyvl-linux-training ~]# yum install --downloadonly --downloaddir=/tmp/vim-rpm/ vim
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.bizflycloud.vn
+ * extras: mirror.bizflycloud.vn
+ * updates: mirror.bizflycloud.vn
+Resolving Dependencies
+--> Running transaction check
+---> Package vim-enhanced.x86_64 2:7.4.629-8.el7_9 will be installed
+...
+...
+(28/31): vim-enhanced-7.4.629-8.el7_9.x86_64.rpm    | 1.1 MB  00:00:00
+(29/31): vim-filesystem-7.4.629-8.el7_9.x86_64.rpm  |  11 kB  00:00:00
+(30/31): vim-common-7.4.629-8.el7_9.x86_64.rpm      | 5.9 MB  00:00:00
+(31/31): perl-Carp-1.26-244.el7.noarch.rpm          |  19 kB  00:00:01
+----------------------------------------------------------------------
+Total                                                                                                                                                                                                   16 MB/s |  18 MB  00:00:01
+exiting because "Download Only" specified
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ls -al /tmp/vim-rpm/
+total 19036
+drwxr-xr-x  2 root root    4096 Aug 23 10:29 .
+drwxrwxrwt. 9 root root    4096 Aug 23 10:29 ..
+-rw-r--r--  1 root root   33120 Aug 23  2019 gpm-libs-1.20.7-6.el7.x86_64.rpm
+-rw-r--r--  1 root root 8360316 Feb  3  2021 perl-5.16.3-299.el7_9.x86_64.rpm
+-rw-r--r--  1 root root   19672 Jul  4  2014 perl-Carp-1.26-244.el7.noarch.rpm
+-rw-r--r--  1 root root   19244 Jul  4  2014 perl-constant-1.27-2.el7.noarch.rpm
+-rw-r--r--  1 root root 1545440 Jul  4  2014 perl-Encode-2.51-7.el7.x86_64.rpm
+-rw-r--r--  1 root root   29092 Jul  4  2014 perl-Exporter-5.68-3.el7.noarch.rpm
+...
+...
+```
+Tiến hành phân tích tệp `rpm` đã được tải về của `vim` như sau:
+```shell
+[root@huyvl-linux-training vim-rpm]# rpm -qlp gpm-libs-1.20.7-6.el7.x86_64.rpm
+/usr/lib64/libgpm.so.2
+/usr/lib64/libgpm.so.2.1.0
+[root@huyvl-linux-training vim-rpm]#
+```
+Thường thì lệnh `update` sẽ cập nhật những `kernel` như sau:
+```shell
+[root@huyvl-linux-training ~]# yum update --downloadonly --downloaddir=/tmp/update/
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.bizflycloud.vn
+ * extras: mirror.bizflycloud.vn
+ * updates: mirror.bizflycloud.vn
+Resolving Dependencies
+--> Running transaction check
+...
+...
+```
+Phân tích `kernel rpm` thấy được như sau:
+```shell
+[root@huyvl-linux-training ~]# cd /tmp/update/
+[root@huyvl-linux-training update]# ls -al | grep kernel
+-rw-r--r--   1 root root 54180012 Jul 28 21:53 kernel-3.10.0-1160.95.1.el7.x86_64.rpm
+-rw-r--r--   1 root root  8579092 Jul 28 21:54 kernel-tools-3.10.0-1160.95.1.el7.x86_64.rpm
+-rw-r--r--   1 root root  8469692 Jul 28 21:54 kernel-tools-libs-3.10.0-1160.95.1.el7.x86_64.rpm
+[root@huyvl-linux-training update]# rpm -qlp kernel-3.10.0-1160.95.1.el7.x86_64.rpm
+/boot/.vmlinuz-3.10.0-1160.95.1.el7.x86_64.hmac
+/boot/System.map-3.10.0-1160.95.1.el7.x86_64
+/boot/config-3.10.0-1160.95.1.el7.x86_64
+/boot/initramfs-3.10.0-1160.95.1.el7.x86_64.img
+/boot/symvers-3.10.0-1160.95.1.el7.x86_64.gz
+/boot/vmlinuz-3.10.0-1160.95.1.el7.x86_64
+/etc/ld.so.conf.d/kernel-3.10.0-1160.95.1.el7.x86_64.conf
+/etc/modprobe.d/dccp-blacklist.conf
+/lib/modules/3.10.0-1160.95.1.el7.x86_64
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/build
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/extra
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/ablk_helper.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/aesni-intel.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/blowfish-x86_64.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx-x86_64.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx2.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-x86_64.ko.xz
+...
+...
+```
