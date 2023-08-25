@@ -5,13 +5,6 @@
     - [1.4 - Năm 2015](#2015)
     - [1.5 - Khái niệm phân phối (:sparkles:UPDATED 21/08/2023)](#distro)
     - [1.6 - Giấy phép lưu hành (:sparkles:UPDATED 21/08/2023)](#license)
-- [2 - Tổng quan về kiến trúc Linux (:sparkles:UPDATED 24/08/2023)](#linux_arch)
-    - [2.1 - Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel)
-    - [2.2 - Vai trò của Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel_job)
-    - [2.3 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)](#file_permission_management)
-    - [2.4 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)](#rpm_package)
-    - [2.5 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.6 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)](#linux_process)
 
 # <a name="linux_history"></a>Lịch sử hình thành và phát triển Linux
 ## <a name="1969s"></a>Năm 1969
