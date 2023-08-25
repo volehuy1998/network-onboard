@@ -1,1 +1,16 @@
 # network-onboard
+- [Part 1 - Lịch sử hình thành và phát triển Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-history-onboard.md)
+    - [1.1 - Những thập niên 1969 (:sparkles:UPDATED 21/08/2023)](#1969s)
+    - [1.2 - Những thập niên 1980 (:sparkles:UPDATED 21/08/2023)](#1980s)
+    - [1.3 - Những thập niên 1990 (:sparkles:UPDATED 21/08/2023)](#1990s)
+    - [1.4 - Năm 2015](#2015)
+    - [1.5 - Khái niệm phân phối (:sparkles:UPDATED 21/08/2023)](#distro)
+    - [1.6 - Giấy phép lưu hành (:sparkles:UPDATED 21/08/2023)](#license)
+- [Part 2 - Kiến trúc Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-arch-onboard.md)
+    - [2.1 - Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel)
+    - [2.2 - Vai trò của Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel_job)
+    - [2.3 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)](#file_permission_management)
+    - [2.4 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)](#rpm_package)
+    - [2.5 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)](#kernel_rpm_package)
+    - [2.6 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)](#linux_process)
+
