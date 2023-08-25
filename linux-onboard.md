@@ -2,7 +2,18 @@
     - [1.1 - Những thập niên 1969](#1969s)
     - [1.2 - Những thập niên 1980](#1980s)
     - [1.3 - Những thập niên 1990](#1990s)
-    
+    - [1.4 - Năm 2015](#2015)
+    - [1.5 - Khái niệm phân phối](#distro)
+    - [1.6 - Giấy phép lưu hành](#license)
+- [2 - Tổng quan về kiến trúc Linux(UPDATED  24/08/2023)](#linux_arch)
+    - [2.1 - Tổng quan kiến trúc Linux](#linux_arch)
+    - [2.2 - Linux Kernel(UPDATED  24/08/2023)](#linux_kernel)
+    - [2.3 - Vai trò của Linux Kernel(UPDATED  24/08/2023)](#linux_kernel_job)
+    - [2.4 - Quản lý quyền tệp tin(UPDATED  24/08/2023)](#file_permission_management)
+    - [2.5 - RPM Package và phân loại(UPDATED  24/08/2023)](#rpm_package)
+    - [2.6 - Kernel RPM Package(UPDATED  24/08/2023)](#kernel_rpm_package)
+    - [2.7 - Trạng thái của tiến trình Linux(UPDATED  24/08/2023)](#linux_process)
+
 # <a name="linux_history"></a>Lịch sử hình thành và phát triển Linux
 ## <a name="1969s"></a>Năm 1969
 <div style="text-align:center"><img src="images/dennis_ritchie_and_ken_thompson.jpg" alt/></div>
@@ -33,11 +44,11 @@ Các công cụ quản trị mạng trên `Linux` được lấy từ mã nguồ
 
 <div style="text-align:center"><img src="images/linux_history.png" /></div>
 
-## Năm 2015
+## <a name="2015"></a>Năm 2015
 Hơn `97%` các siêu máy tính trên thế giới bao gồm `top 10`, hơn `80%` các thiết bị thông minh và hơn `70%` tất cả các máy chủ web, ... đều chạy trên nền tảng `Linux`. Vì thế nó là hệ điều hành được sử dụng phổ biến nhất thế giới.
 
 `Linux kernel` phiên bản `4.0` được phát hành vào tháng 4 năm 2015. Mã nguồn của nó tăng thêm vài trăm nghìn dòng(so với `3.19` đã được phát hành tháng 2/2015) nhờ sự đóng góp của rất nhiều lập trình viên, đa số họ nhận được thù lao rất hậu hĩnh từ các công ty thương mại như: Red Hat, Intel, Samsung, Broadcom, IBM, Nokia, Google, AMD ... và thậm chí cả Microsoft.
-## Phân phối
+## <a name="distro"></a>Phân phối
 Bản phân phối `Linux` hay `Linux distribution` là một tập các phần mềm(thường là mã nguồn mở) chạy trên nền tảng `Linux kernel`. Một bản phân phối hay `distro` đã đóng gói bao gồm các phần mềm máy chủ, công cụ quản lý hệ thống, tài liệu và rất nhiều ứng dụng `desktop` nằm trong `Central Secure Software Repository` - kho phần mềm bảo mật trung tâm. Mỗi một `distro` cung cấp một cách nhìn chung, cảm nhận, bảo mật, phần mềm quản lý dễ sử dụng và thường nó cũng nhắm tới các mục đích sử dụng cụ thể. Định dạng gói `RPM` cho phép tương thích giữa các `distro` với nhau.
 
 `SLS` và `Slackware` - bản phân phối `SLS` được phát hành sớm nhất vào tháng 8/1992, nó rất phổ biến vào thời điểm đó nhưng được người dùng nhận xét là có quá nhiều lỗi. Sau đó `SLS` sớm được thay thế bởi `Slackware` vào tháng 7/1993 bởi `Patrick Volkerding`, về mặt nhìn chung thì `Slackware` hoàn toàn dựa trên `SLS`.
@@ -50,7 +61,7 @@ Bản phân phối `Linux` hay `Linux distribution` là một tập các phần 
 
 `Other` - ngoài 3 `distro` phổ biến kể trên còn có `CentOS`, `Oracle Enterprise Linux` và `Scientific Linux` đều dựa trên `RHEL`, chúng chia sẻ các nguyên tắc, cuối cùng là thư mục và các kỹ thuật quản trị hệ thống đều giống nhau. Ví dụ như `LinuxMint`, `Edubuntu` hay rất nhiều `distro` khác hậu tố `*buntu` đều dựa trên `Ubuntu`. Ngoài ra còn có hàng trăm `Linux distro` khác như Arch, Kali, ...
 
-## Giấy phép lưu hành
+## <a name="license"></a>Giấy phép lưu hành
 <div style="text-align:center"><img src="images/software_license.png" /></div>
 
 Có 2 loại giấy phép lưu hành chiếm đa số là `Free and Opens Source Software(FOSS)` và `Proprietary Software` - phần mềm độc quyền nói chung và `Closed Source Proprietary Software(CSPS)` độc quyền mã nguồn đóng nói riêng. Tiêu chí để phân biệt sự tiếp cận này dựa trên sự kiểm soát đối với phần mềm. Với phần mềm độc quyền thì sự kiểm soát có xu hướng phần nhiều nằm ở phía nhà cung cấp trong khi `FOSS` có xu hướng được coi trọng góp ý từ cộng đồng người dùng. Mặc dù có các mô hình khác nhau nhưng đều sử dụng chung luật `copyright`(luật bản quyền hay diễn giải chủ yếu về quyền của hành vi sao chép) giống nhau để vừa đạt được vừa thực thi được mục đích riêng của mình. Từ góc độ pháp lý thì `FOSS` có thể được coi là phần mềm mà người dùng được nhiều quyền lợi hơn so với phần mềm độc quyền.
@@ -77,12 +88,12 @@ Hiện tại các thuật ngữ `free`, `open` hay `FOSS` thường bị ngườ
 
 `BSD License` - viết tắt của `Berkeley Software Distribution`. Loại `license` này đặt trọng tâm vào những hạn chế tối thiểu ở việc phân phối phần mềm, điều này làm trái ngược lại với `GNU GPL`. Sự khác biệt này ít quan trọng khi người dùng chỉ sử dụng phần mềm một cách đơn thuần.
 
-# Worklog 21/08/2023 - Tổng quan về kiến trúc Linux
-## Tổng quan `Linux kernel`
+# <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
+## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
 `Linux Kernel` là thành phần chính của hệ điều hành `Linux`, thành phần cốt lõi giữa phần cứng máy tính và các tiến trình bên trong nó. Nó giao tiếp giữa 2 thực thể , quản lý tài nguyên một cách tốt nhất.
 
 Đặt tên là `kernel` vì nó được coi là hát gióng nằm bên trong lớp vỏ - nó tồn tại ở ngay bên trong `OS` và điều khiển các chức năng của phần cứng.
-## Vai trò `Linux kernel`
+## <a name="linux_kernel_job"></a>Vai trò `Linux kernel`
 - `Kernel` gồm có 4 công việc:
     - `Memory management` -quản lý bộ nhớ: liên tục theo dõi lượng tài nguyên nơi bộ nhớ đã được sử dụng, bao gồm cả việc nó lưu trữ những gì và nơi nó được lưu trữ.
     - `Process management` - quản lý tiến trình: xác định được những tiến trình nào có thể sử dụng CPU, khi nào và bao lâu.
@@ -104,7 +115,7 @@ Khi `kernel` được triển khai đúng cách thì nó phải nằm trong tr�
 Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng dụng `File Explorer` - dĩ nhiên đây là ứng dụng nằm ở phía `user mode`, ứng dụng này sẽ gửi một yêu cầu `I/O` đến ứng dụng loại `File System Filter Driver` được chạy ở phía `kernel mode`, tại đây `File System Filter Driver` sẽ là một bộ lọc cho phép `File Explorer` lấy dữ liệu từ ổ cứng, ngược lại cũng có quyền từ chối nếu như nội dung hoặc một phần nhỏ trong nội dung nằm trong danh sách không thỏa được bị lập trình viên `driver` thiết kế. Đây là một chức năng nằm trong sản phẩm `File Defender` của tập đoàn chuyên làm phần mềm bảo mật `Plott Ltd` Nhật Bản.
 
 <i>Tham khỏa thêm tại https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_monitoring_and_updating_the_kernel/index#what-the-kernel-is_assembly_the-linux-kernel</i>
-## Phân cấp hệ thống tệp tin
+## <a name="fhs"></a>Phân cấp hệ thống tệp tin
 Cấu trúc của hệ thống tệp tin `File System Hierarchy Standard(FHS)` được định nghĩa tên, nơi chốn và các quyền cho tất cả các loại tệp, thư mục. Tài liệu `FHS` là tài liệu chính thức cho bất kỳ hệ thống tệp tin nào tuân thủ `FHS` nhưng cấu trúc này để lại nhiều mảng không thể định nghĩa hoặc mở rộng.
 
 - Hai điểm quan trọng nhất để đảm bảo rằng hệ thống tuân thủ `FHS` như sau:
@@ -140,9 +151,8 @@ Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhá
     - `/home`: dữ liệu riêng của mỗi `user`
     - `/lib`: thư viện được sử dụng bởi các `program`
     - `/usr`: chứa ứng dụng của `user`
-## Quản lý quyền truy cập tệp tin
-
-## RPM package và phân loại
+## <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
+## <a name="rpm_package"></a>RPM package và phân loại
 - `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
     - Những tệp tin.
     - Tiêu đề `RPM` hay `RPM header`, `metadata` của gói chứa tại đây.
@@ -150,7 +160,7 @@ Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhá
 - Có 2 loại `RPM package`, tất cả chúng đều chia sẻ định dạng và công cụ nhưng có những nội dung khác nhau để phục vụ các mục đích khác nhau:
     - Nguồn của `RPM package` viết tắt `SRPM`, thông tin này chứa mã nguồn và cấu hình tệp nơi mà mô tả làm thế nào để xây dựng được gói `RPM binary`. Thêm vào đó `SRPM` có thông tin các bản vá lỗi cho đoạn mã được bao gồm.
     - Tệp `RPM binary` chứa tệp `binary` được xây dựng từ mã nguồn.
-## Tổng quan về `RPM package` của `Linux kernel`
+## <a name="kernel_rpm_package"></a>Tổng quan về `RPM package` của `Linux kernel`
 `Kernel RPM` là loại `RPM` đặc biệt, nó không chứa bất kỳ tệp nào nhưng nó bắt buộc các gói phụ thuộc phải được cài đặt đúng cách. `Kernel core` chứa các mẫu `binary` hay `binary image` của `kernel`, tất cả các đối tượng liên quan đến `initramfs` khởi động cùng hệ thống, số lượng `kernel-module` tối thiểu để đảm bảo chức năng cốt lõi. `Kernel modules` chứa những `kernel modules` còn lại không nằm trong `kernel core`.
 
 - Một nhóm nhỏ các gói phụ thuộc của `kernel` bên trên nhằm mục đích cung cấp công cụ, môi trường để quản trị viên bảo trì, đặc biệt trong môi trường ảo hóa. Các `kernel package` được tùy chọn thêm gồm có:
@@ -249,7 +259,7 @@ Phân tích `kernel rpm` thấy được như sau:
 ...
 ...
 ```
-## Các trạng thái của `Linux process`
+## <a name="linux_process"></a>Các trạng thái của `Linux process`
 
 <div style="text-align:center"><img src="images/linux_process_states.png"/></div>
 
