@@ -6,7 +6,7 @@
     - [1.5 - Khái niệm phân phối](#distro)
     - [1.6 - Giấy phép lưu hành](#license)
 - [2 - Tổng quan về kiến trúc Linux (UPDATED 24/08/2023)](#linux_arch)
-    - [2.1 - Linux Kernel (UPDATED 24/08/2023)](#linux_kernel)
+    - [2.1 - Linux Kernel (:arrow_up: UPDATED 24/08/2023)](#linux_kernel)
     - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
     - [2.3 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
     - [2.4 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
