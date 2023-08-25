@@ -1,13 +1,18 @@
-# Worklog 19/08/2023 - Lịch sử hình thành và phát triển Linux
-## Năm 1969
+- [1 - Lịch sử hình thành và phát triển Linux](#linux_history)
+    - [1.1 - Những thập niên 1969](#1969s)
+    - [1.2 - Những thập niên 1980](#1980s)
+    - [1.3 - Những thập niên 1990](#1990s)
+    
+# <a name="linux_history"></a>Lịch sử hình thành và phát triển Linux
+## <a name="1969s"></a>Năm 1969
 <div style="text-align:center"><img src="images/dennis_ritchie_and_ken_thompson.jpg" alt/></div>
 
 Hiện tại các hệ điều hành ngày nay đều có nguồn gốc vào năm 1969 khi `Dennis Richie` và `Ken Thomson` phát triển ngôn ngữ C và hệ điều hành `Unix` tại phòng thí nghiệm `Bell AT&T`, họ đã chia sẻ mã nguồn với thế giới. Vào năm 1975, khi `AT&T` bắt đầu thương mại hóa `Unix` và trong đó có hơn một nửa được phát triển bởi người khác vì vậy `AT&T` đã gặp rất nhiều những phản ứng gay gắt, kết quả của sự đấu tranh này đã tạo ra 2 phiên bản: `AT&T Unix` và `BSD Unix` miễn phí.
 
 Sau đó `BSD` đã cho ra đời các thế hệ như: FreeBSD, OpenBSD, NetBSD, Dragon Fly BSD và PC-BSD vẫn còn hiện hành cho tới ngày nay.
-## Năm 1980
+## <a name="1980s"></a>Năm 1980
 Những thập niên 1980, các công ty nở rộ lên xu hướng phát triển `Unix` cho riêng mình: `IBM` phát minh `AIX`, `Sun` có `SunOS`, `HP` hay `Hewlett Packard` thì có `HP-UX`, ... Kết quả là tạo ra một thứ rất hỗn loạn với hàng chục cách thức khác nhau để cùng có một kết quả. Sau đó một ý tưởng về `Linux` thật sự đã được tạo ra để kết thúc sự hỗn loạn này bởi `Richard Stallman` và mọi người cùng bắt đầu xây dựng lại với dự án mang tên là `GNU`, viết tắt của cái tên đệ quy `GNU Not Unix`, ngày nay khái niệm đệ quy trong tên vẫn là xu hướng như cách `Google` đặt tên `gRPC` viết tắt của `gRPC Remote Procedure Call`. Mục đích của ông là phát minh ra một hệ điều hành hoàn toàn miễn phí dành cho tất cả mọi người, nơi mà tất cả họ có thể làm việc cùng nhau. Các câu lệnh được sử dụng ngày nay trên `Linux` đại đa số đến từ `GNU Tools` và phần còn lại từ hệ điều hành `BSD` của `Berkeley`, hệ thống `X Windows` của MIT, ...
-## Năm 1990
+## <a name="1990s"></a>Năm 1990
 Đây là những năm mà `Linus Torvarlds` hoạt động rất sôi nổi, ông là một sinh viên Phần Lan nói tiếng Thụy Điển đã mua một chiếc máy tính mã `386` và viết ra `POSIX kernel` - một loại tiêu chuẩn giúp duy trì tính tương thích của các hệ điều hành. `Linus Torvarlds` đã công khai nó nhưng không có hy vọng lớn nào ngoài việc nó hỗ trợ tốt cho phần cứng `386` của ông, tuy nhiên rất nhiều người đã thích thú với `kernel` này và bắt đầu tích hợp với các `GNU Tools`.
 
 - Phiên bản `0.01` đầu tiên vào tháng 5/1991 không hỗ trợ mạng, chỉ chạy trên nền tảng vi xử lý `Intel 80386` và một số phần cứng được chỉ định, được nhận xét là rất hạn chế về việc giao tiếp với các thiết bị lưu trữ và chỉ hỗ trợ hệ thống tệp tin `Minix`.
@@ -100,7 +105,30 @@ Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng d
 
 <i>Tham khỏa thêm tại https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_monitoring_and_updating_the_kernel/index#what-the-kernel-is_assembly_the-linux-kernel</i>
 ## Phân cấp hệ thống tệp tin
-Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhánh, khởi đầu và khuynh hướng luôn là `/` - còn được gọi là `forward slash`, cái mà ngược lại với `\` hay `back slash` của `Microsoft Windows`.
+Cấu trúc của hệ thống tệp tin `File System Hierarchy Standard(FHS)` được định nghĩa tên, nơi chốn và các quyền cho tất cả các loại tệp, thư mục. Tài liệu `FHS` là tài liệu chính thức cho bất kỳ hệ thống tệp tin nào tuân thủ `FHS` nhưng cấu trúc này để lại nhiều mảng không thể định nghĩa hoặc mở rộng.
+
+- Hai điểm quan trọng nhất để đảm bảo rằng hệ thống tuân thủ `FHS` như sau:
+    - Khả năng tương thích giữa các hệ thống tuân thủ `FHS`.
+    - Phân vùng `/usr` chỉ ở dạng `readonly`, điều này rất quan trọng vì `/usr` chứa các tệp thực thi phổ biến và người dùng không nên thay đổi. Ngoài ra vì `/usr` ở quyền `readonly` nên nó có thể được `mount` từ `CD-ROM` hoặc từ một máy khác thông qua `NFS`.
+- Tiêu chuẩn này yêu cầu rằng tất cả hệ thống tuân thủ `FHS` đều hỗ trợ tính năng bảo mật cơ bản tương tự được tìm thấy hầu hết các ở `UNIX`. Có thể phân biệt sự khác biệt giữa các tệp:
+    - Có thể chia sẻ `shareable` / không thể chia sẻ `unshareable`.
+    - Có thể biến đổi `variable` / không biến đổi `static`.
+
+Ý nghĩa khai sinh của `shareable` chỉ định những tệp có thể được lưu trữ trên máy chủ và được sử dụng trên các máy chủ khác, ngược lại các tệp `unshareable` là những tệp đó không thể chia sẻ với máy chủ khác. Cụ thể hơn, các tệp trong thư mục của người dùng có thể chia sẻ trong khi thiết bị chứa tệp đó thì không. Đối với các tệp `static` bao gồm tệp `binary`, `lib`, tài liệu, ... không `"thay đổi"` nếu không có sự can thiệp của quản trị viên hệ thống, ngược lại sẽ là `variable`.
+
+Lý do: thông thường không phải tất cả các tệp trong hệ thống phân cấp đều chia sẻ được và do đó mỗi hệ thống có nơi chứa cục bộ, các tệp không thể chia sẻ của nó. Phát sinh từ nhu cầu sẽ thuận tiện nếu tất cả tệp mà hệ thống người dùng yêu cầu được lưu trữ trên máy chủ quốc tế, từ đó người dùng có thể được cung cấp bằng cách `mount` một vài thư mục từ máy chủ quốc tế đó.
+
+<div style="text-align:center"><img src="images/shareable_between_servers.png" /></div>
+
+Về lịch sử, cũng giống như hệ thống phân cấp `UNIX` đều chứa cả tệp `static` và `variable` trong cả `/usr` và `/etc`. Để nhận ra được những lợi ích đề cập ở trên thì `/var` được tạo ra và tất cả các tệp `variable` được thay đổi nơi ở, tức chuyển từ `/usr` sang `/var`, do đó hiện giờ  `/usr` chỉ ở chế độ `readonly`. Đối với những tệp `variable` trong `/etc` thì được chuyển sang `/var` sau một thời gian dài chờ đợi công nghệ kỹ thuật phát triển. Sau đây là ví dụ về một hệ thống tuân thủ `FHS`.
+| 			| shareable 		| unshareable|
+| ----------| ---- 				| ---- 		 |
+| static	| /usr 				| /etc		 |
+| static    | /opt 				| /boot		 |
+| variable	| /var/mail 		| /var/run	 |
+| variable  | /var/spool/news 	| /var/lock  |
+
+Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhánh, khởi đầu và khuynh hướng luôn là `/` - còn được gọi là `forward slash`, cái mà ngược lại với `\` hay `back slash` của `Microsoft Windows`. Sau đây mô hình sơ lược về hệ thống phân cấp.
 
 <div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /></div>
 
@@ -112,7 +140,6 @@ Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhá
     - `/home`: dữ liệu riêng của mỗi `user`
     - `/lib`: thư viện được sử dụng bởi các `program`
     - `/usr`: chứa ứng dụng của `user`
-
 ## Quản lý quyền truy cập tệp tin
 
 ## RPM package và phân loại
