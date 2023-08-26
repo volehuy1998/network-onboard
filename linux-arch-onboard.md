@@ -2,9 +2,10 @@
     - [2.1 - Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel)
     - [2.2 - Vai trò của Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel_job)
     - [2.3 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)](#file_permission_management)
-    - [2.4 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)](#rpm_package)
-    - [2.5 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.6 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)](#linux_process)
+    - [2.4 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)](#fhs)
+    - [2.5 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)](#rpm_package)
+    - [2.6 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)](#kernel_rpm_package)
+    - [2.7 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)](#linux_process)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -61,14 +62,46 @@ Hệ thống tệp tin `Linux` được xây dựng theo kiến trúc phân nhá
 
 <div style="text-align:center"><img src="images/linux_file_system_hierarchy.png" /></div>
 
-- Các thư mục thông dụng trong `Linux`:
-    - `/bin`: các chương trình cơ bản
-    - `/boot`: chứa các tệp `Linux kernel`
-    - `/etc`: chuyên về cấu hình
-    - `/dev`: chứa các thông tin liên quan đến thiết bị như: chuột, bàn phím, ...
-    - `/home`: dữ liệu riêng của mỗi `user`
-    - `/lib`: thư viện được sử dụng bởi các `program`
-    - `/usr`: chứa ứng dụng của `user`
+- Chi tiết về `root filesystem` như sau:
+    - `boot` - để khởi động hệ thống thì cần đủ các phần mềm và dữ liệu nằm trên phân vùng `root` để có thể liên kết với hệ thống tệp tin. Tại đây bao gồm các công cụ tiện ích, cấu hình, ...
+    - `recovery` - để kích hoạt khôi phục về trạng thái ở thời điểm nào đó.
+    - `restore` - khi hệ thống bị lỗi cần khôi phục từ hệ thống dự phòng. 
+    - Các yêu cầu tối thiểu cho `/` phải càng nhỏ càng tốt vì một vài lý do: 
+        - Đôi khi nó được `mount` từ các thiết bị rất nhỏ.
+        - Nó chứa các cấu hình như `kernel`, ... vì thế nó thuộc vào loại tệp không thể chia sẻ nên nó sẽ nhưỡng khoảng trống dung lượng cho những loại `shareable`.
+        - Lỗi trên `/` là một vấn đề lớn hơn bất kỳ lỗi nào trên phân vùng khác, nếu nó nhỏ càng giảm thiểu rủi ro cho toàn bộ hệ thống.
+
+Tổng quan các thư mục sau hoặc các `symbolic` đều được yêu cầu trong `root filesystem` :
+| Thư mục 	| Mô tả |
+| ----      | ---- 		 |
+| /bin      | Các chương trình cơ bản cho tất cả người dùng          |
+| /boot     | Các tệp tĩnh dành cho `boot loader` hoặc `linux kernel`       |
+| /dev      | Các tệp về thiết bị: chuột, bàn phím...           |
+| /etc      | Các tệp dành riêng cho cấu hình hệ thống  |
+| /lib      | Các thư viện và `kernel module`       	|
+| /mnt      | Dành để `mount` thủ công bởi quản trị, nội dung này là cục bộ và không ảnh hưởng đến cách thức vận hành của bất kỳ chương trình nào |
+| /media    | Dành cho các thiết bị di động để `mount` tự động như: đĩa mềm `floppy` hoặc CD-ROM, ... hoặc những thứ mà quản trị viên thực sự không muốn nó `mount` vào `root filesystem`. Trong lịch sử đã có một số vị trí `mount` như `/mnt`, `/cdrom` hoặc `/mnt/cdrom` điều nay vô tính là hành vi bổ sung vào `/`.  |
+| /opt      | Được dành riêng nếu bổ sung các gói cài đặt, phần mềm dành cho quản trị viên sử dụng |
+| /run      | Dữ liệu của phần mềm trong lúc hoạt động. Ví dụ: để kiểm tra các tài khoản đang hoạt động `ls -al /run/user` thông qua `ID` hoặc `DNS` của hệ thống đang dùng `ls -al /run/NetworkManager/resolv.conf`, ...	 |
+| /sbin  	| Chương trình của hệ thống sử dụng, hầu hết liên quan đến `root`  |
+| /srv      | Dữ liệu của dịch vụ được cung cấp bởi hệ thống  |
+| /tmp      | Tệp tạm thời, sẽ mất sau khi khởi động.  |
+| /usr      | Đây là phần chính sau `root filesystem` và có thể chia sẻ được nhưng `read only` giữa các máy chủ.  |
+| /var      | Chứa những loại dữ liệu động, nó chứa các thành phần có thể chia sẻ như /`/var/mail`, ... nhưng cũng có phần không thể chia sẻ `/var/log`, ... |
+
+- Chi tiết về `/bin`: các tệp nhị phân được sử dụng bởi tất cả người dùng. Các chương trình nằm trong `/bin` bao gồm:
+    - `cat`: công cụ hiển thị nội dung tệp.
+    - `cp`: công cụ sao chép tệp và thư mục.
+    - `ps`: công cụ báo cáo trạng thái tiến trình.
+    - `ls`: công cụ liệt kê nội dung thư mục.
+    - Và một số chương trình khác: `pwd`, `mkdir`, `chmod`, `chown`, `sed`, ... kể cả ký tự `[` hoặc `test`.
+- Chi tiết về `/boot`: chứa tất cả các yêu cầu cho quá trình `boot` ngoại trừ tệp cấu hình không cần thiết trong lúc khởi động, `/boot` chứa dữ liệu được sử dụng trước khi `kernel` thực hiện `user-mode`. Các chương trình cần thiết để sắp xếp cho `boot loader` có thể khởi động phải được đặt trong `/sbin`, ngược lại các tệp cấu hình không bắt buộc sẽ đặt ở `/etc`. `Kernel` hệ điều hành được đặt ở `/` hoặc `/boot`.
+- Chi tiết về `/dev`: nơi vị trí của cấc tệp đặc biệt hoặc thiết bị. Khi cần thiết thì các thiết bị trong `/dev` có thể được tạo một cách thủ công, `/dev` chứa chương trình `MAKEDEV` dùng để phục vụ chuyện đó.
+- Chi tiết về `/etc`: các tệp cấu hình được chứa trong đây, chúng được sử dụng để điều khiển cách thức vận hành của chương trình, chúng bắt buộc là một tệp tĩnh và không thể thực thi. Một số tệp ví dụ như:
+    - `hosts`: thông tin về ánh xạ tên máy chủ.
+    - `hosts.allow`: danh sách được cho phép truy cập dựa trên `TCP`.
+    - `hosts.deny`: danh sách từ chối truy cập dựa trên `TCP`.
+    - `hosts.equiv`: danh sách các máy chủ và người dùng được tin tưởng hoặc từ chối khi sử dụng `r-command` như `rlogin`, `rsh` hoặc `rcp`... truy cập vào hệ thống mà không cần cung cấp mật khẩu - cơ chế xác thực người dùng cơ bản.
 ## <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
 ## <a name="rpm_package"></a>RPM package và phân loại
 - `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:

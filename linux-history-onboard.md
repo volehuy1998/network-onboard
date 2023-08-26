@@ -1,10 +1,10 @@
-- [1 - Lịch sử hình thành và phát triển Linux (:sparkles:UPDATED 21/08/2023)](#linux_history)
-    - [1.1 - Những thập niên 1969 (:sparkles:UPDATED 21/08/2023)](#1969s)
-    - [1.2 - Những thập niên 1980 (:sparkles:UPDATED 21/08/2023)](#1980s)
-    - [1.3 - Những thập niên 1990 (:sparkles:UPDATED 21/08/2023)](#1990s)
-    - [1.4 - Năm 2015](#2015)
-    - [1.5 - Khái niệm phân phối (:sparkles:UPDATED 21/08/2023)](#distro)
-    - [1.6 - Giấy phép lưu hành (:sparkles:UPDATED 21/08/2023)](#license)
+- [1 - Lịch sử hình thành và phát triển Linux (UPDATED 21/08/2023)](#linux_history)
+    - [1.1 - Những thập niên 1969 (UPDATED 21/08/2023)](#1969s)
+    - [1.2 - Những thập niên 1980 (UPDATED 21/08/2023)](#1980s)
+    - [1.3 - Những thập niên 1990 (UPDATED 21/08/2023)](#1990s)
+    - [1.4 - Năm 2015 (UPDATED 21/08/2023)](#2015)
+    - [1.5 - Khái niệm phân phối (UPDATED 21/08/2023)](#distro)
+    - [1.6 - Giấy phép lưu hành (UPDATED 21/08/2023)](#license)
 
 # <a name="linux_history"></a>Lịch sử hình thành và phát triển Linux
 ## <a name="1969s"></a>Năm 1969
