@@ -9,8 +9,9 @@
 - [Phần 2 - Kiến trúc Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-arch-onboard.md)
     - 2.1 - Linux Kernel (:sparkles:UPDATED 24/08/2023)
     - 2.2 - Vai trò của Linux Kernel (:sparkles:UPDATED 24/08/2023)
-    - 2.3 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)
-    - 2.4 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)
-    - 2.5 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)
-    - 2.6 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)
+    - 2.3 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)
+    - 2.4 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)
+    - 2.5 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)
+    - 2.6 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)
+    - 2.7 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)
 
