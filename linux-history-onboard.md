@@ -1,4 +1,4 @@
-- [1 - Lịch sử hình thành và phát triển Linux (UPDATED 21/08/2023)](#linux_history)
+- [1 - Lịch sử hình thành và phát triển Linux](#linux_history)
     - [1.1 - Những thập niên 1969 (UPDATED 21/08/2023)](#1969s)
     - [1.2 - Những thập niên 1980 (UPDATED 21/08/2023)](#1980s)
     - [1.3 - Những thập niên 1990 (UPDATED 21/08/2023)](#1990s)

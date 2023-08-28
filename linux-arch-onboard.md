@@ -1,11 +1,11 @@
-- [2 - Tổng quan về kiến trúc Linux (:sparkles:UPDATED 24/08/2023)](#linux_arch)
-    - [2.1 - Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel)
-    - [2.2 - Vai trò của Linux Kernel (:sparkles:UPDATED 24/08/2023)](#linux_kernel_job)
-    - [2.3 - Quản lý quyền tệp tin (:sparkles:UPDATED 24/08/2023)](#file_permission_management)
-    - [2.4 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)](#fhs)
-    - [2.5 - RPM Package và phân loại (:sparkles:UPDATED 24/08/2023)](#rpm_package)
-    - [2.6 - Kernel RPM Package (:sparkles:UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.7 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 24/08/2023)](#linux_process)
+- [2 - Tổng quan về kiến trúc Linux (](#linux_arch)
+    - [2.1 - Linux Kernel (:sparkles:UPDATED 27/08/2023)](#linux_kernel)
+    - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
+    - [2.3 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)](#fhs)
+    - [2.4 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
+    - [2.5 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
+    - [2.6 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
+    - [2.7 - Trạng thái của tiến trình Linux (UPDATED 24/08/2023)](#linux_process)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
