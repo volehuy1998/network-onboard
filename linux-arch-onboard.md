@@ -1,4 +1,4 @@
-- [2 - Tổng quan về kiến trúc Linux (](#linux_arch)
+- [2 - Tổng quan về kiến trúc Linux](#linux_arch)
     - [2.1 - Linux Kernel (:sparkles:UPDATED 27/08/2023)](#linux_kernel)
     - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
     - [2.3 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)](#fhs)
