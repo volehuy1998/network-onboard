@@ -6,7 +6,7 @@
     - [2.5 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.6 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
     - [2.7 - Trạng thái của tiến trình Linux (UPDATED 24/08/2023)](#linux_process)
-    - [2.8 - Tổng quan về Interrupt - Ngắt (:sparkles:UPDATED 31/08/2023)](#linux_process)
+    - [2.8 - Tổng quan về Interrupt - Ngắt (:sparkles:UPDATED 31/08/2023)](#interrupt)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -239,7 +239,7 @@ Gồm có 5 trạng thái:
 
 <div style="text-align:center"><img src="images/process_struct.png" /></div>
 
-## Tổng quan về Interrupt - Ngắt
+## <a name="interrupt"></a>Tổng quan về Interrupt - Ngắt
 `Interrupt` là một sự kiện nhìn về ở phía vi xử lý thì nó có độ ưu tiên rất cao, nó xảy ra để thay đổi luồng thực thi của chương trình và nó có thể được tạo ra từ thiết bị phần cứng hoặc phần mềm nói chung, từ chính CPU của nó nói riêng. Khi `interrupt` xảy ra thì mã thực thi hiện tại bị dừng lại nhường chỗ cho việc xử lý `interrupt` bởi một chương trình tên `trap hanlder` hay `page fault handler`, ... luồng thực thi hiện tại sẽ tái khởi động từ trạng thái cũ khi `interrupt` hoàn tất xử lý. Các loại ngắt được nhóm thành 2 thể loại chính dựa trên nguồn khởi tạo của nó: khả năng trì hoãn hoặc vô hiệu tóa tạm thời:
 
 - `synchronous`: đồng bộ, được tạo từ việc thực thi `instruction`.
