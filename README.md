@@ -16,6 +16,6 @@
 - 2.4 - Quản lý quyền tệp tin (UPDATED 24/08/2023)
 - 2.5 - RPM Package và phân loại (UPDATED 24/08/2023)
 - 2.6 - Kernel RPM Package (UPDATED 24/08/2023)
-- 2.7 - Trạng thái của tiến trình Linux (UPDATED 24/08/2023)
-- 2.7 - Tổng quan về Interrupt - Ngắt (:sparkles:UPDATED 31/08/2023)
+- 2.7 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 03/09/2023)
+- 2.7 - Tổng quan về Interrupt - Ngắt (:sparkles:UPDATED 03/09/2023)
 
