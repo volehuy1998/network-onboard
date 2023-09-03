@@ -282,5 +282,8 @@ Ví dụ về `software interrupt` thực hiện nhiệm vụ đặt `trap` vớ
 
 Giải thích:
 
-- Một `breakpoint` đã được đặt tại dòng `2501` trước khi sử dụng chức năng tạo máy ảo.
+- Một `breakpoint` màu đỏ đã được đặt tại dòng `2501` trước khi sử dụng chức năng tạo máy ảo.
+- Ngay khi bấm tạo máy ảo, dòng `2501` đã được kích hoạt bằng màu vàng và dừng lại chờ đợi lệnh tiếp đến thực thi như thế nào: đi đến dòng kế tiếp; thực thi hết các đoạn mã trong hàm này và dừng lại ở hàm đã gọi nó; ...
 - Dòng `2501` thực hiện gán giá trị `SPAWNING` để mô tả giai đoạn công việc đang thực hiện trên máy ảo này.
+
+Đặt `breakpoint` giúp lập trình viên theo dõi chi tiết cách thức hoạt động của một chức năng, sẽ dễ dàng hơn nếu đối tượng của họ là mã đã có sẵn, ngược lại sẽ rất khó khăn nếu đối tượng là một chương trình đã được đóng gói lúc này họ sẽ được gọi là kiểm thử viên `blackbox` hoặc kỹ sư dịch ngược `reverse engineering`. Câu hỏi đặt ra rằng khi không có mã sẵn thì làm thế nào để đặt `breakpoint` tương tự như ví dụ trên? Đối tượng chương trình là gì hoặc chứa nội dung quan trọng gì mà cần kỹ sư dịch ngược phẫu thuật chúng?
