@@ -2,12 +2,13 @@
 
 - [2.1 - Linux Kernel (:sparkles:UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
-- [2.3 - Phân cấp hệ thống tệp tin (:sparkles:UPDATED 26/08/2023)](#fhs)
+- [2.3 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
 - [2.4 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
 - [2.5 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
 - [2.6 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-- [2.7 - Trạng thái của tiến trình Linux (:sparkles:UPDATED 03/09/2023)](#linux_process)
-- [2.8 - Tổng quan về Interrupt - Ngắt (:sparkles:UPDATED 03/09/2023)](#interrupt)
+- [2.7 - Tổng quan tiến trình Linux (:sparkles:UPDATED 05/09/2023)](#linux_process)
+    - [2.7.1 - Trạng thái của tiến trình Linux (UPDATED 03/09/2023)](#process_states)
+- [2.8 - Tổng quan về Interrupt - Ngắt (UPDATED 03/09/2023)](#interrupt)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -227,7 +228,18 @@ Phân tích `kernel rpm` thấy được như sau:
 ...
 ...
 ```
-## <a name="linux_process"></a>Các trạng thái của `Linux process`
+## <a name="linux_process"></a>Tổng quan về tiến trình
+Tiến trình là tên gọi đại diện cho sự trừu tượng hóa hay nhóm các tài nguyên sau:
+
+- `address space`: không gian địa chỉ.
+- `thread`: một hoặc nhiều luồng.
+- `timers`: đồng hồ.
+- `socket`.
+- `shared memory region`: khu vực bộ nhớ xài chung.
+- ...
+
+, trong mã `Linux` nó được gọi với tên nguyên bản là `task_struct` với nội dung hơn 800 dòng tại https://github.com/torvalds/linux/blob/master/include/linux/sched.h#L743-L1554.
+### <a name="process_states"></a>Các trạng thái của tiến trình `Linux`
 
 <div style="text-align:center"><img src="../images/linux_process_states.png"/></div>
 
@@ -244,7 +256,6 @@ Một số quy tắc gửi tín hiệu đến tiến trình thông qua tổ hợ
 
 - `Ctrl C`: gửi tín hiệu và kết thúc tiến trình.
 - `Ctrl Z`: gửi tín hiệu `SIGTSTP` sẽ đưa tiến trình vào trạng thái ngủ đông `sleep`.
-
 ## <a name="interrupt"></a>Tổng quan về Interrupt - Ngắt
 `Interrupt` là một sự kiện nhìn về ở phía vi xử lý thì nó có độ ưu tiên rất cao, nó xảy ra để thay đổi luồng thực thi của chương trình và nó có thể được tạo ra từ thiết bị phần cứng hoặc phần mềm nói chung, từ chính CPU của nó nói riêng. Khi `interrupt` xảy ra thì mã thực thi hiện tại bị dừng lại nhường chỗ cho việc xử lý `interrupt` bởi một chương trình tên `interrupt handler` được biết với tên khác là `interrupt service routine (ISR)`, ví dụ như `trap hanlder` hay `page fault handler`, ... luồng thực thi hiện tại sẽ tái khởi động từ trạng thái cũ khi `interrupt` hoàn tất xử lý. Các loại ngắt được nhóm thành 2 thể loại chính dựa trên nguồn khởi tạo của nó: khả năng trì hoãn hoặc vô hiệu tóa tạm thời:
 
@@ -276,7 +287,7 @@ Có 2 nguồn dẫn đến `exception` là được vi xử lý phát hiện ho�
 
 Có một ngoại lệ dành cho phần mềm là `kernel`, nó không được phép gây ra `traps`, `faults`. Nếu `kernel` gây ra lỗi thì tình hình như vậy được xem xét là nghiêm trọng đối với hệ thống, `trap handler` gọi trường hợp này là `panic`, tên gọi cho việc dừng hệ thống một cách bất ngờ và không mong muốn.
 
-Ví dụ về `software interrupt` thực hiện nhiệm vụ đặt `trap` với `interrupt vector 3` hay viết tắt là `INT 3` thông qua phần mềm `Visual Studio Code` chạy ở phía người dùng, phần mềm đang cố gắng theo đuổi chi tiết chức năng tạo máy ảo của `nova-compute` nói riêng và `Openstack` nói chung dựa trên mã nguồn mở. Ngoài ra đối với trường hợp sử dụng `docker container` thông qua `Kolla` thì người dùng cũng có thể đặt `breakpoint` dựa trên `console` theo hướng dẫn sau: https://docs.openstack.org/kolla-ansible/latest/contributor/kolla-for-openstack-development.html (lưu ý rằng thay thế `socat` trong hướng dẫn bằng chương trình `netcat` cụ thể là `"nc <ip>:<port>"`)
+Ví dụ về `software interrupt` thực hiện nhiệm vụ đặt `trap` với `interrupt 3` hay viết tắt là `INT 3` thông qua phần mềm `Visual Studio Code` chạy ở phía người dùng, phần mềm đang cố gắng theo đuổi chi tiết chức năng tạo máy ảo của `nova-compute` nói riêng và `Openstack` nói chung dựa trên mã nguồn mở. Ngoài ra đối với trường hợp sử dụng `docker container` thông qua `Kolla` thì người dùng cũng có thể đặt `breakpoint` dựa trên `console` theo hướng dẫn sau: https://docs.openstack.org/kolla-ansible/latest/contributor/kolla-for-openstack-development.html (lưu ý rằng thay thế `socat` trong hướng dẫn bằng chương trình `netcat` cụ thể là `"nc <ip>:<port>"`)
 
 <div style="text-align:center"><img src="../images/interrupt_breakpoint_int3.png" /></div>
 
