@@ -2,13 +2,14 @@
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
-- [2.3 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
-- [2.4 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
-- [2.5 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
-- [2.6 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-- [2.7 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
-    - [2.7.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
-- [2.8 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
+- [2.3 - Hệ thống tệp tin (UPDATED 26/08/2023)](#fs)
+    - [2.3.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
+    - [2.3.2 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
+    - [2.3.3 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
+    - [2.3.4 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
+- [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
+    - [2.4.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
+- [2.5 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -39,7 +40,8 @@ Khi `kernel` được triển khai đúng cách thì nó phải nằm trong tr�
 Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng dụng `File Explorer` - dĩ nhiên đây là ứng dụng nằm ở phía `user mode`, ứng dụng này sẽ gửi một yêu cầu `I/O` đến ứng dụng loại `File System Filter Driver` được chạy ở phía `kernel mode`, tại đây `File System Filter Driver` sẽ là một bộ lọc cho phép `File Explorer` lấy dữ liệu từ ổ cứng, ngược lại cũng có quyền từ chối nếu như nội dung hoặc một phần nhỏ trong nội dung nằm trong danh sách không thỏa được bị lập trình viên `driver` thiết kế. Đây là một chức năng nằm trong sản phẩm `File Defender` của tập đoàn chuyên làm phần mềm bảo mật `Plott Ltd` Nhật Bản.
 
 <i>Tham khỏa thêm tại https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_monitoring_and_updating_the_kernel/index#what-the-kernel-is_assembly_the-linux-kernel</i>
-## <a name="fhs"></a>Phân cấp hệ thống tệp tin
+## <a name="fs"></a>Hệ thống tệp tin
+### <a name="fhs"></a>Phân cấp hệ thống tệp tin
 Cấu trúc của hệ thống tệp tin `File System Hierarchy Standard(FHS)` được định nghĩa tên, nơi chốn và các quyền cho tất cả các loại tệp, thư mục. Tài liệu `FHS` là tài liệu chính thức cho bất kỳ hệ thống tệp tin nào tuân thủ `FHS` nhưng cấu trúc này để lại nhiều mảng không thể định nghĩa hoặc mở rộng.
 
 Hai điểm quan trọng nhất để đảm bảo rằng hệ thống tuân thủ `FHS` như sau:
@@ -116,8 +118,8 @@ Chi tiết về `/etc`: các tệp cấu hình được chứa trong đây, chú
 - `hosts.allow`: danh sách được cho phép truy cập dựa trên `TCP`.
 - `hosts.deny`: danh sách từ chối truy cập dựa trên `TCP`.
 - `hosts.equiv`: danh sách các máy chủ và người dùng được tin tưởng hoặc từ chối khi sử dụng `r-command` như `rlogin`, `rsh` hoặc `rcp`... truy cập vào hệ thống mà không cần cung cấp mật khẩu - cơ chế xác thực người dùng cơ bản.
-## <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
-## <a name="rpm_package"></a>RPM package và phân loại
+### <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
+### <a name="rpm_package"></a>RPM package và phân loại
 `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
 
 - Những tệp tin.
@@ -128,7 +130,7 @@ Có 2 loại `RPM package`, tất cả chúng đều chia sẻ định dạng v�
 
 - Nguồn của `RPM package` viết tắt `SRPM`, thông tin này chứa mã nguồn và cấu hình tệp nơi mà mô tả làm thế nào để xây dựng được gói `RPM binary`. Thêm vào đó `SRPM` có thông tin các bản vá lỗi cho đoạn mã được bao gồm.
 - Tệp `RPM binary` chứa tệp `binary` được xây dựng từ mã nguồn.
-## <a name="kernel_rpm_package"></a>Tổng quan về `RPM package` của `Linux kernel`
+### <a name="kernel_rpm_package"></a>Tổng quan về `RPM package` của `Linux kernel`
 `Kernel RPM` là loại `RPM` đặc biệt, nó không chứa bất kỳ tệp nào nhưng nó bắt buộc các gói phụ thuộc phải được cài đặt đúng cách. `Kernel core` chứa các mẫu `binary` hay `binary image` của `kernel`, tất cả các đối tượng liên quan đến `initramfs` khởi động cùng hệ thống, số lượng `kernel-module` tối thiểu để đảm bảo chức năng cốt lõi. `Kernel modules` chứa những `kernel modules` còn lại không nằm trong `kernel core`.
 
 Một nhóm nhỏ các gói phụ thuộc của `kernel` bên trên nhằm mục đích cung cấp công cụ, môi trường để quản trị viên bảo trì, đặc biệt trong môi trường ảo hóa. Các `kernel package` được tùy chọn thêm gồm có:
