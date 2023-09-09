@@ -2,11 +2,12 @@
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
-- [2.3 - Hệ thống tệp tin (UPDATED 26/08/2023)](#fs)
+- [2.3 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.3.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
-    - [2.3.2 - Quản lý quyền tệp tin (UPDATED 24/08/2023)](#file_permission_management)
-    - [2.3.3 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
-    - [2.3.4 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
+    - [2.3.2 - Tổng quan về quyền trên tệp tin (UPDATED 09/09/2023)](#file_permission)
+    - [2.3.3 - Quản lý quyền tệp tin (UPDATED 09/09/2023)](#file_permission_management)
+    - [2.3.4 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
+    - [2.3.5 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
 - [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
     - [2.4.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
 - [2.5 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
@@ -118,7 +119,113 @@ Chi tiết về `/etc`: các tệp cấu hình được chứa trong đây, chú
 - `hosts.allow`: danh sách được cho phép truy cập dựa trên `TCP`.
 - `hosts.deny`: danh sách từ chối truy cập dựa trên `TCP`.
 - `hosts.equiv`: danh sách các máy chủ và người dùng được tin tưởng hoặc từ chối khi sử dụng `r-command` như `rlogin`, `rsh` hoặc `rcp`... truy cập vào hệ thống mà không cần cung cấp mật khẩu - cơ chế xác thực người dùng cơ bản.
+### <a name="file_permission"></a>Tổng quan về quyền trên tệp tin
+Là khả năng về việc kiểm soát quyền hạn của trên tệp tin hoặc thư mục của người dùng hoặc nhóm các người dùng như:
+
+- `View` - xem nội dung.
+- `Modify` - chỉnh sửa nội dung.
+- `Execute` - thực thi nội dung.
+- `Access` - truy cập.
+
+Mỗi tệp hoặc thư mục đều tồn tại 3 cấp độ sở hữu như:
+
+- Người sở hữu - `u` (user).
+- Nhóm người sở hữu - `g` (group).
+- Ngoài ra những người còn lại - `o` (other).
+
+Mỗi cấp độ sở hữu đều có khả năng gán 3 quyền như sau:
+
+- Đọc dữ liệu - `r` (read).
+- Ghi dữ liệu - `w` (write).
+- Thực thi - `x` (execuate).
+
+Khi một tệp hoặc thư mục được tạo thì một tập hợp các quyền mặc định sẽ tự động được gán vào chúng, lưu ý rằng quyền `x` dành cho tệp tin sẽ cho phép thực thi hay `run` tệp đó, ngược lại với thư mục chỉ cho phép truy cập vào nội dung của thư mục.
+Thông tin về các quyền cơ bản được thể hiện ở dạng `symbolic` hoặc giá trị hệ 8 `octal`.
+| Quyền hạn | Giá trị `symbolic` | Giá trị hệ 8 |
+| ---- | ---- | ---- |
+| Không quyền      | --- | 0 |
+| Chỉ thực thi     | --x | 1 |
+| Chỉ viết         | -w- | 2 |
+| Thực thi và viết | -wx | 3 |
+| Chỉ đọc          | r-- | 4 |
+| Đọc và thực thi  | r-x | 5 |
+| Đọc và viết      | rw- | 6 |
+| Đầy đủ quyền     | rwx | 7 |
+
+Với quyền `777` dành cho thư mục có nghĩa là chủ sở hữu, nhóm và những người khác đều có thể xem nội dung bên trong thư mục, tạo, xóa, truy cập vào và chỉnh sửa các thư mục con ở bên trong nó. Lưu ý rằng các tệp tin trong thư mục có thể được cài đặt quyền riêng, điều này có thể ngăn chặn chỉnh sửa nội dung mặc dù trên thư mục chứa nó đang cho phép mọi quyền truy cập `unrestricted`.
+
+Đối với chế độ `umask (user file-creation mode mask)` sẽ lật tất cả các `bit` sao cho ngược lại với chế độ `mask`. Nó được dùng để tự động hóa loại bỏ các quyền mặc định để tăng khả năng bảo mật cho hệ thống tệp tin `Linux`.
+
+| Quyền hạn | Giá trị `symbolic` | Giá trị hệ 8 |
+| ---- | ---- | ---- |
+| Đầy đủ quyền     | rwx | 0 |
+| Đọc và viết      | rw- | 1 |
+| Đọc và thực thi  | r-x | 2 |
+| Chỉ đọc          | r-- | 3 |
+| Thực thi và viết | -wx | 4 |
+| Chỉ viết         | -w- | 5 |
+| Chỉ thực thi     | --x | 6 |
+| Không quyền      | --- | 7 |
+
+<div style="text-align:center"><img src="../images/umask_file_permission.png" /></div>
+
+Quyền hạn cơ bản của thư mục được tạo bởi người dùng thường hay `standard user`.
+
+| Loại quyền | Giá trị `symbolic` | Giá trị hệ 8 |
+| ---- | ---- | ---- |
+| Quyền mặc định       | rw-rw-r-- | 664 |
+| `umask` của mặc định | rwxrwxr-x | 002 |
+| Quyền cơ bản         | rw-rw-rw- | 666 |
+
+Ví dụ như sau:
+```shell
+[sysad@huyvl-linux-training ~]$ ll
+total 4
+drwxrwxr-x 2 sysad sysad 4096 Sep  9 18:46 new-directory
+-rw-rw-r-- 1 sysad sysad    0 Sep  9 18:46 new-file
+[sysad@huyvl-linux-training ~]$
+```
+Chú thích:
+- Ký tự `d` thể hiện đối tượng là thư mục.
+- `rw-` trên thư mục cho phép người sở hữu có mọi quyền trên đó
+- `rw-` chỉ cho phép đọc và thực thi của các tài khoản nằm trong nhóm `sysad`
+- những người còn lại chỉ có quyền đọc `r--`.
+- Tương tự đối với tệp `new-file`.
+
+Quyền hạn cơ bản của thư mục được tạo bởi người dùng `root`.
+
+| Loại quyền | Giá trị `symbolic` | Giá trị hệ 8 |
+| ---- | ---- | ---- |
+| Quyền mặc định       | rwxr-xr-x | 755 |
+| `umask` của mặc định | rwxr-xr-x | 022 |
+| Quyền cơ bản         | rwxrwxrwx | 777 |
+
+Ví dụ như sau:
+```shell
+[root@huyvl-linux-training ~]# ll
+total 4
+drwxr-xr-x 2 root root 4096 Sep  9 17:47 new-directory
+-rw-r--r-- 1 root root    0 Sep  9 17:47 new-file
+[root@huyvl-linux-training ~]#
+```
+Đối với tệp tin có các quyền cơ bản sẽ giống nhau với cả người dùng thường lẫn `root`.
+| Loại quyền | Giá trị `symbolic` | Giá trị hệ 8 |
+| ---- | ---- | ---- |
+| Quyền mặc định       | rw-r--​r-- | 644 |
+| `umask` của mặc định | rwxr-xr-x | 022 |
+| Quyền cơ bản         | rw-rw-rw- | 666 |
 ### <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
+Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc các `symbolic` kèm phép toán sau để thay đổi quyền:
+
+- `+`: thêm quyền dựa trên các quyền hiện hành.
+- `-`: loại bỏ quyền từ các quyền hiện hành.
+- `=`: loại bỏ tất cả quyền hiện tại và định nghĩa lại theo yêu cầu.
+
+Để thay đổi quyền người dùng có thể sử dụng lệnh:
+```shell
+$ chmod <level-ownership><operation><permission> object-name
+$ chmod <octal-value> object-name
+```
 ### <a name="rpm_package"></a>RPM package và phân loại
 `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
 
