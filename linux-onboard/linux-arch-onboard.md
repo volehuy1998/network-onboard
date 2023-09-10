@@ -329,6 +329,11 @@ Sep 10 15:08:57 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't o
 Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
 Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
 Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): new password not acceptable
+...
+...
+[root@huyvl-linux-training ~]# ls -l /etc/security/opasswd
+-rw------- 1 root root 94 Sep 10 15:16 /etc/security/opasswd
+[root@huyvl-linux-training ~]#
 ```
 Chương trình `/usr/bin/id` mô tả chính xác về thông của một tài khoản nhưng cũng có thể là một trong những ví dụ điển hình về cấp nhầm `SUID` dẫn tới một lỗ hổng tiềm tàng như sau:
 ```shell
