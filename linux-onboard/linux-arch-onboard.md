@@ -4,8 +4,11 @@
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
 - [2.3 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.3.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
-    - [2.3.2 - Tổng quan về quyền trên tệp tin (UPDATED 09/09/2023)](#file_permission)
-    - [2.3.3 - Quản lý quyền tệp tin (UPDATED 09/09/2023)](#file_permission_management)
+    - [2.3.2 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
+    - [2.3.3 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
+        - [2.3.3.1 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
+        - [2.3.3.2 - Quyền đặc biệt dành cho nhóm](#guid_permission)
+        - [2.3.3.3 - Quyền đặc biệt Sticky bit](#sticky_bit_permission)
     - [2.3.4 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.3.5 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
 - [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
@@ -223,9 +226,172 @@ Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc cá
 
 Để thay đổi quyền người dùng có thể sử dụng lệnh:
 ```shell
-$ chmod <level-ownership><operation><permission> object-name
+$ chmod <ownership><operation><permission> object-name
 $ chmod <octal-value> object-name
 ```
+Người dùng có thể sử dụng tiện tích `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` ta gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
+```shell
+[root@huyvl-linux-training ~]# umask
+0022
+[root@huyvl-linux-training ~]# umask -S
+u=rwx,g=rx,o=rx
+[root@huyvl-linux-training ~]# su - sysad
+Last login: Sat Sep  9 18:35:15 +07 2023 on pts/0
+[sysad@huyvl-linux-training ~]$ umask
+0002
+[sysad@huyvl-linux-training ~]$ umask -S
+u=rwx,g=rwx,o=rx
+[sysad@huyvl-linux-training ~]$
+```
+Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này.
+#### <a name="suid_permission"></a>Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền
+Mức truy cập `user+s(pecial)` gọi tắt là `SUID (Set User ID)` thường được ứng dụng cho các tệp `binary`, quyền này mô tả tệp sẽ chỉ được thực thi với quyền của chủ sở hữu tệp. Một ví dụ về lợi ích của mặc định áp dụng quyền `SUID` lên tệp `/usr/bin/passwd` sẽ thấy quyền `x(execute)` bị thay thế bởi `s(pecial)` cho nên chương trình sẽ thực thi bởi `root` như sau:
+```shell
+[root@huyvl-linux-training ~]# ls -l /usr/bin/passwd
+-rwsr-xr-x. 1 root root 27856 Apr  1  2020 /usr/bin/passwd
+[root@huyvl-linux-training ~]#
+```
+, có thể chứng minh được chương trình `passwd` này chỉ có thể được sử dụng bởi `root` bằng cách tạo tài khoản `dev` khởi chạy chương trình `passwd` như sau:
+```shell
+[dev@huyvl-linux-training ~]$ passwd
+Changing password for user dev.
+Changing password for dev.
+(current) UNIX password:
+```
+, kiểm tra thấy `bash shell` chạy tiến trình `passwd` với tài khoản `root` như sau:
+```shell
+[root@huyvl-linux-training ~]# ps auf
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root     27864  0.0  0.2 115544  2048 pts/3    Ss   14:24   0:00 /bin/bash
+root     28076  0.0  0.2 191880  2364 pts/3    S    14:24   0:00  \_ su - dev
+dev      28077  0.0  0.2 115544  2080 pts/3    S    14:24   0:00      \_ -bash
+root     20930  0.0  0.1 160400  1908 pts/3    S+   14:58   0:00          \_ passwd
+...
+...
+```
+, việc thay đổi diễn ra thành công tại tài khoản `dev` như sau:
+```shell
+[dev@huyvl-linux-training ~]$ passwd
+Changing password for user dev.
+Changing password for dev.
+(current) UNIX password:
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: all authentication tokens updated successfully.
+[dev@huyvl-linux-training ~]$
+```
+, kiểm tra nhật ký tại `root` như sau:
+```shell
+[root@huyvl-linux-training ~]# tail -f /var/log/secure
+...
+...
+Sep 10 15:05:40 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): password changed for dev
+```
+, loại bỏ quyền `SUID` và kiểm tra lại hoạt động của `passwd` tại `dev` như sau:
+```shell
+[root@huyvl-linux-training ~]# chmod u-s /usr/bin/passwd
+```
+, tại tài khoản `dev` nhận thấy không thể thay đổi mật khẩu:
+```shell
+[dev@huyvl-linux-training ~]$ passwd
+Changing password for user dev.
+Changing password for dev.
+(current) UNIX password:
+Enter new UNIX password:
+Retype new UNIX password:
+Enter new UNIX password:
+Retype new UNIX password:
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: Authentication token manipulation error
+[dev@huyvl-linux-training ~]$
+```
+, tại `root` thấy chương trình `passwd` đã được chuyển sang khởi chạy với chính `dev`, khác với trước khi chỉnh sửa quyền như sau:
+```shell
+[root@huyvl-linux-training ~]# ps auf
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root     27864  0.0  0.2 115544  2048 pts/3    Ss   14:24   0:00 /bin/bash
+root     28076  0.0  0.2 191880  2364 pts/3    S    14:24   0:00  \_ su - dev
+dev      28077  0.0  0.2 115544  2080 pts/3    S    14:24   0:00      \_ -bash
+dev      29300  0.0  0.1 160400  1888 pts/3    S+   15:09   0:00          \_ passwd
+...
+...
+[root@huyvl-linux-training ~]# tail -f /var/log/secure
+...
+...
+Sep 10 15:07:00 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:07:04 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:08:08 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:08:08 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): new password not acceptable
+Sep 10 15:08:51 huyvl-linux-training unix_chkpwd[28509]: password check failed for user (dev)
+Sep 10 15:08:51 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): authentication failure; logname= uid=1001 euid=1001 tty=pts/3 ruser= rhost=  user=dev
+Sep 10 15:08:57 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): can't open /etc/security/opasswd file to check old passwords
+Sep 10 15:08:58 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): new password not acceptable
+```
+Chương trình `/usr/bin/id` mô tả chính xác về thông của một tài khoản nhưng cũng có thể là một trong những ví dụ điển hình về cấp nhầm `SUID` dẫn tới một lỗ hổng tiềm tàng như sau:
+```shell
+[dev@huyvl-linux-training ~]$ id
+uid=1001(dev) gid=1001(dev) groups=1001(dev)
+[dev@huyvl-linux-training ~]$ ls -l /usr/bin/id
+-rwxr-xr-x. 1 root root 37400 Nov 17  2020 /usr/bin/id
+[dev@huyvl-linux-training ~]$
+...
+...
+[dev@huyvl-linux-training ~]$ id
+uid=1001(dev) gid=1001(dev) groups=1001(dev)
+[dev@huyvl-linux-training ~]$
+```
+, giả lập thao tác trao quyền nhầm quyền `SUID` bởi quản trị viên vào chương trình `/usr/bin/id`, sau đó tại tài khoản `dev` đã có được một đặc quyền `root` như sau:
+```shell
+[root@huyvl-linux-training ~]# cp /usr/bin/id /home/dev/
+[root@huyvl-linux-training ~]# chmod u+s /home/dev/id
+...
+...
+[dev@huyvl-linux-training ~]$ ./id
+uid=1001(dev) gid=1001(dev) euid=0(root) groups=1001(dev)
+[dev@huyvl-linux-training ~]$
+```
+, tương tự đối với chương trình `/usr/bin/cat` hoặc thậm chí với các công cụ `gparted`, `nano`, ... như sau:
+```shell
+[dev@huyvl-linux-training ~]$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+[dev@huyvl-linux-training ~]$
+```
+```shell
+[root@huyvl-linux-training ~]# cp /usr/bin/cat /home/dev/
+[root@huyvl-linux-training ~]# chmod u+s /home/dev/cat
+```
+, tài khoản `dev` đã có quyền để thể thấy được tất mật khẩu `root`, `sysad`, ... với dạng băm như sau:
+```shell
+[dev@huyvl-linux-training ~]$ ./cat /etc/shadow
+root:$1$WIK4jiKy$zduQomlM7t93yBZ8gWLO5.:19610:0:99999:7:::
+bin:*:18353:0:99999:7:::
+daemon:*:18353:0:99999:7:::
+adm:*:18353:0:99999:7:::
+lp:*:18353:0:99999:7:::
+sync:*:18353:0:99999:7:::
+shutdown:*:18353:0:99999:7:::
+halt:*:18353:0:99999:7:::
+mail:*:18353:0:99999:7:::
+operator:*:18353:0:99999:7:::
+games:*:18353:0:99999:7:::
+ftp:*:18353:0:99999:7:::
+nobody:*:18353:0:99999:7:::
+systemd-network:!!:18760::::::
+dbus:!!:18760::::::
+polkitd:!!:18760::::::
+sshd:!!:18760::::::
+postfix:!!:18760::::::
+chrony:!!:18760::::::
+gluster:!!:18760::::::
+sysad:$6$5wkk19C0$HQHc9eCGwyE1cXcgsPnUXKZHp9.OLy9gWr95Sno8y1B8VrZut1NSjuMYTojEQ.AiQPgBidqp8u9qJtmB9Mszk.:19610:0:99999:7:::
+dev:$6$MSPq8owf$DPCLXYW1kZrA7Bnf6/cJe2FclE1VWBp4uak4ienAOU0cK3dF.nKX9mRnwqlLx4Di/AwU8cqWuKJUBewLV1Ty0.:19610:0:99999:7:::
+[dev@huyvl-linux-training ~]$
+```
+#### <a name="guid_permission"></a>Quyền đặc biệt dành cho nhóm (GUID)
+#### <a name="sticky_bit_permission"></a>Quyền đặc biệt Sticky Bit
 ### <a name="rpm_package"></a>RPM package và phân loại
 `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
 
