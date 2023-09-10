@@ -2,18 +2,22 @@
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
-- [2.3 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
-    - [2.3.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
-    - [2.3.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
-    - [2.3.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.3.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
-        - [2.3.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
-        - [2.3.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
-        - [2.3.4.3 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
-        - [2.3.4.4 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
-- [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
-    - [2.4.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
 - [2.5 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
+- [2.4 - Quản lý người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)](#user_and_group)
+    - [2.4.1 - Các thao tác quản lý trên người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)](#user_and_group_control)
+    - [2.4.2 - Cấp quyền `sudo` tự do (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_free_sudo)
+    - [2.4.3 - Cấp quyền `sudo` với lệnh cụ thể (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_command_sudo)
+- [2.5 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
+    - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
+    - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
+    - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
+    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
+        - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
+        - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
+        - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
+        - [2.5.4.4 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
+- [2.6 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
+    - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -44,6 +48,372 @@ Khi `kernel` được triển khai đúng cách thì nó phải nằm trong tr�
 Ví dụ: khi người dùng `Windows` mở một tệp bất kỳ trên ứng dụng `File Explorer` - dĩ nhiên đây là ứng dụng nằm ở phía `user mode`, ứng dụng này sẽ gửi một yêu cầu `I/O` đến ứng dụng loại `File System Filter Driver` được chạy ở phía `kernel mode`, tại đây `File System Filter Driver` sẽ là một bộ lọc cho phép `File Explorer` lấy dữ liệu từ ổ cứng, ngược lại cũng có quyền từ chối nếu như nội dung hoặc một phần nhỏ trong nội dung nằm trong danh sách không thỏa được bị lập trình viên `driver` thiết kế. Đây là một chức năng nằm trong sản phẩm `File Defender` của tập đoàn chuyên làm phần mềm bảo mật `Plott Ltd` Nhật Bản.
 
 <i>Tham khỏa thêm tại https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_monitoring_and_updating_the_kernel/index#what-the-kernel-is_assembly_the-linux-kernel</i>
+## <a name="interrupt"></a>Tổng quan về Interrupt - Ngắt
+`Interrupt` là một sự kiện nhìn về ở phía vi xử lý thì nó có độ ưu tiên rất cao, nó xảy ra để thay đổi luồng thực thi của chương trình và nó có thể được tạo ra từ thiết bị phần cứng hoặc phần mềm nói chung, từ chính CPU của nó nói riêng. Khi `interrupt` xảy ra thì mã thực thi hiện tại bị dừng lại nhường chỗ cho việc xử lý `interrupt` bởi một chương trình tên `interrupt handler` được biết với tên khác là `interrupt service routine (ISR)`, tức với một `interrupt vector` trong <a href="https://en.wikipedia.org/wiki/Interrupt_vector_table">`interrupt vector table (IVT)`</a> sẽ có tương ứng một `handler` đảm nhận xử lý, ví dụ như `trap hanlder` hay `page fault handler`, ... luồng thực thi hiện tại sẽ tái khởi động từ trạng thái cũ khi `interrupt` hoàn tất xử lý. Các loại ngắt được nhóm thành 2 thể loại chính dựa trên nguồn khởi tạo của nó: khả năng trì hoãn hoặc vô hiệu tóa tạm thời:
+
+- `synchronous`: đồng bộ, được tạo từ việc thực thi `instruction`.
+- `asynchronous`: bất đồng bộ, được tạo ra từ `external event`.
+- `maskable`: ngắt này có thể bỏ qua, được báo hiệu qua chân `INT`.
+- `non-maskable`: ngắt thuộc loại này không thể bị bỏ qua, được báo hiệu qua chân `NMI`.
+
+<div style="text-align:center"><img src="../images/interrupt_controller.png" /></div>
+
+`Interrupt` được tạo nên bởi 2 thực thể là phần cứng và phần mềm:
+
+-  `Hardware interrupt` hay ngắt cứng được báo hiệu từ thiết bị ngoại vi, ví dụ như một phím được nhấn hoặc di chuyển chuột sẽ tạo ra các ngắt cứng khiến vi xử lý chú ý và xử lý dữ liệu. Các ngắt cứng có thể đến một cách không đồng bộ `asynchronous` hoặc bất kỳ lúc nào trong quá trình thực hiện lệnh của vi xử lý, do đó tất cả tín hiệu ngắt cứng đều phải được đồng bộ hóa với đồng hồ của bộ vi xử lý. Trong hầu hết các hệ thống, mỗi tín hiệu <a href="https://en.wikipedia.org/wiki/Interrupt_request">`interrupt request (IRQ)`</a> đều được gắn mác với một thiết bị cụ thể vì điều này hữu ích trong việc nhanh chóng xác định thiết bị phần cứng nào đang yêu cầu dịch vụ. Về mặt lịch sử thì `interrupt handler` chính là `hardware interrupt handler`, ngắt cứng phát sinh từ các tín hiệu điện hoặc một số các cách thức cấp thấp, các tín hiệu này được chuyển đi sau khi được chuyển đổi thành mã số trong `interrupt vector table`. Tóm lại các ngắt cứng được sử dụng ở mức ưu tiên cao vì yêu cầu dừng việc thực thi hiện tại.
+- Về mặt lịch sử sau khi nhận thấy rằng sẽ thuận tiện hơn nếu phần mềm cũng có thể tạo ra các ngắt tương tự như phần cứng. `Software interrupt` hay ngắt mềm thuộc loại đồng bộ `synchronous` gây ra bởi chính vi xử lý hoặc phần mềm, trường hợp này gọi tắt là `trap` hoặc `exception` như bên dưới mô tả. Số lượng tín hiệu được tạo ra bởi ngắt mềm gần như là vô hạn vì kỹ thuật của nó không phụ thuộc vào số lượng thanh ghi `register` nói riêng hay phần cứng nói chung.
+
+<div style="text-align:center"><img src="../images/interrupt_hardware_software.jpg" /></div>
+
+`Interrupt` và `signal` đều đóng vai trò là một tín hiệu nhưng khác nhau ở ngữ cảnh sử dụng. `Interrupt` là một phương tiện trung chuyển giữa vi xử lý và `kernel` trong khi `signal` được sử dụng giữa `kernel`  và tiến trình người dùng. Khởi nguồn của `interrupt` đến từ vi xử lý hoặc nội tại của vi xử lý đó như phần trên `software interrupt` đã đề cập, đối với `signal` thí nó được khởi tạo từ `kernel` của hệ điều hành.
+
+<div style="text-align:center"><img src="../images/interrupt_and_signal.png" /></div>
+
+Ngắt `sync` thường xuyên được nhắc đến qua từ `exception`, nó được vi xử lý phát hiện ngay trong chính quá trình thực thi. Ví dụ phép toán chia cho `x:0` sẽ tạo ra một `exception`. Ngược lại, ngắt `async` được tạo ra từ các thiết bị `I/O`, ví dụ `NIC` tạo ra một ngắt để báo hiệu rằng gói tin được gửi đến, bàn phím gửi tín hiệu đến vi xử lý để tạo ra ngắt `INT 21H` khi người dùng gõ phím. Hầu hết các loại ngắt đều là `maskable`, tức là hoàn toàn có khả năng tạm thời vô hiệu hóa hoặc trì hoãn nó, tuy nhiên có một số ngắt không thể vô hiệu hóa hoặc trì hoãn.
+
+Có 2 nguồn dẫn đến `exception` là được vi xử lý phát hiện hoặc được lập trình sẵn như sau:
+
+- `faults` là một ngoại lệ được báo trước khi việc thực thi của vi xử lý, ví dụ như phép toán chia cho mẫu số giá trị `0`. `Extended Instruction Pointer(EIP)` lưu địa chỉ lệnh gây lỗi và sau khi xử lý, chương trình có thể thực hiện lại, ví dụ như khi chương trình sử dụng nhiều bộ nhớ hơn bộ nhớ vật lý `RAM` thì `page fault hanlder` sẽ thực hiện việc chuyển đổi giữa `RAM` và `DISK` để giúp hệ thống hoạt động ổn định. Về cái nhìn khắc khe có thể coi `fault` không hoàn toàn là một lỗi.
+- `traps` là một loại ngoại lệ diễn ra ở tiến trình người dùng, việc xử lý `traps` có độ ưu tiên rất cao và mã có thể tiếp tục chạy sau khi `traps` được xử lý xong, tức là cần đồng bộ giữa 2 luồng thực thi. Hầu hết `traps` được xem là một kỳ vọng xảy ra đối với trường hợp nào đó. `traps` được báo sau khi việc thực thi của lệnh `instruction`; ví dụ người dùng đầu tiên tạo một lệnh ngắt `INT 3` tương đương với đặt một `breakpoint` vào trong mã nguồn, sau đó `kernel` gửi một tín hiệu `SIGTRAP` đến chương trình `debug` để thực hiện kích hoạt dòng code đã đặt `breakpoint`.
+- `aborts` được sử dụng để dừng luồng thực thi, trong đa số các trường hợp thì nó được xem xét là một lỗi thực sự ví dụ như lỗi phần cứng, ... Tín hiệu ngắt được gửi tới `Control Unit(CU)` là tín hiệu khẩn cấp để điều hướng sang `abort exception handler`, đối với loại `handler` này được thiết kế một hành động duy nhất là buộc chấm dứt tiến trình.
+
+Có một ngoại lệ dành cho phần mềm là `kernel`, nó không được phép gây ra `traps`, `faults`. Nếu `kernel` gây ra lỗi thì tình hình như vậy được xem xét là nghiêm trọng đối với hệ thống, `trap handler` gọi trường hợp này là `panic`, tên gọi cho việc dừng hệ thống một cách bất ngờ và không mong muốn.
+
+Ví dụ về `software interrupt` thực hiện nhiệm vụ đặt `trap` với `interrupt 3` hay viết tắt là `INT 3` thông qua phần mềm `Visual Studio Code` chạy ở phía người dùng, phần mềm đang cố gắng theo đuổi chi tiết chức năng tạo máy ảo của `nova-compute` nói riêng và `Openstack` nói chung dựa trên mã nguồn mở. Ngoài ra đối với trường hợp sử dụng `docker container` thông qua `Kolla` thì người dùng cũng có thể đặt `breakpoint` dựa trên `console` theo hướng dẫn sau: https://docs.openstack.org/kolla-ansible/latest/contributor/kolla-for-openstack-development.html (lưu ý rằng thay thế `socat` trong hướng dẫn bằng chương trình `netcat` cụ thể là `"nc <ip>:<port>"`)
+
+<div style="text-align:center"><img src="../images/interrupt_breakpoint_int3.png" /></div>
+
+Giải thích:
+
+- Một `breakpoint` màu đỏ đã được đặt tại dòng `2501` trước khi sử dụng chức năng tạo máy ảo.
+- Ngay khi bấm tạo máy ảo, dòng `2501` đã được kích hoạt bằng màu vàng và dừng luồng thực thi lại, chờ đợi lệnh tiếp đến: đi đến dòng kế tiếp; thực thi hết các đoạn mã trong hàm này và dừng lại ở hàm đã gọi nó; ...
+- Dòng `2501` thực hiện gán giá trị `SPAWNING` để mô tả giai đoạn công việc đang thực hiện trên máy ảo này.
+
+Đặt `breakpoint` giúp lập trình viên theo dõi chi tiết cách thức hoạt động của một chức năng, sẽ dễ dàng hơn nếu đối tượng của họ là mã đã có sẵn, ngược lại sẽ rất khó khăn nếu đối tượng là một chương trình đã được đóng gói lúc này họ sẽ được gọi là kiểm thử viên hộp đen hoặc kỹ sư dịch ngược `reverse engineer`. Câu hỏi đặt ra rằng:
+
+- Khi không có mã sẵn thì làm thế nào để đặt `breakpoint` tương tự như ví dụ trên?
+- Tầm quan trọng về `INT 3` có lợi như thế nào đối với người viết ra chương trình và người dịch ngược mã nguồn của chương trình đó?
+- Đối tượng chương trình là gì hoặc chứa nội dung quan trọng gì mà cần kỹ sư dịch ngược phẫu thuật chúng?
+
+Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakpoint` vào chương trình, đồng nghĩa với việc cho chạy chúng với chế độ `debug`, phần mềm `OllyDbg` sẽ tự động triển khai một `software breakpoint` vào mã `assembly` bằng cách ghi đè `0xCC` vào byte đầu tiên của lệnh vi xử lý. Một khi lệnh `0xCC` được thực thi, hệ điều hành sẽ tạo ra một `exception` loại `trap` và trả quyền điều khiển về cho chương trình `debugger` được tích hợp trong phần mềm `OllyDbg`. Về mặt lịch sử, đại diện cho chương trình được phân tích là mã độc, việc nghiên cứu lẫn nhau giữa người viết mã độc và kỹ sư dịch ngược là chuyện xảy ra thường xuyên, để chống lại việc này thì người viết mã độc sẽ dựa vào thói quan sử dụng `software execution breakpoint` của các kỹ sư để vô hiệu hóa cuộc phẩu thuật, ngăn chặn việc mã độc rơi vào trạng thái bị nghiên cứu và phanh phui các hành vi. Ngay khi khởi chạy chương trình thì người viết mã độc có một số cách để phát hiện ra chương trình của mình đang bị phẩu thuật:
+
+- Quét thanh ghi `EDI` để kiểm tra sự tồn tại của byte `0xCC`, nếu có lập tức dừng chương trình.
+- Tính `checksum` vì trong lúc phần mềm `OllyDbg` chỉnh sửa nội dung bởi `0xCC` nên nếu tính toán lại `checksum` trong lúc chạy và trước lúc phát hành mã độc sẽ có sự sai lệch. Cách này không thông dụng như `INT Scanning` trên nhưng cũng là một lựa chọn mang lại hiệu quả tương đương.
+- Tất cả chúng ta đều biết rằng khoảng cách thời gian giữa 2 câu lệnh mà chính chúng ta viết ra đều có giá trị tối thiểu và tối đa. Sẽ thật vô lý nếu thời gian thực thi câu lệnh lâu hơn bình thường, khả năng cao rằng trước đó câu lệnh đang `stop` bởi hành vi `debug` và `resume` trở lại khi ai đó vừa dành thời gian nghiên cứu xong. Đánh dấu thời gian cũng là một cách để phát hiện hoặc `anti-debug` mặc dù không mang lại chính xác tuyệt đối.
+
+`Debug` là một kỹ thuật để phân tích hành vi mã độc, ngoài kỹ thuật này ra còn có `disassembly` tức đọc và hiểu dưới dạng `assembly` thông qua phần mềm `IDA Pro`; chạy chương trình trong môi trường ảo hóa `virtualization`. Tương đương với các kỹ thuật phân tích này thì người viết chương trình sẽ có các kỹ thuật chống lại được gọi là `anti-disassembly` và `anti-virtual machine`. Tất có kỹ thuật đều được mô tả chi tiết trong cuốn `Practical Malware Analysis`.
+
+<div style="text-align:center"><img src="../images/ebook_malware_analysis.jpg" /></div>
+
+## <a name="user_and_group"></a>Quản lý người dùng và nhóm
+Việc kiểm soát người dùng và nhóm là một trong những thành phần cốt lõi của quản trị hệ thống `Linux`. Người dùng tạo tệp tin là người sở hữu của tệp đó, tệp tin được gán mác các quyền đọc, ghi và thực thi cho chủ sở hữu, nhóm và những người ngoài khác. Chỉ có thể thay đổi chủ sở hữu tệp tin bởi người dùng `root`, quyền truy cập vào tệp tin chỉ có thể thay đổi bởi người dùng `root` hoặc chủ sở hữu, người dùng có thể thay đổi quyền sở hữu nhóm đối với tệp mà họ sở hữu thành một trong những nhóm mà họ là thành viên.
+
+Mỗi người dùng được liên kết với một mã định danh duy nhất được gọi là `UID (User ID)`, tương tự đối với mỗi nhóm sẽ là `GID (Group ID)`. Những người dùng trong một nhóm sẽ chia sẻ với nhau về các quyền đọc, ghi và thực thi đối với tệp tin sở hữu. `Linux` dự trữ phạm vi từ `[0-1000]` dành cho người dùng và nhóm ở mức hệ thống, để liệt kê người dùng và nhóm trong phạm vi này cần lệnh:
+```shell
+[root@huyvl-linux-training ~]# cat /usr/share/doc/setup*/uidgid
+NAME    UID     GID     HOME            SHELL   PACKAGES
+root    0       0       /root           /bin/bash       setup
+bin     1       1       /bin            /sbin/nologin   setup
+daemon  2       2       /sbin           /sbin/nologin   setup
+sys     -       3       -               -       setup
+adm     3       4       /var/adm                /bin/bash       setup
+tty     -       5       -               -       setup
+disk    -       6       -               -       setup
+lp      4       7       /var/spool/lpd          /sbin/nologin   setup
+mem     -       8       -               -       setup
+kmem    -       9       -               -       setup
+wheel   -       10      -               -       setup
+cdrom   -       11      -               -       setup
+sync    5       (0)     /sbin           /bin/sync       setup
+shutdown        6       (0)     /sbin           /sbin/shutdown  setup
+halt    7       (0)     /sbin           /sbin/halt      setup
+mail    8       12      /var/spool/mail         /sbin/nologin   setup
+news    9       13      /var/spool/news         /sbin/nologin   setup
+uucp    10      14      /var/spool/uucp         /sbin/nologin   uucp
+operator        11      (0)     /root           /sbin/nologin   setup
+games   12      (100)   /usr/games              /sbin/nologin   setup
+gopher  13      30      /var/gopher             /sbin/nologin   -(not created by default)
+ftp     14      50      /var/ftp                /sbin/nologin   setup
+man     -       15      -               -       setup
+oprofile        16      16      /var/lib/oprofile               /sbin/nologin   oprofile
+pkiuser 17      17      /usr/share/pki          /sbin/nologin   pki-ca,rhpki-ca
+dialout -       18      -               -       setup
+floppy  -       19      -               -       setup
+games   -       20      -               -       setup
+slocate -       21      -               -       slocate
+utmp    -       22      -               -       initscripts,libutempter
+squid   23      23      /var/spool/squid                /dev/null       squid
+pvm     24      24      /usr/share/pvm3         /bin/bash       pvm
+named   25      25      /var/named              /bin/false      bind
+postgres        26      26      /var/lib/pgsql          /bin/bash       postgresql-server
+mysql   27      27      /var/lib/mysql          /bin/bash       mysql
+nscd    28      28      /               /bin/false      nscd
+rpcuser 29      29      /var/lib/nfs            /bin/false      nfs-utils
+console -       31      -               -       dev
+rpc     32      32      /               /bin/false      portmap
+amandabackup    33      (6)     /var/lib/amanda         /bin/false      amanda
+tape    -       33      -               -       setup
+netdump 34      34      /var/crash              /bin/bash       netdump-client, netdump-server
+utempter        -       35      -               -       libutempter
+vdsm    36      -       /               /bin/bash       kvm, vdsm
+kvm     -       36      -               -       kvm, vdsm, libvirt
+rpm     37      37      /var/lib/rpm            /bin/bash       rpm
+ntp     38      38      /etc/ntp                /sbin/nologin   ntp
+video   -       39      -               -       setup
+dip     -       40      -               -       ppp
+mailman 41      41      /var/mailman            /bin/false      mailman
+gdm     42      42      /var/gdm                /bin/bash       gdm
+xfs     43      43      /etc/X11/fs             /bin/false      XFree86-xfs
+exim    93      93      /var/spool/exim         /sbin/nologin   exim                                                                                                                                                            [0/850]
+distcache       94      94      /               /sbin/nologin   distcache
+radiusd 95      95      /               /bin/false      freeradius
+hsqldb  96      96      /var/lib/hsqldb         /sbin/nologin   hsqldb
+dovecot 97      97      /usr/libexec/dovecot            /sbin/nologin   dovecot
+ident   98      98      /               /sbin/nologin   ident
+nobody  99      99      /               /sbin/nologin   setup
+users   -       100     -               -       setup
+qemu    107     107     /               /sbin/nologin   libvirt
+ovirt   108     108     /               /sbin/nologin   libvirt
+rhevm   109     109     /home/rhevm             /sbin/nologin   vdsm-reg
+jetty   110     110     /usr/share/jetty                /sbin/nologin   jetty
+saned   111     111     /               /sbin/nologin   sane-backends
+vhostmd 112     112     /usr/share/vhostmd              /sbin/nologin   vhostmd
+usbmuxd 113     113     /               /sbin/nologin   usbmuxd
+bacula  133     133     /var/spool/bacula               /sbin/nologin   bacula
+cimsrvr 134     134     /               /sbin/nologin   tog-pegasus-libs
+mock    -       135     /               -       mock
+ricci   140     140     /var/lib/ricci          /sbin/nologin   ricci
+luci    141     141     /var/lib/luci           /sbin/nologin   luci
+activemq        142     142     /usr/share/activemq             /sbin/nologin   activemq
+stap-server     155     155     /var/lib/stap-server            /sbin/nologin   systemtap
+stapusr -       156     /               -       systemtap-runtime
+stapsys -       157     /               -       systemtap-runtime
+stapdev -       158     /               -       systemtap-runtime
+swift   160     160     /var/lib/swift          /sbin/nologin   openstack-swift
+glance  161     161     /var/lib/glance         /sbin/nologin   openstack-glance
+nova    162     162     /var/lib/nova           /sbin/nologin   openstack-nova
+keystone        163     163     /var/lib/keystone               /sbin/nologin   openstack-keystone
+quantum 164     164     /var/lib/quantum                /sbin/nologin   openstack-quantum
+cinder  165     165     /var/lib/cinder         /sbin/nologin   openstack-cinder
+ceilometer      166     166     /var/lib/ceilometer             /sbin/nologin   openstack-ceilometer
+ceph    167     167     /var/lib/ceph           /sbin/nologin   ceph-common
+avahi-autoipd   170     170     /var/lib/avahi-autoipd          /sbin/nologin   avahi
+pulse   171     171     /var/run/pulse          /sbin/nologin   pulseaudio
+rtkit   172     172     /proc           /sbin/nologin   rtkit
+abrt    173     173     /etc/abrt               /sbin/nologin   abrt
+retrace 174     174     /usr/share/retrace-server               /sbin/nologin   retrace-server
+ovirtagent      175     175     /               /sbin/nologin   ovirt-guest-agent
+ats     176     176     /               /sbin/nologin   trafficserver
+dhcpd   177     177     /               /sbin/nologin   dhcp
+myproxy 178     178     /var/lib/myproxy                /sbin/nologin   myproxy-server
+sanlock 179     179     /var/run/sanlock                /sbin/nologin   sanlock
+aeolus  180     180     /var/aeolus             /sbin/nologin   aeolus-configure
+wallaby 181     181     /var/lib/wallaby                /sbin/nologin   wallaby
+katello 182     182     /usr/share/katello              /sbin/nologin   katello-common
+elasticsearch   183     183     /usr/share/java/elasticsearch           /sbin/nologin   elasticsearch
+mongodb 184     184     /var/lib/mongodb                /sbin/nologin   mongodb
+jboss   185     185     /var/lib/jbossas                /sbin/nologin   jbossas-core    #was jboss-as and wildfly
+jbosson-agent   186     -       /               /sbin/nologin   jboss-on-agent
+jbosson -       186     -               -       jboss-on-agent
+heat    187     187     /var/lib/heat           /sbin/nologin   heat
+haproxy 188     188     /var/lib/haproxy                /sbin/nologin   haproxy
+hacluster       189     -       /               /sbin/nologin   pacemaker
+haclient        -       189     -               -       pacemaker
+systemd-journal -       190     -               -       systemd
+systemd-journal-gateway 191     191     /               /sbin/nologin   systemd
+#systemd-journal-gateway dynamic on new systems (may have different uid/gid)
+systemd-network 192     192     /               /sbin/nologin   systemd
+systemd-resolve 193     193     /               /sbin/nologin   systemd
+gnats   ?       ?       ?               ?       gnats, gnats-db
+listar  ?       ?       ?               ?       listar
+nfsnobody       65534   65534   /var/lib/nfs            /sbin/nologin   nfs-utils
+[root@huyvl-linux-training ~]#
+```
+Và hệ thống sẽ thiết lập người dùng, nhóm mới mặc định bắt đầu với `ID` giá trị `1000`, để thay đổi cài đặt này cần chỉnh sửa `/etc/login.defs` như sau, lưu việc cập nhật sau chỉnh sửa sẽ được hệ thống tự động hóa:
+```shell
+[root@huyvl-linux-training ~]# cat /etc/login.defs | grep -i ^uid_min
+UID_MIN                  2000
+[root@huyvl-linux-training ~]# cat /etc/login.defs | grep -i ^gid_min
+GID_MIN                  2000
+[root@huyvl-linux-training ~]# groupadd intern
+[root@huyvl-linux-training ~]# useradd -g intern -m intern1
+[root@huyvl-linux-training ~]# id intern1
+uid=2000(intern1) gid=2000(intern) groups=2000(intern)
+[root@huyvl-linux-training ~]#
+```
+### <a name="user_and_group_control"></a>Các thao tác quản lý trên người dùng và nhóm
+Để chỉ định `ID` khi tạo người dùng cần thêm tùy chọn `-u` như sau:
+```shell
+[root@huyvl-linux-training ~]# useradd -u 2005 intern2
+[root@huyvl-linux-training ~]# id intern2
+uid=2005(intern2) gid=2005(intern2) groups=2005(intern2)
+[root@huyvl-linux-training ~]#
+```
+, tương tự đối với nhóm cần thêm tùy chọn `-g` như sau:
+```shell
+[root@huyvl-linux-training ~]# groupadd -g 2010 sale
+[root@huyvl-linux-training ~]# cat /etc/group | grep sale
+sale:x:2010:
+[root@huyvl-linux-training ~]#
+```
+Để thêm người dùng vào nhóm mới ngoài nhóm chính `primary group` thì được gọi là `secondary group` hoặc `supplementary group` như sau:
+```shell
+[root@huyvl-linux-training ~]# id dev
+uid=1001(dev) gid=1001(dev) groups=1001(dev)
+[root@huyvl-linux-training ~]# usermod -a -G intern dev
+[root@huyvl-linux-training ~]# id dev
+uid=1001(dev) gid=1001(dev) groups=1001(dev),2000(intern)
+[root@huyvl-linux-training ~]# groups dev
+dev : dev intern
+[root@huyvl-linux-training ~]#
+```
+Thay đổi `primary group` của người dùng như sau:
+```shell
+[root@huyvl-linux-training ~]# groups dev
+dev : dev intern
+[root@huyvl-linux-training ~]# usermod -g sysad dev
+[root@huyvl-linux-training ~]# groups dev
+dev : sysad intern
+[root@huyvl-linux-training ~]#
+```
+Xóa người dùng khỏi nhóm phụ như sau:
+```shell
+[root@huyvl-linux-training ~]# gpasswd -d dev intern
+Removing user dev from group intern
+[root@huyvl-linux-training ~]# groups dev
+dev : sysad
+[root@huyvl-linux-training ~]#
+```
+Thay mới toàn bộ dánh sách nhóm phụ của người dùng như sau:
+```shell
+[root@huyvl-linux-training ~]# groups dev
+dev : sysad intern
+[root@huyvl-linux-training ~]# usermod -G wheel,dev dev
+[root@huyvl-linux-training ~]# groups dev
+dev : sysad wheel dev
+[root@huyvl-linux-training ~]#
+```
+Thủ tục xóa người dùng khỏi hệ thống trước tiên phải ngắt kết nối để ngăn con `shell` của họ tiếp tục sử dụng:
+```shell
+[root@huyvl-linux-training ~]# loginctl terminate-user intern1
+[root@huyvl-linux-training ~]#
+```
+```shell
+[intern2@huyvl-linux-training ~]$
+Session terminated, killing shell... ...killed.
+[root@huyvl-linux-training ~]#
+```
+, xóa người dùng khỏi hệ thống như sau:
+```shell
+[root@huyvl-linux-training ~]# id intern2
+uid=2005(intern2) gid=2005(intern2) groups=2005(intern2)
+[root@huyvl-linux-training ~]# userdel intern2
+[root@huyvl-linux-training ~]# id intern2
+id: intern2: no such user
+[root@huyvl-linux-training ~]#
+```
+### <a name="grant_free_sudo"></a>Cấp quyền `sudo` tự do
+Quản trị viên có thể cấp quyền truy cập `sudo` để cho phép người dùng ngoài `root` có thể thực thi những lệnh tương đương với quản trị viên, những thứ mà được dành riêng cho người dùng `root`. Do đó những người dùng `non-root` có thể gọi lệnh quản trị mà không cần phải đăng nhập vào tài khoản `root`. Tệp `/etc/sudoers` chỉ định người dùng nào có thể sử dụng lệnh `sudo`, những luật trong đây có thể áp dụng lên những tài khoản riêng lẻ hoặc nhóm người dùng. Quản trị viên cũng có thể sử dụng bí danh `aliases` để có thể đơn giản hóa việc định nghĩa cho các nhóm thuộc `hosts`, lệnh cụ thể hoặc thậm chí nhiều tài khoản. Những bí danh mặc định được định nghĩa trong ở phần đầu tiên của `/etc/sudoers`.
+
+Khi người dùng sử dụng đặc quyền `sudo` để chạy lệnh cái mà nó không được phép hoặc không được định nghĩa trong tệp `/etc/sudoers` sẽ nhận thông báo lỗi như sau:
+```shell
+[dev@huyvl-linux-training ~]$ sudo cat /etc/hosts
+[sudo] password for dev:
+dev is not in the sudoers file.  This incident will be reported.
+[dev@huyvl-linux-training ~]$
+```
+, mặc định tệp `/etc/sudoers` sẽ cung cấp thông tin và các ví dụ về ủy quyền `authorization`. Quản trị viên có thể kích hoạt những `rule` bằng cách xóa bỏ ký tự `# (comment)`. Định dạng sau mô tả tổng quan về ủy quyền:
+```shell
+$ username hostname=path/to/command
+```
+Hệ thống sẽ đọc tệp `/etc/sudoers` theo thứ tự từ trên xuống dưới, vì vậy nếu có nhiều dòng ủy quyền dành cho cùng một người dùng thì nó sẽ lấy theo thứ tự, trong những trường hợp gặp xung đột về giá trị ủy quyền thì hệ thống sẽ lấy lần hợp lệ gần nhất. Cách thức được khuyến nghị nhất khi thêm `rule` vào `sudoers` là tạo một tệp mới nằm trong thư mục `/etc/sudoers.d/` thay vì định nghĩa trực tiếp vào tệp `/etc/sudoers`. Bởi vì cách thức này sẽ giữ nguyên nội dung khi quản trị cập nhật hệ thống, thêm vào đó mô-đun hóa là cách dễ dành truy và sửa lỗi với các tệp tách biệt trong `/etc/sudoers.d/` thay vì tệp tập trung để tránh vô tình ảnh hưởng tới các `rule` không liên quan. Để kích hoạt `/etc/sudoers.d/` hoặc hệ thống đọc được nội dung trong đó thì quản trị viên cần định nghĩa nội dung như sau trong tệp `/etc/sudoers`:
+```shell
+[root@huyvl-linux-training ~]# cat /etc/sudoers | grep ^#include
+#includedir /etc/sudoers.d
+[root@huyvl-linux-training ~]#
+```
+, lưu ý rằng ký tự `#` là cú pháp bắt buộc, các tệp nằm trong `/etc/sudoers.d/` không được chứa dấu `"."`.
+
+Với cấu hình mặc định nói rằng mọi người dùng nằm trong nhóm `wheel` sẽ được cho phép sử dụng `sudo` với bất kỳ lệnh nào, bất kể `hosts` đó là gì.
+```shell
+[root@huyvl-linux-training ~]# cat /etc/sudoers | grep ^\%wheel
+%wheel  ALL=(ALL)       ALL
+[root@huyvl-linux-training ~]#
+```
+, ví dụ thêm tài khoản `dev` vào nhóm `wheel` như sau:
+```shell
+[dev@huyvl-linux-training ~]$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+[dev@huyvl-linux-training ~]$ sudo cat /etc/shadow
+[sudo] password for dev:
+dev is not in the sudoers file.  This incident will be reported.
+[dev@huyvl-linux-training ~]$
+...
+...
+[root@huyvl-linux-training ~]# usermod --append -G wheel dev
+[root@huyvl-linux-training ~]# groups dev
+dev : sysad wheel dev
+...
+...
+[dev@huyvl-linux-training ~]$ sudo cat /etc/shadow
+[sudo] password for dev:
+root:$1$WIK4jiKy$zduQomlM7t93yBZ8gWLO5.:19610:0:99999:7:::
+bin:*:18353:0:99999:7:::
+daemon:*:18353:0:99999:7:::
+adm:*:18353:0:99999:7:::
+lp:*:18353:0:99999:7:::
+sync:*:18353:0:99999:7:::
+shutdown:*:18353:0:99999:7:::
+halt:*:18353:0:99999:7:::
+mail:*:18353:0:99999:7:::
+operator:*:18353:0:99999:7:::
+games:*:18353:0:99999:7:::
+ftp:*:18353:0:99999:7:::
+nobody:*:18353:0:99999:7:::
+systemd-network:!!:18760::::::
+dbus:!!:18760::::::
+polkitd:!!:18760::::::
+sshd:!!:18760::::::
+postfix:!!:18760::::::
+chrony:!!:18760::::::
+gluster:!!:18760::::::
+dev:$6$MSPq8owf$DPCLXYW1kZrA7Bnf6/cJe2FclE1VWBp4uak4ienAOU0cK3dF.nKX9mRnwqlLx4Di/AwU8cqWuKJUBewLV1Ty0.:19610:0:99999:7:::
+sysad:!!:19610:0:99999:7:::
+sysad2:!!:19610:0:99999:7:::
+intern_sysad:$1$SqZgOZ2H$mo2UzyEF1hMiyTsg4juT80:19610:0:99999:7:::
+[dev@huyvl-linux-training ~]$
+```
+### <a name="grant_command_sudo"></a>Cấp quyền `sudo` cụ thể
+Quản trị viên có thể cấp quyền cho phép người dùng không có đặc quyền thực thi một lệnh có đặc quyền bằng cách mô-đun hóa và cấu hình chính sách trong thư mục `/etc/sudoers.d/`. Ví dụ quản trị viên có thể cho phép người dùng `dev` cài đặt chương trình trên máy chủ cụ thể `hosts` thông qua lệnh `yum` với đặc quyền `sudo`.
+```shell
+[dev@huyvl-linux-training ~]$ sudo reboot
+Sorry, user dev is not allowed to execute '/sbin/reboot' as root on huyvl-linux-training.novalocal.
+[dev@huyvl-linux-training ~]$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+[dev@huyvl-linux-training ~]$
+```
+```shell
+[root@huyvl-linux-training ~]# visudo -f /etc/sudoers.d/dev
+[root@huyvl-linux-training ~]# cat /etc/sudoers.d/dev
+dev huyvl-linux-training = /usr/bin/cat
+Defaults    mail_always
+Defaults    mailto="huyvl3@fpt.com"
+[root@huyvl-linux-training ~]#
+```
+```shell
+[dev@huyvl-linux-training ~]$ cat /etc/shadow
+...
+...
+```
+, nhật ký ghi nhận thư điện tử đã được gửi tới `huyvl3@fpt.com`:
+```shell
+[root@huyvl-linux-training ~]# tail -f /var/log/maillog
+Sep 11 03:30:57 huyvl-linux-training postfix/pickup[1383]: 5BBB918C6: uid=0 from=<root>
+Sep 11 03:30:57 huyvl-linux-training postfix/cleanup[4375]: 5BBB918C6: message-id=<20230910203057.5BBB918C6@huyvl-linux-training.novalocal>
+Sep 11 03:30:57 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: from=<root@huyvl-linux-training.novalocal>, size=539, nrcpt=1 (queue active)
+Sep 11 03:30:58 huyvl-linux-training postfix/smtp[4377]: 5BBB918C6: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.28]:25, delay=1.3, delays=0.01/0/0.24/1.1, dsn=2.6.0, status=sent (250 2.6.0 <20230910203057.5BBB918C6@huyvl-linux-training.novalocal> [InternalId=38521561683110, Hostname=TYZPR06MB6239.apcprd06.prod.outlook.com] 8547 bytes in 0.132, 63.086 KB/sec Queued mail for delivery)
+Sep 11 03:30:58 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: removed
+```
 ## <a name="fs"></a>Hệ thống tệp tin
 ### <a name="fhs"></a>Phân cấp hệ thống tệp tin
 Cấu trúc của hệ thống tệp tin `File System Hierarchy Standard(FHS)` được định nghĩa tên, nơi chốn và các quyền cho tất cả các loại tệp, thư mục. Tài liệu `FHS` là tài liệu chính thức cho bất kỳ hệ thống tệp tin nào tuân thủ `FHS` nhưng cấu trúc này để lại nhiều mảng không thể định nghĩa hoặc mở rộng.
@@ -661,59 +1031,3 @@ Một số quy tắc gửi tín hiệu đến tiến trình thông qua tổ hợ
 
 - `Ctrl C`: gửi tín hiệu và kết thúc tiến trình.
 - `Ctrl Z`: gửi tín hiệu `SIGTSTP` sẽ đưa tiến trình vào trạng thái ngủ đông `sleep`.
-## <a name="interrupt"></a>Tổng quan về Interrupt - Ngắt
-`Interrupt` là một sự kiện nhìn về ở phía vi xử lý thì nó có độ ưu tiên rất cao, nó xảy ra để thay đổi luồng thực thi của chương trình và nó có thể được tạo ra từ thiết bị phần cứng hoặc phần mềm nói chung, từ chính CPU của nó nói riêng. Khi `interrupt` xảy ra thì mã thực thi hiện tại bị dừng lại nhường chỗ cho việc xử lý `interrupt` bởi một chương trình tên `interrupt handler` được biết với tên khác là `interrupt service routine (ISR)`, tức với một `interrupt vector` trong <a href="https://en.wikipedia.org/wiki/Interrupt_vector_table">`interrupt vector table (IVT)`</a> sẽ có tương ứng một `handler` đảm nhận xử lý, ví dụ như `trap hanlder` hay `page fault handler`, ... luồng thực thi hiện tại sẽ tái khởi động từ trạng thái cũ khi `interrupt` hoàn tất xử lý. Các loại ngắt được nhóm thành 2 thể loại chính dựa trên nguồn khởi tạo của nó: khả năng trì hoãn hoặc vô hiệu tóa tạm thời:
-
-- `synchronous`: đồng bộ, được tạo từ việc thực thi `instruction`.
-- `asynchronous`: bất đồng bộ, được tạo ra từ `external event`.
-- `maskable`: ngắt này có thể bỏ qua, được báo hiệu qua chân `INT`.
-- `non-maskable`: ngắt thuộc loại này không thể bị bỏ qua, được báo hiệu qua chân `NMI`.
-
-<div style="text-align:center"><img src="../images/interrupt_controller.png" /></div>
-
-`Interrupt` được tạo nên bởi 2 thực thể là phần cứng và phần mềm:
-
--  `Hardware interrupt` hay ngắt cứng được báo hiệu từ thiết bị ngoại vi, ví dụ như một phím được nhấn hoặc di chuyển chuột sẽ tạo ra các ngắt cứng khiến vi xử lý chú ý và xử lý dữ liệu. Các ngắt cứng có thể đến một cách không đồng bộ `asynchronous` hoặc bất kỳ lúc nào trong quá trình thực hiện lệnh của vi xử lý, do đó tất cả tín hiệu ngắt cứng đều phải được đồng bộ hóa với đồng hồ của bộ vi xử lý. Trong hầu hết các hệ thống, mỗi tín hiệu <a href="https://en.wikipedia.org/wiki/Interrupt_request">`interrupt request (IRQ)`</a> đều được gắn mác với một thiết bị cụ thể vì điều này hữu ích trong việc nhanh chóng xác định thiết bị phần cứng nào đang yêu cầu dịch vụ. Về mặt lịch sử thì `interrupt handler` chính là `hardware interrupt handler`, ngắt cứng phát sinh từ các tín hiệu điện hoặc một số các cách thức cấp thấp, các tín hiệu này được chuyển đi sau khi được chuyển đổi thành mã số trong `interrupt vector table`. Tóm lại các ngắt cứng được sử dụng ở mức ưu tiên cao vì yêu cầu dừng việc thực thi hiện tại.
-- Về mặt lịch sử sau khi nhận thấy rằng sẽ thuận tiện hơn nếu phần mềm cũng có thể tạo ra các ngắt tương tự như phần cứng. `Software interrupt` hay ngắt mềm thuộc loại đồng bộ `synchronous` gây ra bởi chính vi xử lý hoặc phần mềm, trường hợp này gọi tắt là `trap` hoặc `exception` như bên dưới mô tả. Số lượng tín hiệu được tạo ra bởi ngắt mềm gần như là vô hạn vì kỹ thuật của nó không phụ thuộc vào số lượng thanh ghi `register` nói riêng hay phần cứng nói chung.
-
-<div style="text-align:center"><img src="../images/interrupt_hardware_software.jpg" /></div>
-
-`Interrupt` và `signal` đều đóng vai trò là một tín hiệu nhưng khác nhau ở ngữ cảnh sử dụng. `Interrupt` là một phương tiện trung chuyển giữa vi xử lý và `kernel` trong khi `signal` được sử dụng giữa `kernel`  và tiến trình người dùng. Khởi nguồn của `interrupt` đến từ vi xử lý hoặc nội tại của vi xử lý đó như phần trên `software interrupt` đã đề cập, đối với `signal` thí nó được khởi tạo từ `kernel` của hệ điều hành.
-
-<div style="text-align:center"><img src="../images/interrupt_and_signal.png" /></div>
-
-Ngắt `sync` thường xuyên được nhắc đến qua từ `exception`, nó được vi xử lý phát hiện ngay trong chính quá trình thực thi. Ví dụ phép toán chia cho `x:0` sẽ tạo ra một `exception`. Ngược lại, ngắt `async` được tạo ra từ các thiết bị `I/O`, ví dụ `NIC` tạo ra một ngắt để báo hiệu rằng gói tin được gửi đến, bàn phím gửi tín hiệu đến vi xử lý để tạo ra ngắt `INT 21H` khi người dùng gõ phím. Hầu hết các loại ngắt đều là `maskable`, tức là hoàn toàn có khả năng tạm thời vô hiệu hóa hoặc trì hoãn nó, tuy nhiên có một số ngắt không thể vô hiệu hóa hoặc trì hoãn.
-
-Có 2 nguồn dẫn đến `exception` là được vi xử lý phát hiện hoặc được lập trình sẵn như sau:
-
-- `faults` là một ngoại lệ được báo trước khi việc thực thi của vi xử lý, ví dụ như phép toán chia cho mẫu số giá trị `0`. `Extended Instruction Pointer(EIP)` lưu địa chỉ lệnh gây lỗi và sau khi xử lý, chương trình có thể thực hiện lại, ví dụ như khi chương trình sử dụng nhiều bộ nhớ hơn bộ nhớ vật lý `RAM` thì `page fault hanlder` sẽ thực hiện việc chuyển đổi giữa `RAM` và `DISK` để giúp hệ thống hoạt động ổn định. Về cái nhìn khắc khe có thể coi `fault` không hoàn toàn là một lỗi.
-- `traps` là một loại ngoại lệ diễn ra ở tiến trình người dùng, việc xử lý `traps` có độ ưu tiên rất cao và mã có thể tiếp tục chạy sau khi `traps` được xử lý xong, tức là cần đồng bộ giữa 2 luồng thực thi. Hầu hết `traps` được xem là một kỳ vọng xảy ra đối với trường hợp nào đó. `traps` được báo sau khi việc thực thi của lệnh `instruction`; ví dụ người dùng đầu tiên tạo một lệnh ngắt `INT 3` tương đương với đặt một `breakpoint` vào trong mã nguồn, sau đó `kernel` gửi một tín hiệu `SIGTRAP` đến chương trình `debug` để thực hiện kích hoạt dòng code đã đặt `breakpoint`.
-- `aborts` được sử dụng để dừng luồng thực thi, trong đa số các trường hợp thì nó được xem xét là một lỗi thực sự ví dụ như lỗi phần cứng, ... Tín hiệu ngắt được gửi tới `Control Unit(CU)` là tín hiệu khẩn cấp để điều hướng sang `abort exception handler`, đối với loại `handler` này được thiết kế một hành động duy nhất là buộc chấm dứt tiến trình.
-
-Có một ngoại lệ dành cho phần mềm là `kernel`, nó không được phép gây ra `traps`, `faults`. Nếu `kernel` gây ra lỗi thì tình hình như vậy được xem xét là nghiêm trọng đối với hệ thống, `trap handler` gọi trường hợp này là `panic`, tên gọi cho việc dừng hệ thống một cách bất ngờ và không mong muốn.
-
-Ví dụ về `software interrupt` thực hiện nhiệm vụ đặt `trap` với `interrupt 3` hay viết tắt là `INT 3` thông qua phần mềm `Visual Studio Code` chạy ở phía người dùng, phần mềm đang cố gắng theo đuổi chi tiết chức năng tạo máy ảo của `nova-compute` nói riêng và `Openstack` nói chung dựa trên mã nguồn mở. Ngoài ra đối với trường hợp sử dụng `docker container` thông qua `Kolla` thì người dùng cũng có thể đặt `breakpoint` dựa trên `console` theo hướng dẫn sau: https://docs.openstack.org/kolla-ansible/latest/contributor/kolla-for-openstack-development.html (lưu ý rằng thay thế `socat` trong hướng dẫn bằng chương trình `netcat` cụ thể là `"nc <ip>:<port>"`)
-
-<div style="text-align:center"><img src="../images/interrupt_breakpoint_int3.png" /></div>
-
-Giải thích:
-
-- Một `breakpoint` màu đỏ đã được đặt tại dòng `2501` trước khi sử dụng chức năng tạo máy ảo.
-- Ngay khi bấm tạo máy ảo, dòng `2501` đã được kích hoạt bằng màu vàng và dừng luồng thực thi lại, chờ đợi lệnh tiếp đến: đi đến dòng kế tiếp; thực thi hết các đoạn mã trong hàm này và dừng lại ở hàm đã gọi nó; ...
-- Dòng `2501` thực hiện gán giá trị `SPAWNING` để mô tả giai đoạn công việc đang thực hiện trên máy ảo này.
-
-Đặt `breakpoint` giúp lập trình viên theo dõi chi tiết cách thức hoạt động của một chức năng, sẽ dễ dàng hơn nếu đối tượng của họ là mã đã có sẵn, ngược lại sẽ rất khó khăn nếu đối tượng là một chương trình đã được đóng gói lúc này họ sẽ được gọi là kiểm thử viên hộp đen hoặc kỹ sư dịch ngược `reverse engineer`. Câu hỏi đặt ra rằng:
-
-- Khi không có mã sẵn thì làm thế nào để đặt `breakpoint` tương tự như ví dụ trên?
-- Tầm quan trọng về `INT 3` có lợi như thế nào đối với người viết ra chương trình và người dịch ngược mã nguồn của chương trình đó?
-- Đối tượng chương trình là gì hoặc chứa nội dung quan trọng gì mà cần kỹ sư dịch ngược phẫu thuật chúng?
-
-Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakpoint` vào chương trình, đồng nghĩa với việc cho chạy chúng với chế độ `debug`, phần mềm `OllyDbg` sẽ tự động triển khai một `software breakpoint` vào mã `assembly` bằng cách ghi đè `0xCC` vào byte đầu tiên của lệnh vi xử lý. Một khi lệnh `0xCC` được thực thi, hệ điều hành sẽ tạo ra một `exception` loại `trap` và trả quyền điều khiển về cho chương trình `debugger` được tích hợp trong phần mềm `OllyDbg`. Về mặt lịch sử, đại diện cho chương trình được phân tích là mã độc, việc nghiên cứu lẫn nhau giữa người viết mã độc và kỹ sư dịch ngược là chuyện xảy ra thường xuyên, để chống lại việc này thì người viết mã độc sẽ dựa vào thói quan sử dụng `software execution breakpoint` của các kỹ sư để vô hiệu hóa cuộc phẩu thuật, ngăn chặn việc mã độc rơi vào trạng thái bị nghiên cứu và phanh phui các hành vi. Ngay khi khởi chạy chương trình thì người viết mã độc có một số cách để phát hiện ra chương trình của mình đang bị phẩu thuật:
-
-- Quét thanh ghi `EDI` để kiểm tra sự tồn tại của byte `0xCC`, nếu có lập tức dừng chương trình.
-- Tính `checksum` vì trong lúc phần mềm `OllyDbg` chỉnh sửa nội dung bởi `0xCC` nên nếu tính toán lại `checksum` trong lúc chạy và trước lúc phát hành mã độc sẽ có sự sai lệch. Cách này không thông dụng như `INT Scanning` trên nhưng cũng là một lựa chọn mang lại hiệu quả tương đương.
-- Tất cả chúng ta đều biết rằng khoảng cách thời gian giữa 2 câu lệnh mà chính chúng ta viết ra đều có giá trị tối thiểu và tối đa. Sẽ thật vô lý nếu thời gian thực thi câu lệnh lâu hơn bình thường, khả năng cao rằng trước đó câu lệnh đang `stop` bởi hành vi `debug` và `resume` trở lại khi ai đó vừa dành thời gian nghiên cứu xong. Đánh dấu thời gian cũng là một cách để phát hiện hoặc `anti-debug` mặc dù không mang lại chính xác tuyệt đối.
-
-`Debug` là một kỹ thuật để phân tích hành vi mã độc, ngoài kỹ thuật này ra còn có `disassembly` tức đọc và hiểu dưới dạng `assembly` thông qua phần mềm `IDA Pro`; chạy chương trình trong môi trường ảo hóa `virtualization`. Tương đương với các kỹ thuật phân tích này thì người viết chương trình sẽ có các kỹ thuật chống lại được gọi là `anti-disassembly` và `anti-virtual machine`. Tất có kỹ thuật đều được mô tả chi tiết trong cuốn `Practical Malware Analysis`.
-
-<div style="text-align:center"><img src="../images/ebook_malware_analysis.jpg" /></div>
