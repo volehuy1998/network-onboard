@@ -384,7 +384,7 @@ intern_sysad:$1$SqZgOZ2H$mo2UzyEF1hMiyTsg4juT80:19610:0:99999:7:::
 [dev@huyvl-linux-training ~]$
 ```
 ### <a name="grant_command_sudo"></a>Cấp quyền `sudo` cụ thể
-Quản trị viên có thể cấp quyền cho phép người dùng không có đặc quyền thực thi một lệnh có đặc quyền bằng cách mô-đun hóa và cấu hình chính sách trong thư mục `/etc/sudoers.d/`. Ví dụ quản trị viên có thể cho phép người dùng `dev` cài đặt chương trình trên máy chủ cụ thể `hosts` thông qua lệnh `yum` với đặc quyền `sudo`.
+Quản trị viên có thể cấp quyền cho phép người dùng không có đặc quyền thực thi một lệnh có đặc quyền bằng cách mô-đun hóa và cấu hình chính sách trong thư mục `/etc/sudoers.d/`. Ví dụ quản trị viên có thể cho phép người dùng `dev` sử dụng lệnh `cat` trên máy chủ cụ thể `hosts` với đặc quyền `sudo`.
 ```shell
 [dev@huyvl-linux-training ~]$ sudo reboot
 Sorry, user dev is not allowed to execute '/sbin/reboot' as root on huyvl-linux-training.novalocal.
