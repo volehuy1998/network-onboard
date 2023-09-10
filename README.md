@@ -17,8 +17,8 @@
     - 2.3.2 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)
     - 2.3.3 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)
         - 2.3.3.1 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)
-        - 2.3.3.2 - Quyền đặc biệt dành cho nhóm
-        - 2.3.3.3 - Quyền đặc biệt Sticky bit
+        - 2.3.3.2 - Quyền đặc biệt dành cho nhóm (:heavy_plus_sign:UPDATED 10/09/2023)
+        - 2.3.3.3 - Quyền đặc biệt Sticky bit (:heavy_plus_sign:UPDATED 10/09/2023)
     - 2.3.4 - RPM Package và phân loại (UPDATED 24/08/2023)
     - 2.3.5 - Kernel RPM Package (UPDATED 24/08/2023)
 - 2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)

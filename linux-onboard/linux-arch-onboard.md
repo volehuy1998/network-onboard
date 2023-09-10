@@ -7,8 +7,8 @@
     - [2.3.2 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
     - [2.3.3 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
         - [2.3.3.1 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
-        - [2.3.3.2 - Quyền đặc biệt dành cho nhóm](#guid_permission)
-        - [2.3.3.3 - Quyền đặc biệt Sticky bit](#sticky_bit_permission)
+        - [2.3.3.2 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#guid_permission)
+        - [2.3.3.3 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
     - [2.3.4 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.3.5 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
 - [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
@@ -157,7 +157,7 @@ Thông tin về các quyền cơ bản được thể hiện ở dạng `symboli
 
 Với quyền `777` dành cho thư mục có nghĩa là chủ sở hữu, nhóm và những người khác đều có thể xem nội dung bên trong thư mục, tạo, xóa, truy cập vào và chỉnh sửa các thư mục con ở bên trong nó. Lưu ý rằng các tệp tin trong thư mục có thể được cài đặt quyền riêng, điều này có thể ngăn chặn chỉnh sửa nội dung mặc dù trên thư mục chứa nó đang cho phép mọi quyền truy cập `unrestricted`.
 
-Đối với chế độ `umask (user file-creation mode mask)` sẽ lật tất cả các `bit` sao cho ngược lại với chế độ `mask`. Nó được dùng để tự động hóa loại bỏ các quyền mặc định để tăng khả năng bảo mật cho hệ thống tệp tin `Linux`.
+Đối với chế độ `umask (user file-creation mode mask)` sẽ lật tất cả các `bit` sao cho ngược lại với chế độ `mask`. Nó được ứng dụng tự động hóa loại bỏ các quyền mặc định để tăng khả năng bảo mật cho hệ thống tệp tin `Linux`.
 
 | Quyền hạn | Giá trị `symbolic` | Giá trị hệ 8 |
 | ---- | ---- | ---- |
@@ -229,7 +229,7 @@ Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc cá
 $ chmod <ownership><operation><permission> object-name
 $ chmod <octal-value> object-name
 ```
-Người dùng có thể sử dụng tiện tích `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` ta gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
+Người dùng có thể sử dụng tiện tích `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` có thể gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
 ```shell
 [root@huyvl-linux-training ~]# umask
 0022
