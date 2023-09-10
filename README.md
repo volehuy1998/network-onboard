@@ -13,7 +13,7 @@
 - 2.1 - Linux Kernel (UPDATED 27/08/2023)
 - 2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)
 - 2.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)
-- 2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)
+- 2.4 - Quản lý người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)
     - 2.4.1 - Các thao tác quản lý trên người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)
     - 2.4.2 - Cấp quyền `sudo` tự do (:heavy_plus_sign:UPDATED 11/09/2023)
     - 2.4.3 - Cấp quyền `sudo` với lệnh cụ thể (:heavy_plus_sign:UPDATED 11/09/2023)
