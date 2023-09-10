@@ -143,6 +143,8 @@ Mỗi cấp độ sở hữu đều có khả năng gán 3 quyền như sau:
 - Thực thi - `x` (execuate).
 
 Khi một tệp hoặc thư mục được tạo thì một tập hợp các quyền mặc định sẽ tự động được gán vào chúng, lưu ý rằng quyền `x` dành cho tệp tin sẽ cho phép thực thi hay `run` tệp đó, ngược lại với thư mục chỉ cho phép truy cập vào nội dung của thư mục.
+
+Ví dụ phân biệt giữa quyền `read` và `execute` trên thư mục:
 ```shell
 [dev@huyvl-linux-training tmp]$ ll -d r_x_dir/
 drwxrwxr-- 3 sysad sysad 4096 Sep 10 22:36 r_x_dir/
@@ -161,6 +163,15 @@ drwxrwx--- 3 sysad sysad 4096 Sep 10 22:36 r_x_dir/
 [dev@huyvl-linux-training tmp]$ ll r_x_dir/
 ls: cannot open directory r_x_dir/: Permission denied
 [dev@huyvl-linux-training tmp]$
+```
+, khi có đầy đủ quyền `read` và `execute` trên thư mục:
+```shell
+[dev@huyvl-linux-training tmp]$ ll -d r_x_dir/
+drwxrwxr-x 3 sysad sysad 4096 Sep 10 22:36 r_x_dir/
+[dev@huyvl-linux-training tmp]$ ll r_x_dir/
+total 4
+drwxrwxr-x 2 sysad sysad 4096 Sep 10 22:36 abc
+-rw-rw-r-- 1 sysad sysad    0 Sep 10 22:36 doc
 ```
 Thông tin về các quyền cơ bản được thể hiện ở dạng `symbolic` hoặc giá trị hệ 8 `octal`.
 | Quyền hạn | Giá trị `symbolic` | Giá trị hệ 8 |
