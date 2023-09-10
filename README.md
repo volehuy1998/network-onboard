@@ -19,7 +19,7 @@
     - 2.3.4 - Kernel RPM Package (UPDATED 24/08/2023)
     - 2.3.5 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)
         - 2.3.5.1 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)
-        - 2.3.5.2 - Quyền đặc biệt dành cho nhóm (:heavy_plus_sign:UPDATED 10/09/2023)
+        - 2.3.5.2 - Quyền đặc biệt dành cho nhóm (SGID)(:heavy_plus_sign:UPDATED 10/09/2023)
         - 2.3.5.3 - Quyền đặc biệt Sticky bit (:heavy_plus_sign:UPDATED 10/09/2023)
 - 2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)
     - 2.4.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)

@@ -9,7 +9,7 @@
     - [2.3.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
     - [2.3.5 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
         - [2.3.5.1 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
-        - [2.3.5.2 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#guid_permission)
+        - [2.3.5.2 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
         - [2.3.5.3 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
 - [2.4 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
     - [2.4.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
@@ -102,7 +102,7 @@ Tổng quan các thư mục sau hoặc các `symbolic` đều được yêu cầ
 | /srv      | Dữ liệu của dịch vụ được cung cấp bởi hệ thống  |
 | /tmp      | Tệp tạm thời, sẽ mất sau khi khởi động.  |
 | /usr      | Đây là phần chính sau `root filesystem` và có thể chia sẻ được nhưng `read only` giữa các máy chủ.  |
-| /var      | Chứa những loại dữ liệu động, nó chứa các thành phần có thể chia sẻ như /`/var/mail`, ... nhưng cũng có phần không thể chia sẻ `/var/log`, ... |
+| /var      | Chứa những loại dữ liệu động, nó chứa các thành phần có thể chia sẻ như `/var/mail`, ... nhưng cũng có phần không thể chia sẻ `/var/log`, ... |
 
 Chi tiết về `/bin`: các tệp nhị phân được sử dụng bởi tất cả người dùng. Các chương trình nằm trong `/bin` bao gồm:
 
@@ -245,6 +245,8 @@ u=rwx,g=rwx,o=rx
 ```
 Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này.
 #### <a name="suid_permission"></a>Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền
+<div style="text-align:center"><img src="../images/suid.png" /></div>
+
 Mức truy cập `user+s(pecial)` gọi tắt là `SUID (Set User ID)` thường được ứng dụng cho các tệp `binary`, quyền này mô tả tệp sẽ chỉ được thực thi với quyền của chủ sở hữu tệp. Một ví dụ về lợi ích của mặc định áp dụng quyền `SUID` lên tệp `/usr/bin/passwd` sẽ thấy quyền `x(execute)` bị thay thế bởi `s(pecial)` cho nên chương trình sẽ thực thi bởi `root` như sau:
 ```shell
 [root@huyvl-linux-training ~]# ls -l /usr/bin/passwd
@@ -395,8 +397,101 @@ sysad:$6$5wkk19C0$HQHc9eCGwyE1cXcgsPnUXKZHp9.OLy9gWr95Sno8y1B8VrZut1NSjuMYTojEQ.
 dev:$6$MSPq8owf$DPCLXYW1kZrA7Bnf6/cJe2FclE1VWBp4uak4ienAOU0cK3dF.nKX9mRnwqlLx4Di/AwU8cqWuKJUBewLV1Ty0.:19610:0:99999:7:::
 [dev@huyvl-linux-training ~]$
 ```
-#### <a name="guid_permission"></a>Quyền đặc biệt dành cho nhóm (GUID)
+#### <a name="sgid_permission"></a>Quyền đặc biệt dành cho nhóm (SGID)
+<div style="text-align:center"><img src="../images/sgid.png" /></div>
+
+Quyền truy cập mức `group+s(pecial)` hay gọi là `SGID (Set Group ID)` mô tả về trường hợp khi một tệp được tạo trong thư mục được cài đặt quyền này thì nhóm sở hữu tệp đó sẽ là nhóm của tác giả tạo thư mục, bất kể người tạo tệp đang thuộc nhóm nào hay cụ thể là `primary group` nào. Quyền này đặc biệt hữu ích khi sử dụng trong trường hợp chia sẻ nội dung.
+
+Ví dụ tài khoản `root` tạo thư mục dùng chung `/groupfolder` như sau:
+```shell
+[root@huyvl-linux-training ~]# mkdir /groupFolder
+[root@huyvl-linux-training ~]# chown :dev /groupFolder/
+[root@huyvl-linux-training ~]# ll -d /groupFolder/
+drwxr-xr-x 2 root dev 4096 Sep 10 21:19 /groupFolder/
+[root@huyvl-linux-training ~]# chmod g+w /groupFolder/
+[root@huyvl-linux-training ~]# ll -d /groupFolder/
+drwxrwxr-x 2 root dev 4096 Sep 10 22:05 /groupFolder/
+[root@huyvl-linux-training ~]#
+```
+, tài khoản `dev` và `sysad` đều thuộc nhóm `dev` (tất nhiên là `secondary-group` với `sysad`):
+```shell
+[sysad@huyvl-linux-training groupFolder]$ id
+uid=1003(sysad) gid=1000(sysad) groups=1000(sysad),1001(dev)
+[sysad@huyvl-linux-training groupFolder]$
+```
+```shell
+[dev@huyvl-linux-training groupFolder]$ id
+uid=1001(dev) gid=1001(dev) groups=1001(dev)
+[dev@huyvl-linux-training groupFolder]$
+```
+```shell
+[sysad@huyvl-linux-training groupFolder]$ touch sysad_doc
+[sysad@huyvl-linux-training groupFolder]$ ll
+total 0
+-rw-rw-r-- 1 dev   dev   0 Sep 10 21:20 dev_document
+-rw-rw-r-- 1 sysad sysad 0 Sep 10 22:05 sysad_doc
+```
+, áp dụng `SGUI` vào thư mục `/groupFolder` bằng `symbolic` hoặc `octal`:
+```shell
+[root@huyvl-linux-training ~]# chmod g+s /groupFolder/
+[root@huyvl-linux-training ~]# ll -d /groupFolder/
+drwxrwsr-x 2 root dev 4096 Sep 10 22:05 /groupFolder/
+[root@huyvl-linux-training ~]#
+```
+, tạo mới một tệp và thấy rằng tên nhóm `dev` như `chown` vừa cài đặt:
+```shell
+[sysad@huyvl-linux-training groupFolder]$ touch sysad_doc2
+[sysad@huyvl-linux-training groupFolder]$ ll
+total 0
+-rw-rw-r-- 1 dev   dev   0 Sep 10 21:20 dev_document
+-rw-rw-r-- 1 sysad sysad 0 Sep 10 22:05 sysad_doc
+-rw-rw-r-- 1 sysad dev   0 Sep 10 22:10 sysad_doc2
+[sysad@huyvl-linux-training groupFolder]$
+```
 #### <a name="sticky_bit_permission"></a>Quyền đặc biệt Sticky Bit
+<div style="text-align:center"><img src="../images/sticky_bit.png" /></div>
+
+Quyền truy cập mức `other+t(sticky)` hay `Sticky Bit` mô tả về đặc quyền hữu dụng trên thư mục, ngược lại không gây ra ảnh hưởng nếu áp dụng nhầm lên tệp tin. Loại quyền này chỉ cho phép xóa nội dung bởi chủ sở hữu hoặc `root`, tức ngay cả khi một tài khoản có cùng nhóm với chủ sở hữu cũng không thể xóa nội dung.
+Ví dụ:
+```shell
+[dev@huyvl-linux-training tmp]$ mkdir stickyFolder
+[dev@huyvl-linux-training tmp]$ cd stickyFolder/
+[dev@huyvl-linux-training stickyFolder]$ touch doc
+[dev@huyvl-linux-training stickyFolder]$
+```
+, xóa tệp `doc` với tài khoản `sysad` thành công:
+```shell
+[sysad@huyvl-linux-training stickyFolder]$ id
+uid=1003(sysad) gid=1000(sysad) groups=1000(sysad),1001(dev)
+[sysad@huyvl-linux-training stickyFolder]$ ll
+total 0
+-rw-rw-r-- 1 dev dev 0 Sep 10 22:26 doc
+[sysad@huyvl-linux-training stickyFolder]$ rm doc
+[sysad@huyvl-linux-training stickyFolder]$ ll
+total 0
+[sysad@huyvl-linux-training stickyFolder]$
+```
+, áp dụng `sticky bit` vào:
+```shell
+[dev@huyvl-linux-training tmp]$ mkdir stickyFolder
+[dev@huyvl-linux-training tmp]$ cd stickyFolder/
+[dev@huyvl-linux-training stickyFolder]$ touch doc
+[dev@huyvl-linux-training stickyFolder]$ ll -d /tmp/stickyFolder/
+drwxrwxr-x 2 dev dev 4096 Sep 10 22:27 /tmp/stickyFolder/
+[dev@huyvl-linux-training stickyFolder]$ chmod o+t /tmp/stickyFolder/
+[dev@huyvl-linux-training stickyFolder]$ ll -d /tmp/stickyFolder/
+drwxrwxr-t 2 dev dev 4096 Sep 10 22:27 /tmp/stickyFolder/
+[dev@huyvl-linux-training stickyFolder]$ touch doc2
+```
+, xóa tệp không thành công ngay cả khi chung nhóm:
+```shell
+[sysad@huyvl-linux-training stickyFolder]$ ll
+total 0
+-rw-rw-r-- 1 dev dev 0 Sep 10 22:28 doc2
+[sysad@huyvl-linux-training stickyFolder]$ rm doc2
+rm: cannot remove ‘doc2’: Operation not permitted
+[sysad@huyvl-linux-training stickyFolder]$
+```
 ### <a name="rpm_package"></a>RPM package và phân loại
 `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
 
