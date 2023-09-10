@@ -11,7 +11,7 @@
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
+    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission)
         - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission_management)
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
