@@ -674,7 +674,7 @@ drwxr-xr-x 2 dev dev 4096 Sep 11 03:50 my_dir2
 -rw-r--r-- 1 dev dev    0 Sep 11 03:50 my_file2
 [dev@huyvl-linux-training ~]$
 ```
-Hoặc quản trị viên áp dụng chính sách bảo mật thông qua `umask` với tất cả người dùng bằng cách chỉnh sửa nội dung đã có sẵn trong tệp `/etc/profile` với `033` như sau:
+Hoặc quản trị viên áp dụng chính sách bảo mật thông qua `umask` với tất cả người dùng bằng cách chỉnh sửa nội dung đã có sẵn trong tệp `/etc/profile` với `333` như sau:
 ```shell
 [root@huyvl-linux-training ~]# vi /etc/profile
 ...
