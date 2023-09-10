@@ -12,7 +12,7 @@
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
     - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission)
-        - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 09/09/2023)](#file_permission_management)
+        - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission_management)
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
         - [2.5.4.4 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
@@ -644,6 +644,54 @@ u=rwx,g=rwx,o=rx
 [sysad@huyvl-linux-training ~]$
 ```
 Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này.
+
+Thay đổi `umask` với người dùng cụ thể và quy định chính sách bảo mật như sau:
+```shell
+[dev@huyvl-linux-training ~]$ mkdir my_dir
+[dev@huyvl-linux-training ~]$ touch my_file
+[dev@huyvl-linux-training ~]$ ll
+total 4
+drwxrwxr-x 2 dev dev 4096 Sep 11 03:49 my_dir
+-rw-rw-r-- 1 dev dev    0 Sep 11 03:49 my_file
+[dev@huyvl-linux-training ~]$
+```
+```shell
+[root@huyvl-linux-training ~]# echo 'umask 022' >> /home/dev/.bashrc
+```
+, kiểm tra lại `umask` trên tài khoản `dev` như sau:
+```shell
+[dev@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# su - dev
+Last login: Mon Sep 11 03:49:40 +07 2023 on pts/1
+[dev@huyvl-linux-training ~]$ mkdir my_dir2
+[dev@huyvl-linux-training ~]$ touch my_file2
+[dev@huyvl-linux-training ~]$ ll
+total 8
+drwxrwxr-x 2 dev dev 4096 Sep 11 03:49 my_dir
+drwxr-xr-x 2 dev dev 4096 Sep 11 03:50 my_dir2
+-rw-rw-r-- 1 dev dev    0 Sep 11 03:49 my_file
+-rw-r--r-- 1 dev dev    0 Sep 11 03:50 my_file2
+[dev@huyvl-linux-training ~]$
+```
+Hoặc quản trị viên áp dụng chính sách bảo mật thông qua `umask` với tất cả người dùng bằng cách chỉnh sửa nội dung đã có sẵn trong tệp `/etc/profile` với `033` như sau:
+```shell
+[root@huyvl-linux-training ~]# vi /etc/profile
+...
+if [ $UID -gt 199 ] && [ "`/usr/bin/id -gn`" = "`/usr/bin/id -un`" ]; then
+    umask 002
+else
+    umask 333
+fi
+...
+[root@huyvl-linux-training ~]# su - dev2
+[dev2@huyvl-linux-training ~]$ touch example
+[dev2@huyvl-linux-training ~]$ ll
+total 0
+-r--r--r-- 1 dev2 dev 0 Sep 11 03:56 example
+[dev2@huyvl-linux-training ~]$
+```
+, lưu ý rằng sửa đổi trên chỉ áp dụng với login-shell `-bash`, kiểm tra qua `"$ echo $0"`.
 #### <a name="suid_permission"></a>Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền
 <div style="text-align:center"><img src="../images/suid.png" /></div>
 
