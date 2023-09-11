@@ -106,9 +106,9 @@ Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakp
 <div style="text-align:center"><img src="../images/ebook_malware_analysis.jpg" /></div>
 
 ## <a name="user_and_group"></a>Quản lý người dùng và nhóm
-Việc kiểm soát người dùng và nhóm là một trong những thành phần cốt lõi của quản trị hệ thống `Linux`. Người dùng tạo tệp tin là người sở hữu của tệp đó, tệp tin được gán mác các quyền đọc, ghi và thực thi cho chủ sở hữu, nhóm và những người ngoài khác. Chỉ có thể thay đổi chủ sở hữu tệp tin bởi người dùng `root`, quyền truy cập vào tệp tin chỉ có thể thay đổi bởi người dùng `root` hoặc chủ sở hữu, người dùng có thể thay đổi quyền sở hữu nhóm đối với tệp mà họ sở hữu thành một trong những nhóm mà họ là thành viên.
+Việc kiểm soát người dùng và nhóm là một trong những thành phần cốt lõi của quản trị hệ thống `Linux`. Người dùng tạo tệp tin là người sở hữu của tệp đó, tệp tin sẽ được gán mác các quyền đọc, ghi và thực thi cho chủ sở hữu, nhóm và những người ngoài khác. Chỉ có thể thay đổi chủ sở hữu tệp tin bởi người dùng `root`, quyền truy cập vào tệp tin chỉ có thể thay đổi bởi người dùng `root` hoặc chủ sở hữu, người dùng có thể thay đổi quyền sở hữu nhóm đối với tệp mà họ sở hữu thành một trong những nhóm mà họ là thành viên.
 
-Mỗi người dùng được liên kết với một mã định danh duy nhất được gọi là `UID (User ID)`, tương tự đối với mỗi nhóm sẽ là `GID (Group ID)`. Những người dùng trong một nhóm sẽ chia sẻ với nhau về các quyền đọc, ghi và thực thi đối với tệp tin sở hữu. `Linux` dự trữ phạm vi từ `[0-1000]` dành cho người dùng và nhóm ở mức hệ thống, để liệt kê người dùng và nhóm trong phạm vi này cần lệnh:
+Mỗi người dùng được liên kết với một mã định danh duy nhất được gọi là `UID (User ID)`, tương tự đối với mỗi nhóm sẽ là `GID (Group ID)`. Những người dùng trong một nhóm sẽ chia sẻ với nhau về các quyền đọc, ghi và thực thi đối với tệp tin sở hữu. `Linux` dự trữ phạm vi `ID` từ `[0-1000]` dành cho người dùng và nhóm hệ thống, để liệt kê người dùng và nhóm trong phạm vi này cần lệnh:
 ```shell
 [root@huyvl-linux-training ~]# cat /usr/share/doc/setup*/uidgid
 NAME    UID     GID     HOME            SHELL   PACKAGES
@@ -629,7 +629,7 @@ Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc cá
 $ chmod <ownership><operation><permission> object-name
 $ chmod <octal-value> object-name
 ```
-Người dùng có thể sử dụng tiện tích `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` có thể gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
+Người dùng có thể sử dụng lệnh `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` có thể gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
 ```shell
 [root@huyvl-linux-training ~]# umask
 0022
@@ -643,9 +643,7 @@ Last login: Sat Sep  9 18:35:15 +07 2023 on pts/0
 u=rwx,g=rwx,o=rx
 [sysad@huyvl-linux-training ~]$
 ```
-Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này.
-
-Thay đổi `umask` với người dùng cụ thể và quy định chính sách bảo mật như sau:
+Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này. Thay đổi `umask` với người dùng cụ thể và quy định chính sách bảo mật như sau:
 ```shell
 [dev@huyvl-linux-training ~]$ mkdir my_dir
 [dev@huyvl-linux-training ~]$ touch my_file
@@ -695,7 +693,7 @@ total 0
 #### <a name="suid_permission"></a>Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền
 <div style="text-align:center"><img src="../images/suid.png" /></div>
 
-Mức truy cập `user+s(pecial)` gọi tắt là `SUID (Set User ID)` thường được ứng dụng cho các tệp `binary`, quyền này mô tả tệp sẽ chỉ được thực thi với quyền của chủ sở hữu tệp. Một ví dụ về lợi ích của mặc định áp dụng quyền `SUID` lên tệp `/usr/bin/passwd` sẽ thấy quyền `x(execute)` bị thay thế bởi `s(pecial)` cho nên chương trình sẽ thực thi bởi `root` như sau:
+Mức truy cập `user+s(pecial)` gọi tắt là `SUID (Set User ID)` thường được ứng dụng cho các tệp `binary`, quyền này mô tả tệp sẽ chỉ được thực thi với quyền của chủ sở hữu tệp. Một ví dụ về lợi ích của áp dụng quyền `SUID` lên tệp `/usr/bin/passwd` một cách mặc định sẽ thấy quyền `x(execute)` bị thay thế bởi `s(pecial)` cho nên chương trình sẽ thực thi bởi `root` như sau:
 ```shell
 [root@huyvl-linux-training ~]# ls -l /usr/bin/passwd
 -rwsr-xr-x. 1 root root 27856 Apr  1  2020 /usr/bin/passwd
@@ -737,7 +735,7 @@ passwd: all authentication tokens updated successfully.
 ...
 Sep 10 15:05:40 huyvl-linux-training passwd: pam_unix(passwd:chauthtok): password changed for dev
 ```
-, loại bỏ quyền `SUID` và kiểm tra lại hoạt động của `passwd` tại `dev` như sau:
+, loại bỏ quyền `SUID` và kiểm tra lại hoạt động của `passwd` tại người dùng `dev` như sau:
 ```shell
 [root@huyvl-linux-training ~]# chmod u-s /usr/bin/passwd
 ```
@@ -756,7 +754,7 @@ Retype new UNIX password:
 passwd: Authentication token manipulation error
 [dev@huyvl-linux-training ~]$
 ```
-, tại `root` thấy chương trình `passwd` đã được chuyển sang khởi chạy với chính `dev`, khác với trước khi chỉnh sửa quyền như sau:
+, tại `root` thấy chương trình `passwd` đã được chuyển sang khởi chạy với chính người dùng `dev`, khác với trước khi chỉnh sửa quyền như sau:
 ```shell
 [root@huyvl-linux-training ~]# ps auf
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
@@ -792,13 +790,8 @@ uid=1001(dev) gid=1001(dev) groups=1001(dev)
 [dev@huyvl-linux-training ~]$ ls -l /usr/bin/id
 -rwxr-xr-x. 1 root root 37400 Nov 17  2020 /usr/bin/id
 [dev@huyvl-linux-training ~]$
-...
-...
-[dev@huyvl-linux-training ~]$ id
-uid=1001(dev) gid=1001(dev) groups=1001(dev)
-[dev@huyvl-linux-training ~]$
 ```
-, giả lập thao tác trao quyền nhầm quyền `SUID` bởi quản trị viên vào chương trình `/usr/bin/id`, sau đó tại tài khoản `dev` đã có được một đặc quyền `root` như sau:
+, giả lập thao tác trao nhầm quyền `SUID` bởi quản trị viên vào chương trình `/usr/bin/id`, sau đó tại tài khoản `dev` đã có được một đặc quyền `root` như sau:
 ```shell
 [root@huyvl-linux-training ~]# cp /usr/bin/id /home/dev/
 [root@huyvl-linux-training ~]# chmod u+s /home/dev/id
