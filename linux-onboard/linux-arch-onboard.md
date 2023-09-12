@@ -2,20 +2,23 @@
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
-- [2.5 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
-- [2.4 - Quản lý người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)](#user_and_group)
-    - [2.4.1 - Các thao tác quản lý trên người dùng và nhóm (:heavy_plus_sign:UPDATED 11/09/2023)](#user_and_group_control)
-    - [2.4.2 - Cấp quyền `sudo` tự do (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_free_sudo)
-    - [2.4.3 - Cấp quyền `sudo` với lệnh cụ thể (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_command_sudo)
+- [2.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
+- [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 12/09/2023)](#user_and_group)
+    - [2.4.1 - Khái niệm `User` (:heavy_plus_sign:UPDATED 12/09/2023)](#user)
+    - [2.4.2 - Khái niệm về nhóm, chính và phụ (:heavy_plus_sign:UPDATED 12/09/2023)](#group)
+    - [2.4.3 - Các thao tác quản lý trên người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
+    - [2.4.4 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
+    - [2.4.5 - Cấp quyền `sudo` với lệnh cụ thể (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_command_sudo)
+    - [2.4.6 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 12/09/2023)](#switch_user)
 - [2.5 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
     - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission)
         - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission_management)
-        - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:heavy_plus_sign:UPDATED 10/09/2023)](#suid_permission)
-        - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:heavy_plus_sign:UPDATED 10/09/2023)](#sgid_permission)
-        - [2.5.4.4 - Quyền đặc biệt Sticky bit(:heavy_plus_sign:UPDATED 10/09/2023)](#sticky_bit_permission)
+        - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:arrow_up:UPDATED 10/09/2023)](#suid_permission)
+        - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:arrow_up:UPDATED 10/09/2023)](#sgid_permission)
+        - [2.5.4.4 - Quyền đặc biệt Sticky bit(:arrow_up:UPDATED 10/09/2023)](#sticky_bit_permission)
 - [2.6 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
 
@@ -107,6 +110,25 @@ Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakp
 
 ## <a name="user_and_group"></a>Quản lý người dùng và nhóm
 Việc kiểm soát người dùng và nhóm là một trong những thành phần cốt lõi của quản trị hệ thống `Linux`. Người dùng tạo tệp tin là người sở hữu của tệp đó, tệp tin sẽ được gán mác các quyền đọc, ghi và thực thi cho chủ sở hữu, nhóm và những người ngoài khác. Chỉ có thể thay đổi chủ sở hữu tệp tin bởi người dùng `root`, quyền truy cập vào tệp tin chỉ có thể thay đổi bởi người dùng `root` hoặc chủ sở hữu, người dùng có thể thay đổi quyền sở hữu nhóm đối với tệp mà họ sở hữu thành một trong những nhóm mà họ là thành viên.
+### <a name="user"></a>Khái niệm về `User`
+Tài khoản người dùng cung cấp một ranh giới về quyền hạn của người dùng đó và chương trình có thể chạy. Tài khoản người dùng là nền tảng cho bảo mật hệ thống, mỗi tiến trình trên hệ thống đều chạy dựa trên tư cách một người dùng cụ thể, mỗi tệp tin đều có người dùng cụ thể đại diện cho chủ sở hữu. Với quyền sở hữu tệp, hệ thống sẽ thực thi quyền kiểm soát truy cập đối với người dùng tệp tin. Người dùng được liên kết với tiến trình để xác định các tệp và thư mục có thể được truy cập bởi tiến trình đó. Tài khoản gồm có các loại chính: `superuser`, `system user`, `regular user`.
+
+- Tài khoản `superuser`: hầu hết các hệ điều hành đều có một tài khoản `superuser` có toàn quyền đối với hệ thống. Đối với `CentOS`, `Ubuntu`, `RHEL`, ... tên nó là `root` và có `UID` là `0`. Tài khoản này có quyền ghi đè lên các đặc quyền đã được định nghĩa. Đặc quyền của nó đi kèm với trách nhiệm rất lớn, người dùng `root` có đặc quyền vô hạn đến mức có thể làm hỏng hệ thống như: thêm `user`, cài `backdoor`, ... Người dùng chỉ nâng cấp lên đặc quyền `root` tạm thời khi cần, ngoài ra nên sử dụng tài khoản thông thường `regular user`. Tài khoản `root` tương tự như `Administrator` bên `Microsoft Windows`.
+- Tài khoản `system user` được sử dụng bởi các tiến trình cung cấp `services` hỗ trợ. Những tiến trình thường hoặc `deamon` có thể không nhất thiết chạy với `superuser`, chúng được gắn bởi các tài khoản phi đặc quyền để bảo vệ các tệp tin và với những người dùng thông thường `regular user` trên hệ thống. Người dùng thường không đăng nhập bằng tài khoản `system user`.
+- Hầu hét các `user` là người dùng thường cho công việc hằng ngày của họ, cũng giống với `system user`, người dùng thường có quyền truy cập hạn chế vào hệ thống.
+
+Để hiển thị thông tin về người dùng đang đăng nhập cần lệnh:
+```shell
+[root@huyvl-linux-training ~]# id
+uid=0(root) gid=0(root) groups=0(root)
+[root@huyvl-linux-training ~]# id sysad
+uid=1000(sysad) gid=1000(sysad) groups=1000(sysad)
+[root@huyvl-linux-training ~]# su - sysad
+Last login: Tue Sep 12 10:17:52 +07 2023 on pts/0
+[sysad@huyvl-linux-training ~]$ id
+uid=1000(sysad) gid=1000(sysad) groups=1000(sysad)
+[sysad@huyvl-linux-training ~]$
+```
 
 Mỗi người dùng được liên kết với một mã định danh duy nhất được gọi là `UID (User ID)`, tương tự đối với mỗi nhóm sẽ là `GID (Group ID)`. Những người dùng trong một nhóm sẽ chia sẻ với nhau về các quyền đọc, ghi và thực thi đối với tệp tin sở hữu. `Linux` dự trữ phạm vi `ID` từ `[0-1000]` dành cho người dùng và nhóm hệ thống, để liệt kê người dùng và nhóm trong phạm vi này cần lệnh:
 ```shell
@@ -240,6 +262,55 @@ GID_MIN                  2000
 [root@huyvl-linux-training ~]# id intern1
 uid=2000(intern1) gid=2000(intern) groups=2000(intern)
 [root@huyvl-linux-training ~]#
+```
+Liệt kê tất cả các tiến trình `-a` kèm theo tên `-u` của người dùng liên kết với nó như sau:
+```shell
+[sysad@huyvl-linux-training ~]$ ps -au
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      1245  0.0  0.0 110204   860 tty1     Ss+  10:14   0:00 /sbin/agetty --noclear tty1 linux
+root      1246  0.0  0.0 110204   868 ttyS0    Ss+  10:14   0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+root      1522  0.0  0.1 115544  2040 pts/0    Ss   10:15   0:00 -bash
+root      2512  0.0  0.1 191876  2348 pts/0    S    10:17   0:00 su - sysad
+sysad     2513  0.0  0.1 115544  2056 pts/0    S    10:17   0:00 -bash
+root      5826  0.0  0.1 191984  2416 pts/0    S    10:26   0:00 su
+root      5845  0.0  0.1 115544  2064 pts/0    S    10:27   0:00 bash
+root     29060  0.0  0.1 191880  2360 pts/0    S    11:31   0:00 su - sysad
+sysad    29061  0.0  0.1 115544  2052 pts/0    S    11:31   0:00 -bash
+sysad    30290  0.0  0.0 155448  1860 pts/0    R+   11:34   0:00 ps -au
+[sysad@huyvl-linux-training ~]$
+```
+, nội dung hiển thị người dùng theo tên nhưng bên trong hệ điều hành sử dụng `UID` để theo dõi, việc ánh xạ tên người dùng thành `UID` được định nghĩa trong cơ sở dữ liệu thông tin tài khoản. Mặc định thì hệ thống sử dụng tệp `/etc/passwd` để lưu trữ thông tin. Mỗi một dòng trong `/etc/passwd` chứa thông tin `1` người dùng như sau:
+```shell
+[sysad@huyvl-linux-training ~]$ grep sysad /etc/passwd
+sysad:x:1000:1000::/home/sysad:/bin/bash
+[sysad@huyvl-linux-training ~]$
+```
+Chú thích các thành phần được phân tách bởi dấu hai chấm `:` như sau:
+
+- `sysad`: là tên người dùng.
+- `x`: về mặt lịch sử thì mật khẩu được mã hóa tại đây, nhưng hiện tại nó đã được thay bằng dấu `x`.
+- `1000`: định danh `UID`.
+- `1000`: định danh nhóm `GID` theo `primary group`.
+- `:<khoảng trống>:` không có mô tả nào về tài khoản.
+- `/home/sysad`: thư mục khởi tạo mặc định của người dùng khi `shell` đăng nhập.
+- `/bin/bash`: chương trình `shell` mặc định cho người dùng khi đăng nhập. Một số tài khoản sử dụng `shell` khác như `/sbin/nologin` để không cho phép đăng nhập tương tác bằng tài khoản đó.
+### <a name="group"></a>Khái niệm về nhóm, chính và phụ
+`Group` là một tập người dùng có thể chia sẻ các tệp hoặc tài nguyên hệ thống với nhau. `Group` có thể cấp quyền lên tệp để áp dụng cho tập các người dùng thay vì đơn lẻ. Cũng giống với `user` thì nó cũng có tên để nhận biết, hệ thống phân biệt các nhóm dựa trên `GID`. Việc ánh xạ tên nhóm với định danh thì mặc định hệ thống sử dụng `/etc/group` để lưu trữ:
+```shell
+[root@huyvl-linux-training ~]# grep sysad /etc/group
+sysad:x:1000:
+[root@huyvl-linux-training ~]#
+```
+Chú thích:
+
+- `sysad`: tên nhóm
+- `x`: mật khẩu tuy nhiên đã lỗi thời ở thời điểm hiện tại và đã được thay thế bằng ký tự `x`.
+- `1000`: định danh của nhóm `sysad`.
+
+Mỗi một `user` đều chỉ thuộc duy nhất một nhóm chính hay `primary group`. `Pri-group` sở hữu những tệp mà `user` trong nhóm tạo. Khi `regular user` được tạo thì một `group` cũng được tạo cùng tên. Những `user` cũng có những nhóm phụ hay `supplementary group`. Người dùng được cấp quyền truy cập tệp dựa trên những nhóm mà họ thuộc về mà không phân biệt nhóm chính hay phụ.
+```shell
+[root@huyvl-linux-training ~]# id sysad
+uid=1000(sysad) gid=1000(sysad) groups=1000(sysad),1001(intern)
 ```
 ### <a name="user_and_group_control"></a>Các thao tác quản lý trên người dùng và nhóm
 Để chỉ định `ID` khi tạo người dùng cần thêm tùy chọn `-u` như sau:
@@ -413,6 +484,50 @@ Sep 11 03:30:57 huyvl-linux-training postfix/cleanup[4375]: 5BBB918C6: message-i
 Sep 11 03:30:57 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: from=<root@huyvl-linux-training.novalocal>, size=539, nrcpt=1 (queue active)
 Sep 11 03:30:58 huyvl-linux-training postfix/smtp[4377]: 5BBB918C6: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.28]:25, delay=1.3, delays=0.01/0/0.24/1.1, dsn=2.6.0, status=sent (250 2.6.0 <20230910203057.5BBB918C6@huyvl-linux-training.novalocal> [InternalId=38521561683110, Hostname=TYZPR06MB6239.apcprd06.prod.outlook.com] 8547 bytes in 0.132, 63.086 KB/sec Queued mail for delivery)
 Sep 11 03:30:58 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: removed
+```
+### <a name="switch_user"></a>Thay đổi tài khoản người dùng
+Sử dụng lệnh `su` để thay đổi sang người dùng khác. Từ một `regular user` thay đổi sang một tài khoản người dùng khác cần cung cấp mật khẩu, ngược lại khi đang sử dụng `root` có thể thay đổi sang người dùng khác mà không cần cung cấp mật khẩu của tài khoản đó.
+```shell
+[sysad2@huyvl-linux-training ~]$ su - sysad
+Password:
+[sysad2@huyvl-linux-training ~]$
+```
+, sử dụng `su -` để chuyển sang `root`:
+```shell
+[sysad@huyvl-linux-training ~]$ su -
+Password:
+Last login: Tue Sep 12 10:27:02 +07 2023 on pts/0
+[root@huyvl-linux-training ~]#
+```
+Trong khi lệnh `su` sẽ khởi chạy con `shell` loại `non-login`, thì `su -` khởi chạy con `shell` loại `login`. Sự khác biết chính là `su -` sẽ cài đặt môi trường như thể nó đăng nhập với tư cách người dùng đó, trong khi `su` vẫn giữ nguyên cài đặt môi trường của người dùng trước khi chuyển.
+```shell
+[sysad@huyvl-linux-training ~]$ export some_thing="sysad defined"
+[sysad@huyvl-linux-training ~]$ echo $some_thing
+sysad defined
+[sysad@huyvl-linux-training ~]$ su sysad2
+Password:
+[sysad2@huyvl-linux-training sysad]$ echo $some_thing
+sysad defined
+[sysad2@huyvl-linux-training sysad]$ exit
+exit
+[sysad@huyvl-linux-training ~]$ su
+Password:
+[root@huyvl-linux-training sysad]# echo $some_thing
+sysad defined
+[root@huyvl-linux-training sysad]#
+```
+Vì lý do bảo mật, một số trường hợp quản trị viên cấu hình tài khoản `root` không có mật khẩu hợp lệ, điều này ngăn cản người dùng đăng nhập vào `root`. Không giống như `su`, lệnh `sudo` thường yêu cầu nhập mật khẩu của chính người yêu cầu để xác thực, tức là người dùng sử dụng `sudo` để chạy lệnh với quyền `root` mà không cần đăng nhập vào `root`. Nhưng không vì vậy mà không thể kiểm soát được gọi `sudo` từ người dùng, tất cả lệnh gọi `sudo` đều sẽ được ghi nhận lại:
+```shell
+[sysad@huyvl-linux-training ~]$ sudo reboot
+[sudo] password for sysad:
+sysad is not in the sudoers file.  This incident will be reported.
+[sysad@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# tail -f /var/log/secure
+...
+...
+Sep 12 17:44:27 huyvl-linux-training sudo:   sysad : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/sysad ; USER=root ; COMMAND=/sbin/reboot
+Sep 12 17:44:31 huyvl-linux-training su: pam_unix(su-l:session): session closed for user sysad
 ```
 ## <a name="fs"></a>Hệ thống tệp tin
 ### <a name="fhs"></a>Phân cấp hệ thống tệp tin
