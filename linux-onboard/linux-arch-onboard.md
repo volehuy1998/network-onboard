@@ -8,7 +8,7 @@
     - [2.4.2 - Khái niệm về nhóm, chính và phụ (:heavy_plus_sign:UPDATED 12/09/2023)](#group)
     - [2.4.3 - Các thao tác quản lý trên người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
     - [2.4.4 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
-    - [2.4.5 - Cấp quyền `sudo` với lệnh cụ thể (:heavy_plus_sign:UPDATED 11/09/2023)](#grant_command_sudo)
+    - [2.4.5 - Cấp quyền `sudo` với lệnh cụ thể (:arrow_up:UPDATED 11/09/2023)](#grant_command_sudo)
     - [2.4.6 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 12/09/2023)](#switch_user)
 - [2.5 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
