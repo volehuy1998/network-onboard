@@ -6,10 +6,10 @@
 - [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 12/09/2023)](#user_and_group)
     - [2.4.1 - Khái niệm `User` (:heavy_plus_sign:UPDATED 12/09/2023)](#user)
     - [2.4.2 - Khái niệm về nhóm, chính và phụ (:heavy_plus_sign:UPDATED 12/09/2023)](#group)
-    - [2.4.3 - Các thao tác quản lý trên người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
-    - [2.4.4 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
-    - [2.4.5 - Cấp quyền `sudo` với lệnh cụ thể (:arrow_up:UPDATED 11/09/2023)](#grant_command_sudo)
-    - [2.4.6 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 12/09/2023)](#switch_user)
+    - [2.4.3 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 12/09/2023)](#switch_user)
+    - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
+    - [2.4.5 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
+    - [2.4.6 - Cấp quyền `sudo` với lệnh cụ thể (:arrow_up:UPDATED 11/09/2023)](#grant_command_sudo)
 - [2.5 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
@@ -312,6 +312,50 @@ Mỗi một `user` đều chỉ thuộc duy nhất một nhóm chính hay `prima
 [root@huyvl-linux-training ~]# id sysad
 uid=1000(sysad) gid=1000(sysad) groups=1000(sysad),1001(intern)
 ```
+### <a name="switch_user"></a>Thay đổi tài khoản người dùng
+Sử dụng lệnh `su` để thay đổi sang người dùng khác. Từ một `regular user` thay đổi sang một tài khoản người dùng khác cần cung cấp mật khẩu, ngược lại khi đang sử dụng `root` có thể thay đổi sang người dùng khác mà không cần cung cấp mật khẩu của tài khoản đó.
+```shell
+[sysad2@huyvl-linux-training ~]$ su - sysad
+Password:
+[sysad2@huyvl-linux-training ~]$
+```
+, sử dụng `su -` để chuyển sang `root`:
+```shell
+[sysad@huyvl-linux-training ~]$ su -
+Password:
+Last login: Tue Sep 12 10:27:02 +07 2023 on pts/0
+[root@huyvl-linux-training ~]#
+```
+Trong khi lệnh `su` sẽ khởi chạy con `shell` loại `non-login`, thì `su -` khởi chạy con `shell` loại `login`. Sự khác biết chính là `su -` sẽ cài đặt môi trường như thể nó đăng nhập với tư cách người dùng đó, trong khi `su` vẫn giữ nguyên cài đặt môi trường của người dùng trước khi chuyển.
+```shell
+[sysad@huyvl-linux-training ~]$ export some_thing="sysad defined"
+[sysad@huyvl-linux-training ~]$ echo $some_thing
+sysad defined
+[sysad@huyvl-linux-training ~]$ su sysad2
+Password:
+[sysad2@huyvl-linux-training sysad]$ echo $some_thing
+sysad defined
+[sysad2@huyvl-linux-training sysad]$ exit
+exit
+[sysad@huyvl-linux-training ~]$ su
+Password:
+[root@huyvl-linux-training sysad]# echo $some_thing
+sysad defined
+[root@huyvl-linux-training sysad]#
+```
+Vì lý do bảo mật, một số trường hợp quản trị viên cấu hình tài khoản `root` không có mật khẩu hợp lệ, điều này ngăn cản người dùng đăng nhập vào `root`. Không giống như `su`, lệnh `sudo` thường yêu cầu nhập mật khẩu của chính người yêu cầu để xác thực, tức là người dùng sử dụng `sudo` để chạy lệnh với quyền `root` mà không cần đăng nhập vào `root`. Nhưng không vì vậy mà không thể kiểm soát được gọi `sudo` từ người dùng, tất cả lệnh gọi `sudo` đều sẽ được ghi nhận lại:
+```shell
+[sysad@huyvl-linux-training ~]$ sudo reboot
+[sudo] password for sysad:
+sysad is not in the sudoers file.  This incident will be reported.
+[sysad@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# tail -f /var/log/secure
+...
+...
+Sep 12 17:44:27 huyvl-linux-training sudo:   sysad : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/sysad ; USER=root ; COMMAND=/sbin/reboot
+Sep 12 17:44:31 huyvl-linux-training su: pam_unix(su-l:session): session closed for user sysad
+```
 ### <a name="user_and_group_control"></a>Các thao tác quản lý trên người dùng và nhóm
 Để chỉ định `ID` khi tạo người dùng cần thêm tùy chọn `-u` như sau:
 ```shell
@@ -484,50 +528,6 @@ Sep 11 03:30:57 huyvl-linux-training postfix/cleanup[4375]: 5BBB918C6: message-i
 Sep 11 03:30:57 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: from=<root@huyvl-linux-training.novalocal>, size=539, nrcpt=1 (queue active)
 Sep 11 03:30:58 huyvl-linux-training postfix/smtp[4377]: 5BBB918C6: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.28]:25, delay=1.3, delays=0.01/0/0.24/1.1, dsn=2.6.0, status=sent (250 2.6.0 <20230910203057.5BBB918C6@huyvl-linux-training.novalocal> [InternalId=38521561683110, Hostname=TYZPR06MB6239.apcprd06.prod.outlook.com] 8547 bytes in 0.132, 63.086 KB/sec Queued mail for delivery)
 Sep 11 03:30:58 huyvl-linux-training postfix/qmgr[1116]: 5BBB918C6: removed
-```
-### <a name="switch_user"></a>Thay đổi tài khoản người dùng
-Sử dụng lệnh `su` để thay đổi sang người dùng khác. Từ một `regular user` thay đổi sang một tài khoản người dùng khác cần cung cấp mật khẩu, ngược lại khi đang sử dụng `root` có thể thay đổi sang người dùng khác mà không cần cung cấp mật khẩu của tài khoản đó.
-```shell
-[sysad2@huyvl-linux-training ~]$ su - sysad
-Password:
-[sysad2@huyvl-linux-training ~]$
-```
-, sử dụng `su -` để chuyển sang `root`:
-```shell
-[sysad@huyvl-linux-training ~]$ su -
-Password:
-Last login: Tue Sep 12 10:27:02 +07 2023 on pts/0
-[root@huyvl-linux-training ~]#
-```
-Trong khi lệnh `su` sẽ khởi chạy con `shell` loại `non-login`, thì `su -` khởi chạy con `shell` loại `login`. Sự khác biết chính là `su -` sẽ cài đặt môi trường như thể nó đăng nhập với tư cách người dùng đó, trong khi `su` vẫn giữ nguyên cài đặt môi trường của người dùng trước khi chuyển.
-```shell
-[sysad@huyvl-linux-training ~]$ export some_thing="sysad defined"
-[sysad@huyvl-linux-training ~]$ echo $some_thing
-sysad defined
-[sysad@huyvl-linux-training ~]$ su sysad2
-Password:
-[sysad2@huyvl-linux-training sysad]$ echo $some_thing
-sysad defined
-[sysad2@huyvl-linux-training sysad]$ exit
-exit
-[sysad@huyvl-linux-training ~]$ su
-Password:
-[root@huyvl-linux-training sysad]# echo $some_thing
-sysad defined
-[root@huyvl-linux-training sysad]#
-```
-Vì lý do bảo mật, một số trường hợp quản trị viên cấu hình tài khoản `root` không có mật khẩu hợp lệ, điều này ngăn cản người dùng đăng nhập vào `root`. Không giống như `su`, lệnh `sudo` thường yêu cầu nhập mật khẩu của chính người yêu cầu để xác thực, tức là người dùng sử dụng `sudo` để chạy lệnh với quyền `root` mà không cần đăng nhập vào `root`. Nhưng không vì vậy mà không thể kiểm soát được gọi `sudo` từ người dùng, tất cả lệnh gọi `sudo` đều sẽ được ghi nhận lại:
-```shell
-[sysad@huyvl-linux-training ~]$ sudo reboot
-[sudo] password for sysad:
-sysad is not in the sudoers file.  This incident will be reported.
-[sysad@huyvl-linux-training ~]$ exit
-logout
-[root@huyvl-linux-training ~]# tail -f /var/log/secure
-...
-...
-Sep 12 17:44:27 huyvl-linux-training sudo:   sysad : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/sysad ; USER=root ; COMMAND=/sbin/reboot
-Sep 12 17:44:31 huyvl-linux-training su: pam_unix(su-l:session): session closed for user sysad
 ```
 ## <a name="fs"></a>Hệ thống tệp tin
 ### <a name="fhs"></a>Phân cấp hệ thống tệp tin
