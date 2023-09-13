@@ -3,22 +3,23 @@
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
 - [2.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
-- [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 12/09/2023)](#user_and_group)
+- [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 13/09/2023)](#user_and_group)
     - [2.4.1 - Khái niệm `User` (:heavy_plus_sign:UPDATED 12/09/2023)](#user)
     - [2.4.2 - Khái niệm về nhóm, chính và phụ (:heavy_plus_sign:UPDATED 12/09/2023)](#group)
-    - [2.4.3 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 12/09/2023)](#switch_user)
-    - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm (:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
-    - [2.4.5 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
-    - [2.4.6 - Cấp quyền `sudo` với lệnh cụ thể (:arrow_up:UPDATED 11/09/2023)](#grant_command_sudo)
+    - [2.4.3 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 13/09/2023)](#switch_user)
+    - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm(:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
+    - [2.4.5 - Hạn chế quyền truy cập người dùng (:heavy_plus_sign:UPDATED 13/09/2023)](#user_restrict_access)
+    - [2.4.6 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
+    - [2.4.7 - Cấp quyền `sudo` với lệnh cụ thể (:arrow_up:UPDATED 11/09/2023)](#grant_command_sudo)
 - [2.5 - Hệ thống tệp tin (UPDATED 09/09/2023)](#fs)
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission)
-        - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 11/09/2023)](#file_permission_management)
+    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 13/09/2023)](#file_permission)
+        - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 13/09/2023)](#file_permission_management)
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:arrow_up:UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:arrow_up:UPDATED 10/09/2023)](#sgid_permission)
-        - [2.5.4.4 - Quyền đặc biệt Sticky bit(:arrow_up:UPDATED 10/09/2023)](#sticky_bit_permission)
+        - [2.5.4.4 - Quyền đặc biệt Sticky bit(:arrow_up:UPDATED 13/09/2023)](#sticky_bit_permission)
 - [2.6 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
 
@@ -293,7 +294,7 @@ Chú thích các thành phần được phân tách bởi dấu hai chấm `:` n
 - `1000`: định danh nhóm `GID` theo `primary group`.
 - `:<khoảng trống>:` không có mô tả nào về tài khoản.
 - `/home/sysad`: thư mục khởi tạo mặc định của người dùng khi `shell` đăng nhập.
-- `/bin/bash`: chương trình `shell` mặc định cho người dùng khi đăng nhập. Một số tài khoản sử dụng `shell` khác như `/sbin/nologin` để không cho phép đăng nhập tương tác bằng tài khoản đó.
+- `/bin/bash`: chương trình `shell` mặc định cho người dùng khi đăng nhập. Một số tài khoản sử dụng `shell` khác như `/sbin/nologin` để không cho phép đăng nhập tương tác bằng tài khoản đó (trường hợp này sẽ có ví dụ).
 ### <a name="group"></a>Khái niệm về nhóm, chính và phụ
 `Group` là một tập người dùng có thể chia sẻ các tệp hoặc tài nguyên hệ thống với nhau. `Group` có thể cấp quyền lên tệp để áp dụng cho tập các người dùng thay vì đơn lẻ. Cũng giống với `user` thì nó cũng có tên để nhận biết, hệ thống phân biệt các nhóm dựa trên `GID`. Việc ánh xạ tên nhóm với định danh thì mặc định hệ thống sử dụng `/etc/group` để lưu trữ:
 ```shell
@@ -307,7 +308,8 @@ Chú thích:
 - `x`: mật khẩu tuy nhiên đã lỗi thời ở thời điểm hiện tại và đã được thay thế bằng ký tự `x`.
 - `1000`: định danh của nhóm `sysad`.
 
-Mỗi một `user` đều chỉ thuộc duy nhất một nhóm chính hay `primary group`. `Pri-group` sở hữu những tệp mà `user` trong nhóm tạo. Khi `regular user` được tạo thì một `group` cũng được tạo cùng tên. Những `user` cũng có những nhóm phụ hay `supplementary group`. Người dùng được cấp quyền truy cập tệp dựa trên những nhóm mà họ thuộc về mà không phân biệt nhóm chính hay phụ.
+Mỗi một `user` đều chỉ thuộc duy nhất một nhóm chính hay `primary group`. Khi tệp được tạo thì `primary group` sẽ được gắn vào. Khi `regular user` được tạo thì một `group` cũng được tạo cùng tên. Những `user` cũng có những nhóm phụ hay `supplementary group`. Người dùng được cấp quyền truy cập tệp dựa trên những nhóm mà họ thuộc về mà không phân biệt nhóm chính hay phụ.
+
 ```shell
 [root@huyvl-linux-training ~]# id sysad
 uid=1000(sysad) gid=1000(sysad) groups=1000(sysad),1001(intern)
@@ -356,6 +358,34 @@ logout
 Sep 12 17:44:27 huyvl-linux-training sudo:   sysad : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/sysad ; USER=root ; COMMAND=/sbin/reboot
 Sep 12 17:44:31 huyvl-linux-training su: pam_unix(su-l:session): session closed for user sysad
 ```
+Tệp `/etc/sudoers` là tệp cấu hình chính của lệnh `sudo`. Để tránh các vấn đề khi nhiều quản trị viên chỉnh sửa tệp cùng lúc thì có thể sử dụng `visudo`, ngoài ra `visudo` còn có chức năng kiểm tra cú pháp của tệp.
+```
+[root@huyvl-linux-training ~]# grep wheel /etc/sudoers
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
+```
+Chú thích:
+
+- `%wheel` là người dùng hoặc nhóm sẽ được áp dụng `rule`. Ký tự `%` để chỉ định đối tượng là nhóm.
+- `ALL` đầu tiên có thể thực hiện trên bất kỳ máy chủ nào tùy thích, `ALL` thứ hai là người dùng trong nhóm `wheel` có thể chạy lệnh với bất kỳ người dùng khác.
+- `ALL` cuối cùng rằng người dùng nhóm `wheel` có thể áp dụng `sudo` với bất kỳ lệnh nào tùy thích.
+
+Để xác định được tài khoản hiện đang sử dụng là con shell `login` hay `non-login` cần lệnh:
+```shell
+[sysad@huyvl-linux-training ~]$ sudo su
+[sudo] password for sysad:
+[root@huyvl-linux-training sysad]# echo $0
+bash
+[root@huyvl-linux-training sysad]# # this is non-login shell
+[root@huyvl-linux-training sysad]# exit
+exit
+[sysad@huyvl-linux-training ~]$ sudo su -
+Last login: Wed Sep 13 10:41:46 +07 2023 on pts/0
+[root@huyvl-linux-training ~]# echo $0
+-bash
+[root@huyvl-linux-training ~]# # this is login shell
+[root@huyvl-linux-training ~]#
+```
 ### <a name="user_and_group_control"></a>Các thao tác quản lý trên người dùng và nhóm
 Để chỉ định `ID` khi tạo người dùng cần thêm tùy chọn `-u` như sau:
 ```shell
@@ -370,6 +400,27 @@ uid=2005(intern2) gid=2005(intern2) groups=2005(intern2)
 [root@huyvl-linux-training ~]# cat /etc/group | grep sale
 sale:x:2010:
 [root@huyvl-linux-training ~]#
+```
+Tạo nhóm khu vực hệ thống cần tùy chọn `-r` như sau:
+```shell
+[root@huyvl-linux-training ~]# groupadd -r sysgroup
+[root@huyvl-linux-training ~]# grep sysgroup /etc/group
+sysgroup:x:993:
+```
+Thay đổi tên nhóm với tùy chọn `-n` như sau:
+```shell
+[root@huyvl-linux-training ~]# groupmod -n systemgroup sysgroup
+[root@huyvl-linux-training ~]# grep systemgroup /etc/group
+systemgroup:x:993:
+```
+Hủy nhóm cần chắc chắn rằng không có người dùng nào thuộc nhóm chính đó:
+```shell
+[root@huyvl-linux-training ~]# id hcmoperator
+uid=1003(hcmoperator) gid=1007(hcmsysad) groups=1007(hcmsysad),1006(sysad)
+[root@huyvl-linux-training ~]# groupdel hcmsysad
+groupdel: cannot remove the primary group of user 'hcmoperator'
+[root@huyvl-linux-training ~]# userdel -r hcmoperator
+[root@huyvl-linux-training ~]# groupdel hcmsysad
 ```
 Để thêm người dùng vào nhóm mới ngoài nhóm chính `primary group` thì được gọi là `secondary group` hoặc `supplementary group` như sau:
 ```shell
@@ -422,9 +473,87 @@ Session terminated, killing shell... ...killed.
 ```shell
 [root@huyvl-linux-training ~]# id intern2
 uid=2005(intern2) gid=2005(intern2) groups=2005(intern2)
-[root@huyvl-linux-training ~]# userdel intern2
+[root@huyvl-linux-training ~]# userdel -r intern2
 [root@huyvl-linux-training ~]# id intern2
 id: intern2: no such user
+[root@huyvl-linux-training ~]#
+```
+Đặt mật khẩu cho người dùng qua lệnh `passwd` và kiểm tra tính hình mật khẩu như sau:
+```shell
+[root@huyvl-linux-training ~]# passwd -S hcmoperator
+hcmoperator LK 2023-09-13 0 99999 7 -1 (Password locked.)
+[root@huyvl-linux-training ~]# grep hcmoperator /etc/shadow
+hcmoperator:!!:19613:0:99999:7:::
+[root@huyvl-linux-training ~]# passwd hcmoperator
+Changing password for user hcmoperator.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@huyvl-linux-training ~]# passwd -S hcmoperator
+hcmoperator PS 2023-09-13 0 99999 7 -1 (Password set, MD5 crypt.)
+[root@huyvl-linux-training ~]# grep hcmoperator /etc/shadow
+hcmoperator:$1$aI3nOxva$88mPNNN2vzq7MpsYwGgGH0:19613:0:99999:7:::
+[root@huyvl-linux-training ~]#
+```
+Quy định về thời hạn mật khẩu được biểu diễn như sau:
+<div style="text-align:center"><img src="../images/password_age.png" /></div>
+
+Thay đổi thời hạn vô hiệu hóa mật khẩu thành `30 ngày` cho tài khoản như sau:
+```shell
+[root@huyvl-linux-training ~]# chage -l hcmoperator
+Last password change                                    : Sep 13, 2023
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : never
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+[root@huyvl-linux-training ~]# chage -E $(date -d "+30 days" +%F) hcmoperator
+[root@huyvl-linux-training ~]# chage -l hcmoperator
+Last password change                                    : Sep 13, 2023
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : Oct 13, 2023
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+[root@huyvl-linux-training ~]# grep hcmoperator /etc/shadow
+hcmoperator:$1$aI3nOxva$88mPNNN2vzq7MpsYwGgGH0:19613:0:99999:7::19643:
+[root@huyvl-linux-training ~]#
+```
+Câu lệnh sau buộc người dùng phải thay đổi mật khẩu ở lần đăng nhập kế tiếp:
+```shell
+[root@huyvl-linux-training ~]# chage -d 0 hcmoperator
+[root@huyvl-linux-training ~]# chage -l hcmoperator
+Last password change                                    : password must be changed
+Password expires                                        : password must be changed
+Password inactive                                       : password must be changed
+Account expires                                         : Oct 13, 2023
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+[root@huyvl-linux-training ~]#
+```
+### <a name="user_restrict_access"></a>Hạn chế truy cập người dùng
+Khóa và mở khóa tài khoản người dùng như sau:
+```shell
+[root@huyvl-linux-training ~]# passwd -S hcmoperator
+hcmoperator PS 2023-09-13 0 99999 7 -1 (Password set, MD5 crypt.)
+[root@huyvl-linux-training ~]# usermod -L hcmoperator
+[root@huyvl-linux-training ~]# passwd -S hcmoperator
+hcmoperator LK 2023-09-13 0 99999 7 -1 (Password locked.)
+[root@huyvl-linux-training ~]#
+```
+Con shell `nologin` có những quyền như con shell `login` được thay thế nhưng sẽ không cung cấp phương thức đăng nhập. Đây là một phương pháp bảo mật tốt khi tài khoản đó không có nhu cầu đăng nhập. Ví dụ như một máy chủ `Mail` cần tạo tài khoản để người dùng xác thực qua ứng dụng khách như `Thunderbird`, `Outlook`, ... để truy xuất thư điện tử mà họ không cần đăng nhập trực tiếp vào máy chủ `Mail`. Giải pháp cho tình huống này là cài đặt con `shell` của tài khoản người dùng là `/sbin/nologin`.
+```shell
+[root@huyvl-linux-training ~]# su - sale
+Last login: Wed Sep 13 11:42:31 +07 2023 on pts/0
+[sale@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# usermod -s /sbin/nologin sale
+[root@huyvl-linux-training ~]# su - sale
+Last login: Wed Sep 13 14:19:03 +07 2023 on pts/0
+This account is currently not available.
 [root@huyvl-linux-training ~]#
 ```
 ### <a name="grant_free_sudo"></a>Cấp quyền `sudo` tự do
@@ -744,6 +873,32 @@ Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc cá
 $ chmod <ownership><operation><permission> object-name
 $ chmod <octal-value> object-name
 ```
+Để có thể cài đặt quyền đồng thời cho 3 mức sở hữu thay vì từng lệnh, người dùng có thể sử dụng tùy chọn `a` như sau:
+```shell
+[root@huyvl-linux-training ~]# ll -d data/
+drwxr-xr-x 2 root root 4096 Sep 13 15:42 data/
+[root@huyvl-linux-training ~]# chmod a+w data/
+[root@huyvl-linux-training ~]# ll -d data/
+drwxrwxrwx 2 root root 4096 Sep 13 15:42 data/
+[root@huyvl-linux-training ~]#
+```
+Để tránh khỏi việc tùy chọn đệ quy `-R` áp dụng quyền thực thi `x(execute)` lên những tệp tin một cách không mong muốn, người dùng có thể quy ước `X` như sau:
+```shell
+[root@huyvl-linux-training ~]# ll -d data/
+d--------- 3 root root 4096 Sep 13 15:46 data/
+[root@huyvl-linux-training ~]# ll data/
+total 4
+d--------- 2 root root 4096 Sep 13 15:46 data1
+---------- 1 root root    0 Sep 13 15:42 regular_file
+[root@huyvl-linux-training ~]# chmod -R a=rX data/
+[root@huyvl-linux-training ~]# ll -d data
+dr-xr-xr-x 3 root root 4096 Sep 13 15:46 data
+[root@huyvl-linux-training ~]# ll data
+total 4
+dr-xr-xr-x 2 root root 4096 Sep 13 15:46 data1
+-r--r--r-- 1 root root    0 Sep 13 15:42 regular_file
+[root@huyvl-linux-training ~]#
+```
 Người dùng có thể sử dụng lệnh `umask` để hiển thị, cài đặt hoặc thay đổi giá trị hiện tại. Để hiện thị `umask` có thể gọi lệnh như sau với tùy chọn `-S` để hiện thị với dạng `symbolic`:
 ```shell
 [root@huyvl-linux-training ~]# umask
@@ -805,6 +960,13 @@ total 0
 [dev2@huyvl-linux-training ~]$
 ```
 , lưu ý rằng sửa đổi trên chỉ áp dụng với login-shell `-bash`, kiểm tra qua `"$ echo $0"`.
+
+Đối tượng hoạt động của `3` quyền đặc biệt nói trên là tệp tin và thư mục được phân chia như sau
+| Quyền | Có thể áp dụng lên tệp tin | Có thể áp dụng lên thư mục
+| --- | --- | --- |
+| SUID | Có | Không |
+| SGID | Có | Có |
+| Sticky Bit | Không | Có |
 #### <a name="suid_permission"></a>Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền
 <div style="text-align:center"><img src="../images/suid.png" /></div>
 
@@ -957,7 +1119,24 @@ dev:$6$MSPq8owf$DPCLXYW1kZrA7Bnf6/cJe2FclE1VWBp4uak4ienAOU0cK3dF.nKX9mRnwqlLx4Di
 <div style="text-align:center"><img src="../images/sgid.png" /></div>
 
 Quyền truy cập mức `group+s(pecial)` hay gọi là `SGID (Set Group ID)` mô tả về trường hợp khi một tệp được tạo trong thư mục được cài đặt quyền này thì nhóm sở hữu tệp đó sẽ là nhóm của tác giả tạo thư mục, bất kể người tạo tệp đang thuộc nhóm nào hay cụ thể là `primary group` nào. Quyền này đặc biệt hữu ích khi sử dụng trong trường hợp chia sẻ nội dung.
-
+```shell
+[root@huyvl-linux-training ~]# ll -d /run/log/journal
+drwxr-sr-x 3 root systemd-journal 60 Sep 12 10:14 /run/log/journal
+[root@huyvl-linux-training ~]# ll -d /usr/bin/ssh-agent
+---x--s--x. 1 root nobody 382216 Aug  9  2019 /usr/bin/ssh-agent
+[root@huyvl-linux-training ~]# find / -perm /2000 2>/dev/null
+/run/log/journal
+/run/log/journal/02703c0eb0f445a990d32af13a6d0e61
+/usr/libexec/utempter/utempter
+/usr/libexec/openssh/ssh-keysign
+/usr/sbin/postdrop
+/usr/sbin/postqueue
+/usr/sbin/netreport
+/usr/bin/wall
+/usr/bin/ssh-agent
+/usr/bin/write
+[root@huyvl-linux-training ~]#
+```
 Ví dụ tài khoản `root` tạo thư mục dùng chung `/groupfolder` như sau:
 ```shell
 [root@huyvl-linux-training ~]# mkdir /groupFolder
@@ -1010,43 +1189,70 @@ total 0
 Quyền truy cập mức `other+t(sticky)` hay `Sticky Bit` mô tả về đặc quyền hữu dụng trên thư mục, ngược lại không gây ra ảnh hưởng nếu áp dụng nhầm lên tệp tin. Loại quyền này chỉ cho phép xóa nội dung bởi chủ sở hữu hoặc `root`, tức ngay cả khi một tài khoản có cùng nhóm với chủ sở hữu cũng không thể xóa nội dung.
 Ví dụ:
 ```shell
-[dev@huyvl-linux-training tmp]$ mkdir stickyFolder
-[dev@huyvl-linux-training tmp]$ cd stickyFolder/
-[dev@huyvl-linux-training stickyFolder]$ touch doc
-[dev@huyvl-linux-training stickyFolder]$
+[root@huyvl-linux-training ~]# id hcmoperator
+uid=1003(hcmoperator) gid=1007(hcmsysad) groups=1007(hcmsysad),1006(sysad)
+[root@huyvl-linux-training ~]# id hnoperator
+uid=1004(hnoperator) gid=1005(hnsysad) groups=1005(hnsysad),1006(sysad)
+[root@huyvl-linux-training ~]# ll -d data
+drwxrwx--- 3 root root 4096 Sep 13 15:46 data
+[root@huyvl-linux-training ~]# ll /data
+total 0
+-rw-r--r-- 1 hcmoperator hcmsysad 0 Sep 13 16:35 hcm
+[root@huyvl-linux-training ~]#
 ```
-, xóa tệp `doc` với tài khoản `sysad` thành công:
+, trước khi áp dụng `sticky bit` thì tài khoản `hnoperator` xóa tệp thành công hay nói cách khác `hcmoperator` và `hnoperator` đều xóa tệp chéo nhau được:
 ```shell
-[sysad@huyvl-linux-training stickyFolder]$ id
-uid=1003(sysad) gid=1000(sysad) groups=1000(sysad),1001(dev)
-[sysad@huyvl-linux-training stickyFolder]$ ll
+[hnoperator@huyvl-linux-training ~]$ cd /data
+[hnoperator@huyvl-linux-training data]$ ll
 total 0
--rw-rw-r-- 1 dev dev 0 Sep 10 22:26 doc
-[sysad@huyvl-linux-training stickyFolder]$ rm doc
-[sysad@huyvl-linux-training stickyFolder]$ ll
+-rw-r--r-- 1 hcmoperator hcmsysad 0 Sep 13 16:35 hcm
+[hnoperator@huyvl-linux-training data]$ rm hcm
+rm: remove write-protected regular empty file ‘hcm’? y
+[hnoperator@huyvl-linux-training data]$ ll
 total 0
-[sysad@huyvl-linux-training stickyFolder]$
+[hnoperator@huyvl-linux-training data]$ touch hn
+[hnoperator@huyvl-linux-training data]$ ll
+total 0
+-rw-r--r-- 1 hnoperator hnsysad 0 Sep 13 16:43 hn
+[hnoperator@huyvl-linux-training data]$
 ```
 , áp dụng `sticky bit` vào:
 ```shell
-[dev@huyvl-linux-training tmp]$ mkdir stickyFolder
-[dev@huyvl-linux-training tmp]$ cd stickyFolder/
-[dev@huyvl-linux-training stickyFolder]$ touch doc
-[dev@huyvl-linux-training stickyFolder]$ ll -d /tmp/stickyFolder/
-drwxrwxr-x 2 dev dev 4096 Sep 10 22:27 /tmp/stickyFolder/
-[dev@huyvl-linux-training stickyFolder]$ chmod o+t /tmp/stickyFolder/
-[dev@huyvl-linux-training stickyFolder]$ ll -d /tmp/stickyFolder/
-drwxrwxr-t 2 dev dev 4096 Sep 10 22:27 /tmp/stickyFolder/
-[dev@huyvl-linux-training stickyFolder]$ touch doc2
+[root@huyvl-linux-training ~]# ll -d /data
+drwxrwx--- 2 root sysad 4096 Sep 13 16:43 /data
+[root@huyvl-linux-training ~]# chmod o+t /data
+[root@huyvl-linux-training ~]# ll -d /data
+drwxrwx--T 2 root sysad 4096 Sep 13 16:43 /data
+[root@huyvl-linux-training ~]#
 ```
-, xóa tệp không thành công ngay cả khi chung nhóm:
+, xóa tệp không thành công ngay cả khi chung nhóm `sysad`:
 ```shell
-[sysad@huyvl-linux-training stickyFolder]$ ll
+[hcmoperator@huyvl-linux-training ~]$ cd /data
+[hcmoperator@huyvl-linux-training data]$ ll
 total 0
--rw-rw-r-- 1 dev dev 0 Sep 10 22:28 doc2
-[sysad@huyvl-linux-training stickyFolder]$ rm doc2
-rm: cannot remove ‘doc2’: Operation not permitted
-[sysad@huyvl-linux-training stickyFolder]$
+-rw-r--r-- 1 hnoperator hnsysad 0 Sep 13 16:43 hn
+[hcmoperator@huyvl-linux-training data]$ rm hn
+rm: remove write-protected regular empty file ‘hn’? y
+rm: cannot remove ‘hn’: Operation not permitted
+[hcmoperator@huyvl-linux-training data]$
+```
+Ký tự `T` lớn cho thấy `sticky bit` đã được kích hoạt và kèm theo những tài khoản ngoài chủ sở hữu và ngoài nhóm lớn `sysad` đều không có quyền truy cập vào thư mục này. Ngược lại khi ký tự là `t` nhỏ tức là `sticky bit` đã được kích hoạt và cho phép những tất cả các tài khoản nằm ngoài vùng phủ sóng có thể truy cấp, dùng lệnh `cd` đến được.
+```shell
+[sale@huyvl-linux-training ~]$ ll -d /data
+drwxrwx--T 2 root sysad 4096 Sep 13 16:49 /data
+[sale@huyvl-linux-training ~]$ cd /data
+-bash: cd: /data: Permission denied
+[sale@huyvl-linux-training ~]$ cd /data
+-bash: cd: /data: Permission denied
+[sale@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# chmod o+x /data
+[root@huyvl-linux-training ~]# id sale
+uid=1002(sale) gid=1003(sale) groups=1003(sale)
+[root@huyvl-linux-training ~]# su - sale
+Last login: Wed Sep 13 16:55:41 +07 2023 on pts/0
+[sale@huyvl-linux-training ~]$ cd /data
+[sale@huyvl-linux-training data]$
 ```
 ### <a name="rpm_package"></a>RPM package và phân loại
 `RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
