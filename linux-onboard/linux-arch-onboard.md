@@ -15,7 +15,7 @@
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 13/09/2023)](#file_permission)
+    - [2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 14/09/2023)](#file_permission)
         - [2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 13/09/2023)](#file_permission_management)
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:arrow_up:UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:arrow_up:UPDATED 10/09/2023)](#sgid_permission)
@@ -913,6 +913,8 @@ Last login: Sat Sep  9 18:35:15 +07 2023 on pts/0
 u=rwx,g=rwx,o=rx
 [sysad@huyvl-linux-training ~]$
 ```
+<div style="text-align:center"><img src="../images/umask_detail.png" /></div>
+
 Một loại quyền đặc biệt được mô tả người dùng khi hiển thị `umask`, loại đặc biệt này sẽ là quyền truy cập thứ `4` được thêm vào ngoài những thứ đã có sẵn `owner/user`, `group` và `other`. Giá trị `bit` đầu tiên thể hiện cho `sticky bit`, `SUID` hoặc `SGID`, khi giá trị `bit` là `0` tức chưa được kích hoạt chức năng này. Thay đổi `umask` với người dùng cụ thể và quy định chính sách bảo mật như sau:
 ```shell
 [dev@huyvl-linux-training ~]$ mkdir my_dir
@@ -961,6 +963,36 @@ total 0
 ```
 , lưu ý rằng sửa đổi trên chỉ áp dụng với login-shell `-bash`, kiểm tra qua `"$ echo $0"`.
 
+Thay đổi tạm thời ở tài khoản cục bộ như sau:
+```shell
+[hcmoperator@huyvl-linux-training ~]$ umask
+0022
+[hcmoperator@huyvl-linux-training ~]$ umask 0777
+[hcmoperator@huyvl-linux-training ~]$ umask
+0777
+[hcmoperator@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# su - hcmoperator
+Last login: Thu Sep 14 09:22:59 +07 2023 on pts/0
+[hcmoperator@huyvl-linux-training ~]$ umask
+0022
+[hcmoperator@huyvl-linux-training ~]$
+```
+Thay đổi ở cục bộ tài khoản như sau:
+```shell
+[hcmoperator@huyvl-linux-training ~]$ umask
+0022
+[hcmoperator@huyvl-linux-training ~]$ echo "umask 0777" >> ~/.bashrc
+[hcmoperator@huyvl-linux-training ~]$ umask
+0022
+[hcmoperator@huyvl-linux-training ~]$ exit
+logout
+[root@huyvl-linux-training ~]# su - hcmoperator
+Last login: Thu Sep 14 09:23:09 +07 2023 on pts/0
+[hcmoperator@huyvl-linux-training ~]$ umask
+0777
+[hcmoperator@huyvl-linux-training ~]$
+```
 Đối tượng hoạt động của `3` quyền đặc biệt nói trên là tệp tin và thư mục được phân chia như sau
 | Quyền | Có thể áp dụng lên tệp tin | Có thể áp dụng lên thư mục
 | --- | --- | --- |

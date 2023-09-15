@@ -26,7 +26,7 @@
     - 2.5.2 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 09/09/2023)
     - 2.5.3 - RPM Package và phân loại (UPDATED 24/08/2023)
     - 2.5.4 - Kernel RPM Package (UPDATED 24/08/2023)
-    - 2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 13/09/2023)
+    - 2.5.4 - Tổng quan về quyền trên tệp tin (:arrow_up:UPDATED 14/09/2023)
         - 2.5.4.1 - Quản lý quyền tệp tin (:arrow_up:UPDATED 13/09/2023)
         - 2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:arrow_up:UPDATED 10/09/2023)
         - 2.5.4.3 - Quyền đặc biệt dành cho nhóm(:arrow_up:UPDATED 10/09/2023)
