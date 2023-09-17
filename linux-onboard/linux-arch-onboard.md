@@ -1838,7 +1838,8 @@ Lệnh `kill` cho phép người dùng chỉ định gửi tín hiệu bằng s�
 Tải lại cấu hình `sshd`, thay vì mặc định có thể điều khiển thông qua tất cả các `ethX` thì chỉ cho phép điều khiển thông qua `eth0` để gia tăng bảo mật. Sau khi sử dụng tín hiệu `SIGHUP` thì sẽ bị từ chối khi kiểm tra kết nối đến `eth1` như sau:
 ```shell
 [root@huyvl-linux-training ~]# ip -4 a
-...
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
     inet 10.10.1.119/16 brd 10.10.255.255 scope global noprefixroute dynamic eth0
        valid_lft 399557sec preferred_lft 399557sec
