@@ -1544,20 +1544,6 @@ echo "You just put: $something"
 [root@huyvl-linux-training ~]#
 ```
 . Mặc định khi khởi chạy một chương trình nó sẽ sử dụng chế độ `foreground`, người dùng có thể chuyển trạng thái giữa `foreground` sang `background`. Lệnh `fg` tức `foreground` sẽ chiếm quyền kiểm soát của `terminal`, ngược lại với lệnh `bg` tức `background` sẽ tách `job` ra khỏi `terminal` để tránh việc kiểm soát toàn bộ `terminal`. Lệnh `jobs` sẽ liệt kê ra tất cả các `job` hiện có, dấu `+` mô tả rằng `job` này sẽ được gọi nếu lệnh `fg` hoặc `bg` không chỉ định cụ thể định danh `%<number>`, ngược lại dấu `-` sẽ mô tả rằng `job` này sắp tới sẽ chuyển thành `+`.
-```shell
-[root@huyvl-linux-training ~]# ps j
-...
-...
-[root@huyvl-linux-training ~]# kill -9 20021
-[root@huyvl-linux-training ~]# jobs
-[1]+  Killed                  vi
-[2]   Running                 sleep 10000 &
-[3]-  Running                 sleep 100 &
-[root@huyvl-linux-training ~]# jobs
-[2]-  Running                 sleep 10000 &
-[3]+  Running                 sleep 100 &
-[root@huyvl-linux-training ~]#
-```
 
 Khi chạy lệnh `top` thì một `job` sẽ được sinh ra và chạy ở chế độ `foreground`. Sử dụng tổ hợp phím `Ctrl-Z` để đưa tiến trình đang chạy vào trạng thái `stopped` như sau:
 ```shell
@@ -1585,9 +1571,6 @@ root     10724  0.0  0.1 162104  2240 pts/0    T    10:35   0:00 top
 root     11786  0.0  0.1 162104  2240 pts/0    T    10:49   0:00 top
 root     11882  0.0  0.0 112808   968 pts/0    S+   10:50   0:00 grep --color=auto top
 root     22812  0.1  0.1 162100  2296 pts/2    S+   Sep16   1:07 top
-[root@huyvl-linux-training ~]#
-...
-...
 [root@huyvl-linux-training ~]# jobs
 [1]-  Stopped                 top
 [2]+  Stopped                 top
@@ -1775,8 +1758,8 @@ Liệt kê tất cả các tiến trình được chạy bởi người dùng c�
 [hcmoperator@huyvl-linux-training ~]$ sleep 10000 &
 [2] 5972
 [hcmoperator@huyvl-linux-training ~]$
-...
-...
+```
+```shell
 [root@huyvl-linux-training ~]# pgrep -l -u hcmoperator
 5874 bash
 5933 vim
@@ -1927,10 +1910,9 @@ Sử dụng lệnh mới `pkill` hoặc `killall` để tìm và kết thúc t�
 10593 bash
 [root@huyvl-linux-training ~]# pkill -SIGKILL -u hcmoperator
 [root@huyvl-linux-training ~]#
-...
-...
+```
+```shell
 [hcmoperator@huyvl-linux-training ~]$ Killed
-...
 ```
 Đăng xuất chỉ định phiên đăng nhập khi tài khoản người dùng mở nhiều phiên đăng nhập cùng lúc thông qua nhiều thiết bị hoặc một `tab` khác:
 ```shell
