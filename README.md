@@ -32,6 +32,6 @@
         - 2.5.4.3 - Quyền đặc biệt dành cho nhóm(UPDATED 10/09/2023)
         - 2.5.4.4 - Quyền đặc biệt Sticky bit(UPDATED 13/09/2023)
 - 2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 17/09/2023)
-    - 2.6.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)
+    - 2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)
     - 2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)
     - 2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 17/09/2023)
