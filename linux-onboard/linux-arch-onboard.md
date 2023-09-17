@@ -3,10 +3,10 @@
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
 - [2.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
-- [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 13/09/2023)](#user_and_group)
-    - [2.4.1 - Khái niệm `User` (:heavy_plus_sign:UPDATED 12/09/2023)](#user)
-    - [2.4.2 - Khái niệm về nhóm, chính và phụ (:heavy_plus_sign:UPDATED 12/09/2023)](#group)
-    - [2.4.3 - Thay đổi tài khoản người dùng (:heavy_plus_sign:UPDATED 13/09/2023)](#switch_user)
+- [2.4 - Quản lý người dùng và nhóm (:arrow_up:UPDATED 17/09/2023)](#user_and_group)
+    - [2.4.1 - Khái niệm `User` (UPDATED 17/09/2023)](#user)
+    - [2.4.2 - Khái niệm về nhóm, chính và phụ (UPDATED 12/09/2023)](#group)
+    - [2.4.3 - Thay đổi tài khoản người dùng (UPDATED 13/09/2023)](#switch_user)
     - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm(:arrow_up:UPDATED 11/09/2023)](#user_and_group_control)
     - [2.4.5 - Hạn chế quyền truy cập người dùng (:heavy_plus_sign:UPDATED 13/09/2023)](#user_restrict_access)
     - [2.4.6 - Cấp quyền `sudo` tự do (:arrow_up:UPDATED 11/09/2023)](#grant_free_sudo)
@@ -20,8 +20,10 @@
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (:arrow_up:UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(:arrow_up:UPDATED 10/09/2023)](#sgid_permission)
         - [2.5.4.4 - Quyền đặc biệt Sticky bit(:arrow_up:UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (UPDATED 05/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 05/09/2023)](#process_states)
+    - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
+    - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 17/09/2023)](#kill_process)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -130,7 +132,15 @@ Last login: Tue Sep 12 10:17:52 +07 2023 on pts/0
 uid=1000(sysad) gid=1000(sysad) groups=1000(sysad)
 [sysad@huyvl-linux-training ~]$
 ```
-
+Liệt kê chi tiết thông tin người dùng có trong hệ thống: đăng nhập khi nào, thông qua cách thức gì, ...
+```shell
+[root@huyvl-linux-training ~]# w
+ 21:58:31 up 5 days, 11:44,  2 users,  load average: 0.00, 0.06, 0.06
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    171.252.188.216  17:36    7.00s  0.40s  0.01s  -2 attach -t 1
+hcmopera pts/1    171.252.188.216  21:58   22.00s  0.00s  0.00s -bash
+[root@huyvl-linux-training ~]#
+```
 Mỗi người dùng được liên kết với một mã định danh duy nhất được gọi là `UID (User ID)`, tương tự đối với mỗi nhóm sẽ là `GID (Group ID)`. Những người dùng trong một nhóm sẽ chia sẻ với nhau về các quyền đọc, ghi và thực thi đối với tệp tin sở hữu. `Linux` dự trữ phạm vi `ID` từ `[0-1000]` dành cho người dùng và nhóm hệ thống, để liệt kê người dùng và nhóm trong phạm vi này cần lệnh:
 ```shell
 [root@huyvl-linux-training ~]# cat /usr/share/doc/setup*/uidgid
@@ -1400,14 +1410,86 @@ Phân tích `kernel rpm` thấy được như sau:
 ## <a name="linux_process"></a>Tổng quan về tiến trình
 Tiến trình là tên gọi đại diện cho sự trừu tượng hóa hay nhóm các tài nguyên sau:
 
-- `address space`: không gian địa chỉ.
-- `thread`: một hoặc nhiều luồng.
+- `address space`: không gian địa chỉ của bộ nhớ đã phân bổ.
+- Các thuộc tính bảo mật bao gồm cả xác thực quyền sở hữu và phạm vi của quyền hạn. 
+- `thread`: một hoặc nhiều luồng được thực thi trong mã nguồn chương trình.
 - `timers`: đồng hồ.
 - `socket`.
 - `shared memory region`: khu vực bộ nhớ xài chung.
 - ...
 
 , trong mã `Linux` nó được gọi với tên nguyên bản là `task_struct` với nội dung hơn 800 dòng tại https://github.com/torvalds/linux/blob/master/include/linux/sched.h#L743-L1554.
+
+<div style="text-align:center"><img src="../images/fork_routine.png"/></div>
+
+Mọi tiến trình đều có thể tạo tiến trình con của riêng nó, tất cả tiến trình đều có chung một tiến trình cha đầu tiên là `systemd`. Tiến trình cha sao chép không gian địa chỉ bộ nhớ, hành động này được gọi là `fork` để tạo ra tiến trình con. Thông qua `fork`, tiến trình con kế thừa những đặc tính bảo mật, đặc quyền truy cập tài nguyên, biến môi trường, ... nhưng không kế thừa `lock`, `alarm` của tiến trình cha. Thông thường thì tiến trình cha sẽ rơi vào trạng thái ngủ đông `sleep` trong khi tiến trình con hoạt động và đặt một yêu cầu `wait` để chờ tiến trình con hoàn thành.
+
+```shell
+[root@huyvl-linux-training ~]# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.2 190920  3852 ?        Ss   Sep12   1:46 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+root         2  0.0  0.0      0     0 ?        S    Sep12   0:00 [kthreadd]
+root         4  0.0  0.0      0     0 ?        S<   Sep12   0:00 [kworker/0:0H]
+root         5  0.0  0.0      0     0 ?        S    Sep12   0:00 [kworker/u4:0]
+root         6  0.0  0.0      0     0 ?        S    Sep12   0:00 [ksoftirqd/0]
+root         7  0.0  0.0      0     0 ?        S    Sep12   0:04 [migration/0]
+root         8  0.0  0.0      0     0 ?        S    Sep12   0:00 [rcu_bh]
+root         9  0.0  0.0      0     0 ?        S    Sep12   0:31 [rcu_sched]
+root        10  0.0  0.0      0     0 ?        S<   Sep12   0:00 [lru-add-drain]
+root        11  0.0  0.0      0     0 ?        S    Sep12   0:04 [watchdog/0]
+root        12  0.0  0.0      0     0 ?        S    Sep12   0:03 [watchdog/1]
+...
+...
+```
+
+Chú thích sơ lược
+
+- Mọi tiến trình bên dưới đều là con của tiến trình đầu tiên `systemd` có định danh `PID` là 1.
+- Các tiến trình được đóng trong ngoặc vuông là của `kernel`.
+
+Lệnh `ps` của `Linux` hỗ trợ nhiều tùy chọn định dạng:
+
+- `UNIX(POSIX)` có phong cách nhóm các tùy chọn lại với dấu trừ `- (dash)` thay vì rời rạc.
+- `BSD` ngược lại với `UNIX(POSIX)` rằng cho phép nhóm các tùy chọn mà không cần `- (dash)`.
+- `GNU` dài dòng hơn khi sử dụng tới 2 dấu `-- (dash dash)`.
+
+Sử dụng tùy chọn `--forest` theo định dạng `GNU` để hiển thị danh sách tiến trình dạng cây hay mỗi liên hệ giữa các tiến trình con và tiến trình cha như sau:
+```shell
+[root@huyvl-linux-training ~]# ps --forest ax
+...
+...
+18926 ?        Ss     0:00  \_ sshd: root@pts/0
+18930 pts/0    Ss+    0:00  |   \_ -bash
+18928 ?        Ss     0:00  \_ sshd: root@notty
+18948 ?        Ss     0:00  |   \_ /usr/libexec/openssh/sftp-server
+20881 ?        Ss     0:00  \_ sshd: root@pts/1
+20885 pts/1    Ss     0:00  |   \_ -bash
+22557 pts/1    S+     0:00  |       \_ tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
+20883 ?        Ss     0:00  \_ sshd: root@notty
+20903 ?        Ss     0:00      \_ /usr/libexec/openssh/sftp-server
+22603 ?        Ss     0:02 tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
+22605 pts/3    Ss     0:00  \_ /bin/bash
+25961 pts/3    R+     0:00  |   \_ ps --forest ax
+22689 pts/2    Ss     0:00  \_ /bin/bash
+22812 pts/2    S+     0:00      \_ top
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ps fax
+...
+...
+ 1292 ?        Ss     0:05 /usr/sbin/sshd -D
+ 8887 ?        Ss     0:00  \_ sshd: root@pts/0
+ 8892 pts/0    Ss     0:00  |   \_ -bash
+ 9020 pts/0    R+     0:00  |       \_ ps fax
+ 8890 ?        Ss     0:00  \_ sshd: root@notty
+ 8910 ?        Ss     0:00      \_ /usr/libexec/openssh/sftp-server
+22603 ?        Ss     0:59 tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
+22605 pts/3    Ss     0:00  \_ /bin/bash
+29044 pts/3    S+     0:00  |   \_ man ps
+29053 pts/3    S+     0:00  |       \_ less -s
+22689 pts/2    Ss     0:00  \_ /bin/bash
+22812 pts/2    S+     1:03      \_ top
+[root@huyvl-linux-training ~]#
+```
 ### <a name="process_states"></a>Các trạng thái của tiến trình `Linux`
 
 <div style="text-align:center"><img src="../images/linux_process_states.png"/></div>
@@ -1425,3 +1507,458 @@ Một số quy tắc gửi tín hiệu đến tiến trình thông qua tổ hợ
 
 - `Ctrl C`: gửi tín hiệu và kết thúc tiến trình.
 - `Ctrl Z`: gửi tín hiệu `SIGTSTP` sẽ đưa tiến trình vào trạng thái ngủ đông `sleep`.
+
+Trong thực tế hệ thống thì các chữ cái ký hiệu trạng thái của tiến trình được biểu diễn như sau:
+
+<div style="text-align:center"><img src="../images/real_states.png" /></div>
+
+| Cờ | Tên | Mô tả |
+| --- | --- | --- |
+| R | Running | TASK_RUNNING: trạng thái đang chạy |
+| S | Sleeping | TASK_INTERRUPTIBLE: tiến trình đang ngủ đông chờ một điều kiện thỏa mãn để có thể chạy tiếp, ví dụ như yêu cầu từ phần cứng hoặc một tín hiệu `SIGN` ...
+| D | Sleeping| TASK_INTERRUPTIBLE: tiến trình đang ngủ nhưng khác với trạng thái `S` rằng nó không nhận tín hiệu.
+| K | Sleeping | TASK_KILLABLE: khác với trạng thái `D` rằng nó cho phép phản hồi tín hiệu khi được yêu cầu kết thúc tiến trình, một số công cụ hiển thị các tiến trình `killable` là trạng thái `D`.
+| I | Sleeping | TASK_REPORT_IDLE: trạng thái này chỉ được sử dụng cho các tiến trình chạy ở `kernel mode`. Là một trường hợp lai giữa trạng thái `D` và `K`.
+| T | Stopped | TASK_STOPPED: dừng hoặc tạm hoãn, thường được gây ra bởi người dùng hoặc một tiến trình khác. Nó có thể tiếp tục hoạt động trở lại.
+| T | Stopped | TASK_TRACED: tiến trình đang bị tác động bởi `debugger`, sử dụng chung cờ `T`.
+| Z | Zombie | EXIT_ZOMBIE: tiến trình con thông báo với tiến trình cha rằng nó bị kết thúc trở thành một `Zombie`.
+| Z | X | EXIT_DEAD: khi tiến trình cha giải phóng toàn bộ các tài nguyên của tiến trình con, trạng thái này sẽ không được hiển thị bởi các công cụ liệt kê tiến trình.
+
+Lời khuyên khi làm việc với tiến trình rằng nên nghiên cứu về cách thức làm thế nào để liên hệ giữa `kernel` với tiến trình, làm thế nào để tiến trình này liên lạc với các tiến trình khác. Về mặt lịch sử hệ thống chỉ có một tiến trình duy nhất tại một thời điểm, ngày nay với sự phát triển của khoa học máy tính thì hệ thống có thể chạy tuần tự hoặc song song cùng lúc nhiều tiến trình. Một tiến trình được thiết kế có thể `catch` tín hiệu từ `kernel`, những tiến trình khác, ... 
+
+### <a name="control_job"></a>Kiểm soát các `Job`
+Việc kiểm soát `job` để quản lý nhiều tiến trình khi chúng đã khởi chạy trên một phiên `terminal` nào đó. Tiến trình chạy nền `background` không thể nhận `input` hay nhận các ngắt `interrupt` được tạo ra từ bàn phím, nếu tiến trình chạy nền được thiết kế để đọc dữ liệu từ `terminal` thì nó sẽ tự động bị `stop` như sau:
+```shell
+[root@huyvl-linux-training ~]# cat read_from_keyboard.sh
+echo -n "Enter something: "
+read something
+echo "You just put: $something"
+[root@huyvl-linux-training ~]# jobs
+[root@huyvl-linux-training ~]# ./read_from_keyboard.sh &
+[1] 17964
+[root@huyvl-linux-training ~]# Enter something:
+
+[1]+  Stopped                 ./read_from_keyboard.sh
+[root@huyvl-linux-training ~]# jobs
+[1]+  Stopped                 ./read_from_keyboard.sh
+[root@huyvl-linux-training ~]#
+```
+. Mặc định khi khởi chạy một chương trình nó sẽ sử dụng chế độ `foreground`, người dùng có thể chuyển trạng thái giữa `foreground` sang `background`. Lệnh `fg` tức `foreground` sẽ chiếm quyền kiểm soát của `terminal`, ngược lại với lệnh `bg` tức `background` sẽ tách `job` ra khỏi `terminal` để tránh việc kiểm soát toàn bộ `terminal`. Lệnh `jobs` sẽ liệt kê ra tất cả các `job` hiện có, dấu `+` mô tả rằng `job` này sẽ được gọi nếu lệnh `fg` hoặc `bg` không chỉ định cụ thể định danh `%<number>`, ngược lại dấu `-` sẽ mô tả rằng `job` này sắp tới sẽ chuyển thành `+`.
+```shell
+[root@huyvl-linux-training ~]# ps j
+...
+...
+[root@huyvl-linux-training ~]# kill -9 20021
+[root@huyvl-linux-training ~]# jobs
+[1]+  Killed                  vi
+[2]   Running                 sleep 10000 &
+[3]-  Running                 sleep 100 &
+[root@huyvl-linux-training ~]# jobs
+[2]-  Running                 sleep 10000 &
+[3]+  Running                 sleep 100 &
+[root@huyvl-linux-training ~]#
+```
+
+Khi chạy lệnh `top` thì một `job` sẽ được sinh ra và chạy ở chế độ `foreground`. Sử dụng tổ hợp phím `Ctrl-Z` để đưa tiến trình đang chạy vào trạng thái `stopped` như sau:
+```shell
+[root@huyvl-linux-training ~]# top
+%Cpu(s):  3.2 us,  0.0 sy,  0.0 ni, 96.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   952836 free,   167840 used,   761156 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1508828 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+11785 sshd      20   0  112940   2232   1168 S   6.7  0.1   0:00.01 sshd
+11786 root      20   0  162104   2204   1540 R   6.7  0.1   0:00.01 top
+    1 root      20   0  190920   3852   2596 S   0.0  0.2   2:04.82 systemd
+    2 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kthreadd
+    4 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/0:0H
+    5 root      20   0       0      0      0 S   0.0  0.0   0:00.88 kworker/u4:0
+    6 root      20   0       0      0      0 S   0.0  0.0   0:01.15 ksoftirqd/0
+...
+...
+[2]+  Stopped                 top
+```
+, sau khi `Ctrl-Z` thì `ID` của `job` trả về là `2`, liệt kê các tiến trình hiện có để kiểm tra trạng thái của tiến trình `top` vừa được `stopped` với ký hiệu `T` như sau:
+```shell
+[root@huyvl-linux-training ~]# ps aux | grep top
+root     10724  0.0  0.1 162104  2240 pts/0    T    10:35   0:00 top
+root     11786  0.0  0.1 162104  2240 pts/0    T    10:49   0:00 top
+root     11882  0.0  0.0 112808   968 pts/0    S+   10:50   0:00 grep --color=auto top
+root     22812  0.1  0.1 162100  2296 pts/2    S+   Sep16   1:07 top
+[root@huyvl-linux-training ~]#
+...
+...
+[root@huyvl-linux-training ~]# jobs
+[1]-  Stopped                 top
+[2]+  Stopped                 top
+[root@huyvl-linux-training ~]#
+```
+, quay trở lại với chương trình `top` cần `foreground` giá trị `2` như sau:
+```shell
+[root@huyvl-linux-training ~]# fg %2
+...
+...
+top - 12:25:58 up 5 days,  2:11,  1 user,  load average: 0.00, 0.01, 0.05
+Tasks:  85 total,   3 running,  81 sleeping,   1 stopped,   0 zombie
+%Cpu(s):  0.1 us,  0.1 sy,  0.0 ni, 99.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   955244 free,   163424 used,   763164 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1513248 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+22812 root      20   0  162100   2296   1608 S   0.2  0.1   1:15.95 top
+  419 root      20   0       0      0      0 S   0.1  0.0   0:01.42 hwrng
+16666 root      20   0  161968   2232   1604 R   0.1  0.1   0:00.02 top
+    1 root      20   0  190920   3852   2596 S   0.0  0.2   2:07.06 systemd
+    2 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kthreadd
+    4 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/0:0H
+```
+Chạy tiến trình ở chế độ `background` bằng cách thêm ký tự `&` vào cuối lệnh:
+```shell
+[root@huyvl-linux-training ~]# sleep 5 &
+[3] 16809
+[root@huyvl-linux-training ~]# jobs
+[1]-  Stopped                 top
+[2]+  Stopped                 top
+[3]   Running                 sleep 5 &
+[root@huyvl-linux-training ~]# jobs
+[1]-  Stopped                 top
+[2]+  Stopped                 top
+[3]   Done                    sleep 5
+[root@huyvl-linux-training ~]#
+```
+Chuyển tiến trình đang chạy ở chế độ `backgound` sang `foreground` và ngược lại:
+```shell
+[root@huyvl-linux-training ~]# sleep 1000 &
+[3] 16861
+[root@huyvl-linux-training ~]# jobs
+[1]-  Stopped                 top
+[2]+  Stopped                 top
+[3]   Running                 sleep 1000 &
+[root@huyvl-linux-training ~]# fg %3
+sleep 1000
+^Z
+[3]+  Stopped                 sleep 1000
+[root@huyvl-linux-training ~]# jobs
+[1]   Stopped                 top
+[2]-  Stopped                 top
+[3]+  Stopped                 sleep 1000
+[root@huyvl-linux-training ~]# bg %3
+[3]+ sleep 1000 &
+[root@huyvl-linux-training ~]# jobs
+[1]-  Stopped                 top
+[2]+  Stopped                 top
+[3]   Running                 sleep 1000 &
+[root@huyvl-linux-training ~]#
+```
+Để kiểm tra thông tin `job` cần lệnh `ps j` như sau:
+```shell
+[root@huyvl-linux-training ~]# sleep 100 &
+[1] 18621
+[root@huyvl-linux-training ~]# ps j
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    1  1245  1245  1245 tty1      1245 Ss+      0   0:00 /sbin/agetty --noclear tty1 linux
+    1  1246  1246  1246 ttyS0     1246 Ss+      0   0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+18270 18274 18274 18274 pts/0    18623 Ss       0   0:00 -bash
+18274 18621 18621 18274 pts/0    18623 S        0   0:00 sleep 100
+18274 18623 18623 18274 pts/0    18623 R+       0   0:00 ps j
+...
+...
+[root@huyvl-linux-training ~]#
+```
+Liệt kê chính xác các tiến trình theo lệnh cụ thể thông qua lệnh `pidof` như sau:
+```shell
+[root@huyvl-linux-training ~]# watch -n 1 -e ls
+[1]+  Stopped                 watch -n 1 -e ls
+[root@huyvl-linux-training ~]# ps aux | grep watch
+root        11  0.0  0.0      0     0 ?        S    Sep12   0:05 [watchdog/0]
+root        12  0.0  0.0      0     0 ?        S    Sep12   0:03 [watchdog/1]
+root        29  0.0  0.0      0     0 ?        S<   Sep12   0:00 [watchdogd]
+root     19600  0.1  0.1 157604  2480 pts/3    T    19:49   0:00 watch -n 1 -e ls
+root     19763  0.0  0.0 112812   972 pts/3    S+   19:49   0:00 grep --color=auto watch
+[root@huyvl-linux-training ~]# pgrep watch
+11
+12
+29
+19600
+[root@huyvl-linux-training ~]# pidof watch
+19600
+[root@huyvl-linux-training ~]#
+```
+Kiểm tra trung bình tải thông qua lệnh `uptime` như sau:
+```shell
+[root@huyvl-linux-training ~]# uptime
+ 19:52:20 up 5 days,  9:38,  1 user,  load average: 0.63, 0.21, 0.12
+[root@huyvl-linux-training ~]# lscpu -p
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting from zero.
+# CPU,Core,Socket,Node,,L1d,L1i,L2,L3
+0,0,0,0,,0,0,0,0
+1,1,1,0,,1,1,1,1
+[root@huyvl-linux-training ~]#
+```
+Chú thích:
+
+- Lệnh `lscpu -p` hiển thị `2` dòng đồng nghĩa với số lượng `2` CPU hiện có, cột đầu tiên sẽ định danh cho CPU.
+- Lệnh `uptime` cho thấy giờ hiện tại khi chạy lệnh là `7:52:20 PM`, hệ thống đã khởi động được `5` ngày, có `1` người dùng hiện tại đang đăng nhập hệ thống, tải trung bình `0.63/2(CPU)=31.5(%)` vào phút gần đây nhất, tải trung bình `0.21/2(CPU)=10.5(%)` vào 5 phút gần đây nhất, tải trung bình `0.12/2(CPU)=6(%)` vào 15 phút gần nhất.
+
+Sơ đồ sử dụng chương trình `top` như sau:
+```shell
+[root@huyvl-linux-training ~]# top
+Tasks:  84 total,   1 running,  83 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  2.0 us,  1.3 sy,  0.0 ni, 96.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   152328 free,   167192 used,  1562312 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1493776 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+22603 root      20   0   25044   4588   1332 S   0.7  0.2   2:16.21 tmux
+    1 root      20   0  190920   3896   2620 S   0.0  0.2   2:18.60 systemd
+...
+...
+```
+, gõ phím `h` để nhận sự trợ giúp, các chữ cái mô tả sự hỗ trợ như sau:
+```shell
+Help for Interactive Commands - procps-ng version 3.3.10
+Window 1:Def: Cumulative mode Off.  System: Delay 3.0 secs; Secure mode Off.
+
+  Z,B,E,e   Global: 'Z' colors; 'B' bold; 'E'/'e' summary/task memory scale
+  l,t,m     Toggle Summary: 'l' load avg; 't' task/cpu stats; 'm' memory info
+  0,1,2,3,I Toggle: '0' zeros; '1/2/3' cpus or numa node views; 'I' Irix mode
+  f,F,X     Fields: 'f'/'F' add/remove/order/sort; 'X' increase fixed-width
+
+  L,&,<,> . Locate: 'L'/'&' find/again; Move sort column: '<'/'>' left/right
+  R,H,V,J . Toggle: 'R' Sort; 'H' Threads; 'V' Forest view; 'J' Num justify
+  c,i,S,j . Toggle: 'c' Cmd name/line; 'i' Idle; 'S' Time; 'j' Str justify
+  x,y     . Toggle highlights: 'x' sort field; 'y' running tasks
+  z,b     . Toggle: 'z' color/mono; 'b' bold/reverse (only if 'x' or 'y')
+  u,U,o,O . Filter by: 'u'/'U' effective/any user; 'o'/'O' other criteria
+  n,#,^O  . Set: 'n'/'#' max tasks displayed; Show: Ctrl+'O' other filter(s)
+  C,...   . Toggle scroll coordinates msg for: up,down,left,right,home,end
+
+  k,r       Manipulate tasks: 'k' kill; 'r' renice
+  d or s    Set update interval
+  W,Y       Write configuration file 'W'; Inspect other output 'Y'
+  q         Quit
+          ( commands shown with '.' require a visible task display window )
+Press 'h' or '?' for help with Windows,
+Type 'q' or <Esc> to continue
+
+```
+, gõ `O` lớn hiển thị tùy chọn tìm kiếm tiến trình bằng tên thông qua cột `COMMAND` như sau:
+```shell
+top - 20:48:39 up 5 days, 10:34,  1 user,  load average: 0.00, 0.06, 0.08
+Tasks:  85 total,   1 running,  84 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.8 us,  1.7 sy,  0.0 ni, 96.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   151960 free,   167540 used,  1562332 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1493428 avail Mem
+add filter #2 (case sensitive) as: [!]FLD?VAL COMMAND=sleep
+...
+...
+...
+...
+top - 20:49:28 up 5 days, 10:35,  1 user,  load average: 0.00, 0.05, 0.08
+Tasks:  85 total,   1 running,  84 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.7 us,  1.0 sy,  0.0 ni, 97.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   151980 free,   167512 used,  1562340 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1493456 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+27630 root      20   0  108052    356    280 S   0.0  0.0   0:00.00 sleep
+```
+Liệt kê tất cả các tiến trình được chạy bởi người dùng cụ thể thông qua lệnh `pgrep` với tùy chọn `-u` để phân giải những `UID` thành tên và lọc theo người dùng `hcmoperator`:
+```shell
+[hcmoperator@huyvl-linux-training ~]$ vi &
+[1] 5933
+[hcmoperator@huyvl-linux-training ~]$
+
+[1]+  Stopped                 vim
+[hcmoperator@huyvl-linux-training ~]$ sleep 10000 &
+[2] 5972
+[hcmoperator@huyvl-linux-training ~]$
+...
+...
+[root@huyvl-linux-training ~]# pgrep -l -u hcmoperator
+5874 bash
+5933 vim
+5972 sleep
+[root@huyvl-linux-training ~]#
+```
+
+### <a name="kill_process"></a>Kết thúc tiến trình
+Kiểm soát tiến trình với `signal`, `signal` là một loại ngắt mềm `software interrupt` được chuyển đến tiến trình. 
+
+| Số | Tên | Mô tả |
+| --- | --- | --- |
+| 1 | HUP | Tên đầy đủ là `hangup`, gửi tín hiệu kết thúc đến chương trình, về mặt lịch sử thì thường gây ra bởi người dùng ngắt kết nối thiết bị đầu cuối ví dụ như điện thoại bàn. Tín hiệu này cũng yêu cầu tiến trình tái khởi tạo để làm mới cấu hình mà không phải khởi động lại tiến trình với một `PID` khác.
+| 2 | INT | `keyboard interrupt` sẽ làm cho chương trình kết thúc thông qua tổ hợp phím `Ctrl-C`, tín hiệu này có thể bị bắt và xử lý theo hướng khác. |
+| 3 | QUIT | giống như `INT` nhưng được sử dụng khi người dùng phát hiện chương trình bị lỗi, có thể tạo bẳng tổ hợp phím `Ctr-\`. |
+| 9 | KILL | giống như `INT` nhưng tín hiệu này một khi gửi đi thì không thể bị bắt, chặn và điều hướng xử lý. Tức kết thúc chương trình ngay lập tức. |
+| 15 | TERM (default) | `terminate`: kết thúc chương trình nhưng khác với `KILL`, đây là cách tốt nhất để kết thúc chương trình vì nó cho phép dọn dẹp tài nguyên trước đó. |
+| 18 | CONT | `continue`: gửi tín hiệu đến tiến trình đang bị tạm dừng để yêu cầu nó tiếp tục công việc. |
+| 19 | STOP | `stop` hay `suspend` để tạm dừng chương trình, tín hiệu này có thể bị bắt, chặn và điều hướng xử lý. |
+| 20 | TSTP | giống như `STOP` nhưng không thể bị bắt, chặn và điều hướng xử lý. Tín hiệu này được tạo bởi tổ hợp phím `Ctrl-Z`. |
+
+Thường thói quen sử dụng `signal` đối với tiến trình `foreground` sẽ thông qua tổ hợp phím như `Ctrl-C`, `Ctrl-Z` hay `Ctrl-\`, ngược lại đối với các tiến trình chạy ở `background` sẽ sử dụng lệnh. Đối với tiến trình của người dùng khác yêu cầu cần quyền để có thể kết thúc, kiểm tra quyền sẽ thấy chương trình `kill` không được cài đặt đặc quyền [`SUID`](#suid_permission):
+```shell
+[root@huyvl-linux-training ~]# ll /usr/bin/kill
+-rwxr-xr-x. 1 root root 33608 Feb  2  2021 /usr/bin/kill
+[root@huyvl-linux-training ~]#
+```
+Liệt kê các tùy chọn của lệnh `kill`, không phải tất cả các tùy chọn sau đều dùng để kết thúc tiến trình, chúng có thể dùng để làm việc khác:
+```shell
+[root@huyvl-linux-training ~]# kill -l
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
+ 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+63) SIGRTMAX-1  64) SIGRTMAX
+[root@huyvl-linux-training ~]#
+```
+Lệnh `kill` cho phép người dùng chỉ định gửi tín hiệu bằng số hoặc tên:
+```shell
+[root@huyvl-linux-training ~]# sleep 100 &
+[1] 4479
+[root@huyvl-linux-training ~]# kill -9 4479
+[root@huyvl-linux-training ~]# jobs
+[1]+  Killed                  sleep 100
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# sleep 1000 &
+[1] 4698
+[root@huyvl-linux-training ~]# kill -TERM 4698
+[1]+  Terminated              sleep 1000
+```
+Tải lại cấu hình `sshd`, thay vì mặc định có thể điều khiển thông qua tất cả các `ethX` thì chỉ cho phép điều khiển thông qua `eth0` để gia tăng bảo mật. Sau khi sử dụng tín hiệu `SIGHUP` thì sẽ bị từ chối khi kiểm tra kết nối đến `eth1` như sau:
+```shell
+[root@huyvl-linux-training ~]# ip -4 a
+...
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.10.1.119/16 brd 10.10.255.255 scope global noprefixroute dynamic eth0
+       valid_lft 399557sec preferred_lft 399557sec
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 192.168.30.174/24 brd 192.168.30.255 scope global noprefixroute dynamic eth1
+       valid_lft 604607sec preferred_lft 604607sec
+[root@huyvl-linux-training ~]# telnet 192.168.30.174 22
+Trying 192.168.30.174...
+Connected to 192.168.30.174.
+Escape character is '^]'.
+SSH-2.0-OpenSSH_7.4
+^]
+telnet> quit
+Connection closed.
+[root@huyvl-linux-training ~]# telnet 10.10.1.119 22
+Trying 10.10.1.119...
+Connected to 10.10.1.119.
+Escape character is '^]'.
+SSH-2.0-OpenSSH_7.4
+^]
+telnet> quit
+Connection closed.
+[root@huyvl-linux-training ~]# vi /etc/ssh/sshd_config
+[root@huyvl-linux-training ~]# cat /etc/ssh/sshd_config | grep ^Listen
+ListenAddress 10.10.1.119
+[root@huyvl-linux-training ~]# pidof sshd
+1292 389
+[root@huyvl-linux-training ~]# kill -HUP 1292
+[root@huyvl-linux-training ~]# telnet 192.168.30.174 22
+Trying 192.168.30.174...
+telnet: connect to address 192.168.30.174: Connection refused
+[root@huyvl-linux-training ~]# telnet 10.10.1.119 22
+Trying 10.10.1.119...
+Connected to 10.10.1.119.
+Escape character is '^]'.
+SSH-2.0-OpenSSH_7.4
+^]
+[root@huyvl-linux-training ~]#
+```
+Sử dụng chương trình `top` để gửi tín hiệu, chọn `k` để chỉ định tiến trình như sau:
+```shell
+top - 20:53:08 up 5 days, 10:39,  1 user,  load average: 0.00, 0.03, 0.05
+Tasks:  85 total,   2 running,  83 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.9 us,  1.3 sy,  0.0 ni, 96.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   151956 free,   167472 used,  1562404 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1493496 avail Mem
+PID to signal/kill [default pid = 22603] 30164
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+30164 root      20   0  108052    352    280 S   0.0  0.0   0:00.00 sleep
+```
+, nhấn phím `enter` và chỉ định số tín hiệu để tắt tiến trình, mặc định sẽ là `SIGTERM=15` như sau:
+```shell
+top - 20:53:08 up 5 days, 10:39,  1 user,  load average: 0.00, 0.03, 0.05
+Tasks:  85 total,   2 running,  83 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.9 us,  1.3 sy,  0.0 ni, 96.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881832 total,   151956 free,   167472 used,  1562404 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1493496 avail Mem
+Send pid 30164 signal [15/sigterm] 15
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+30164 root      20   0  108052    352    280 S   0.0  0.0   0:00.00 sleep
+```
+Sử dụng lệnh mới `pkill` hoặc `killall` để tìm và kết thúc tất cả các chương trình có tên theo chỉ định:
+```shell
+[root@huyvl-linux-training ~]# sleep 100 &
+[1] 2020
+[root@huyvl-linux-training ~]# sleep 1000 &
+[2] 2043
+[root@huyvl-linux-training ~]# pidof sleep
+2043 2020
+[root@huyvl-linux-training ~]# pkill sleep
+[1]-  Terminated              sleep 100
+[2]+  Terminated              sleep 1000
+[root@huyvl-linux-training ~]# pidof sleep
+[root@huyvl-linux-training ~]# 
+```
+Đăng xuất và kết thúc tất cả chương trình của người dùng `hcmoperator` như sau:
+```shell
+[root@huyvl-linux-training ~]# pgrep -l -u hcmoperator
+5874 bash
+5933 vim
+5972 sleep
+10565 sshd
+10568 sshd
+10569 sftp-server
+10593 bash
+[root@huyvl-linux-training ~]# pkill -SIGKILL -u hcmoperator
+[root@huyvl-linux-training ~]#
+...
+...
+[hcmoperator@huyvl-linux-training ~]$ Killed
+...
+```
+Đăng xuất chỉ định phiên đăng nhập khi tài khoản người dùng mở nhiều phiên đăng nhập cùng lúc thông qua nhiều thiết bị hoặc một `tab` khác:
+```shell
+[root@huyvl-linux-training ~]# w -u hcmoperator
+ 22:09:16 up 5 days, 11:55,  3 users,  load average: 0.06, 0.16, 0.12
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+hcmopera pts/1    171.252.188.216  22:06    2:59   0.00s  0.00s -bash
+hcmopera pts/4    171.252.188.216  22:06    2:58   0.00s  0.00s -bash
+[root@huyvl-linux-training ~]# pkill -t pts/4 -SIGKILL
+[root@huyvl-linux-training ~]# w -u hcmoperator
+ 22:10:42 up 5 days, 11:56,  2 users,  load average: 0.01, 0.12, 0.11
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+hcmopera pts/1    171.252.188.216  22:06   50.00s  0.01s  0.01s -bash
+[root@huyvl-linux-training ~]#
+```
+Kết thúc `job` đang chạy `background` như sau:
+```shell
+[root@huyvl-linux-training ~]# sleep 100 &
+[1] 27276
+[root@huyvl-linux-training ~]# sleep 1000 &
+[2] 27304
+[root@huyvl-linux-training ~]# jobs
+[1]-  Running                 sleep 100 &
+[2]+  Running                 sleep 1000 &
+[root@huyvl-linux-training ~]# kill -TERM %2
+[root@huyvl-linux-training ~]# jobs
+[1]-  Running                 sleep 100 &
+[2]+  Terminated              sleep 1000
+[root@huyvl-linux-training ~]# jobs
+[1]+  Running                 sleep 100 &
+[root@huyvl-linux-training ~]#
+```
