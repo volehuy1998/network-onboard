@@ -1516,7 +1516,7 @@ Trong thực tế hệ thống thì các chữ cái ký hiệu trạng thái c�
 | --- | --- | --- |
 | R | Running | TASK_RUNNING: trạng thái đang chạy |
 | S | Sleeping | TASK_INTERRUPTIBLE: tiến trình đang ngủ đông chờ một điều kiện thỏa mãn để có thể chạy tiếp, ví dụ như yêu cầu từ phần cứng hoặc một tín hiệu `SIGN` ...
-| D | Sleeping| TASK_INTERRUPTIBLE: tiến trình đang ngủ nhưng khác với trạng thái `S` rằng nó không nhận tín hiệu.
+| D | Sleeping| TASK_UNINTERRUPTIBLE: tiến trình đang ngủ nhưng khác với trạng thái `S` rằng nó không nhận tín hiệu.
 | K | Sleeping | TASK_KILLABLE: khác với trạng thái `D` rằng nó cho phép phản hồi tín hiệu khi được yêu cầu kết thúc tiến trình, một số công cụ hiển thị các tiến trình `killable` là trạng thái `D`.
 | I | Sleeping | TASK_REPORT_IDLE: trạng thái này chỉ được sử dụng cho các tiến trình chạy ở `kernel mode`. Là một trường hợp lai giữa trạng thái `D` và `K`.
 | T | Stopped | TASK_STOPPED: dừng hoặc tạm hoãn, thường được gây ra bởi người dùng hoặc một tiến trình khác. Nó có thể tiếp tục hoạt động trở lại.
@@ -1683,7 +1683,7 @@ Kiểm tra trung bình tải thông qua lệnh `uptime` như sau:
 Chú thích:
 
 - Lệnh `lscpu -p` hiển thị `2` dòng đồng nghĩa với số lượng `2` CPU hiện có, cột đầu tiên sẽ định danh cho CPU.
-- Lệnh `uptime` cho thấy giờ hiện tại khi chạy lệnh là `7:52:20 PM`, hệ thống đã khởi động được `5` ngày, có `1` người dùng hiện tại đang đăng nhập hệ thống, tải trung bình `0.63/2(CPU)=31.5(%)` vào phút gần đây nhất, tải trung bình `0.21/2(CPU)=10.5(%)` vào 5 phút gần đây nhất, tải trung bình `0.12/2(CPU)=6(%)` vào 15 phút gần nhất.
+- Lệnh `uptime` cho thấy giờ hiện tại khi chạy lệnh là `7:52:20 PM`, hệ thống đã khởi động được `5` ngày, có `1` người dùng hiện tại đang đăng nhập hệ thống, tải trung bình `0.63/2(CPU)=31.5(%)` vào phút gần đây nhất, tải trung bình `0.21/2(CPU)=10.5(%)` vào 5 phút gần đây nhất, tải trung bình `0.12/2(CPU)=6(%)` vào 15 phút gần nhất. Việc tính toán trung bình tải dựa trên các tiến trình đang chạy với trạng thái `R (Running)` và những tiến trình trạng thái `D (Uninterruptible)` đang chờ tài nguyên. Một số hệ thống `UNIX` lạc hậu chỉ xem xét đến tài nguyên `CPU` sử dụng hoặc hàng đợi để biểu diễn tải hệ thống, nhưng với `Linux` bao gồm thêm tài nguyên ổ cứng, mạng bởi vì chúng sẽ ảnh hưởng đến hiệu suất của hệ thống. Vì vậy khi mức tải trung bình cao nhưng riêng tải `CPU` thấp thì hãy xem xét đến vấn đề ở ổ cứng và mạng.
 
 Sơ đồ sử dụng chương trình `top` như sau:
 ```shell
