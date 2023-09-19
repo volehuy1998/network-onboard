@@ -1971,7 +1971,13 @@ Có `3` sơ đồ chính triển khai khởi tạo hệ thống khởi tạo c�
 
 - Sơ đồ `System V Init (SysV)` là một tiến trình khởi tạo hệ thống vào những năm `1980` dành cho `UNIX`. Sau một số thay đổi nó đã được tích hợp vào `Linux`. Quy trình này hoạt động rất tốt trong nhiều năm đến mức phiên bản `RHEL5` đã đưa nó vào sử dụng. Nhược điểm của nó là không thể giải quyết trường hợp `hot-plug` các thiết bị, ví dụ khi hệ thống đang chạy, người dùng cắm thiết bị `USB` vào thì hệ thống không thể nhận biết được và hành xử với thiết bị này như thế nào. Thêm vào đó nó khởi chạy một cách tuần tự, điều này sẽ gây ra vấn đề nếu như kịch bản khởi tạo bị kẹt trong lúc thực thi thì tất cả những thành phần không liên quan sẽ phải chờ cho đến khi nó quá thời gian thực thi, điều này làm cho hệ thống bị chậm lại rất nhiều. Sử dụng `6` định mức để cung cấp việc kiểm soát. Trước `RHEL6` thì `SysV` được chọn bởi vì nó dễ sử dụng và có tính linh hoạt cao hơn sơ đồ khởi tạo truyền thống của `BSD`. Ví dụ khi quản trị viên cần vận hành hệ thống ở cấp độ thấp để thực hiện chuẩn đoán sửa lỗi ổ cứng thì cần khởi chạy với mức `1`; sử dụng mức `7` để khởi tạo giao diện thân thiện với người dùng.
 - Sơ đồ `Upstart` được phát triển bởi tập đoàn `Canonical` vào những năm 2009. Phiên bản `RHEL6` thì `SysV` đã được thay thế bởi `Upstart`. Sơ đồ khởi tạo hệ thống này tân tiến hơn so với `SysV` ở chỗ nó chia thành các tác vụ khác nhau thay vì tuần tự, ví dụ như cho phép khởi chạy các dịch vụ một cách bất đồng bộ, tự động khởi động lại các dịch vụ bị hư hỏng.
-- Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` kế thừa `upstart` và phát triển thêm một số công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là `service`, `mount`, `target`, ...
+- Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` kế thừa `upstart` và phát triển thêm một số công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là:
+  - `*.service`: kiểm soát, các dịch vụ hệ thống.
+  - `*.target`: nhóm các đối tượng `unit` mà đã được định nghĩa trong hệ thống.
+  - `*.device`: quản lý thiết bị.
+  - `*.mount`: xử lý việc `mount`.
+  - `*.timer`: lập lịch các tác vụ theo thời gian cụ thể.
+  - `*.path`: theo dõi sự thay đổi của các tệp tin trong thư mục.
 
 Nhận biết tiến trình khởi tạo hệ thống `systemd` ở `CentOS 7`:
 ```shell
@@ -2023,3 +2029,177 @@ root@huyvl-ubuntu-16:~#
 ```
 
 ### <a name="systemd"></a>Tổng quan về `systemd`
+`systemd` giới thiệu các khái niệm liên quan đến `systemd units`. Những `unit` được đại diện bởi các tệp cấu hình nằm trong các thư mục:
+
+- Thư mục `/usr/lib/systemd/system/` chứa các `systemd unit` được tạo cùng với các gói `RPM` đã được cài đặt.
+- Thư mục `/run/systemd/system` chứa các `systemd unit` được sinh ra ngay trong lúc chạy, thư mục này có độ ưu tiên cao hơn `/usr/lib/systemd/system/`.
+- Thư mục `/etc/systemd/system` hỗ trợ mở rộng thêm dịch vụ từ nhu cầu của người dùng, thư mục này được ưu tiên hơn `/run/systemd/system`.
+
+`systemd unit` là một khái niệm trừu tượng để xác định các đối tượng mà hệ thống nhận biết và quản lý nó. Các `unit` đại diện bằng các tệp cấu hình, nó gói gọn thông tin về dịch vụ và các đối tượng liên quan khác cho hệ thống `systemd`. `systemd` quản lý nhiều loại `unit` khác nhau:
+
+- Các `unit` liên quan đến dịch vụ có phần mở rộng là `*.service`, đại diện cho dịch vụ hệ thống. Người dùng thường biết đến loại này thông qua máy chủ web.
+- Các `unit` có phần mở rộng `*.socket`, bất kể khi nào kết nối vào `socket` trên máy thì `systemd` sẽ truyền kết nối đó vào `unit`. Người dùng có thể trì hoãn hoặc xử lý khi có một kết nối được thiết lập đến `socket`.
+  ```shell
+  [root@huyvl-linux-training ~]# cat hello.sh
+  echo -n "Do you still want to connect? [Y/N] "
+  read anwser
+  echo "Welcome to socket unit!"
+  [root@huyvl-linux-training ~]#
+  [root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
+  [Unit]
+  Description=Welcome to port 5555
+
+  [Socket]
+  ListenStream=5555
+  Accept=Yes
+
+  [Install]
+  WantedBy=sockets.target
+  [root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
+  [Unit]
+  Description=Welcome to connect service
+
+  [Service]
+  ExecStart=/bin/bash /root/hello.sh
+  StandardInput=socket
+  [root@huyvl-linux-training ~]#
+  [root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
+  tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
+  [root@huyvl-linux-training ~]#
+  [root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
+  Do you still want to connect? [Y/N] y
+  Welcome to socket unit!
+  [root@huyvl-linux-training ~]#
+  ```
+- Còn rất nhiều `unit` với phần mở rộng khác như mô tả trên.
+
+Cấu hình mặc định của `systemd` được định nghĩa trong `/etc/systemd/system.conf`. Chỉnh sửa cấu hình tại đây sẽ ảnh hưởng toàn cục hệ thống ví dụ như:
+```shell
+[root@huyvl-linux-training system]# cat /etc/systemd/system.conf | grep -i timeout
+#DefaultTimeoutStartSec=90s
+#DefaultTimeoutStopSec=90s
+[root@huyvl-linux-training system]#
+```
+
+Người dùng có thể sử dụng công cụ `systemctl` để quản lý các dịch vụ của hệ thống. Công cụ cho phép khởi chạy, dừng, tái khởi động, kích hoạt hoặc vô hiệu hóa ở lần khởi động kế tiếp, liệt kê các dịch vụ hiện có và hiển thị trạng thái dịch vụ. Liệt kê các `unit` ở trạng thái `ACTIVE` với loại là `socket` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units -t socket
+UNIT                         LOAD   ACTIVE SUB       DESCRIPTION
+dbus.socket                  loaded active running   D-Bus System Message Bus Socket
+greet.socket                 loaded active listening Welcome to port 5555
+systemd-initctl.socket       loaded active listening /dev/initctl Compatibility Named Pipe
+systemd-journald.socket      loaded active running   Journal Socket
+systemd-shutdownd.socket     loaded active listening Delayed Shutdown Socket
+systemd-udevd-control.socket loaded active running   udev Control Socket
+systemd-udevd-kernel.socket  loaded active running   udev Kernel Socket
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+7 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@huyvl-linux-training ~]#
+```
+Liệt kê các `unit` bất kể trạng thái có phải là `active` hay không:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units --type socket --all
+  UNIT                         LOAD      ACTIVE   SUB       DESCRIPTION
+  dbus.socket                  loaded    active   running   D-Bus System Message Bus Socket
+* echo.socket                  not-found inactive dead      echo.socket
+  greet.socket                 loaded    active   listening Welcome to port 5555
+  sshd.socket                  loaded    inactive dead      OpenSSH Server Socket
+  syslog.socket                loaded    inactive dead      Syslog Socket
+  systemd-initctl.socket       loaded    active   listening /dev/initctl Compatibility Named Pipe
+  systemd-journald.socket      loaded    active   running   Journal Socket
+  systemd-shutdownd.socket     loaded    active   listening Delayed Shutdown Socket
+  systemd-udevd-control.socket loaded    active   running   udev Control Socket
+  systemd-udevd-kernel.socket  loaded    active   running   udev Kernel Socket
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+10 loaded units listed.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@huyvl-linux-training ~]#
+```
+Nếu chỉ sử dụng `systemctl` mà không có bất kỳ đối số nào kèm theo thì hệ thống sẽ liệt kê các `unit` thỏa mãn vừa `loaded` vừa `active` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl
+UNIT                                                                        LOAD   ACTIVE SUB       DESCRIPTION
+proc-sys-fs-binfmt_misc.automount                                           loaded active waiting   Arbitrary Executable File Formats File System Automount Point
+sys-devices-pci0000:00-0000:00:03.0-virtio1-net-eth0.device                 loaded active plugged   Virtio network device
+sys-devices-pci0000:00-0000:00:04.0-virtio2-virtio\x2dports-vport2p1.device loaded active plugged   /sys/devices/pci0000:00/0000:00:04.0/virtio2/virtio-ports/vport2p1
+sys-devices-pci0000:00-0000:00:05.0-virtio3-block-vda-vda1.device           loaded active plugged   /sys/devices/pci0000:00/0000:00:05.0/virtio3/block/vda/vda1
+sys-devices-pci0000:00-0000:00:05.0-virtio3-block-vda.device                loaded active plugged   /sys/devices/pci0000:00/0000:00:05.0/virtio3/block/vda
+sys-devices-platform-serial8250-tty-ttyS1.device                            loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS1
+sys-devices-platform-serial8250-tty-ttyS2.device                            loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS2
+sys-devices-platform-serial8250-tty-ttyS3.device                            loaded active plugged   /sys/devices/platform/serial8250/tty/ttyS3
+sys-devices-pnp0-00:04-tty-ttyS0.device                                     loaded active plugged   /sys/devices/pnp0/00:04/tty/ttyS0
+sys-module-configfs.device                                                  loaded active plugged   /sys/module/configfs
+sys-subsystem-net-devices-eth0.device                                       loaded active plugged   Virtio network device
+-.mount                                                                     loaded active mounted   /
+dev-hugepages.mount                                                         loaded active mounted   Huge Pages File System
+dev-mqueue.mount                                                            loaded active mounted   POSIX Message Queue File System
+run-user-0.mount                                                            loaded active mounted   /run/user/0
+sys-kernel-config.mount                                                     loaded active mounted   Configuration File System
+sys-kernel-debug.mount                                                      loaded active mounted   Debug File System
+systemd-ask-password-plymouth.path                                          loaded active waiting   Forward Password Requests to Plymouth Directory Watch
+systemd-ask-password-wall.path                                              loaded active waiting   Forward Password Requests to Wall Directory Watch
+session-1.scope                                                             loaded active running   Session 1 of user root
+session-2.scope                                                             loaded active running   Session 2 of user root
+acpid.service                                                               loaded active running   ACPI Event Daemon
+auditd.service                                                              loaded active running   Security Auditing Service
+cloud-config.service                                                        loaded active exited    Apply the settings specified in cloud-config
+cloud-final.service                                                         loaded active exited    Execute cloud user/final scripts
+cloud-init-local.service                                                    loaded active exited    Initial cloud-init job (pre-networking)
+cloud-init.service                                                          loaded active exited    Initial cloud-init job (metadata service crawler)
+crond.service                                                               loaded active running   Command Scheduler
+dbus.service                                                                loaded active running   D-Bus System Message Bus
+getty@tty1.service                                                          loaded active running   Getty on tty1
+irqbalance.service                                                          loaded active running   irqbalance daemon
+kdump.service                                                               loaded active exited    Crash recovery kernel arming
+kmod-static-nodes.service                                                   loaded active exited    Create list of required static device nodes for the current kernel
+network.service                                                             loaded active exited    LSB: Bring up/down networking
+NetworkManager-wait-online.service                                          loaded active exited    Network Manager Wait Online
+NetworkManager.service                                                      loaded active running   Network Manager
+polkit.service                                                              loaded active running   Authorization Manager
+postfix.service                                                             loaded active running   Postfix Mail Transport Agent
+qemu-guest-agent.service                                                    loaded active running   QEMU Guest Agent
+rc-local.service                                                            loaded active exited    /etc/rc.d/rc.local Compatibility
+rhel-dmesg.service                                                          loaded active exited    Dump dmesg to /var/log/dmesg
+rhel-domainname.service                                                     loaded active exited    Read and set NIS domainname from /etc/sysconfig/network
+rhel-import-state.service                                                   loaded active exited    Import network configuration from initramfs
+rhel-readonly.service                                                       loaded active exited    Configure read-only root support
+rsyslog.service                                                             loaded active running   System Logging Service
+serial-getty@ttyS0.service                                                  loaded active running   Serial Getty on ttyS0
+sshd.service                                                                loaded active running   OpenSSH server daemon
+systemd-fsck-root.service                                                   loaded active exited    File System Check on Root Device
+systemd-journal-flush.service                                               loaded active exited    Flush Journal to Persistent Storage
+systemd-journald.service                                                    loaded active running   Journal Service
+systemd-logind.service                                                      loaded active running   Login Service
+systemd-random-seed.service                                                 loaded active exited    Load/Save Random Seed
+systemd-remount-fs.service                                                  loaded active exited    Remount Root and Kernel File Systems
+systemd-sysctl.service                                                      loaded active exited    Apply Kernel Variables
+systemd-tmpfiles-setup-dev.service                                          loaded active exited    Create Static Device Nodes in /dev
+lines 1-56
+```
+Đối số `list-units` không hiển thị những dịch vụ đã được cài đặt nhưng chưa kích hoạt. Thay vào đó sử dụng `list-unit-files` để thấy được tất cả các tệp `unit` đã được cài đặt bất kể đã kích hoạt hay không:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-unit-files --type=socket
+UNIT FILE                    STATE
+dbus.socket                  static
+greet.socket                 enabled
+rsyncd.socket                disabled
+sshd.socket                  disabled
+syslog.socket                static
+systemd-initctl.socket       static
+systemd-journald.socket      static
+systemd-shutdownd.socket     static
+systemd-udevd-control.socket static
+systemd-udevd-kernel.socket  static
+
+10 unit files listed.
+[root@huyvl-linux-training ~]#
+```
