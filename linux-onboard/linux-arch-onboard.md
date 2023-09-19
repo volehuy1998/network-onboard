@@ -24,7 +24,8 @@
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
-- [2.7 - Dịch vụ hạ tầng (:arrow_up:UPDATED 18/09/2023)](#infra_service)
+- [2.7 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 19/09/2023)](#infra_service)
+  - [2.7.1 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -1965,3 +1966,60 @@ Một trong những thành phần quan trọng nhất của bất kỳ hệ di�
 , nếu tìm không thấy `1` trong `4` tệp thì sẽ quyết định hành động `kernel panic`. Tiến trình khởi tạo luôn có định danh `PID` là `1`. Tất cả tiến trình nằm trong `user mode` đều được `fork` từ tiến trình này.
 
 Có rất nhiều sơ đồ về hệ điều hành được phát minh từ `UNIX` theo các mốc thời gian, trong số đó sơ đồ `Init` quan trọng nhất có tác động mang tính lịch sử, ảnh hướng mạnh mẻ đến các bản phân phối `Linux` sau này là sơ đồ khởi tạo `RC` được sử dụng trong `BSD 4.4` và sơ đồ `SysV (System V)` trong `SunOS` và `Solaris`. Hệ thống khởi tạo của `BSD 4.4` thuộc dạng sơ khai nhất với cấu trúc nguyên khối `monolithic` không mô-đun hóa, khi khởi động thì `kernel` sẽ chạy `/sbin/init` với kịch bản chứa trong tệp `/etc/rc`, đây một kịch bản gồm các tập lệnh đầu tiên sẽ kiểm tra tính toàn vẹn của phần cứng, nếu không phát hiện hỏng hóc sẽ tiến hành `mount`, thiết lập mạng, ... một danh sách các tập lệnh đơn lẻ xen kẻ nhau mặc dù các thành phần của chúng không liên quan đến nhau được chứa trong cùng một tệp tin khiến nó trở nên cồng kềnh và phức tạp. Dù sau đó đã có một số nổ lực phân tách phần quan trọng trong `/etc/rc`, ví dụ như `/etc/netstart`. Hiện nay các hệ điều hành kế thừa hệ thống khởi tạo `RC` gồm có `Free BSD`, `Net BSD` và `Slackware`. Còn lại các bản phân phối `Linux` khác đều sử dụng sơ đồ khởi tạo `SysV` đã được áp dụng vào `AT&T Unix`.
+
+Có `3` sơ đồ chính triển khai khởi tạo hệ thống khởi tạo của `Linux`:
+
+- Sơ đồ `System V Init (SysV)` là một tiến trình khởi tạo hệ thống vào những năm `1980` dành cho `UNIX`. Sau một số thay đổi nó đã được tích hợp vào `Linux`. Quy trình này hoạt động rất tốt trong nhiều năm đến mức phiên bản `RHEL5` đã đưa nó vào sử dụng. Nhược điểm của nó là không thể giải quyết trường hợp `hot-plug` các thiết bị, ví dụ khi hệ thống đang chạy, người dùng cắm thiết bị `USB` vào thì hệ thống không thể nhận biết được và hành xử với thiết bị này như thế nào. Thêm vào đó nó khởi chạy một cách tuần tự, điều này sẽ gây ra vấn đề nếu như kịch bản khởi tạo bị kẹt trong lúc thực thi thì tất cả những thành phần không liên quan sẽ phải chờ cho đến khi nó quá thời gian thực thi, điều này làm cho hệ thống bị chậm lại rất nhiều. Sử dụng `6` định mức để cung cấp việc kiểm soát. Trước `RHEL6` thì `SysV` được chọn bởi vì nó dễ sử dụng và có tính linh hoạt cao hơn sơ đồ khởi tạo truyền thống của `BSD`. Ví dụ khi quản trị viên cần vận hành hệ thống ở cấp độ thấp để thực hiện chuẩn đoán sửa lỗi ổ cứng thì cần khởi chạy với mức `1`; sử dụng mức `7` để khởi tạo giao diện thân thiện với người dùng.
+- Sơ đồ `Upstart` được phát triển bởi tập đoàn `Canonical` vào những năm 2009. Phiên bản `RHEL6` thì `SysV` đã được thay thế bởi `Upstart`. Sơ đồ khởi tạo hệ thống này tân tiến hơn so với `SysV` ở chỗ nó chia thành các tác vụ khác nhau thay vì tuần tự, ví dụ như cho phép khởi chạy các dịch vụ một cách bất đồng bộ, tự động khởi động lại các dịch vụ bị hư hỏng.
+- Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` kế thừa `upstart` và phát triển thêm một số công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là `service`, `mount`, `target`, ...
+
+Nhận biết tiến trình khởi tạo hệ thống `systemd` ở `CentOS 7`:
+```shell
+[root@huyvl-linux-training ~]# ls -l /sbin/init
+lrwxrwxrwx. 1 root root 22 May 13  2021 /sbin/init -> ../lib/systemd/systemd
+[root@huyvl-linux-training ~]# stat /proc/1/exe
+  File: ‘/proc/1/exe’ -> ‘/usr/lib/systemd/systemd’
+  Size: 0               Blocks: 0          IO Block: 1024   symbolic link
+Device: 3h/3d   Inode: 1184979     Links: 1
+Access: (0777/lrwxrwxrwx)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2023-09-18 20:01:01.616108121 +0700
+Modify: 2023-09-17 19:01:01.208020104 +0700
+Change: 2023-09-17 19:01:01.208020104 +0700
+ Birth: -
+[root@huyvl-linux-training ~]#
+```
+
+Nhận biết tiến trình khởi tạo hệ thống `SysV` ở `CentOS 6` và mức `3` mặc định khi khởi động và mức đang sử dụng:
+```shell
+[root@huyvl-centos6 ~]# stat /proc/1/exe
+  File: `/proc/1/exe' -> `/sbin/init'
+  Size: 0               Blocks: 0          IO Block: 1024   symbolic link
+Device: 3h/3d   Inode: 6862        Links: 1
+Access: (0777/lrwxrwxrwx)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2023-09-19 10:40:04.166999964 +0700
+Modify: 2023-09-19 10:40:04.025999965 +0700
+Change: 2023-09-19 10:40:04.025999965 +0700
+[root@huyvl-centos6 ~]# cat /etc/inittab | grep ^id
+id:3:initdefault:
+[root@huyvl-centos6 ~]# runlevel
+N 3
+[root@huyvl-centos6 ~]# who -r
+         run-level 3  2023-09-19 03:40
+[root@huyvl-centos6 ~]#
+```
+
+Nhận biết tiến trình khởi tạo hệ thống `systemd` ở `Ubuntu 16`:
+```shell
+root@huyvl-ubuntu-16:~# stat /proc/1/exe
+  File: '/proc/1/exe' -> '/lib/systemd/systemd'
+  Size: 0               Blocks: 0          IO Block: 1024   symbolic link
+Device: 4h/4d   Inode: 9627        Links: 1
+Access: (0777/lrwxrwxrwx)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2023-09-19 10:42:21.908000000 +0700
+Modify: 2023-09-19 10:42:21.888000000 +0700
+Change: 2023-09-19 10:42:21.888000000 +0700
+ Birth: -
+root@huyvl-ubuntu-16:~#
+```
+
+### <a name="systemd"></a>Tổng quan về `systemd`

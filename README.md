@@ -35,4 +35,5 @@
     - 2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)
     - 2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)
     - 2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)
-- 2.7 - Dịch vụ hạ tầng (:arrow_up:UPDATED 18/09/2023)
+- 2.7 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 19/09/2023)
+  - 2.7.1 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)
