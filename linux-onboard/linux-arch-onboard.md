@@ -2376,7 +2376,7 @@ Sep 21 15:01:43 huyvl-linux-training.novalocal sshd[9215]: pam_succeed_if(sshd:a
 
 Chú thích:
 
-- Dấu sao `*` màu xanh thể hiện rằng dịch vụ `sshd.service` đã có mô tả `OpenSSH server daemon`.
+- Dấu sao `*` màu xanh thể hiện rằng dịch vụ `sshd.service` có mô tả `OpenSSH server daemon` được được chạy `active (running)`
 - Dịch vụ này đã được tải lên bộ nhớ và chạy `loaded`, `unit` được đặt ở tệp `/usr/lib/systemd/system/sshd.service`. Hiện tại dịch vụ này đánh dấu `enable` tức là sẽ được khởi chạy cùng với hệ thống, mô tả `vendor preset: enabled` chỉ ra rằng mặc định tác giả đã cài đặt `enabled` ngay khi người dùng cài đặt gói.
 - Dịch vụ đã được chạy `active (running)` từ ngày `21/09/2023 10:45:28 AM` tức `4h16m` trước.
 - Người dùng có thể đọc hướng dẫn sử dụng thông qua công cụ `man` trang `sshd` với mục `8`, tương tự với `sshd_config` mục `5`.
