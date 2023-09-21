@@ -2081,7 +2081,7 @@ Liệt kê các `unit` thuộc loại `service` với tùy chọn `-a` để hi�
   ...
 ```
 
-Chú thích: `systemd` không nhận biết được sự hiện diện của `display-manager.service` bởi vì tệp `unit` có mở rộng `*.service` không thể tìm thấy bởi `systemd`, nguyên nhân sâu xa hơn nữa là gói phần mềm `display-manager` không được cài đặt. Nếu như một phần mềm được cài đặt vào đúng cách thì nó sẽ đưa `unit` vào `systemd`. Tương tự như `iptables.service`, `CentOS 7` sử dụng `firewalld` để thay thế nó từ `CentOS 6` trở về trước.
+Chú thích: `systemd` không nhận biết được sự hiện diện của `display-manager.service` bởi vì tệp `unit` có mở rộng `*.service` không thể tìm thấy bởi `systemd`, nguyên nhân sâu xa hơn nữa là gói phần mềm `display-manager` không được cài đặt. Nếu như một phần mềm được cài đặt vào đúng cách thì nó sẽ đưa `unit` vào `systemd`. Tương tự như `iptables.service` thì nó được sử dụng từ `CentOS 6` trở về trước nhưng đến `CentOS 7` về sau thì nó bị thay thế bởi `firewalld`.
 
 Người dùng có thể sử dụng công cụ `systemctl` để quản lý các dịch vụ của hệ thống. Công cụ cho phép khởi chạy, dừng, tái khởi động, kích hoạt hoặc vô hiệu hóa ở lần khởi động kế tiếp, liệt kê các dịch vụ hiện có và hiển thị trạng thái dịch vụ. Liệt kê các `unit` ở trạng thái `ACTIVE` với loại là `socket` như sau:
 ```shell
