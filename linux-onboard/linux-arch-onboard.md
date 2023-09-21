@@ -1971,14 +1971,15 @@ Có rất nhiều sơ đồ về hệ điều hành được phát minh từ `UN
 Có `3` sơ đồ chính triển khai khởi tạo hệ thống khởi tạo của `Linux`:
 
 - Sơ đồ `System V Init (SysV)` là một tiến trình khởi tạo hệ thống vào những năm `1980` dành cho `UNIX`. Sau một số thay đổi nó đã được tích hợp vào `Linux`. Quy trình này hoạt động rất tốt trong nhiều năm đến mức phiên bản `RHEL5` đã đưa nó vào sử dụng. Nhược điểm của nó là không thể giải quyết trường hợp `hot-plug` các thiết bị, ví dụ khi hệ thống đang chạy, người dùng cắm thiết bị `USB` vào thì hệ thống không thể nhận biết được và hành xử với thiết bị này như thế nào. Thêm vào đó nó khởi chạy một cách tuần tự, điều này sẽ gây ra vấn đề nếu như kịch bản khởi tạo bị kẹt trong lúc thực thi thì tất cả những thành phần không liên quan sẽ phải chờ cho đến khi nó quá thời gian thực thi, điều này làm cho hệ thống bị chậm lại rất nhiều. Sử dụng `6` định mức để cung cấp việc kiểm soát. Trước `RHEL6` thì `SysV` được chọn bởi vì nó dễ sử dụng và có tính linh hoạt cao hơn sơ đồ khởi tạo truyền thống của `BSD`. Ví dụ khi quản trị viên cần vận hành hệ thống ở cấp độ thấp để thực hiện chuẩn đoán sửa lỗi ổ cứng thì cần khởi chạy với mức `1`; sử dụng mức `7` để khởi tạo giao diện thân thiện với người dùng.
-- Sơ đồ `Upstart` được phát triển bởi tập đoàn `Canonical` vào những năm 2009. Phiên bản `RHEL6` thì `SysV` đã được thay thế bởi `Upstart`. Sơ đồ khởi tạo hệ thống này tân tiến hơn so với `SysV` ở chỗ nó chia thành các tác vụ khác nhau thay vì tuần tự, ví dụ như cho phép khởi chạy các dịch vụ một cách bất đồng bộ, tự động khởi động lại các dịch vụ bị hư hỏng.
+- Sơ đồ `Upstart` được phát triển bởi tập đoàn `Canonical` vào những năm `2009`. Phiên bản `RHEL6` thì `SysV` đã được thay thế bởi `Upstart`. Sơ đồ khởi tạo hệ thống này tân tiến hơn so với `SysV` ở chỗ nó chia thành các tác vụ khác nhau thay vì tuần tự, ví dụ như cho phép khởi chạy các dịch vụ một cách bất đồng bộ, tự động khởi động lại các dịch vụ bị hư hỏng.
 - Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` kế thừa `upstart` và phát triển thêm một số công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là:
-  - `*.service`: kiểm soát, các dịch vụ hệ thống.
+  - `*.service`: kiểm soát, các dịch vụ hệ thống. Người dùng thường biết đến loại này thông qua máy chủ web, `ssh`, ...
   - `*.target`: nhóm các đối tượng `unit` mà đã được định nghĩa trong hệ thống.
   - `*.device`: quản lý thiết bị.
   - `*.mount`: xử lý việc `mount`.
   - `*.timer`: lập lịch các tác vụ theo thời gian cụ thể.
-  - `*.path`: theo dõi sự thay đổi của các tệp tin trong thư mục.
+  - `*.path`: theo dõi sự thay đổi của các tệp tin trong thư mục và đưa ra hướng xử lý.
+  - `*.socket`: bất kể khi nào kết nối vào `socket` trên máy thì `systemd` sẽ truyền kết nối đó vào `unit`. Người dùng có thể trì hoãn hoặc xử lý khi có một kết nối được thiết lập đến `socket`.
 
 Nhận biết tiến trình khởi tạo hệ thống `systemd` ở `CentOS 7`:
 ```shell
@@ -2036,13 +2037,7 @@ root@huyvl-ubuntu-16:~#
 - Thư mục `/run/systemd/system` chứa các `systemd unit` được sinh ra ngay trong lúc chạy, thư mục này có độ ưu tiên cao hơn `/usr/lib/systemd/system/`.
 - Thư mục `/etc/systemd/system` hỗ trợ mở rộng thêm dịch vụ từ nhu cầu của người dùng, thư mục này được ưu tiên hơn `/run/systemd/system`.
 
-`systemd unit` là một khái niệm trừu tượng để xác định các đối tượng mà hệ thống nhận biết và quản lý nó. Các `unit` đại diện bằng các tệp cấu hình, nó gói gọn thông tin về dịch vụ và các đối tượng liên quan khác cho hệ thống `systemd`. `systemd` quản lý nhiều loại `unit` khác nhau:
-
-- Các `unit` liên quan đến dịch vụ có phần mở rộng là `*.service`, đại diện cho dịch vụ hệ thống. Người dùng thường biết đến loại này thông qua máy chủ web.
-- Các `unit` có phần mở rộng `*.socket`, bất kể khi nào kết nối vào `socket` trên máy thì `systemd` sẽ truyền kết nối đó vào `unit`. Người dùng có thể trì hoãn hoặc xử lý khi có một kết nối được thiết lập đến `socket`.
-- Còn rất nhiều `unit` với phần mở rộng khác như mô tả trên.
-
-Cấu hình mặc định của `systemd` được định nghĩa trong `/etc/systemd/system.conf`. Chỉnh sửa cấu hình tại đây sẽ ảnh hưởng toàn cục hệ thống ví dụ như:
+`systemd unit` là một khái niệm trừu tượng để xác định các đối tượng mà hệ thống nhận biết và quản lý nó. Các `unit` đại diện bằng các tệp cấu hình, nó gói gọn thông tin về dịch vụ và các đối tượng liên quan khác cho hệ thống `systemd`. `systemd` quản lý nhiều loại `unit` khác nhau. Cấu hình mặc định của `systemd` được định nghĩa trong `/etc/systemd/system.conf`. Chỉnh sửa cấu hình tại đây sẽ ảnh hưởng toàn cục hệ thống ví dụ như:
 ```shell
 [root@huyvl-linux-training system]# cat /etc/systemd/system.conf | grep -i timeout
 #DefaultTimeoutStartSec=90s
