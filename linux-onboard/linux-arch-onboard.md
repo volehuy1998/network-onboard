@@ -24,8 +24,9 @@
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
-- [2.7 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 19/09/2023)](#infra_service)
+- [2.7 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
   - [2.7.1 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
+  - [2.7.2 - Tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 21/09/2023)](#automatically_run_process)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2039,38 +2040,6 @@ root@huyvl-ubuntu-16:~#
 
 - Các `unit` liên quan đến dịch vụ có phần mở rộng là `*.service`, đại diện cho dịch vụ hệ thống. Người dùng thường biết đến loại này thông qua máy chủ web.
 - Các `unit` có phần mở rộng `*.socket`, bất kể khi nào kết nối vào `socket` trên máy thì `systemd` sẽ truyền kết nối đó vào `unit`. Người dùng có thể trì hoãn hoặc xử lý khi có một kết nối được thiết lập đến `socket`.
-  ```shell
-  [root@huyvl-linux-training ~]# cat hello.sh
-  echo -n "Do you still want to connect? [Y/N] "
-  read anwser
-  echo "Welcome to socket unit!"
-  [root@huyvl-linux-training ~]#
-  [root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
-  [Unit]
-  Description=Welcome to port 5555
-
-  [Socket]
-  ListenStream=5555
-  Accept=Yes
-
-  [Install]
-  WantedBy=sockets.target
-  [root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
-  [Unit]
-  Description=Welcome to connect service
-
-  [Service]
-  ExecStart=/bin/bash /root/hello.sh
-  StandardInput=socket
-  [root@huyvl-linux-training ~]#
-  [root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
-  tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
-  [root@huyvl-linux-training ~]#
-  [root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
-  Do you still want to connect? [Y/N] y
-  Welcome to socket unit!
-  [root@huyvl-linux-training ~]#
-  ```
 - Còn rất nhiều `unit` với phần mở rộng khác như mô tả trên.
 
 Cấu hình mặc định của `systemd` được định nghĩa trong `/etc/systemd/system.conf`. Chỉnh sửa cấu hình tại đây sẽ ảnh hưởng toàn cục hệ thống ví dụ như:
@@ -2080,6 +2049,44 @@ Cấu hình mặc định của `systemd` được định nghĩa trong `/etc/sy
 #DefaultTimeoutStopSec=90s
 [root@huyvl-linux-training system]#
 ```
+Liệt kê các `unit` thuộc loại `service` với tùy chọn `-a` để hiển thị bất kể trạng thái của cột `LOAD` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units -t service -a
+  UNIT                                                  LOAD      ACTIVE   SUB     DESCRIPTION
+  acpid.service                                         loaded    active   running ACPI Event Daemon
+  auditd.service                                        loaded    active   running Security Auditing Service
+  cloud-config.service                                  loaded    active   exited  Apply the settings specified in cloud-config
+  cloud-final.service                                   loaded    active   exited  Execute cloud user/final scripts
+  cloud-init-local.service                              loaded    active   exited  Initial cloud-init job (pre-networking)
+  cloud-init.service                                    loaded    active   exited  Initial cloud-init job (metadata service crawler)
+  cpupower.service                                      loaded    inactive dead    Configure CPU power related settings
+  crond.service                                         loaded    active   running Command Scheduler
+  dbus.service                                          loaded    active   running D-Bus System Message Bus
+* display-manager.service                               not-found inactive dead    display-manager.service
+  dracut-cmdline.service                                loaded    inactive dead    dracut cmdline hook
+  dracut-initqueue.service                              loaded    inactive dead    dracut initqueue hook
+  dracut-mount.service                                  loaded    inactive dead    dracut mount hook
+  dracut-pre-mount.service                              loaded    inactive dead    dracut pre-mount hook
+  dracut-pre-pivot.service                              loaded    inactive dead    dracut pre-pivot and cleanup hook
+  dracut-pre-trigger.service                            loaded    inactive dead    dracut pre-trigger hook
+  dracut-pre-udev.service                               loaded    inactive dead    dracut pre-udev hook
+  dracut-shutdown.service                               loaded    inactive dead    Restore /run/initramfs
+  emergency.service                                     loaded    inactive dead    Emergency Shell
+* exim.service                                          not-found inactive dead    exim.service
+  getty@tty1.service                                    loaded    active   running Getty on tty1
+  initrd-cleanup.service                                loaded    inactive dead    Cleaning Up and Shutting Down Daemons
+  initrd-parse-etc.service                              loaded    inactive dead    Reload Configuration from the Real Root
+  initrd-switch-root.service                            loaded    inactive dead    Switch Root
+  initrd-udevadm-cleanup-db.service                     loaded    inactive dead    Cleanup udevd DB
+* ip6tables.service                                     not-found inactive dead    ip6tables.service
+* iptables.service                                      not-found inactive dead    iptables.service
+  irqbalance.service                                    loaded    active   running irqbalance daemon
+  kdump.service                                         loaded    active   exited  Crash recovery kernel arming
+  ...
+  ...
+```
+
+Chú thích: `systemd` đã biết được sự hiện diện của `display-manager.service` nhưng trạng thái `not-found` là bởi vì tệp `unit` được cài đặt kèm vào `systemd` chính là một phần của gói phần mềm. Tương tự như `iptables.service`. Nói cách khác khi người dùng cài đặt phần mềm `iptables` thì phần mềm sẽ gửi một `unit` đến để thực hiện quản lý `iptable`.
 
 Người dùng có thể sử dụng công cụ `systemctl` để quản lý các dịch vụ của hệ thống. Công cụ cho phép khởi chạy, dừng, tái khởi động, kích hoạt hoặc vô hiệu hóa ở lần khởi động kế tiếp, liệt kê các dịch vụ hiện có và hiển thị trạng thái dịch vụ. Liệt kê các `unit` ở trạng thái `ACTIVE` với loại là `socket` như sau:
 ```shell
@@ -2201,5 +2208,318 @@ systemd-udevd-control.socket static
 systemd-udevd-kernel.socket  static
 
 10 unit files listed.
+[root@huyvl-linux-training ~]#
+```
+### <a name="automatically_run_process"></a>Tiến trình hệ thống tự khởi chạy
+Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
+```shell
+[root@huyvl-linux-training ~]# cat hello.sh
+echo -n "Do you still want to connect? [Y/N] "
+read anwser
+echo "Welcome to socket unit!"
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
+[Unit]
+Description=Welcome to port 5555
+
+[Socket]
+ListenStream=5555
+Accept=Yes
+
+[Install]
+WantedBy=sockets.target
+[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
+[Unit]
+Description=Welcome to connect service
+
+[Service]
+ExecStart=/bin/bash /root/hello.sh
+StandardInput=socket
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
+tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
+Do you still want to connect? [Y/N] y
+Welcome to socket unit!
+[root@huyvl-linux-training ~]#
+```
+
+Liệt kê các `unit` loại `path` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units -t path
+UNIT                               LOAD   ACTIVE SUB     DESCRIPTION
+systemd-ask-password-plymouth.path loaded active waiting Forward Password Requests to Plymouth Directory Watch
+systemd-ask-password-wall.path     loaded active waiting Forward Password Requests to Wall Directory Watch
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+2 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@huyvl-linux-training ~]#
+```
+
+Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `socket`, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo.
+
+```shell
+[root@huyvl-linux-training system]# cat passwd-mon.path
+[Unit]
+Description="Monitor the /etc/passwd file for anychanges"
+
+[Path]
+PathModified=/etc/passwd
+Unit=passwd-mon.service
+
+[Install]
+WantedBy=multi-user.target
+[root@huyvl-linux-training system]# cat passwd-mon.service
+[Unit]
+Description="Run script to send email alert"
+
+[Service]
+ExecStart=/bin/bash /root/email-alert.sh
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# tail -n 3 /etc/passwd
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+gluster:x:998:996:GlusterFS daemons:/run/gluster:/sbin/nologin
+test
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# tail -f /var/log/maillog
+Sep 21 10:47:10 huyvl-linux-training postfix/cleanup[2060]: 4052180E38: message-id=<20230921034710.4052180E38@huyvl-linux-training.novalocal>
+Sep 21 10:47:10 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: from=<root@huyvl-linux-training.novalocal>, size=1400, nrcpt=1 (queue active)
+Sep 21 10:47:11 huyvl-linux-training postfix/smtp[2063]: 4052180E38: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.30]:25, delay=1.7, delays=0.02/0.01/0.21/1.4, dsn=2.6.0, status=sent (250 2.6.0 <20230921034710.4052180E38@huyvl-linux-training.novalocal> [InternalId=9161165263317, Hostname=TYSPR06MB6541.apcprd06.prod.outlook.com] 9458 bytes in 0.192, 47.977 KB/sec Queued mail for delivery)
+Sep 21 10:47:11 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: removed
+```
+
+<div style="text-align:center"><img src="../images/systemd_path_ex.png" /></div>
+
+Liệt kê các `unit` loại `target` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units -t target
+UNIT                  LOAD   ACTIVE SUB    DESCRIPTION
+basic.target          loaded active active Basic System
+cloud-config.target   loaded active active Cloud-config availability
+cloud-init.target     loaded active active Cloud-init target
+cryptsetup.target     loaded active active Local Encrypted Volumes
+getty.target          loaded active active Login Prompts
+graphical.target      loaded active active Graphical Interface
+local-fs-pre.target   loaded active active Local File Systems (Pre)
+local-fs.target       loaded active active Local File Systems
+multi-user.target     loaded active active Multi-User System
+network-online.target loaded active active Network is Online
+network-pre.target    loaded active active Network (Pre)
+network.target        loaded active active Network
+paths.target          loaded active active Paths
+remote-fs.target      loaded active active Remote File Systems
+slices.target         loaded active active Slices
+sockets.target        loaded active active Sockets
+swap.target           loaded active active Swap
+sysinit.target        loaded active active System Initialization
+timers.target         loaded active active Timers
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+19 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@huyvl-linux-training ~]#
+```
+
+Chú thích: 
+
+  - Loại `target` này sử dụng để nhóm các loại `unit` khác.
+  - `multi-user.target` được kế thừa từ tiến trình khởi tạo tiền nhiệm `SysV`, đây là `1` trong `6` chế độ `runlevel` đã mô tả ở trên. Trong quá khứ dùng để chỉ khi khởi tạo hệ thống thì có thể cho phép nhiều người sử dụng, có thể là `multi-user` chế độ chỉ `console` hoặc `multi-user` chế độ giao diện đồ họa.
+
+Xem trạng thái của dịch vụ `ssh` với tùy chọn `status` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl status sshd.service
+* sshd.service - OpenSSH server daemon
+   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2023-09-21 10:45:28 +07; 4h 16min ago
+     Docs: man:sshd(8)
+           man:sshd_config(5)
+ Main PID: 1093 (sshd)
+   CGroup: /system.slice/sshd.service
+           |-1093 /usr/sbin/sshd -D
+           |-8881 sshd: [accepted]
+           |-9041 sshd: [accepted]
+           |-9042 sshd: [net]
+           |-9206 sshd: [accepted]
+           |-9207 sshd: [net]
+           |-9215 sshd: root [priv]
+           |-9217 sshd: root [net]
+           |-9268 sshd: [accepted]
+           |-9290 sshd: [net]
+           |-9378 sshd: [accepted]
+           |-9379 sshd: [net]
+           |-9396 sshd: [accepted]
+           |-9397 sshd: [net]
+           |-9405 sshd: [accepted]
+           `-9406 sshd: [net]
+
+Sep 21 15:01:37 huyvl-linux-training.novalocal sshd[9512]: Connection closed by 221.229.103.87 port 56162 [preauth]
+Sep 21 15:01:38 huyvl-linux-training.novalocal sshd[9619]: Connection closed by 221.229.103.87 port 37104 [preauth]
+Sep 21 15:01:38 huyvl-linux-training.novalocal sshd[9739]: Failed password for root from 223.113.53.139 port 41890 ssh2
+Sep 21 15:01:38 huyvl-linux-training.novalocal sshd[9739]: Received disconnect from 223.113.53.139 port 41890:11: Bye Bye [preauth]
+Sep 21 15:01:38 huyvl-linux-training.novalocal sshd[9739]: Disconnected from 223.113.53.139 port 41890 [preauth]
+Sep 21 15:01:39 huyvl-linux-training.novalocal sshd[9471]: Connection reset by 221.229.103.87 port 56556 [preauth]
+Sep 21 15:01:40 huyvl-linux-training.novalocal sshd[9024]: Connection closed by 221.229.103.87 port 43742 [preauth]
+Sep 21 15:01:41 huyvl-linux-training.novalocal sshd[9022]: Connection closed by 221.229.103.87 port 43174 [preauth]
+Sep 21 15:01:43 huyvl-linux-training.novalocal sshd[9215]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=221.229.103.87  user=root
+Sep 21 15:01:43 huyvl-linux-training.novalocal sshd[9215]: pam_succeed_if(sshd:auth): requirement "uid >= 1000" not met by user "root"
+[root@huyvl-linux-training ~]#
+```
+<div style="text-align:center"><img src="../images/sshd_status.png" /></div>
+
+Chú thích:
+
+- Dấu sao `*` màu xanh thể hiện rằng dịch vụ `sshd.service` đã có mô tả `OpenSSH server daemon`.
+- Dịch vụ này đã được tải lên bộ nhớ và chạy `loaded`, `unit` được đặt ở tệp `/usr/lib/systemd/system/sshd.service`. Hiện tại dịch vụ này đánh dấu `enable` tức là sẽ được khởi chạy cùng với hệ thống, mô tả `vendor preset: enabled` chỉ ra rằng mặc định tác giả đã cài đặt `enabled` ngay khi người dùng cài đặt gói.
+- Dịch vụ đã được chạy `active (running)` từ ngày `21/09/2023 10:45:28 AM` tức `4h16m` trước.
+- Người dùng có thể đọc hướng dẫn sử dụng thông qua công cụ `man` trang `sshd` với mục `8`, tương tự với `sshd_config` mục `5`.
+- Tiến trình chính được gắn với `PID` là `1093`, trong tệp `unit` sử dụng `PID` này để gửi tín hiệu `hang-up` tải lại cấu hình.
+- `CGroup` hay `control group` dùng để quản lý, nó cho phép người dùng chỉ định giới hạn tài nguyên cho các tiến trình. Ví dụ như trình duyệt trên `Windows` và `Mac` đang trong tình trạng tiêu thụ rất nhiều bộ nhớ, `CGroup` có thể ứng dụng giới hạn chỉ cho phép tối đa `x(GB)` mà trình duyệt có thể sử dụng, khi người dùng sử dụng quá `x(GB)` thì nhận sẽ được thông báo lỗi mặc dù tài nguyên còn lại của họ cho phép.
+- Phần nhật ký dưới cùng là `output stream` vì thế có thể ứng dụng `&>/dev/null` để ẩn đi, nếu nhật ký quá nhiều so với màn hình hiển thị thì sử dụng tùy chọn `-l` để giải quyết.
+
+Hiển thị cụ thể tệp `unit` của `sshd` như sau:
+```shell
+[root@huyvl-linux-training ~]# cat /usr/lib/systemd/system/sshd.service
+[Unit]
+Description=OpenSSH server daemon
+Documentation=man:sshd(8) man:sshd_config(5)
+After=network.target sshd-keygen.service
+Wants=sshd-keygen.service
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/sysconfig/sshd
+ExecStart=/usr/sbin/sshd -D $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+[root@huyvl-linux-training ~]#
+```
+
+Chú thích:
+
+- Tệp `unit` nằm trong `/usr/lib` được sử hữu bởi người dùng `root` hay nói cách khác là hệ thống. Vì thế tệp `unit` này được khuyến cáo không nên chỉnh sửa. Vì hệ thống sở hữu `sshd.service` và nó là một phần của gói cài đặt `OpenSSH` nên khi gói được cập nhật thì sẽ có sự thay đổi bên trong tệp `unit`, dẫn tới việc nội dung tự chỉnh sửa sẽ không còn ý nghĩa vì chúng bị thay thế.
+- Định dạng ngoặc vuông `[tên]` và sau đó là cặp `key=value` cũng được sử dụng rất nhiều ở `Microsoft Windows` với tên mở rộng là `*.ini`. Trên `Windows` định dạng này được nhắc đến rất nhiều ở các cấu hình trò chơi `Red Alert 2`, ... hoặc các lập trình viên viết `driver` ở `kernel mode`.
+- Các cặp khóa `After` và `Want` là mô tả những thành phần phụ thuộc.
+- Khu vực `[Service]` dùng để mô tả cách thức mà nó khởi chạy với `ExecStart`. Khi chỉnh sửa cấu hình chỉ cần gửi tín hiệu `hang-up (HUP)` đến `Main PID` mà không cần phải tái khởi động hoàn toàn dịch vụ `sshd`.
+- `WantedBy=multi-user.target` mô tả dịch vụ này thuộc quyền quản lý hay nhóm bởi `multi-user.target`.
+
+Tìm gói phần mềm `nginx` dựa vào tệp `unit` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl status nginx.service
+Unit nginx.service could not be found.
+[root@huyvl-linux-training ~]# yum provides /usr/lib/systemd/system/nginx.service
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.bizflycloud.vn
+ * epel: mirror.01link.hk
+ * extras: mirror.bizflycloud.vn
+ * updates: mirror.bizflycloud.vn
+1:nginx-1.20.1-10.el7.x86_64 : A high performance web server and reverse proxy server
+Repo        : epel
+Matched from:
+Filename    : /usr/lib/systemd/system/nginx.service
+
+
+
+[root@huyvl-linux-training ~]# yum install -y nginx &>/dev/null
+[root@huyvl-linux-training ~]# systemctl status nginx.service
+* nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+[root@huyvl-linux-training ~]# systemctl is-enabled nginx.service
+disabled
+[root@huyvl-linux-training ~]#
+```
+Kích hoạt dịch vụ `nginx` đồng thời khởi động dịch vụ:
+```shell
+[root@huyvl-linux-training ~]# systemctl enable --now nginx.service
+Created symlink from /etc/systemd/system/multi-user.target.wants/nginx.service to /usr/lib/systemd/system/nginx.service.
+[root@huyvl-linux-training ~]# systemctl status nginx.service
+* nginx.service - The nginx HTTP and reverse proxy server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: active (running) since Thu 2023-09-21 16:47:02 +07; 4s ago
+  Process: 1342 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+  Process: 1339 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 1337 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+ Main PID: 1344 (nginx)
+   CGroup: /system.slice/nginx.service
+           |-1344 nginx: master process /usr/sbin/nginx
+           |-1345 nginx: worker process
+           `-1347 nginx: worker process
+
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@huyvl-linux-training ~]#
+```
+Thay vì chỉnh sửa trực tiếp vào `/usr/lib/systemd/system/nginx.service` sẽ bị rủi ro việc mất cấu hình tùy chỉnh khi cập nhật gói `nginx`. Người dùng được cho phép ghi đè cấu hình "chỉ" với các nội dung được định nghĩa, việc thay đổi sau chỉ nhắm tới `mô tả dịch vụ (Description)`củ:
+```shell
+[root@huyvl-linux-training ~]# ll -d /etc/systemd/system/nginx.service.d/
+drwxr-xr-x 2 root root 4096 Sep 21 16:56 /etc/systemd/system/nginx.service.d/
+[root@huyvl-linux-training ~]# vi /etc/systemd/system/nginx.service.d/01-custom.conf
+[root@huyvl-linux-training ~]# cat /etc/systemd/system/nginx.service.d/01-custom.conf
+[Unit]
+Description=
+[root@huyvl-linux-training ~]# systemctl daemon-reload
+[root@huyvl-linux-training ~]# systemctl status nginx.service
+* nginx.service
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/nginx.service.d
+           `-01-custom.conf
+   Active: active (running) since Thu 2023-09-21 16:47:02 +07; 10min ago
+ Main PID: 1344 (nginx)
+   CGroup: /system.slice/nginx.service
+           |-1344 nginx: master process /usr/sbin/nginx
+           |-1345 nginx: worker process
+           `-1347 nginx: worker process
+
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@huyvl-linux-training ~]#
+```
+, số càng lớn (ví dụ `02-custom.conf`) sẽ ghi đè số nhỏ (ví dụ `01-custom.conf`), người dùng có thể kiểm tra sự thay đổi này thông qua mô tả `Drop-In` khi kiểm tra trạng thái dịch vụ như sau:
+```shell
+[root@huyvl-linux-training nginx.service.d]# cp 01-custom.conf 02-custom.conf
+[root@huyvl-linux-training nginx.service.d]# ll
+total 8
+-rw-r--r-- 1 root root 20 Sep 21 16:56 01-custom.conf
+-rw-r--r-- 1 root root 83 Sep 21 16:59 02-custom.conf
+[root@huyvl-linux-training nginx.service.d]# vi 02-custom.conf
+[root@huyvl-linux-training nginx.service.d]# cat 02-custom.conf
+[Unit]
+Description=FCI override /etc/systemd/system/nginx.service.d/01-custom.conf
+[root@huyvl-linux-training nginx.service.d]#
+[root@huyvl-linux-training nginx.service.d]# systemctl daemon-reload
+[root@huyvl-linux-training nginx.service.d]# systemctl status nginx.service
+* nginx.service - FCI override /etc/systemd/system/nginx.service.d/01-custom.conf
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/nginx.service.d
+           `-01-custom.conf, 02-custom.conf
+   Active: active (running) since Thu 2023-09-21 16:47:02 +07; 12min ago
+ Main PID: 1344 (nginx)
+   CGroup: /system.slice/nginx.service
+           |-1344 nginx: master process /usr/sbin/nginx
+           |-1345 nginx: worker process
+           `-1347 nginx: worker process
+
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
 [root@huyvl-linux-training ~]#
 ```
