@@ -2261,7 +2261,7 @@ To show all installed unit files use 'systemctl list-unit-files'.
 [root@huyvl-linux-training ~]#
 ```
 
-Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `socket`, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo.
+Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `socket`, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
 
 ```shell
 [root@huyvl-linux-training system]# cat passwd-mon.path
@@ -2409,10 +2409,10 @@ WantedBy=multi-user.target
 
 Chú thích:
 
-- Tệp `unit` nằm trong `/usr/lib` được sử hữu bởi người dùng `root` hay nói cách khác là hệ thống. Vì thế tệp `unit` này được khuyến cáo không nên chỉnh sửa. Vì hệ thống sở hữu `sshd.service` và nó là một phần của gói cài đặt `OpenSSH` nên khi gói được cập nhật thì sẽ có sự thay đổi bên trong tệp `unit`, dẫn tới việc nội dung tự chỉnh sửa sẽ không còn ý nghĩa vì chúng bị thay thế.
+- Tệp `unit` nằm trong `/usr/lib` được sử hữu bởi người dùng `root` hay nói cách khác là hệ thống. Vì thế tệp `unit` này được khuyến cáo không nên chỉnh sửa. Vì hệ thống sở hữu `sshd.service` và nó là một phần của gói cài đặt `OpenSSH`, nên khi gói được cập nhật thì sẽ có sự thay đổi bên trong tệp `unit`, dẫn tới việc nội dung tự chỉnh sửa sẽ không còn ý nghĩa vì chúng bị thay thế.
 - Định dạng ngoặc vuông `[tên]` và sau đó là cặp `key=value` cũng được sử dụng rất nhiều ở `Microsoft Windows` với tên mở rộng là `*.ini`. Trên `Windows` định dạng này được nhắc đến rất nhiều ở các cấu hình trò chơi `Red Alert 2`, ... hoặc các lập trình viên viết `driver` ở `kernel mode`.
 - Các cặp khóa `After` và `Want` là mô tả những thành phần phụ thuộc.
-- Khu vực `[Service]` dùng để mô tả cách thức mà nó khởi chạy với `ExecStart`. Khi chỉnh sửa cấu hình chỉ cần gửi tín hiệu `hang-up (HUP)` đến `Main PID` mà không cần phải tái khởi động hoàn toàn dịch vụ `sshd`.
+- Khu vực `[Service]` dùng để mô tả cách thức mà nó khởi chạy với `ExecStart`. Khi chỉnh sửa cấu hình chỉ cần gửi tín hiệu `hang-up (HUP)` đến `Main PID` mà không cần phải tái khởi động hoàn toàn dịch vụ `sshd`, điều này được định nghĩa ở `ExecReload` được bao bọc trong hành động `systemctl reload sshd.service`.
 - `WantedBy=multi-user.target` mô tả dịch vụ này thuộc quyền quản lý hay nhóm bởi `multi-user.target`.
 
 Tìm gói phần mềm `nginx` dựa vào tệp `unit` như sau:
@@ -2465,7 +2465,7 @@ Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration
 Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
 [root@huyvl-linux-training ~]#
 ```
-Thay vì chỉnh sửa trực tiếp vào `/usr/lib/systemd/system/nginx.service` sẽ bị rủi ro việc mất cấu hình tùy chỉnh khi cập nhật gói `nginx`. Người dùng được cho phép ghi đè cấu hình "chỉ" với các nội dung được định nghĩa, việc thay đổi sau chỉ nhắm tới `mô tả dịch vụ (Description)`củ:
+Thay vì chỉnh sửa trực tiếp vào `/usr/lib/systemd/system/nginx.service` sẽ bị rủi ro việc mất cấu hình tùy chỉnh khi cập nhật gói `nginx`. Người dùng được cho phép ghi đè cấu hình "chỉ" với các nội dung được định nghĩa, việc thay đổi sau nhắm tới `mô tả dịch vụ (Description)`:
 ```shell
 [root@huyvl-linux-training ~]# ll -d /etc/systemd/system/nginx.service.d/
 drwxr-xr-x 2 root root 4096 Sep 21 16:56 /etc/systemd/system/nginx.service.d/
