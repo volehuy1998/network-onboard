@@ -2192,7 +2192,7 @@ systemd-sysctl.service                                                      load
 systemd-tmpfiles-setup-dev.service                                          loaded active exited    Create Static Device Nodes in /dev
 lines 1-56
 ```
-Đối số `list-units` không hiển thị những dịch vụ đã được cài đặt nhưng chưa kích hoạt. Thay vào đó sử dụng `list-unit-files` để thấy được tất cả các tệp `unit` đã được cài đặt bất kể đã kích hoạt hay không:
+Đối số `list-units` không hiển thị những dịch vụ đã được cài đặt nhưng chưa kích hoạt. Thay vào đó sử dụng `list-unit-files` để thấy được tất cả các tệp `unit` đã được cài đặt trong `/usr/lib/systemd/system/` bất kể đã kích hoạt hay không:
 ```shell
 [root@huyvl-linux-training ~]# systemctl list-unit-files --type=socket
 UNIT FILE                    STATE
@@ -2382,7 +2382,7 @@ Chú thích:
 - Người dùng có thể đọc hướng dẫn sử dụng thông qua công cụ `man` trang `sshd` với mục `8`, tương tự với `sshd_config` mục `5`.
 - Tiến trình chính được gắn với `PID` là `1093`, trong tệp `unit` sử dụng `PID` này để gửi tín hiệu `hang-up` tải lại cấu hình.
 - `CGroup` hay `control group` dùng để quản lý, nó cho phép người dùng chỉ định giới hạn tài nguyên cho các tiến trình. Ví dụ như trình duyệt trên `Windows` và `Mac` đang trong tình trạng tiêu thụ rất nhiều bộ nhớ, `CGroup` có thể ứng dụng giới hạn chỉ cho phép tối đa `x(GB)` mà trình duyệt có thể sử dụng, khi người dùng sử dụng quá `x(GB)` thì nhận sẽ được thông báo lỗi mặc dù tài nguyên còn lại của họ cho phép.
-- Phần nhật ký dưới cùng là `output stream` vì thế có thể ứng dụng `&>/dev/null` để ẩn đi, nếu nhật ký quá nhiều so với màn hình hiển thị thì sử dụng tùy chọn `-l` để giải quyết.
+- Phần nhật ký dưới cùng ghi nhận những hành động mà nó đã gặp trong lịch sử, nếu nhật ký quá nhiều so với màn hình hiển thị thì sử dụng tùy chọn `-l` để giải quyết.
 
 Hiển thị cụ thể tệp `unit` của `sshd` như sau:
 ```shell
