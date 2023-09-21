@@ -2280,7 +2280,9 @@ Description="Run script to send email alert"
 
 [Service]
 ExecStart=/bin/bash /root/email-alert.sh
-[root@huyvl-linux-training system]#
+[root@huyvl-linux-training ~]# cat email-alert.sh
+mail -S sendwait -s "/etc/passwd has been changed on $(hostname)" huyvl3@fpt.com < /etc/passwd
+[root@huyvl-linux-training ~]#
 [root@huyvl-linux-training system]# tail -n 3 /etc/passwd
 postfix:x:89:89::/var/spool/postfix:/sbin/nologin
 gluster:x:998:996:GlusterFS daemons:/run/gluster:/sbin/nologin
@@ -2376,9 +2378,9 @@ Sep 21 15:01:43 huyvl-linux-training.novalocal sshd[9215]: pam_succeed_if(sshd:a
 
 Chú thích:
 
-- Dấu sao `*` màu xanh thể hiện rằng dịch vụ `sshd.service` có mô tả `OpenSSH server daemon` được được chạy `active (running)`
-- Dịch vụ này đã được tải lên bộ nhớ và chạy `loaded`, `unit` được đặt ở tệp `/usr/lib/systemd/system/sshd.service`. Hiện tại dịch vụ này đánh dấu `enable` tức là sẽ được khởi chạy cùng với hệ thống, mô tả `vendor preset: enabled` chỉ ra rằng mặc định tác giả đã cài đặt `enabled` ngay khi người dùng cài đặt gói.
-- Dịch vụ đã được chạy `active (running)` từ ngày `21/09/2023 10:45:28 AM` tức `4h16m` trước.
+- Dấu sao `*` màu xanh thể hiện rằng dịch vụ `sshd.service` có mô tả `OpenSSH server daemon` được chạy `active (running)`.
+- Dịch vụ này đã được tải lên bộ nhớ `loaded`, `unit` được đặt ở tệp `/usr/lib/systemd/system/sshd.service`. Hiện tại dịch vụ này đánh dấu `enable` tức là sẽ được khởi chạy cùng với hệ thống, mô tả `vendor preset: enabled` chỉ ra rằng mặc định tác giả đã cài đặt `enabled` ngay khi người dùng cài đặt gói.
+- Dịch vụ đang chạy `active (running)` từ ngày `21/09/2023 10:45:28 AM` tức `4h16m` trước.
 - Người dùng có thể đọc hướng dẫn sử dụng thông qua công cụ `man` trang `sshd` với mục `8`, tương tự với `sshd_config` mục `5`.
 - Tiến trình chính được gắn với `PID` là `1093`, trong tệp `unit` sử dụng `PID` này để gửi tín hiệu `hang-up` tải lại cấu hình.
 - `CGroup` hay `control group` dùng để quản lý, nó cho phép người dùng chỉ định giới hạn tài nguyên cho các tiến trình. Ví dụ như trình duyệt trên `Windows` và `Mac` đang trong tình trạng tiêu thụ rất nhiều bộ nhớ, `CGroup` có thể ứng dụng giới hạn chỉ cho phép tối đa `x(GB)` mà trình duyệt có thể sử dụng, khi người dùng sử dụng quá `x(GB)` thì nhận sẽ được thông báo lỗi mặc dù tài nguyên còn lại của họ cho phép.
@@ -2409,7 +2411,7 @@ WantedBy=multi-user.target
 
 Chú thích:
 
-- Tệp `unit` nằm trong `/usr/lib` được sử hữu bởi người dùng `root` hay nói cách khác là hệ thống. Vì thế tệp `unit` này được khuyến cáo không nên chỉnh sửa. Vì hệ thống sở hữu `sshd.service` và nó là một phần của gói cài đặt `OpenSSH`, nên khi gói được cập nhật thì sẽ có sự thay đổi bên trong tệp `unit`, dẫn tới việc nội dung tự chỉnh sửa sẽ không còn ý nghĩa vì chúng bị thay thế.
+- Tệp `unit` nằm trong `/usr/lib/systemd/system` được đưa vào khi cài đặt gói phần mềm, vì thế nó thuộc về hệ thống, khuyến cáo không nên chỉnh sửa tại nơi này. Vì hệ thống sở hữu `sshd.service` và nó là một phần của gói phần mềm `OpenSSH`, nên khi gói cập nhật thì sẽ có sự thay đổi bên trong tệp `unit`, dẫn tới việc nội dung tự chỉnh sửa sẽ không còn ý nghĩa vì chúng bị thay thế.
 - Định dạng ngoặc vuông `[tên]` và sau đó là cặp `key=value` cũng được sử dụng rất nhiều ở `Microsoft Windows` với tên mở rộng là `*.ini`. Trên `Windows` định dạng này được nhắc đến rất nhiều ở các cấu hình trò chơi `Red Alert 2`, ... hoặc các lập trình viên viết `driver` ở `kernel mode`.
 - Các cặp khóa `After` và `Want` là mô tả những thành phần phụ thuộc.
 - Khu vực `[Service]` dùng để mô tả cách thức mà nó khởi chạy với `ExecStart`. Khi chỉnh sửa cấu hình chỉ cần gửi tín hiệu `hang-up (HUP)` đến `Main PID` mà không cần phải tái khởi động hoàn toàn dịch vụ `sshd`, điều này được định nghĩa ở `ExecReload` được bao bọc trong hành động `systemctl reload sshd.service`.
@@ -2430,8 +2432,6 @@ Loading mirror speeds from cached hostfile
 Repo        : epel
 Matched from:
 Filename    : /usr/lib/systemd/system/nginx.service
-
-
 
 [root@huyvl-linux-training ~]# yum install -y nginx &>/dev/null
 [root@huyvl-linux-training ~]# systemctl status nginx.service
