@@ -1,4 +1,4 @@
-[2 - Tổng quan về kiến trúc Linux](#linux_arch)
+[Phần 2 - Tổng quan về kiến trúc Linux](#linux_arch)
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](#linux_kernel)
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
@@ -24,9 +24,9 @@
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
-- [2.7 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
-  - [2.7.1 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
-  - [2.7.2 - Tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 21/09/2023)](#automatically_run_process)
+    - [2.6.4 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
+    - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
+    - [2.6.6 - Tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 21/09/2023)](#automatically_run_process)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
