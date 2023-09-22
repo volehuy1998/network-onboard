@@ -20,13 +20,14 @@
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(UPDATED 10/09/2023)](#sgid_permission)
         - [2.5.4.4 - Quyền đặc biệt Sticky bit(UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 21/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 22/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
-    - [2.6.6 - Tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 21/09/2023)](#automatically_run_process)
+    - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)](#automatically_run_process)
+    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 22/09/2023)](#ctl_sys_svc)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -104,7 +105,7 @@ Giải thích:
 - Tầm quan trọng về `INT 3` có lợi như thế nào đối với người viết ra chương trình và người dịch ngược mã nguồn của chương trình đó?
 - Đối tượng chương trình là gì hoặc chứa nội dung quan trọng gì mà cần kỹ sư dịch ngược phẫu thuật chúng?
 
-Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakpoint` vào chương trình, đồng nghĩa với việc cho chạy chúng với chế độ `debug`, phần mềm `OllyDbg` sẽ tự động triển khai một `software breakpoint` vào mã `assembly` bằng cách ghi đè `0xCC` vào byte đầu tiên của lệnh vi xử lý. Một khi lệnh `0xCC` được thực thi, hệ điều hành sẽ tạo ra một `exception` loại `trap` và trả quyền điều khiển về cho chương trình `debugger` được tích hợp trong phần mềm `OllyDbg`. Về mặt lịch sử, đại diện cho chương trình được phân tích là mã độc, việc nghiên cứu lẫn nhau giữa người viết mã độc và kỹ sư dịch ngược là chuyện xảy ra thường xuyên, để chống lại việc này thì người viết mã độc sẽ dựa vào thói quan sử dụng `software execution breakpoint` của các kỹ sư để vô hiệu hóa cuộc phẩu thuật, ngăn chặn việc mã độc rơi vào trạng thái bị nghiên cứu và phanh phui các hành vi. Ngay khi khởi chạy chương trình thì người viết mã độc có một số cách để phát hiện ra chương trình của mình đang bị phẩu thuật:
+Kỹ sư dịch ngược sử dụng phần mềm `OllyDbg` để đặt `breakpoint` vào chương trình, đồng nghĩa với việc cho chạy chúng với chế độ `debug`, phần mềm `OllyDbg` sẽ tự động triển khai một `software breakpoint` vào mã `assembly` bằng cách ghi đè `0xCC` vào byte đầu tiên của lệnh vi xử lý. Một khi lệnh `0xCC` được thực thi, hệ điều hành sẽ tạo ra một `exception` loại `trap` và trả quyền điều khiển về cho chương trình `debugger` được tích hợp trong phần mềm `OllyDbg`. Về mặt lịch sử, đại diện cho chương trình được phân tích là mã độc, việc nghiên cứu lẫn nhau giữa người viết mã độc và kỹ sư dịch ngược là chuyện xảy ra thường xuyên, để chống lại việc này thì người viết mã độc sẽ dựa vào thói quen sử dụng `software execution breakpoint` của các kỹ sư để vô hiệu hóa cuộc phẩu thuật, ngăn chặn việc mã độc rơi vào trạng thái bị nghiên cứu và phanh phui các hành vi. Ngay khi khởi chạy chương trình thì người viết mã độc có một số cách để phát hiện ra chương trình của mình đang bị phẩu thuật:
 
 - Quét thanh ghi `EDI` để kiểm tra sự tồn tại của byte `0xCC`, nếu có lập tức dừng chương trình.
 - Tính `checksum` vì trong lúc phần mềm `OllyDbg` chỉnh sửa nội dung bởi `0xCC` nên nếu tính toán lại `checksum` trong lúc chạy và trước lúc phát hành mã độc sẽ có sự sai lệch. Cách này không thông dụng như `INT Scanning` trên nhưng cũng là một lựa chọn mang lại hiệu quả tương đương.
@@ -2481,7 +2482,7 @@ Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration
 Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
 [root@huyvl-linux-training ~]#
 ```
-, số càng lớn (ví dụ `02-custom.conf`) sẽ ghi đè số nhỏ (ví dụ `01-custom.conf`), người dùng có thể kiểm tra sự thay đổi này thông qua mô tả `Drop-In` khi kiểm tra trạng thái dịch vụ như sau:
+, số càng lớn (ví dụ `02-custom.conf`) sẽ ghi đè số nhỏ (ví dụ `01-custom.conf`), người dùng có thể kiểm tra sự thay đổi này thông qua mô tả `Drop-In (thư mục *.d)` khi kiểm tra trạng thái dịch vụ như sau:
 ```shell
 [root@huyvl-linux-training nginx.service.d]# cp 01-custom.conf 02-custom.conf
 [root@huyvl-linux-training nginx.service.d]# ll
@@ -2510,5 +2511,199 @@ Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Starting The nginx HT
 Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration file /etc/nginx/nginx.conf test is successful
 Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@huyvl-linux-training ~]#
+```
+### <a name="ctl_sys_svc"></a>Kiểm soát dịch vụ hệ thống
+Thực hiện tải lại cấu hình chương trình `nginx` để kiểm tra sự thay đổi của `Main PID` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl status nginx
+* nginx.service
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/nginx.service.d
+           `-01-custom.conf, 02-custom.conf
+   Active: active (running) since Thu 2023-09-21 16:47:02 +07; 18h ago
+ Main PID: 1344 (nginx)
+   CGroup: /system.slice/nginx.service
+           |-1344 nginx: master process /usr/sbin/nginx
+           |-1345 nginx: worker process
+           `-1347 nginx: worker process
+
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@huyvl-linux-training ~]# systemctl reload nginx
+[root@huyvl-linux-training ~]# pidof nginx
+16849 16848 1344
+[root@huyvl-linux-training ~]# systemctl restart nginx
+[root@huyvl-linux-training ~]# pidof nginx
+21126 21125 21124
+[root@huyvl-linux-training ~]# systemctl status nginx
+* nginx.service
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/nginx.service.d
+           `-01-custom.conf, 02-custom.conf
+   Active: active (running) since Fri 2023-09-22 11:18:50 +07; 6s ago
+  Process: 20547 ExecReload=/usr/sbin/nginx -s reload (code=exited, status=0/SUCCESS)
+  Process: 21122 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+  Process: 21118 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+  Process: 21116 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+ Main PID: 21124 (nginx)
+   CGroup: /system.slice/nginx.service
+           |-21124 nginx: master process /usr/sbin/nginx
+           |-21125 nginx: worker process
+           `-21126 nginx: worker process
+
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Stopped nginx.service.
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Starting nginx.service...
+Sep 22 11:18:50 huyvl-linux-training.novalocal nginx[21118]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 22 11:18:50 huyvl-linux-training.novalocal nginx[21118]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Started nginx.service.
+[root@huyvl-linux-training ~]#
+```
+Trong định nghĩa `unit` của dịch vụ `sshd` và `nginx` đều có `ExecReload` là cái mà hỗ trợ dịch vụ có thể tải lại cấu hình đã được đưa vào bộ nhớ. Lệnh `systemctl reload-or-restart *.service` sau dùng trong trường hợp khi người dùng không chắc chắn về `ExecReload` có thực sự tồn tại trong tệp `unit`, tùy chọn này đầu tiên sẽ thử `reload` nếu không được sẽ sử dụng `restart`.
+```shell
+[root@huyvl-linux-training ~]# pidof nginx
+18815 18814 18813
+[root@huyvl-linux-training ~]# systemctl reload-or-restart nginx
+[root@huyvl-linux-training ~]# pidof nginx
+20549 20548 18813
+[root@huyvl-linux-training ~]#
+```
+Liệt kê những thành phần phụ thuộc của `nginx.service`, là những cái `unit` mà `nginx` yêu cầu để có thể chạy được:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-dependencies nginx.service
+nginx.service
+* |--.mount
+* |-system.slice
+* |-basic.target
+* | |-microcode.service
+* | |-rhel-dmesg.service
+* | |-selinux-policy-migrate-local-changes@targeted.service
+* | |-paths.target
+* | |-slices.target
+* | | |--.slice
+* | | `-system.slice
+* | |-sockets.target
+* | | |-dbus.socket
+* | | |-echo.socket
+* | | |-greet.socket
+* | | |-systemd-initctl.socket
+* | | |-systemd-journald.socket
+* | | |-systemd-shutdownd.socket
+* | | |-systemd-udevd-control.socket
+* | | `-systemd-udevd-kernel.socket
+* | |-sysinit.target
+* | | |-dev-hugepages.mount
+* | | |-dev-mqueue.mount
+* | | |-kmod-static-nodes.service
+* | | |-plymouth-read-write.service
+* | | |-plymouth-start.service
+* | | |-proc-sys-fs-binfmt_misc.automount
+* | | |-rhel-autorelabel-mark.service
+* | | |-rhel-autorelabel.service
+* | | |-rhel-domainname.service
+* | | |-rhel-import-state.service
+* | | |-rhel-loadmodules.service
+* | | |-sys-fs-fuse-connections.mount
+* | | |-sys-kernel-config.mount
+* | | |-sys-kernel-debug.mount
+* | | |-systemd-ask-password-console.path
+* | | |-systemd-binfmt.service
+* | | |-systemd-firstboot.service
+* | | |-systemd-hwdb-update.service
+* | | |-systemd-journal-catalog-update.service
+* | | |-systemd-journal-flush.service
+* | | |-systemd-journald.service
+* | | |-systemd-machine-id-commit.service
+* | | |-systemd-modules-load.service
+* | | |-systemd-random-seed.service
+* | | |-systemd-sysctl.service
+* | | |-systemd-tmpfiles-setup-dev.service
+* | | |-systemd-tmpfiles-setup.service
+* | | |-systemd-udev-trigger.service
+* | | |-systemd-udevd.service
+* | | |-systemd-update-done.service
+* | | |-systemd-update-utmp.service
+* | | |-systemd-vconsole-setup.service
+* | | |-cryptsetup.target
+* | | |-local-fs.target
+* | | | |--.mount
+* | | | |-rhel-readonly.service
+* | | | |-systemd-fsck-root.service
+* | | | `-systemd-remount-fs.service
+* | | `-swap.target
+* | `-timers.target
+* |   `-systemd-tmpfiles-clean.timer
+* `-network-online.target
+*   `-NetworkManager-wait-online.service
+lines 27-64/64 (END)
+```
+
+<div style="text-align:center"><img src="../images/list_dependencies_nginx.png" /></div>
+
+Chú thích: 
+
+- Một số đánh dấu màu đỏ ví dụ như `echo.socket` và `greet.socket`, ... là bởi vì các `unit` này đã không còn tồn tại, cụ thể hơn là đã bị xóa.
+- `nginx` bị phụ thuộc vào rất nhiều `unit` phụ thuộc khác, bao gồm các loại `timer`, `socket`, ... Nếu không có các `unit` này thì `nginx` sẽ không hoạt động được.
+
+Liệt kê các dịch vụ được `sshd` hỗ trợ:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-dependencies sshd-keygen.service --reverse
+sshd-keygen.service
+* |-cloud-init.service
+* |-sshd.service
+* |-sshd.service
+* `-sshd.socket
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# systemctl list-dependencies sshd.service --reverse
+sshd.service
+* |-cloud-init.service
+* `-multi-user.target
+*   `-graphical.target
+[root@huyvl-linux-training ~]#
+```
+
+Chú thích: dịch vụ `ssh-keygen.service` hỗ trợ cho `sshd.service` và tiếp đến `sshd.service` hỗ trợ cho `cloud-init.service`.
+
+Vô hiệu hóa dịch vụ `nginx` và đồng thời dừng nó lại thông qua tùy chọn `--now` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl disable --now nginx.service
+Removed symlink /etc/systemd/system/multi-user.target.wants/nginx.service.
+[root@huyvl-linux-training ~]# systemctl status nginx.service
+* nginx.service
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/nginx.service.d
+           `-01-custom.conf, 02-custom.conf
+   Active: inactive (dead)
+
+Sep 22 11:17:31 huyvl-linux-training.novalocal systemd[1]: Reloading nginx.service.
+Sep 22 11:17:31 huyvl-linux-training.novalocal systemd[1]: Reloaded nginx.service.
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Stopping nginx.service...
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Stopped nginx.service.
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Starting nginx.service...
+Sep 22 11:18:50 huyvl-linux-training.novalocal nginx[21118]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Sep 22 11:18:50 huyvl-linux-training.novalocal nginx[21118]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Sep 22 11:18:50 huyvl-linux-training.novalocal systemd[1]: Started nginx.service.
+Sep 22 11:39:39 huyvl-linux-training.novalocal systemd[1]: Stopping nginx.service...
+Sep 22 11:39:39 huyvl-linux-training.novalocal systemd[1]: Stopped nginx.service.
+[root@huyvl-linux-training ~]#
+```
+
+Đôi khi một số dịch vụ được cài đặt trên hệ thống có thể gây xung đột với nhau, ví dụ có nhiều cách để quản lý máy chủ thư như `postfix` và `sendmail`. Việc `masking` dịch vụ sẽ tránh khỏi việc người dùng vô tình khởi chạy dịch vụ nào đó và gây ra xung đột với dịch vụ khác.
+```shell
+[root@huyvl-linux-training ~]# systemctl mask nginx.service
+Created symlink from /etc/systemd/system/nginx.service to /dev/null.
+[root@huyvl-linux-training ~]# systemctl start nginx.service
+Failed to start nginx.service: Unit is masked.
+[root@huyvl-linux-training ~]# systemctl list-unit-file --type=service --state=mask
+Unknown operation 'list-unit-file'.
+[root@huyvl-linux-training ~]# systemctl list-unit-files --type=service --state=mask
+UNIT FILE STATE
+
+0 unit files listed.
+[root@huyvl-linux-training ~]# systemctl unmask nginx.service
+Removed symlink /etc/systemd/system/nginx.service.
+[root@huyvl-linux-training ~]# systemctl start nginx.service
 [root@huyvl-linux-training ~]#
 ```
