@@ -20,14 +20,15 @@
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(UPDATED 10/09/2023)](#sgid_permission)
         - [2.5.4.4 - Quyền đặc biệt Sticky bit(UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 22/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 24/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
     - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)](#automatically_run_process)
-    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 22/09/2023)](#ctl_sys_svc)
+    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 24/09/2023)](#ctl_sys_svc)
+    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 24/09/2023)](#unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2430,6 +2431,8 @@ Filename    : /usr/lib/systemd/system/nginx.service
    Active: inactive (dead)
 [root@huyvl-linux-training ~]# systemctl is-enabled nginx.service
 disabled
+[root@huyvl-linux-training ~]# systemctl is-active nginx.service
+unknown
 [root@huyvl-linux-training ~]#
 ```
 Kích hoạt dịch vụ `nginx` đồng thời khởi động dịch vụ:
@@ -2647,7 +2650,7 @@ Chú thích:
 - Một số đánh dấu màu đỏ ví dụ như `echo.socket` và `greet.socket`, ... là bởi vì các `unit` này đã không còn tồn tại, cụ thể hơn là đã bị xóa.
 - `nginx` bị phụ thuộc vào rất nhiều `unit` phụ thuộc khác, bao gồm các loại `timer`, `socket`, ... Nếu không có các `unit` này thì `nginx` sẽ không hoạt động được.
 
-Liệt kê các dịch vụ được `sshd` hỗ trợ:
+Liệt kê các dịch vụ được `sshd` và `sshd-keygen` hỗ trợ:
 ```shell
 [root@huyvl-linux-training ~]# systemctl list-dependencies sshd-keygen.service --reverse
 sshd-keygen.service
@@ -2707,3 +2710,93 @@ Removed symlink /etc/systemd/system/nginx.service.
 [root@huyvl-linux-training ~]# systemctl start nginx.service
 [root@huyvl-linux-training ~]#
 ```
+Kiểm tra danh sách các dịch vụ được khởi động trước dịch vụ `sshd` thông qua tùy chọn `--after` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-dependencies --after sshd.service
+sshd.service
+* |-cloud-init.service
+* |-sshd-keygen.service
+* |-system.slice
+* |-systemd-journald.socket
+* |-basic.target
+* | |-systemd-ask-password-plymouth.path
+* | |-paths.target
+* | | |-systemd-ask-password-console.path
+...
+[root@huyvl-linux-training ~]# cat /usr/lib/systemd/system/sshd.service
+[Unit]
+Description=OpenSSH server daemon
+Documentation=man:sshd(8) man:sshd_config(5)
+After=network.target sshd-keygen.service
+Wants=sshd-keygen.service
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/sysconfig/sshd
+ExecStart=/usr/sbin/sshd -D $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+[root@huyvl-linux-training ~]#
+```
+
+Chú thích: dịch vụ `sshd-keygen.service` được sắp xếp khởi dộng ở vị trí thứ `2` trước khi khởi động dịch vụ `sshd.service`, trong tệp `unit` của `sshd.service` đã mô tả `After=` tức là nó sẽ khởi động sau `sshd-keygen.service`. Tương tự trái ngược với nó là `--before` và `Before=` của `cloud-init.service` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-dependencies --before cloud-init.service
+cloud-init.service
+* |-sshd-keygen.service
+* |-sshd.service
+* |-systemd-user-sessions.service
+* |-cloud-config.target
+* | `-cloud-config.service
+* |-cloud-init.target
+* |-network-online.target
+* | |-cloud-config.service
+* | |-cloud-final.service
+* | |-kdump.service
+* | `-rsyslog.service
+* `-shutdown.target
+*   |-systemd-reboot.service
+*   `-final.target
+*     `-systemd-reboot.service
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# cat /usr/lib/systemd/system/cloud-init.service
+[Unit]
+Description=Initial cloud-init job (metadata service crawler)
+Wants=cloud-init-local.service
+Wants=sshd-keygen.service
+Wants=sshd.service
+After=cloud-init-local.service
+After=NetworkManager.service network.service
+Before=network-online.target
+Before=sshd-keygen.service
+Before=sshd.service
+Before=systemd-user-sessions.service
+ConditionPathExists=!/etc/cloud/cloud-init.disabled
+ConditionKernelCommandLine=!cloud-init=disabled
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cloud-init init
+RemainAfterExit=yes
+TimeoutSec=0
+
+# Output needs to appear in instance console output
+StandardOutput=journal+console
+
+[Install]
+WantedBy=cloud-init.target
+[root@huyvl-linux-training ~]#
+```
+### <a name="unit"></a>Chi tiết về tệp `unit`
+Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông tin của tệp `unit` đó và định nghĩa các hành động của nó. Lệnh `systemctl` sẽ làm việc với các tệp `unit` được chạy nền. Để thực hiện những điều chỉnh thì người dùng hay quản trị phải chỉnh sửa hoặc tạo mới tệp `unit` một cách thủ công. Vị trí của các tệp `unit` đã được mô tả gồm 3 nơi [ở đây](#systemd), trong số đó `/etc/systemd/system/` được dành riêng để lưu trữ các tệp `unit` mà mở rộng theo nhu cầu của người dùng trong lúc vận hành hệ thống. 
+
+Để thay đổi nội dung cho các tệp cấu hình `unit` có 2 cách, mỗi cách đều có ưu nhược điểm riêng:
+
+- Bô sung đối với cấu hình có sẵn ở `/usr/lib/systemd/system/` cần tạo một thư mục `drop-in` với cách đặt tên đơn giản `/etc/systemd/system/<tên unit>.<loại dịch vụ>.d/` như ví dụ trên về `/etc/systemd/system/nginx.service.d/`. Khi cập nhật gói phần mềm thì nó cũng sẽ tự động áp dụng những bổ sung này kèm theo những thay đổi trong cấu hình cập nhật.
+
+- Tạo một bản sao `unit` từ `/usr/lib/systemd/system/` vào đặt nó ở `/etc/systemd/system/`. Khi cập nhật gói phần mềm thì những thay đổi của bản cập nhật sẽ không được áp dụng. Nói cách khác đây là cách ghi đè toàn bộ cấu hình.
