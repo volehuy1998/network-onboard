@@ -2982,14 +2982,14 @@ for i in {1..1000}; do echo "hello" && sleep 1; done
 [root@huyvl-linux-training system]# systemctl restart dep.service
 [root@huyvl-linux-training system]#
 ```
-, nội dung `ExecStart=/bin/false` để nói rằng được thiết lập cho kịch bản dịch vụ này luôn khởi động thất bại. Quan sát nhật ký của `systemd` cho thấy nó đã khởi động `default_simple_type.service` và `dep.service` cùng lúc
+, nội dung `ExecStart=/bin/false` để thông báo kịch bản dịch vụ này luôn khởi động thất bại. Quan sát nhật ký của `systemd` cho thấy nó đã khởi động `default_simple_type.service` và `dep.service` cùng lúc
 ```shell
 Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Started dep.service.
 Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service: main process exited, code=exited, status=1/FAILURE
 Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Unit default_simple_type.service entered failed state.
 Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service failed.
 ```
-, chính vì điều này đã làm lệch hướng kết quả được dự đoán từ ban đầu rằng dịch vụ phụ thuộc `dep.service` vẫn sẽ hoạt động `active (running)` cho dù `default_simple_type.service` nằm trong `Requires=` khởi động không thành công `failed`.
+, chính vì điều này đã làm lệch hướng kết quả được dự đoán từ ban đầu, dịch vụ phụ thuộc `dep.service` vẫn sẽ hoạt động `active (running)` cho dù `default_simple_type.service` nằm trong `Requires=` khởi động không thành công `failed`.
 ```shell
 [root@huyvl-linux-training ~]# systemctl status default_simple_type.service
 * default_simple_type.service
@@ -3097,7 +3097,8 @@ Hint: Some lines were ellipsized, use -l to show in full.
 
 Với `Type=forking` cũng sẽ có kết quả tương tự `Type=oneshot`. Khi dừng một trong những `Requires=` thì `systemd` cũng tự động dừng `unit` `dep.service`.
 ```shell
-[root@huyvl-linux-training system]# systemctl is-active dep.service  active
+[root@huyvl-linux-training system]# systemctl is-active dep.service 
+active
 [root@huyvl-linux-training system]# systemctl is-active nginx.service
 active
 [root@huyvl-linux-training system]# cat dep.service
