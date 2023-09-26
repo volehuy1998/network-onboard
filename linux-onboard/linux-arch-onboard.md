@@ -20,7 +20,7 @@
         - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
         - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(UPDATED 10/09/2023)](#sgid_permission)
         - [2.5.4.4 - Quyền đặc biệt Sticky bit(UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 24/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 26/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
@@ -28,7 +28,7 @@
     - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
     - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)](#automatically_run_process)
     - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 24/09/2023)](#ctl_sys_svc)
-    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 24/09/2023)](#unit)
+    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 26/09/2023)](#unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2797,9 +2797,134 @@ Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông
 
 Để thay đổi nội dung cho các tệp cấu hình `unit` có 2 cách, mỗi cách đều có ưu nhược điểm riêng:
 
-- Bô sung đối với cấu hình có sẵn ở `/usr/lib/systemd/system/` cần tạo một thư mục `drop-in` với cách đặt tên đơn giản `/etc/systemd/system/<tên unit>.<loại dịch vụ>.d/` như ví dụ trên về `/etc/systemd/system/nginx.service.d/`. Khi cập nhật gói phần mềm thì nó cũng sẽ tự động áp dụng những bổ sung này kèm theo những thay đổi trong cấu hình cập nhật.
+- Bô sung đối với cấu hình có sẵn ở `/usr/lib/systemd/system/` cần tạo một thư mục `drop-in` với cách đặt tên đơn giản `/etc/systemd/system/<tên unit>.<loại dịch vụ>.d/` như ví dụ bên trên về `/etc/systemd/system/nginx.service.d/`. Khi cập nhật gói phần mềm thì nó cũng sẽ tự động áp dụng những bổ sung này kèm theo những thay đổi trong cấu hình cập nhật.
 
 - Tạo một bản sao `unit` từ `/usr/lib/systemd/system/` vào đặt nó ở `/etc/systemd/system/`. Khi cập nhật gói phần mềm thì những thay đổi của bản cập nhật sẽ không được áp dụng. Nói cách khác đây là cách ghi đè toàn bộ cấu hình.
+
+Tương tự đối với các thư mục định dạng `<tên dịch vụ>.<loại dịch vụ>.wants/` và `<tên dịch vụ>.<loại dịch vụ>.requires/` cũng có thể được tạo một cách thủ công. Chỉ khác với `drop-in` rằng chúng chỉ chứa các tệp `symbolic link` trỏ tới những tệp `unit` phụ thuộc. Những `symbolic link` được tạo một cách tự động trong quá trình cài đặt (tức trước khi khởi chạy) thông qua tùy chọn `[Install]` hoặc ngay trong lúc chạy với tùy chọn `Unit`. Với ví dụ `greet.socket` ở phần đầu [Tiến trình hệ thống tự khởi chạy](#automatically_run_process).
+```shell
+[root@huyvl-linux-training ~]# ll -l /etc/systemd/system/sockets.target.wants
+total 0
+lrwxrwxrwx 1 root root 31 Sep 19 16:35 echo.socket -> /etc/systemd/system/echo.socket
+lrwxrwxrwx 1 root root 32 Sep 19 17:04 greet.socket -> /etc/systemd/system/greet.socket
+[root@huyvl-linux-training ~]#
+```
+
+Về cơ bản các tệp `unit` thường có `3` phần:
+
+- `[Unit]` được sử dụng chung bởi tất cả các loại `unit`. Những thông tin nằm trong đây được sử dụng để mô tả cung cấp thông tin, định nghĩa những hành vi và nêu rõ cách thức phụ thuộc vào các danh sách `unit` khác.
+
+  | Tùy chọn trong mục `[Unit]` | Mô tả |
+  | --- | --- |
+  | `Description` | Mô tả về ý nghĩa của loại `unit` đang định nghĩa, mục đích sử dụng, ... đoạn văn bản mô tả này sẽ được hiện thị khi lệnh `systemctl status` được gọi. |
+  | `Documentation` | Cung cấp danh sách các địa chỉ tài liệu. |
+  | `After` | Xác định thứ tự được khởi động, cụ thể nó sẽ được khởi động sau các `unit` được định nghĩa trong `After=`. |
+  | `Before` | Ngược lại với `After=`. |
+  | `Requires` | Cho biết những `unit` phụ thuộc mà không yêu cầu thứ tự kích hoạt, khi `unit` được kích hoạt thì tất cả các `unit` trong `Requires=` cũng sẽ được khởi động đồng thời mà không hề có trì hoãn hay thứ tự giữa chúng, nếu có `unit` nào đó trong `Requires=` không thể kích hoạt thì `unit` này cũng sẽ không được kích hoạt. |
+  | `Wants` | Giống với `Requires=` nhưng không có tính bắt buộc, `unit` này sẽ không bị ảnh ảnh hưởng cho dù có bất kỳ `unit` nào trong danh sách `Wants=` bị kích hoạt thất bại. Tùy chọn này được khuyến nghị dùng hơn `Requires=`. |
+  | `Conflicts` | Còn được gọi là phụ thuộc loại `negative`, ngược lại với `Requires=` là phụ thuộc `positive`. Khi có bất kỳ `unit` nào trong `Conflicts=` kích hoạt thì `unit` này sẽ tự động bị `systemd` cho dừng. |
+
+- `[<unit type>]` chỉ định loại `unit`. Ví dụ như loại `*.service` sẽ khai báo `[Service]`, loại `*.socket` sẽ khai báo `[Socket]`, ...
+- `[Install]` chứa những thông tin về cách thức tiến hành cài đặt `unit` vào hệ thống được sử dụng bởi `systemctl enable` và `systemctl disable`.
+
+  | Tùy chọn trong mục `[Install]` | Mô tả |
+  | --- | --- |
+  | `Alias` | Cung cấp danh sách các bí danh, tên gọi khác cho `unit`. Ngoại trừ lệnh `systemctl enable` thì hầu hết các lệnh còn lại đều có thể sử dụng với bí danh này. |
+  | `RequiredBy` | Định nghĩa tùy chọn này sẽ tạo ra thư mục `*.requires/`, giống như `Requires=` nhưng nó nằm ở trạng thái bị động và đương nhiên cũng mang tính chặt chẽ nghiêm ngặt của `Requires=`, tức hãy dừng các `unit` khác nếu dịch vụ sau đây không khởi động được. |
+  | `WantedBy` | Định nghĩa này sẽ tạo ra thư mục `*.wants/`, cũng mang hàm ý giống như `Wants=` nhưng ở trạng thái bị động, tức khi khởi động máy tính hãy "thử" chạy `unit` này. Và tùy chọn này được khuyến nghị dùng hơn là `RequiredBy=`, thực tế rõ ràng ví dụ khi `MariaDB` hoặc dịch vụ nào đó khởi động không thành công thì chúng không có nghĩa buộc máy tính phải dừng lại. |
+  | `Also` | Chỉ định danh sách các `unit` sẽ được cài đặt hoặc gỡ cài đặt cùng với `unit` này.
+
+Những lưu ý cần thiết:
+
+- Phân biệt giữa `Requires/Wants` và `RequiredBy/WantedBy` chủ yếu dựa vào `2` yếu tố `know` (chủ động) và `aware` (bị động). Ví dụ đổi vai trò giữa việc khởi động máy tính và khởi động máy chủ `nginx` để nhận biết được cách sử dụng:
+  ```shell
+  [Install]
+  WantedBy=multi-user.target
+  ```
+  ```shell
+  [Unit]
+  Wants=nginx.service
+  ```
+  , mặc dù cả 2 cách đều không sai nhưng cách thứ 2 không có ý nghĩa vì `nginx` hiểu rất rõ ràng sự tồn tại của nó với việc khởi động máy tính đã được thiết lập từ trước.
+
+- Người dùng hoàn toàn có thể sử dụng `After/Before` mà không cần `Requires/Wants`.
+
+Ví dụ khởi động một dịch vụ khi nhận thấy tín hiệu `network` hoạt động:
+```shell
+[Unit]
+Description=Hello World
+After=network.target
+```
+
+Sử dụng `Type=simple` để thấy được rằng `PID` của `Process` và `Main PID` như nhau, giống như việc dùng lệnh mà không có hậu tố chạy nền `&`.
+```shell
+[root@huyvl-linux-training system]# cat simple_type.service
+[Service]
+Type=simple
+ExecStart=/bin/false
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl start simple_type.service; systemctl status simple_type.service
+* simple_type.service
+   Loaded: loaded (/etc/systemd/system/simple_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Mon 2023-09-25 23:12:35 +07; 3ms ago
+  Process: 13235 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+ Main PID: 13235 (code=exited, status=1/FAILURE)
+
+Sep 25 23:12:35 huyvl-linux-training.novalocal systemd[1]: Started ...
+Sep 25 23:12:35 huyvl-linux-training.novalocal systemd[1]: simple_t...
+Sep 25 23:12:35 huyvl-linux-training.novalocal systemd[1]: Unit sim...
+Sep 25 23:12:35 huyvl-linux-training.novalocal systemd[1]: simple_t...
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@huyvl-linux-training system]# systemctl start simple_type.service; systemctl status simple_type.service
+* simple_type.service
+   Loaded: loaded (/etc/systemd/system/simple_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Mon 2023-09-25 23:12:38 +07; 3ms ago
+  Process: 13256 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+ Main PID: 13256 (code=exited, status=1/FAILURE)
+
+Sep 25 23:12:38 huyvl-linux-training.novalocal systemd[1]: Started ...
+Sep 25 23:12:38 huyvl-linux-training.novalocal systemd[1]: simple_t...
+Sep 25 23:12:38 huyvl-linux-training.novalocal systemd[1]: Unit sim...
+Sep 25 23:12:38 huyvl-linux-training.novalocal systemd[1]: simple_t...
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@huyvl-linux-training system]#
+```
+
+Khác với `Type=simple` thì `Type=forking` sẽ tạo ra một tiến trình con để thực thi lệnh trong `ExecStart=` vì thế `PID` của `Process` và `Main PID`(dịch vụ) không giống nhau.
+```shell
+[root@huyvl-linux-training system]# cat forking_type.service
+[Service]
+Type=forking
+ExecStart=/bin/false
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart forking_type.service; systemctl status forking_type.service
+Job for forking_type.service failed because the control process exited with error code. See "systemctl status forking_type.service" and "journalctl -xe" for details.
+* forking_type.service
+   Loaded: loaded (/etc/systemd/system/forking_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Mon 2023-09-25 23:45:21 +07; 4ms ago
+  Process: 17978 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+ Main PID: 17767 (code=exited, status=1/FAILURE)
+
+Sep 25 23:45:21 huyvl-linux-training.novalocal systemd[1]: Starting forking_type.service...
+Sep 25 23:45:21 huyvl-linux-training.novalocal systemd[1]: forking_type.service: control process exited, code=exited status=1
+Sep 25 23:45:21 huyvl-linux-training.novalocal systemd[1]: Failed to start forking_type.service.
+Sep 25 23:45:21 huyvl-linux-training.novalocal systemd[1]: Unit forking_type.service entered failed state.
+Sep 25 23:45:21 huyvl-linux-training.novalocal systemd[1]: forking_type.service failed.
+[root@huyvl-linux-training system]# systemctl restart forking_type.service; systemctl status forking_type.service
+Job for forking_type.service failed because the control process exited with error code. See "systemctl status forking_type.service" and "journalctl -xe" for details.
+* forking_type.service
+   Loaded: loaded (/etc/systemd/system/forking_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Mon 2023-09-25 23:45:22 +07; 4ms ago
+  Process: 17995 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+ Main PID: 17767 (code=exited, status=1/FAILURE)
+
+Sep 25 23:45:22 huyvl-linux-training.novalocal systemd[1]: Starting forking_type.service...
+Sep 25 23:45:22 huyvl-linux-training.novalocal systemd[1]: forking_type.service: control process exited, code=exited status=1
+Sep 25 23:45:22 huyvl-linux-training.novalocal systemd[1]: Failed to start forking_type.service.
+Sep 25 23:45:22 huyvl-linux-training.novalocal systemd[1]: Unit forking_type.service entered failed state.
+Sep 25 23:45:22 huyvl-linux-training.novalocal systemd[1]: forking_type.service failed.
+[root@huyvl-linux-training system]#
+```
 
 Khi một dịch vụ nào đó được khai báo nằm trong danh sách `Wants=` không được tìm thấy thì dịch vụ phụ thuộc `dep.service` vẫn có thể khởi động.
 ```shell
@@ -2970,7 +3095,7 @@ Hint: Some lines were ellipsized, use -l to show in full.
 [root@huyvl-linux-training ~]#
 ```
 
-Với `Type=forking` cũng sẽ có kết quả tương tự `Type=oneshot`. Khi dừng một trong những `Require=` thì `systemd` cũng tự động dừng `unit` `dep.service`.
+Với `Type=forking` cũng sẽ có kết quả tương tự `Type=oneshot`. Khi dừng một trong những `Requires=` thì `systemd` cũng tự động dừng `unit` `dep.service`.
 ```shell
 [root@huyvl-linux-training system]# systemctl is-active dep.service  active
 [root@huyvl-linux-training system]# systemctl is-active nginx.service
