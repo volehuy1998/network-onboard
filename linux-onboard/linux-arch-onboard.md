@@ -2800,3 +2800,192 @@ Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông
 - Bô sung đối với cấu hình có sẵn ở `/usr/lib/systemd/system/` cần tạo một thư mục `drop-in` với cách đặt tên đơn giản `/etc/systemd/system/<tên unit>.<loại dịch vụ>.d/` như ví dụ trên về `/etc/systemd/system/nginx.service.d/`. Khi cập nhật gói phần mềm thì nó cũng sẽ tự động áp dụng những bổ sung này kèm theo những thay đổi trong cấu hình cập nhật.
 
 - Tạo một bản sao `unit` từ `/usr/lib/systemd/system/` vào đặt nó ở `/etc/systemd/system/`. Khi cập nhật gói phần mềm thì những thay đổi của bản cập nhật sẽ không được áp dụng. Nói cách khác đây là cách ghi đè toàn bộ cấu hình.
+
+Khi một dịch vụ nào đó được khai báo nằm trong danh sách `Wants=` không được tìm thấy thì dịch vụ phụ thuộc `dep.service` vẫn có thể khởi động.
+```shell
+[root@huyvl-linux-training system]# cat dep.service
+[Unit]
+Wants=not_exist.service
+
+[Service]
+ExecStart=/usr/bin/echo "Hello my name is dependency"
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart dep.service
+[root@huyvl-linux-training system]# systemctl status dep.service
+* dep.service
+   Loaded: loaded (/etc/systemd/system/dep.service; static; vendor preset: disabled)
+   Active: inactive (dead)
+
+Sep 26 09:52:35 huyvl-linux-training.novalocal systemd[1]: Started dep.service.
+Sep 26 09:52:35 huyvl-linux-training.novalocal echo[10440]: Hello my name is dependency
+```
+
+Trái ngược với `Wants=` thì `Requires=` có yêu cầu nghiêm ngặt hơn nếu muốn dịch vụ phụ thuộc có thể khởi động.
+```shell
+[root@huyvl-linux-training system]# cat dep.service
+[Unit]
+Requires=not_exist.service
+
+[Service]
+ExecStart=/usr/bin/echo "Hello my name is dependency"
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart dep.service
+Failed to restart dep.service: Unit not found.
+[root@huyvl-linux-training system]#
+```
+
+Xem xét về trường hợp nâng cao có `2` dịch vụ, ví dụ sau đầu tiên có `Type=simple` (mặc định nếu không định nghĩa `Type=` thì `systemd` sẽ  hiểu là `Type=simple`) với một dịch vụ khác có vai trò phụ thuộc vào nó.
+```shell
+[root@huyvl-linux-training system]# cat default_simple_type.service
+[Service]
+Type=simple
+ExecStart=/bin/false
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# cat dep.service
+[Unit]
+After=default_simple_type.service
+Requires=default_simple_type.service
+
+[Service]
+ExecStart=/usr/local/bin/say_hello.sh
+[root@huyvl-linux-training system]# cat /usr/local/bin/say_hello.sh
+#!/bin/bash
+for i in {1..1000}; do echo "hello" && sleep 1; done
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart dep.service
+[root@huyvl-linux-training system]#
+```
+, nội dung `ExecStart=/bin/false` để nói rằng được thiết lập cho kịch bản dịch vụ này luôn khởi động thất bại. Quan sát nhật ký của `systemd` cho thấy nó đã khởi động `default_simple_type.service` và `dep.service` cùng lúc
+```shell
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Started dep.service.
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service: main process exited, code=exited, status=1/FAILURE
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Unit default_simple_type.service entered failed state.
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service failed.
+```
+, chính vì điều này đã làm lệch hướng kết quả được dự đoán từ ban đầu rằng dịch vụ phụ thuộc `dep.service` vẫn sẽ hoạt động `active (running)` cho dù `default_simple_type.service` nằm trong `Requires=` khởi động không thành công `failed`.
+```shell
+[root@huyvl-linux-training ~]# systemctl status default_simple_type.service
+* default_simple_type.service
+   Loaded: loaded (/etc/systemd/system/default_simple_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Tue 2023-09-26 10:21:51 +07; 46s ago
+  Process: 27060 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+ Main PID: 27060 (code=exited, status=1/FAILURE)
+
+Sep 26 10:21:51 huyvl-linux-training.novalocal systemd[1]: Started default_simple_type.service.
+Sep 26 10:21:51 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service: main process exited...URE
+Sep 26 10:21:51 huyvl-linux-training.novalocal systemd[1]: Unit default_simple_type.service entered failed state.
+Sep 26 10:21:51 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service failed.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@huyvl-linux-training ~]#
+```
+```shell
+[root@huyvl-linux-training ~]# systemctl status dep.service
+* dep.service
+   Loaded: loaded (/etc/systemd/system/dep.service; static; vendor preset: disabled)
+   Active: active (running) since Tue 2023-09-26 10:21:51 +07; 1min 7s ago
+ Main PID: 27061 (say_hello.sh)
+   CGroup: /system.slice/dep.service
+           |-27061 /bin/bash /usr/local/bin/say_hello.sh
+           `-27695 sleep 1
+
+Sep 26 10:22:49 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:50 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:51 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:52 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:53 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:54 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:55 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:56 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:57 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+Sep 26 10:22:58 huyvl-linux-training.novalocal say_hello.sh[27061]: hello
+[root@huyvl-linux-training ~]#
+```
+, mối quan hệ chặt chẽ giữa `Requires=` và `Type=simple` được biểu diễn như sau, dịch vụ đầu tiên là `Type=simple` cùng với các dịch vụ phụ thuộc phía dưới sẽ được khởi động cùng lúc (màu xanh).
+
+<div style="text-align:center"><img src="../images/simple_and_dep.png" /></div>
+
+, khi thiết lập `Type=oneshot` thì dịch vụ phụ thuộc sẽ chờ cho đến khi nó kết thúc (màu đỏ). `Type=oneshot` về mặt bản chất cũng tương tự như `Type=simple` khi `PID` của `Process` và `Main PID` giống nhau.
+
+<div style="text-align:center"><img src="../images/oneshot_and_dep.png" /></div>
+
+, sửa đổi từ `Type=simple` thành `Type=oneshot` như sau:
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "sleep 5 && /bin/false"
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# cat dep.service
+[Unit]
+Requires=oneshot_type.service
+After=oneshot_type.service
+
+[Service]
+ExecStart=/usr/local/bin/say_hello.sh
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart dep.service
+A dependency job for dep.service failed. See 'journalctl -xe' for details.
+[root@huyvl-linux-training system]#
+```
+, nhận thấy kết quả như mong muốn rằng `dep.service` khởi động không thành công `inactive (dead)` với vì dịch vụ phụ thuộc khởi động thất bại `failed` sau `5s` kể từ `11:10:36` đến `11:10:41`.
+```shell
+Sep 26 11:10:36 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service: main process exited, code=exited, status=1/FAILURE
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: Failed to start oneshot_type.service.
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: Dependency failed for dep.service.
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: Job dep.service/start failed with result 'dependency'.
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: Unit oneshot_type.service entered failed state.
+Sep 26 11:10:41 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service failed.
+```
+```shell
+[root@huyvl-linux-training ~]# systemctl status default_simple_type.service dep.service
+* default_simple_type.service
+   Loaded: loaded (/etc/systemd/system/default_simple_type.service; static; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Tue 2023-09-26 10:23:15 +07; 4min 21s ago
+ Main PID: 27854 (code=exited, status=1/FAILURE)
+
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Started default_simple_type.service.
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service: main process exited...URE
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: Unit default_simple_type.service entered failed state.
+Sep 26 10:23:15 huyvl-linux-training.novalocal systemd[1]: default_simple_type.service failed.
+
+* dep.service
+   Loaded: loaded (/etc/systemd/system/dep.service; static; vendor preset: disabled)
+   Active: inactive (dead)
+
+Sep 26 10:25:15 huyvl-linux-training.novalocal systemd[1]: Stopping dep.service...
+Sep 26 10:25:15 huyvl-linux-training.novalocal systemd[1]: Stopped dep.service.
+Sep 26 10:25:15 huyvl-linux-training.novalocal systemd[1]: Dependency failed for dep.service.
+Sep 26 10:25:15 huyvl-linux-training.novalocal systemd[1]: Job dep.service/start failed with result 'dependency'.
+Sep 26 10:25:27 huyvl-linux-training.novalocal systemd[1]: Dependency failed for dep.service.
+Sep 26 10:25:27 huyvl-linux-training.novalocal systemd[1]: Job dep.service/start failed with result 'dependency'.
+Sep 26 10:25:41 huyvl-linux-training.novalocal systemd[1]: Dependency failed for dep.service.
+Sep 26 10:25:41 huyvl-linux-training.novalocal systemd[1]: Job dep.service/start failed with result 'dependency'.
+Sep 26 10:27:06 huyvl-linux-training.novalocal systemd[1]: Dependency failed for dep.service.
+Sep 26 10:27:06 huyvl-linux-training.novalocal systemd[1]: Job dep.service/start failed with result 'dependency'.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@huyvl-linux-training ~]#
+```
+
+Với `Type=forking` cũng sẽ có kết quả tương tự `Type=oneshot`. Khi dừng một trong những `Require=` thì `systemd` cũng tự động dừng `unit` `dep.service`.
+```shell
+[root@huyvl-linux-training system]# systemctl is-active dep.service  active
+[root@huyvl-linux-training system]# systemctl is-active nginx.service
+active
+[root@huyvl-linux-training system]# cat dep.service
+[Unit]
+Requires=nginx.service
+After=nginx.service
+
+[Service]
+ExecStart=/usr/local/bin/say_hello.sh
+[root@huyvl-linux-training system]# systemctl stop nginx.service
+[root@huyvl-linux-training system]# systemctl is-active nginx.service
+unknown
+[root@huyvl-linux-training system]# systemctl is-active dep.service
+unknown
+[root@huyvl-linux-training system]#
+```
