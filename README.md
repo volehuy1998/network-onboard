@@ -40,3 +40,6 @@
     - 2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)
     - 2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 24/09/2023)
     - 2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 26/09/2023)
+        - 2.6.8.1 - Loại `unit` phổ biến `*.service` (:heavy_plus_sign:UPDATED 26/09/2023)
+        - 2.6.8.2 - Loại `unit` về `*.socket` (:heavy_plus_sign:UPDATED 26/09/2023)
+        - 2.6.8.3 - Loại `unit` về `*.path` (:heavy_plus_sign:UPDATED 26/09/2023)

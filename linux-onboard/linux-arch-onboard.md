@@ -16,11 +16,11 @@
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
     - [2.5.4 - Tổng quan về quyền trên tệp tin (UPDATED 15/09/2023)](#file_permission)
-        - [2.5.4.1 - Quản lý quyền tệp tin (UPDATED 13/09/2023)](#file_permission_management)
-        - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
-        - [2.5.4.3 - Quyền đặc biệt dành cho nhóm(UPDATED 10/09/2023)](#sgid_permission)
-        - [2.5.4.4 - Quyền đặc biệt Sticky bit(UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 26/09/2023)](#linux_process)
+      - [2.5.4.1 - Quản lý quyền tệp tin (UPDATED 13/09/2023)](#file_permission_management)
+      - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
+      - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
+      - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 28/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
@@ -28,7 +28,10 @@
     - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
     - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)](#automatically_run_process)
     - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 24/09/2023)](#ctl_sys_svc)
-    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 26/09/2023)](#unit)
+    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 28/09/2023)](#unit)
+      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:heavy_plus_sign:UPDATED 28/09/2023)](#service_unit)
+      - [2.6.8.2 - Loại `unit` về `*.socket` (:heavy_plus_sign:UPDATED 28/09/2023)](#socket_unit)
+      - [2.6.8.3 - Loại `unit` về `*.path` (:heavy_plus_sign:UPDATED 28/09/2023)](#path_unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2860,7 +2863,7 @@ Ví dụ khởi động một dịch vụ khi nhận thấy tín hiệu `network
 Description=Hello World
 After=network.target
 ```
-
+#### <a name="service_unit"></a>Loại dịch vụ phổ biến `*.service`
 Sử dụng `Type=simple` để thấy được rằng `PID` của `Process` và `Main PID` như nhau, giống như việc dùng lệnh mà không có hậu tố chạy nền `&`.
 ```shell
 [root@huyvl-linux-training system]# cat simple_type.service
@@ -3120,6 +3123,9 @@ unknown
 unknown
 [root@huyvl-linux-training system]#
 ```
+
+
+
 Bảng trạng thái giữa `Type=simple` và `Type=oneshot` như sau:
 
 | Loại `Type=` | Trước khi kích hoạt | Trong lúc kích hoạt | Sau khi kích hoạt | 
@@ -3229,3 +3235,83 @@ Sep 28 16:40:43 huyvl-linux-training bash: Clean resource
 Thu Sep 28 16:41:25 +07 2023
 [root@huyvl-linux-training ~]#
 ```
+Sử dụng `Drop-In` kèm với tùy chọn `RestartSec=` để khi dịch vụ `httpd` khởi động thì sẽ trì hoãn một khoảng thời gian (giây) trước khi khởi chạy `ExecStart=`, kiểm tra trạng thái sẽ thấy `"Processing requests..."`.
+```shell
+[root@huyvl-linux-training ~]# yum install httpd -y &>/dev/null
+[root@huyvl-linux-training ~]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+     Docs: man:httpd(8)
+           man:apachectl(8)
+[root@huyvl-linux-training ~]# mkdir -v /etc/systemd/system/httpd.service.d
+mkdir: created directory ‘/etc/systemd/system/httpd.service.d’
+[root@huyvl-linux-training ~]# cd /etc/systemd/system/httpd.service.d
+[root@huyvl-linux-training httpd.service.d]# touch 00-delay.conf
+[root@huyvl-linux-training httpd.service.d]# vi 00-delay.conf
+[root@huyvl-linux-training httpd.service.d]# cat 00-delay.conf
+[Service]
+RestartSec=30
+[root@huyvl-linux-training httpd.service.d]#
+[root@huyvl-linux-training httpd.service.d]# systemctl daemon-reload
+[root@huyvl-linux-training httpd.service.d]# systemctl start httpd
+[root@huyvl-linux-training httpd.service.d]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/httpd.service.d
+           └─00-delay.conf
+   Active: active (running) since Thu 2023-09-28 22:46:37 +07; 4s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+ Main PID: 4549 (httpd)
+   Status: "Processing requests..."
+   CGroup: /system.slice/httpd.service
+           ├─4549 /usr/sbin/httpd -DFOREGROUND
+           ├─4550 /usr/sbin/httpd -DFOREGROUND
+           ├─4551 /usr/sbin/httpd -DFOREGROUND
+           ├─4552 /usr/sbin/httpd -DFOREGROUND
+           ├─4553 /usr/sbin/httpd -DFOREGROUND
+           └─4554 /usr/sbin/httpd -DFOREGROUND
+
+Sep 28 22:46:37 huyvl-linux-training.novalocal systemd[1]: Starting The Apache HTTP Server...
+Sep 28 22:46:37 huyvl-linux-training.novalocal systemd[1]: Started The Apache HTTP Server.
+```
+Tiếp tục sử dụng `Drop-In` với tùy chọn `ExecStartPre=` và `ExecStartPost=` để hiệu chỉnh hành vi trước và sau khi thực hiện `ExecStart=` của `httpd` như sau:
+```shell
+[root@huyvl-linux-training httpd.service.d]# vi 01-start-callback.conf
+[root@huyvl-linux-training httpd.service.d]# cat 01-start-callback.conf
+[Service]
+ExecStartPre=/bin/bash -c "echo Handle before start httpd && sleep 5"
+ExecStartPost=/bin/bash -c "echo Handle after start httpd && sleep 5"
+[root@huyvl-linux-training httpd.service.d]# systemctl daemon-reload
+[root@huyvl-linux-training httpd.service.d]# systemctl restart httpd
+[root@huyvl-linux-training httpd.service.d]# systemctl status httpd -l
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/httpd.service.d
+           └─00-delay.conf, 01-start-callback.conf
+   Active: active (running) since Thu 2023-09-28 22:55:41 +07; 5s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 4826 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+  Process: 4844 ExecStartPost=/bin/bash -c echo Handle after start httpd && sleep 5 (code=exited, status=0/SUCCESS)
+  Process: 4831 ExecStartPre=/bin/bash -c echo Handle before start httpd && sleep 5 (code=exited, status=0/SUCCESS)
+ Main PID: 4836 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─4836 /usr/sbin/httpd -DFOREGROUND
+           ├─4839 /usr/sbin/httpd -DFOREGROUND
+           ├─4840 /usr/sbin/httpd -DFOREGROUND
+           ├─4841 /usr/sbin/httpd -DFOREGROUND
+           ├─4842 /usr/sbin/httpd -DFOREGROUND
+           └─4843 /usr/sbin/httpd -DFOREGROUND
+
+Sep 28 22:55:31 huyvl-linux-training.novalocal systemd[1]: Stopped The Apache HTTP Server.
+Sep 28 22:55:31 huyvl-linux-training.novalocal systemd[1]: Starting The Apache HTTP Server...
+Sep 28 22:55:31 huyvl-linux-training.novalocal bash[4831]: Handle before start httpd
+Sep 28 22:55:36 huyvl-linux-training.novalocal bash[4844]: Handle after start httpd
+Sep 28 22:55:41 huyvl-linux-training.novalocal systemd[1]: Started The Apache HTTP Server.
+[root@huyvl-linux-training httpd.service.d]#
+```
+#### <a name="service_unit"></a>Loại `unit` về `*.socket`
+#### <a name="path_unit"></a>Loại `unit` về `*.path`
