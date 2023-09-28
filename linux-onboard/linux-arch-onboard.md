@@ -3120,7 +3120,7 @@ unknown
 unknown
 [root@huyvl-linux-training system]#
 ```
-Sự khác biệt về trạng thái trong lúc kích hoạt giữa `Type=simple` và `Type=oneshot` là lý do để các `unit` phụ thuộc bắt buộc phải chờ `Type=oneshot` kết thúc, và không phải chờ `Type=simple` kết thúc. Tùy chọn `RemainAfterExit=` của `Type=oneshot` sẽ làm cho trạng thái kích hoạt dịch vụ khác nhau, cụ thể là làm thay đổi hành vi khác đi một chút.
+Bảng trạng thái giữa `Type=simple` và `Type=oneshot` như sau:
 
 | Loại `Type=` | Trước khi kích hoạt | Trong lúc kích hoạt | Sau khi kích hoạt | 
 | --- | --- | --- | --- |
