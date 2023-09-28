@@ -22,12 +22,12 @@
       - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
 - [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 28/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
-    - [2.6.2 - Kiểm soát các `Job` (:heavy_plus_sign:UPDATED 17/09/2023)](#control_job)
-    - [2.6.3 - Kết thúc tiến trình (:heavy_plus_sign:UPDATED 18/09/2023)](#kill_process)
-    - [2.6.4 - Dịch vụ hạ tầng (:heavy_plus_sign:UPDATED 21/09/2023)](#infra_service)
-    - [2.6.5 - Tổng quan về `systemd` (:heavy_plus_sign:UPDATED 19/09/2023)](#systemd)
-    - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:heavy_plus_sign:UPDATED 22/09/2023)](#automatically_run_process)
-    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:heavy_plus_sign:UPDATED 24/09/2023)](#ctl_sys_svc)
+    - [2.6.2 - Kiểm soát các `Job` (:arrow_up:UPDATED 17/09/2023)](#control_job)
+    - [2.6.3 - Kết thúc tiến trình (:arrow_up:UPDATED 18/09/2023)](#kill_process)
+    - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
+    - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 19/09/2023)](#systemd)
+    - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:arrow_up:UPDATED 22/09/2023)](#automatically_run_process)
+    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 24/09/2023)](#ctl_sys_svc)
     - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 28/09/2023)](#unit)
       - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:heavy_plus_sign:UPDATED 28/09/2023)](#service_unit)
       - [2.6.8.2 - Loại `unit` về `*.socket` (:heavy_plus_sign:UPDATED 28/09/2023)](#socket_unit)
@@ -1950,7 +1950,7 @@ Kết thúc `job` đang chạy `background` như sau:
 [root@huyvl-linux-training ~]#
 ```
 ## <a name="infra_service"></a>Dịch vụ hạ tầng
-Một trong những thành phần quan trọng nhất của bất kỳ hệ diều hành nào kế thừa `UNIX` là tiến trình khởi tạo hệ thống. Đối với `Linux` nó được khởi chạy bên trong `kernel` và cũng là tiến trình được khởi tạo đầu tiên. Trong lịch sử phát triển `UNIX` và `Linux` có rất nhiều hệ thống khởi tạo được phát minh, chúng sau đó được nhanh chóng phổ biến và không may bị lụi tàn. Cụ thể để khởi chạy quá trình `Init` đã được nêu rất rõ trong mã nguồn của `Linux kernel`, trong những tệp thực thi mà `Linux kernel` yêu cầu gồm có:
+Một trong những thành phần quan trọng nhất của bất kỳ hệ điều hành nào kế thừa `UNIX` là tiến trình khởi tạo hệ thống. Đối với `Linux` nó được khởi chạy bên trong `kernel` và cũng là tiến trình được khởi tạo đầu tiên. Trong lịch sử phát triển `UNIX` và `Linux` có rất nhiều hệ thống khởi tạo được phát minh, chúng sau đó được nhanh chóng phổ biến và không may bị lụi tàn. Cụ thể để khởi chạy quá trình `Init` đã được nêu rất rõ trong mã nguồn của `Linux kernel`, trong những tệp thực thi mà `Linux kernel` yêu cầu gồm có:
 ```c
   // https://github.com/torvalds/linux/blob/master/init/main.c#L1493-L1500
   ...
@@ -2130,7 +2130,7 @@ SUB    = The low-level unit activation state, values depend on unit type.
 To show all installed unit files use 'systemctl list-unit-files'.
 [root@huyvl-linux-training ~]#
 ```
-Nếu chỉ sử dụng `systemctl` mà không có bất kỳ đối số nào kèm theo thì hệ thống sẽ liệt kê các `unit` thỏa mãn vừa `loaded` vừa `active` như sau:
+Nếu chỉ sử dụng `systemctl` mà không có bất kỳ đối số nào kèm theo thì hệ thống sẽ liệt kê các `unit` thỏa mãn cả `loaded` và `active` như sau:
 ```shell
 [root@huyvl-linux-training ~]# systemctl
 UNIT                                                                        LOAD   ACTIVE SUB       DESCRIPTION
@@ -2260,7 +2260,7 @@ To show all installed unit files use 'systemctl list-unit-files'.
 [root@huyvl-linux-training ~]#
 ```
 
-Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `socket`, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
+Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `*.socket` phía trên, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
 
 ```shell
 [root@huyvl-linux-training system]# cat passwd-mon.path
@@ -3188,7 +3188,7 @@ Sep 28 14:49:57 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.
 [root@huyvl-linux-training system]#
 ```
 
-Có một số loại dịch vụ thực hiện `ExecStart=` để khởi tạo các tài nguyên cần thiết và dọn dẹp chúng chỉ khi tắt hệ thống, nhu cầu này cần `RemainAfterExit=yes` và định nghĩa `ExecStop=`. Mục `[Install]` chỉ có ý nghĩa với các lệnh `systemctl enable` và `systemctl disable`, còn các lệnh còn lại chỉ áp dụng với `[Unit]` và `[Service]`. Vì `/etc/systemd/system/multi-user.target.wants/` đã có sẵn nên sẽ không tạo thêm khi `systemctl enable` với khai báo `WantedBy=multi-user.target` và sau đó tạo `symbol link` trong thư mục đó.
+Có một số loại dịch vụ thực hiện `ExecStart=` để khởi tạo các tài nguyên cần thiết và dọn dẹp chúng chỉ khi tắt hệ thống, nhu cầu này cần đồng thời `RemainAfterExit=yes` và `ExecStop=`. Mục `[Install]` chỉ có ý nghĩa với các lệnh `systemctl enable` và `systemctl disable`, còn các lệnh còn lại chỉ áp dụng với mục `[Unit]` và `[Service]`. Vì `/etc/systemd/system/multi-user.target.wants/` đã có sẵn nên sẽ không tạo thêm khi `systemctl enable` với khai báo `WantedBy=multi-user.target` và sau đó tạo `symbol link` trong thư mục đó. Ví dụ sau đây thể hiện một phần nói lên sự khác nhau giữa `soft/hard reboot` nói chung và sự đóng góp của `systemd` nói riêng.
 ```shell
 [root@huyvl-linux-training system]# cat oneshot_type.service
 [Service]
