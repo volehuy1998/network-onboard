@@ -3126,7 +3126,7 @@ Bảng trạng thái giữa `Type=simple` và `Type=oneshot` như sau:
 | --- | --- | --- | --- |
 | `Type=simple` | inactive (dead) | active (running) | inactive (dead) |
 | `Type=oneshot` | inactive (dead) | activating (start) | inactive (dead) |
-| `Type=oneshot` | inactive (dead) | activating (start) | active (exited) |
+| `Type=oneshot (RemainAfterExit=yes)` | inactive (dead) | activating (start) | active (exited) |
 
 Khi `RemainAfterExit=yes` thì `unit` sẽ không tự động thực hiện dừng dịch vụ ngay sau khi kết thúc `ExecStart=` mà cần phải có tác động:
 ```shell
