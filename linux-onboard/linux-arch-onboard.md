@@ -1968,7 +1968,7 @@ Có `3` sơ đồ chính triển khai khởi tạo hệ thống khởi tạo c�
 
 - Sơ đồ `System V Init (SysV)` là một tiến trình khởi tạo hệ thống vào những năm `1980` dành cho `UNIX`. Sau một số thay đổi nó đã được tích hợp vào `Linux`. Quy trình này hoạt động rất tốt trong nhiều năm đến mức phiên bản `RHEL5` đã đưa nó vào sử dụng. Nhược điểm của nó là không thể giải quyết trường hợp `hot-plug` các thiết bị, ví dụ khi hệ thống đang chạy, người dùng cắm thiết bị `USB` vào thì hệ thống không thể nhận biết được và hành xử với thiết bị này như thế nào. Thêm vào đó nó khởi chạy một cách tuần tự, điều này sẽ gây ra vấn đề nếu như kịch bản khởi tạo bị kẹt trong lúc thực thi thì tất cả những thành phần không liên quan sẽ phải chờ cho đến khi nó quá thời gian thực thi, điều này làm cho hệ thống bị chậm lại rất nhiều. Sử dụng `6` định mức để cung cấp việc kiểm soát. Trước `RHEL6` thì `SysV` được chọn bởi vì nó dễ sử dụng và có tính linh hoạt cao hơn sơ đồ khởi tạo truyền thống của `BSD`. Ví dụ khi quản trị viên cần vận hành hệ thống ở cấp độ thấp để thực hiện chuẩn đoán sửa lỗi ổ cứng thì cần khởi chạy với mức `1`; sử dụng mức `7` để khởi tạo giao diện thân thiện với người dùng.
 - Sơ đồ `Upstart` được phát triển bởi tập đoàn `Canonical` vào những năm `2009`. Phiên bản `RHEL6` thì `SysV` đã được thay thế bởi `Upstart`. Sơ đồ khởi tạo hệ thống này tân tiến hơn so với `SysV` ở chỗ nó chia thành các tác vụ khác nhau thay vì tuần tự, ví dụ như cho phép khởi chạy các dịch vụ một cách bất đồng bộ, tự động khởi động lại các dịch vụ bị hư hỏng.
-- Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` kế thừa `upstart` và phát triển thêm một số công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là:
+- Sơ đồ `systemd` là chương trình khởi tạo hệ thống hiện đại và ưu việt nhất tính đến thời điểm bây giờ. Các phiên bản `CentOS 7` và `RHEL7` trở đi đều sử dụng `systemd` làm mặc định. `systemd` phát triển nhiều loại công cụ để quản lý dịch vụ, thiết bị, ... hay cụ thể hơn là:
   - `*.service`: kiểm soát, các dịch vụ hệ thống. Người dùng thường biết đến loại này thông qua máy chủ web, `ssh`, ...
   - `*.target`: nhóm các đối tượng `unit` mà đã được định nghĩa trong hệ thống.
   - `*.device`: quản lý thiết bị.
@@ -1976,6 +1976,11 @@ Có `3` sơ đồ chính triển khai khởi tạo hệ thống khởi tạo c�
   - `*.timer`: lập lịch các tác vụ theo thời gian cụ thể.
   - `*.path`: theo dõi sự thay đổi của các tệp tin trong thư mục và đưa ra hướng xử lý.
   - `*.socket`: bất kể khi nào kết nối vào `socket` trên máy thì `systemd` sẽ truyền kết nối đó vào `unit`. Người dùng có thể trì hoãn hoặc xử lý khi có một kết nối được thiết lập đến `socket`.
+
+, và vì `systemd` cũng thế thừa từ `Upstart` nên về tổng quan có thể tóm gọn lại nhiều lợi thế như sau:
+  - `systemd` bảo vệ hệ thống một cách linh hoạt và nghiêm ngặt, không áp dụng điều này cho ứng dụng: giảm thiểu đặc quyền của ứng dụng, đảm bảo ứng dụng không thực hiện những hành vi chưa định nghĩa, kiểm soát việc liên lạc với ứng dụng.
+  - `systemd` được thiết kế để không tự thực hiện bất kỳ kiểm tra bảo mật, cấu hình các cơ chế bảo mật cho không gian `kernel`.
+  - `systemd` đảm bảo các `daemon` của người dùng có thể khởi chạy và kết thúc đúng cách.
 
 Nhận biết tiến trình khởi tạo hệ thống `systemd` ở `CentOS 7`:
 ```shell
@@ -3114,4 +3119,113 @@ unknown
 [root@huyvl-linux-training system]# systemctl is-active dep.service
 unknown
 [root@huyvl-linux-training system]#
+```
+Sự khác biệt về trạng thái trong lúc kích hoạt giữa `Type=simple` và `Type=oneshot` là lý do để các `unit` phụ thuộc bắt buộc phải chờ `Type=oneshot` kết thúc, và không phải chờ `Type=simple` kết thúc. Tùy chọn `RemainAfterExit=` của `Type=oneshot` sẽ làm cho trạng thái kích hoạt dịch vụ khác nhau, cụ thể là làm thay đổi hành vi khác đi một chút.
+
+| Loại `Type=` | Trước khi kích hoạt | Trong lúc kích hoạt | Sau khi kích hoạt | 
+| --- | --- | --- | --- |
+| `Type=simple` | inactive (dead) | active (running) | inactive (dead) |
+| `Type=oneshot` | inactive (dead) | activating (start) | inactive (dead) |
+| `Type=oneshot` | inactive (dead) | activating (start) | active (exited) |
+
+Khi `RemainAfterExit=yes` thì `unit` sẽ không tự động thực hiện dừng dịch vụ ngay sau khi kết thúc `ExecStart=` mà cần phải có tác động:
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo Hello World"
+RemainAfterExit=yes
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status oneshot_type.service -l
+* oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; static; vendor preset: disabled)
+   Active: active (exited) since Thu 2023-09-28 14:45:57 +07; 4s ago
+  Process: 31008 ExecStart=/bin/bash -c echo Hello World (code=exited, status=0/SUCCESS)
+ Main PID: 31008 (code=exited, status=0/SUCCESS)
+
+Sep 28 14:45:57 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Sep 28 14:45:57 huyvl-linux-training.novalocal bash[31008]: Hello World
+Sep 28 14:45:57 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.service.
+[root@huyvl-linux-training system]# systemctl stop oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status oneshot_type.service -l
+* oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; static; vendor preset: disabled)
+   Active: inactive (dead)
+
+Sep 28 14:45:57 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Sep 28 14:45:57 huyvl-linux-training.novalocal bash[31008]: Hello World
+Sep 28 14:45:57 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.service.
+Sep 28 14:46:07 huyvl-linux-training.novalocal systemd[1]: Stopped oneshot_type.service.
+[root@huyvl-linux-training system]#
+```
+
+Trái ngược với ví dụ trên thì `RemainAfterExit=no` (mặc định) sẽ cho phép tự động dừng dịch vụ ngay sau khi kết thúc `ExecStart=`, trước khi dừng dịch vụ thì thực hiện `ExecStop=` nếu có:
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo Hello World"
+ExecStop=/bin/bash -c "echo Goodbye World"
+RemainAfterExit=no
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status oneshot_type.service -l
+* oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; static; vendor preset: disabled)
+   Active: inactive (dead)
+
+Sep 28 14:49:57 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Sep 28 14:49:57 huyvl-linux-training.novalocal bash[404]: Hello World
+Sep 28 14:49:57 huyvl-linux-training.novalocal bash[406]: Goodbye World
+Sep 28 14:49:57 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.service.
+[root@huyvl-linux-training system]#
+```
+
+Có một số loại dịch vụ thực hiện `ExecStart=` để khởi tạo các tài nguyên cần thiết và dọn dẹp chúng chỉ khi tắt hệ thống, nhu cầu này cần `RemainAfterExit=yes` và định nghĩa `ExecStop=`. Mục `[Install]` chỉ có ý nghĩa với các lệnh `systemctl enable` và `systemctl disable`, còn các lệnh còn lại chỉ áp dụng với `[Unit]` và `[Service]`. Vì `/etc/systemd/system/multi-user.target.wants/` đã có sẵn nên sẽ không tạo thêm khi `systemctl enable` với khai báo `WantedBy=multi-user.target` và sau đó tạo `symbol link` trong thư mục đó.
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo Allocate memory; date >> /tmp/allocate"
+ExecStop=/bin/bash -c "echo Clean resource; date >> /tmp/clean"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl enable oneshot_type.service
+Created symlink from /etc/systemd/system/multi-user.target.wants/oneshot_type.service to /etc/systemd/system/oneshot_type.service.
+[root@huyvl-linux-training ~]# ll -l /etc/systemd/system/multi-user.target.wants/ | grep one
+lrwxrwxrwx  1 root root 40 Sep 28 16:39 oneshot_type.service -> /etc/systemd/system/oneshot_type.service
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training system]# systemctl start oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status oneshot_type.service -l
+● oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; enabled; vendor preset: disabled)
+   Active: active (exited) since Thu 2023-09-28 16:41:04 +07; 553ms ago
+  Process: 2459 ExecStop=/bin/bash -c echo Clean resource; date >> /tmp/clean (code=exited, status=0/SUCCESS)
+  Process: 2597 ExecStart=/bin/bash -c echo Allocate memory; date >> /tmp/allocate (code=exited, status=0/SUCCESS)
+ Main PID: 2597 (code=exited, status=0/SUCCESS)
+
+Sep 28 16:41:04 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Sep 28 16:41:04 huyvl-linux-training.novalocal bash[2597]: Allocate memory
+Sep 28 16:41:04 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.service.
+[root@huyvl-linux-training tmp]# reboot
+
+Remote side unexpectedly closed network connection
+
+──────────────────────────────────────────────
+
+Session stopped
+    - Press <Return> to exit tab
+    - Press R to restart session
+    - Press S to save terminal output to file
+[root@huyvl-linux-training ~]# grep -i clean /var/log/messages
+...
+Sep 28 16:40:43 huyvl-linux-training bash: Clean resource
+...
+[root@huyvl-linux-training ~]# cat /tmp/clean
+Thu Sep 28 16:41:25 +07 2023
+[root@huyvl-linux-training ~]#
 ```
