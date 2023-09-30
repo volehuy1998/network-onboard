@@ -3227,7 +3227,7 @@ Sep 28 22:55:36 huyvl-linux-training.novalocal bash[4844]: Handle after start ht
 Sep 28 22:55:41 huyvl-linux-training.novalocal systemd[1]: Started The Apache HTTP Server.
 [root@huyvl-linux-training httpd.service.d]#
 ```
-#### <a name="service_unit"></a>Loại `unit` về `*.socket`
+#### <a name="socket_unit"></a>Loại `unit` về `*.socket`
 Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
 ```shell
 [root@huyvl-linux-training ~]# cat hello.sh
@@ -3279,6 +3279,7 @@ To show all installed unit files use 'systemctl list-unit-files'.
 ```
 
 Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `*.socket` phía trên, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi.
+
 #### <a name="path_unit"></a>Loại `unit` về `*.path`
 Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
 
