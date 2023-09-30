@@ -20,18 +20,17 @@
       - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
       - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
       - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 28/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 30/09/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (:arrow_up:UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (:arrow_up:UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (:arrow_up:UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
-    - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 19/09/2023)](#systemd)
-    - [2.6.6 - Xác định tiến trình hệ thống tự khởi chạy (:arrow_up:UPDATED 22/09/2023)](#automatically_run_process)
-    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 24/09/2023)](#ctl_sys_svc)
-    - [2.6.8 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 28/09/2023)](#unit)
-      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:heavy_plus_sign:UPDATED 28/09/2023)](#service_unit)
-      - [2.6.8.2 - Loại `unit` về `*.socket` (:heavy_plus_sign:UPDATED 28/09/2023)](#socket_unit)
-      - [2.6.8.3 - Loại `unit` về `*.path` (:heavy_plus_sign:UPDATED 28/09/2023)](#path_unit)
+    - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
+    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 30/09/2023)](#ctl_sys_svc)
+    - [2.6.7 - Chi tiết tệp `unit` (:heavy_plus_sign:UPDATED 30/09/2023)](#unit)
+      - [2.6.7.1 - Loại `unit` phổ biến `*.service` (:heavy_plus_sign:UPDATED 30/09/2023)](#service_unit)
+      - [2.6.7.2 - Loại `unit` về `*.socket` (:heavy_plus_sign:UPDATED 30/09/2023)](#socket_unit)
+      - [2.6.7.3 - Loại `unit` về `*.path` (:heavy_plus_sign:UPDATED 2830/09/2023)](#path_unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2035,7 +2034,7 @@ root@huyvl-ubuntu-16:~#
 ```
 
 ### <a name="systemd"></a>Tổng quan về `systemd`
-`systemd` giới thiệu các khái niệm liên quan đến `systemd units`. Những `unit` được đại diện bởi các tệp cấu hình nằm trong các thư mục:
+`systemd` giới thiệu các khái niệm liên quan đến `systemd units` hay còn được biết đến là tiến trình hệ thống tự khởi chạy. Những `unit` được đại diện bởi các tệp cấu hình nằm trong các thư mục:
 
 - Thư mục `/usr/lib/systemd/system/` chứa các `systemd unit` được tạo cùng với các gói `RPM` đã được cài đặt.
 - Thư mục `/run/systemd/system` chứa các `systemd unit` được sinh ra ngay trong lúc chạy, thư mục này có độ ưu tiên cao hơn `/usr/lib/systemd/system/`.
@@ -2209,92 +2208,6 @@ systemd-udevd-kernel.socket  static
 10 unit files listed.
 [root@huyvl-linux-training ~]#
 ```
-### <a name="automatically_run_process"></a>Tiến trình hệ thống tự khởi chạy
-Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
-```shell
-[root@huyvl-linux-training ~]# cat hello.sh
-echo -n "Do you still want to connect? [Y/N] "
-read anwser
-echo "Welcome to socket unit!"
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
-[Unit]
-Description=Welcome to port 5555
-
-[Socket]
-ListenStream=5555
-Accept=Yes
-
-[Install]
-WantedBy=sockets.target
-[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
-[Unit]
-Description=Welcome to connect service
-
-[Service]
-ExecStart=/bin/bash /root/hello.sh
-StandardInput=socket
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
-tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
-Do you still want to connect? [Y/N] y
-Welcome to socket unit!
-[root@huyvl-linux-training ~]#
-```
-
-Liệt kê các `unit` loại `path` như sau:
-```shell
-[root@huyvl-linux-training ~]# systemctl list-units -t path
-UNIT                               LOAD   ACTIVE SUB     DESCRIPTION
-systemd-ask-password-plymouth.path loaded active waiting Forward Password Requests to Plymouth Directory Watch
-systemd-ask-password-wall.path     loaded active waiting Forward Password Requests to Wall Directory Watch
-
-LOAD   = Reflects whether the unit definition was properly loaded.
-ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
-SUB    = The low-level unit activation state, values depend on unit type.
-
-2 loaded units listed. Pass --all to see loaded but inactive units, too.
-To show all installed unit files use 'systemctl list-unit-files'.
-[root@huyvl-linux-training ~]#
-```
-
-Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `*.socket` phía trên, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi. Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
-
-```shell
-[root@huyvl-linux-training system]# cat passwd-mon.path
-[Unit]
-Description="Monitor the /etc/passwd file for anychanges"
-
-[Path]
-PathModified=/etc/passwd
-Unit=passwd-mon.service
-
-[Install]
-WantedBy=multi-user.target
-[root@huyvl-linux-training system]# cat passwd-mon.service
-[Unit]
-Description="Run script to send email alert"
-
-[Service]
-ExecStart=/bin/bash /root/email-alert.sh
-[root@huyvl-linux-training ~]# cat email-alert.sh
-mail -S sendwait -s "/etc/passwd has been changed on $(hostname)" huyvl3@fpt.com < /etc/passwd
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training system]# tail -n 3 /etc/passwd
-postfix:x:89:89::/var/spool/postfix:/sbin/nologin
-gluster:x:998:996:GlusterFS daemons:/run/gluster:/sbin/nologin
-test
-[root@huyvl-linux-training system]#
-[root@huyvl-linux-training system]# tail -f /var/log/maillog
-Sep 21 10:47:10 huyvl-linux-training postfix/cleanup[2060]: 4052180E38: message-id=<20230921034710.4052180E38@huyvl-linux-training.novalocal>
-Sep 21 10:47:10 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: from=<root@huyvl-linux-training.novalocal>, size=1400, nrcpt=1 (queue active)
-Sep 21 10:47:11 huyvl-linux-training postfix/smtp[2063]: 4052180E38: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.30]:25, delay=1.7, delays=0.02/0.01/0.21/1.4, dsn=2.6.0, status=sent (250 2.6.0 <20230921034710.4052180E38@huyvl-linux-training.novalocal> [InternalId=9161165263317, Hostname=TYSPR06MB6541.apcprd06.prod.outlook.com] 9458 bytes in 0.192, 47.977 KB/sec Queued mail for delivery)
-Sep 21 10:47:11 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: removed
-```
-
-<div style="text-align:center"><img src="../images/systemd_path_ex.png" /></div>
 
 Liệt kê các `unit` loại `target` như sau:
 ```shell
@@ -2334,6 +2247,7 @@ Chú thích:
   - Loại `target` này sử dụng để nhóm các loại `unit` khác.
   - `multi-user.target` được kế thừa từ tiến trình khởi tạo tiền nhiệm `SysV`, đây là `1` trong `6` chế độ `runlevel` đã mô tả ở trên. Trong quá khứ dùng để chỉ khi khởi tạo hệ thống thì có thể cho phép nhiều người sử dụng, có thể là `multi-user` chế độ chỉ `console` hoặc `multi-user` chế độ giao diện đồ họa.
 
+### <a name="ctl_sys_svc"></a>Kiểm soát dịch vụ hệ thống
 Xem trạng thái của dịch vụ `ssh` với tùy chọn `status` như sau:
 ```shell
 [root@huyvl-linux-training ~]# systemctl status sshd.service
@@ -2524,7 +2438,7 @@ Sep 21 16:47:02 huyvl-linux-training.novalocal nginx[1339]: nginx: configuration
 Sep 21 16:47:02 huyvl-linux-training.novalocal systemd[1]: Started The nginx HTTP and reverse proxy server.
 [root@huyvl-linux-training ~]#
 ```
-### <a name="ctl_sys_svc"></a>Kiểm soát dịch vụ hệ thống
+
 Thực hiện tải lại cấu hình chương trình `nginx` để kiểm tra sự thay đổi của `Main PID` như sau:
 ```shell
 [root@huyvl-linux-training ~]# systemctl status nginx
@@ -3314,4 +3228,90 @@ Sep 28 22:55:41 huyvl-linux-training.novalocal systemd[1]: Started The Apache HT
 [root@huyvl-linux-training httpd.service.d]#
 ```
 #### <a name="service_unit"></a>Loại `unit` về `*.socket`
+Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
+```shell
+[root@huyvl-linux-training ~]# cat hello.sh
+echo -n "Do you still want to connect? [Y/N] "
+read anwser
+echo "Welcome to socket unit!"
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
+[Unit]
+Description=Welcome to port 5555
+
+[Socket]
+ListenStream=5555
+Accept=Yes
+
+[Install]
+WantedBy=sockets.target
+[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
+[Unit]
+Description=Welcome to connect service
+
+[Service]
+ExecStart=/bin/bash /root/hello.sh
+StandardInput=socket
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
+tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
+Do you still want to connect? [Y/N] y
+Welcome to socket unit!
+[root@huyvl-linux-training ~]#
+```
+
+Liệt kê các `unit` loại `path` như sau:
+```shell
+[root@huyvl-linux-training ~]# systemctl list-units -t path
+UNIT                               LOAD   ACTIVE SUB     DESCRIPTION
+systemd-ask-password-plymouth.path loaded active waiting Forward Password Requests to Plymouth Directory Watch
+systemd-ask-password-wall.path     loaded active waiting Forward Password Requests to Wall Directory Watch
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+2 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@huyvl-linux-training ~]#
+```
+
+Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `*.socket` phía trên, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi.
 #### <a name="path_unit"></a>Loại `unit` về `*.path`
+Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
+
+```shell
+[root@huyvl-linux-training system]# cat passwd-mon.path
+[Unit]
+Description="Monitor the /etc/passwd file for anychanges"
+
+[Path]
+PathModified=/etc/passwd
+Unit=passwd-mon.service
+
+[Install]
+WantedBy=multi-user.target
+[root@huyvl-linux-training system]# cat passwd-mon.service
+[Unit]
+Description="Run script to send email alert"
+
+[Service]
+ExecStart=/bin/bash /root/email-alert.sh
+[root@huyvl-linux-training ~]# cat email-alert.sh
+mail -S sendwait -s "/etc/passwd has been changed on $(hostname)" huyvl3@fpt.com < /etc/passwd
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training system]# tail -n 3 /etc/passwd
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+gluster:x:998:996:GlusterFS daemons:/run/gluster:/sbin/nologin
+test
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# tail -f /var/log/maillog
+Sep 21 10:47:10 huyvl-linux-training postfix/cleanup[2060]: 4052180E38: message-id=<20230921034710.4052180E38@huyvl-linux-training.novalocal>
+Sep 21 10:47:10 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: from=<root@huyvl-linux-training.novalocal>, size=1400, nrcpt=1 (queue active)
+Sep 21 10:47:11 huyvl-linux-training postfix/smtp[2063]: 4052180E38: to=<huyvl3@fpt.com>, relay=fpt-com.mail.protection.outlook.com[52.101.132.30]:25, delay=1.7, delays=0.02/0.01/0.21/1.4, dsn=2.6.0, status=sent (250 2.6.0 <20230921034710.4052180E38@huyvl-linux-training.novalocal> [InternalId=9161165263317, Hostname=TYSPR06MB6541.apcprd06.prod.outlook.com] 9458 bytes in 0.192, 47.977 KB/sec Queued mail for delivery)
+Sep 21 10:47:11 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: removed
+```
+
+<div style="text-align:center"><img src="../images/systemd_path_ex.png" /></div>
