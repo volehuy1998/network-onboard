@@ -3262,6 +3262,7 @@ Welcome to socket unit!
 [root@huyvl-linux-training ~]#
 ```
 
+#### <a name="path_unit"></a>Loại `unit` về `*.path`
 Liệt kê các `unit` loại `path` như sau:
 ```shell
 [root@huyvl-linux-training ~]# systemctl list-units -t path
@@ -3280,7 +3281,6 @@ To show all installed unit files use 'systemctl list-unit-files'.
 
 Công dụng: có thể sử dụng để giám sát bất kể sự thay đổi nào của đường dẫn mà người dùng muốn. Giống với ví dụ về `*.socket` phía trên, khi bất kỳ sự thay đổi nào hướng đến đường dẫn mà người dùng đã định nghĩa trong `*.path` thì nó này sẽ kích hoạt `*.service` tương ứng để phản hồi.
 
-#### <a name="path_unit"></a>Loại `unit` về `*.path`
 Ví dụ máy chủ `postfix` tạo tài khoản để nhận thư điện tử tại `/home/hcmoperator/MailDir/new/`, khi có bất cứ tệp thư nào được viết vào thì nó sẽ kích hoạt kịch bản gửi tín hiệu đến chương trình nào đó trên màn hình để thông báo. Ví dụ sau đây dùng để mô tả giám sát tệp `/etc/passwd`:
 
 ```shell
