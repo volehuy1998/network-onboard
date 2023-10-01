@@ -20,13 +20,13 @@
       - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
       - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
       - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 01/10/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 02/10/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
-    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 30/09/2023)](#ctl_sys_svc)
+    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
     - [2.6.7 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
       - [2.6.7.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
       - [2.6.7.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
@@ -2713,6 +2713,23 @@ StandardOutput=journal+console
 [Install]
 WantedBy=cloud-init.target
 [root@huyvl-linux-training ~]#
+```
+Phân tích và kiểm tra cú pháp, ví dụ sau đề cập đến thiếu cách thức hoạt động chính của `unit` là `ExecStart=`:
+```shell
+[root@huyvl-linux-training system]# cat missing_start.service
+[Service]
+ExecStart=/bin/true
+[root@huyvl-linux-training system]# systemd-analyze verify missing_start.service
+[root@huyvl-linux-training system]# vi missing_start.service
+[root@huyvl-linux-training system]# cat missing_start.service
+[Service]
+#ExecStart=/bin/true
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemd-analyze verify missing_start.service
+missing_start.service lacks both ExecStart= and ExecStop= setting. Refusing.
+Error: org.freedesktop.DBus.Error.InvalidArgs: Unit is not loaded properly: Invalid argument.
+Failed to create missing_start.service/start: Invalid argument
+[root@huyvl-linux-training system]#
 ```
 ### <a name="unit"></a>Chi tiết về tệp `unit`
 Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông tin của tệp `unit` đó và định nghĩa các hành động của nó. Lệnh `systemctl` sẽ làm việc với các tệp `unit` được chạy nền. Để thực hiện những điều chỉnh thì người dùng hay quản trị phải chỉnh sửa hoặc tạo mới tệp `unit` một cách thủ công. Vị trí của các tệp `unit` đã được mô tả gồm 3 nơi [ở đây](#systemd), trong số đó `/etc/systemd/system/` được dành riêng để lưu trữ các tệp `unit` mà mở rộng theo nhu cầu của người dùng trong lúc vận hành hệ thống. 
