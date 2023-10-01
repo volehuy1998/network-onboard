@@ -20,15 +20,15 @@
       - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
       - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
       - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 30/09/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 01/10/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
     - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 30/09/2023)](#ctl_sys_svc)
-    - [2.6.7 - Chi tiết tệp `unit` (:arrow_up:UPDATED 30/09/2023)](#unit)
-      - [2.6.7.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 30/09/2023)](#service_unit)
+    - [2.6.7 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
+      - [2.6.7.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
       - [2.6.7.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
       - [2.6.7.3 - Loại `unit` về `*.path` (:arrow_up:UPDATED 2830/09/2023)](#path_unit)
 
@@ -3149,47 +3149,97 @@ Sep 28 16:40:43 huyvl-linux-training bash: Clean resource
 Thu Sep 28 16:41:25 +07 2023
 [root@huyvl-linux-training ~]#
 ```
-Sử dụng `Drop-In` kèm với tùy chọn `RestartSec=` để khi dịch vụ `httpd` khởi động thì sẽ trì hoãn một khoảng thời gian (giây) trước khi khởi chạy `ExecStart=`, kiểm tra trạng thái sẽ thấy `"Processing requests..."`.
+Sử dụng `Drop-In` kèm với tùy chọn `RestartSec=` để khi dịch vụ `httpd` khởi động thì sẽ trì hoãn một khoảng thời gian (giây) được sử dụng kèm với `Restart=`, mẫu `unit` sau sử dụng `journalctl` theo dõi thấy được mỗi `5` giây sẽ được tái khởi động.
 ```shell
-[root@huyvl-linux-training ~]# yum install httpd -y &>/dev/null
-[root@huyvl-linux-training ~]# systemctl status httpd
-● httpd.service - The Apache HTTP Server
-   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
-   Active: inactive (dead)
-     Docs: man:httpd(8)
-           man:apachectl(8)
-[root@huyvl-linux-training ~]# mkdir -v /etc/systemd/system/httpd.service.d
-mkdir: created directory ‘/etc/systemd/system/httpd.service.d’
-[root@huyvl-linux-training ~]# cd /etc/systemd/system/httpd.service.d
-[root@huyvl-linux-training httpd.service.d]# touch 00-delay.conf
-[root@huyvl-linux-training httpd.service.d]# vi 00-delay.conf
-[root@huyvl-linux-training httpd.service.d]# cat 00-delay.conf
+[root@huyvl-linux-training system]# cat restart_sec.service
 [Service]
-RestartSec=30
-[root@huyvl-linux-training httpd.service.d]#
-[root@huyvl-linux-training httpd.service.d]# systemctl daemon-reload
-[root@huyvl-linux-training httpd.service.d]# systemctl start httpd
-[root@huyvl-linux-training httpd.service.d]# systemctl status httpd
-● httpd.service - The Apache HTTP Server
-   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
-  Drop-In: /etc/systemd/system/httpd.service.d
-           └─00-delay.conf
-   Active: active (running) since Thu 2023-09-28 22:46:37 +07; 4s ago
-     Docs: man:httpd(8)
-           man:apachectl(8)
- Main PID: 4549 (httpd)
-   Status: "Processing requests..."
-   CGroup: /system.slice/httpd.service
-           ├─4549 /usr/sbin/httpd -DFOREGROUND
-           ├─4550 /usr/sbin/httpd -DFOREGROUND
-           ├─4551 /usr/sbin/httpd -DFOREGROUND
-           ├─4552 /usr/sbin/httpd -DFOREGROUND
-           ├─4553 /usr/sbin/httpd -DFOREGROUND
-           └─4554 /usr/sbin/httpd -DFOREGROUND
-
-Sep 28 22:46:37 huyvl-linux-training.novalocal systemd[1]: Starting The Apache HTTP Server...
-Sep 28 22:46:37 huyvl-linux-training.novalocal systemd[1]: Started The Apache HTTP Server.
+Restart=on-failure
+RestartSec=5
+ExecStart=/bin/false
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl start start restart_sec.service
+Failed to start start.service: Unit not found.
+^C
+[root@huyvl-linux-training system]# systemctl start restart_sec.service
+[root@huyvl-linux-training system]# journalctl -fu restart_sec.service
+-- Logs begin at Thu 2023-09-28 16:41:35 +07. --
+Oct 01 20:08:45 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:08:45 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:08:45 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:08:45 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:08:50 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
 ```
+
+Trong hầu hết các phần mềm đều định nghĩa khoảng thời gian tối đa mà có thể chờ đợi trước khi thực hiện công việc chính vì một số lý do ngoại quan, ví dụ như tốc độ mạng chậm, ... Hệ thống `Linux` đã định nghĩa tối đa `DefaultTimeoutStartSec=90s` đã nêu ở phần [tổng quan systemd](#systemd) khi người dùng không khai báo cho phần mềm của riêng mình. Cần cú pháp `TimeoutStartSec=` để thay đổi mặc định:
+```shell
+[root@huyvl-linux-training system]# cat restart_sec.service
+[Service]
+Restart=on-failure
+RestartSec=5
+ExecStart=/bin/false
+TimeoutSec=3
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart restart_sec.service
+[root@huyvl-linux-training system]# journalctl -fu restart_sec.service
+-- Logs begin at Thu 2023-09-28 16:41:35 +07. --
+Oct 01 20:11:07 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:11:07 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+Oct 01 20:11:11 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
+Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
+Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
+```
+, hoặc với một ví dụ khác như sau:
+```shell
+[root@huyvl-linux-training system]# cat timeout.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo sleeping && sleep 10"
+TimeoutSec=3
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart timeout.service
+Job for timeout.service failed because a fatal signal was delivered to the control process. See "systemctl status timeout.service" and "journalctl -xe" for details.
+[root@huyvl-linux-training system]# systemctl status timeout.service
+● timeout.service
+   Loaded: loaded (/etc/systemd/system/timeout.service; static; vendor preset: disabled)
+   Active: failed (Result: signal) since Sun 2023-10-01 20:17:14 +07; 2s ago
+  Process: 11916 ExecStart=/bin/bash -c echo sleeping && sleep 10 (code=killed, signal=TERM)
+ Main PID: 11916 (code=killed, signal=TERM)
+
+Oct 01 20:17:11 huyvl-linux-training.novalocal systemd[1]: Starting timeout.service...
+Oct 01 20:17:11 huyvl-linux-training.novalocal bash[11916]: sleeping
+Oct 01 20:17:14 huyvl-linux-training.novalocal systemd[1]: timeout.service start operation timed out. Terminating.
+Oct 01 20:17:14 huyvl-linux-training.novalocal systemd[1]: timeout.service: main process exited, code=killed, status=15/TERM
+Oct 01 20:17:14 huyvl-linux-training.novalocal systemd[1]: Failed to start timeout.service.
+Oct 01 20:17:14 huyvl-linux-training.novalocal systemd[1]: Unit timeout.service entered failed state.
+Oct 01 20:17:14 huyvl-linux-training.novalocal systemd[1]: timeout.service failed.
+[root@huyvl-linux-training system]#
+```
+
 Tiếp tục sử dụng `Drop-In` với tùy chọn `ExecStartPre=` và `ExecStartPost=` để hiệu chỉnh hành vi trước và sau khi thực hiện `ExecStart=` của `httpd` như sau:
 ```shell
 [root@huyvl-linux-training httpd.service.d]# vi 01-start-callback.conf
