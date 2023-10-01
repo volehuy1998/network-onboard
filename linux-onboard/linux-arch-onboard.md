@@ -3157,7 +3157,7 @@ Restart=on-failure
 RestartSec=5
 ExecStart=/bin/false
 [root@huyvl-linux-training system]# systemctl daemon-reload
-[root@huyvl-linux-training system]# systemctl start start restart_sec.service
+[root@huyvl-linux-training system]# systemctl start restart_sec.service
 Failed to start start.service: Unit not found.
 ^C
 [root@huyvl-linux-training system]# systemctl start restart_sec.service
