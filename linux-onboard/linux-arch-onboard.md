@@ -3158,9 +3158,6 @@ RestartSec=5
 ExecStart=/bin/false
 [root@huyvl-linux-training system]# systemctl daemon-reload
 [root@huyvl-linux-training system]# systemctl start restart_sec.service
-Failed to start start.service: Unit not found.
-^C
-[root@huyvl-linux-training system]# systemctl start restart_sec.service
 [root@huyvl-linux-training system]# journalctl -fu restart_sec.service
 -- Logs begin at Thu 2023-09-28 16:41:35 +07. --
 Oct 01 20:08:45 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
