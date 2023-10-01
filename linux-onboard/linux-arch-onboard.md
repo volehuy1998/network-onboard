@@ -3180,38 +3180,6 @@ Oct 01 20:08:55 huyvl-linux-training.novalocal systemd[1]: restart_sec.service f
 
 Trong hầu hết các phần mềm đều định nghĩa khoảng thời gian tối đa mà có thể chờ đợi trước khi thực hiện công việc chính vì một số lý do ngoại quan, ví dụ như tốc độ mạng chậm, ... Hệ thống `Linux` đã định nghĩa tối đa `DefaultTimeoutStartSec=90s` đã nêu ở phần [tổng quan systemd](#systemd) khi người dùng không khai báo cho phần mềm của riêng mình. Cần cú pháp `TimeoutStartSec=` để thay đổi mặc định:
 ```shell
-[root@huyvl-linux-training system]# cat restart_sec.service
-[Service]
-Restart=on-failure
-RestartSec=5
-ExecStart=/bin/false
-TimeoutSec=3
-[root@huyvl-linux-training system]# systemctl daemon-reload
-[root@huyvl-linux-training system]# systemctl restart restart_sec.service
-[root@huyvl-linux-training system]# journalctl -fu restart_sec.service
--- Logs begin at Thu 2023-09-28 16:41:35 +07. --
-Oct 01 20:11:07 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
-Oct 01 20:11:07 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
-Oct 01 20:11:11 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
-Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
-Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
-Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
-Oct 01 20:19:29 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
-Oct 01 20:19:34 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service holdoff time over, scheduling restart.
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Stopped restart_sec.service.
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Started restart_sec.service.
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service: main process exited, code=exited, status=1/FAILURE
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: Unit restart_sec.service entered failed state.
-Oct 01 20:19:39 huyvl-linux-training.novalocal systemd[1]: restart_sec.service failed.
-```
-, hoặc với một ví dụ khác như sau:
-```shell
 [root@huyvl-linux-training system]# cat timeout.service
 [Service]
 Type=oneshot
