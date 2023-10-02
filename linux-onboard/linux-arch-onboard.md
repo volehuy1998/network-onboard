@@ -26,11 +26,12 @@
     - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
-    - [2.6.7 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
-    - [2.6.7 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
-      - [2.6.7.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
-      - [2.6.7.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
-      - [2.6.7.3 - Loại `unit` về `*.path` (:arrow_up:UPDATED 2830/09/2023)](#path_unit)
+    - [2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
+    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (::heavy_plus_sign::UPDATED 02/10/2023)](#instantiated_unit)
+    - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
+      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
+      - [2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
+      - [2.6.8.3 - Loại `unit` về `*.path` (:arrow_up:UPDATED 2830/09/2023)](#path_unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -2731,6 +2732,24 @@ Error: org.freedesktop.DBus.Error.InvalidArgs: Unit is not loaded properly: Inva
 Failed to create missing_start.service/start: Invalid argument
 [root@huyvl-linux-training system]#
 ```
+### <a name="instantiated_unit"></a>Mẫu `unit` với ký hiệu `@`
+`systemd` cho phép khởi tạo nhiều `unit` từ một tệp cấu hình mẫu ngay tại thời điểm thực thi. Ký hiệu `@` trong tên tệp mẫu được sử dụng để đánh dấu sự liên kiết với các `unit` khác đến nó, ví dụ như `*.socket`, `*.path`, ... Thủ tục khai báo liên kết sử dụng `Wants=` hoặc `Requires=` để liên kết và chạy tệp cấu hình mẫu `template_name@instance_name.service`. Một số mẫu sử dụng chung mà không chỉ định `@instance_name` cụ thể sẽ có định dạng `template_name@.service`. Ví dụ khi chỉ định cụ thể:
+```shell
+[root@huyvl-linux-training ~]# grep ^After /usr/lib/dracut/modules.d/98systemd/dracut-shutdown.service
+After=getty@tty1.service display-manager.service
+[root@huyvl-linux-training ~]#
+```
+, khi `systemd` không tìm thấy `getty@tty1.service` sẽ sử dụng `getty@.service`.
+
+Những ký tự `wildcard` cũng được sử dụng:
+| Ký tự `wildcard` | Mô tả |
+| --- | --- |
+| `%n` | Tên đầy đủ `template_name@instance_name.service`. Với `%N` có cùng ý nghĩa nhưng lược bỏ bớt các ký tự đặc biệt bởi `ASCII`. |
+| `%p` | Chỉ có phần đầu `template_name@.service`. |
+| `%i` | Chỉ có phần đuôi `@instance_name.service`. Với `%I` có ý nghĩa tương tự nhưng lược bỏ các ký tự đặc biệt bởi `ASCII`. |
+| `%H` | Đại diện cho tên máy chủ `/etc/hostname`. |
+| `%t` | Đại diện cho thư mục hiện tại đang hoạt động hay `runtime`. |
+
 ### <a name="unit"></a>Chi tiết về tệp `unit`
 Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông tin của tệp `unit` đó và định nghĩa các hành động của nó. Lệnh `systemctl` sẽ làm việc với các tệp `unit` được chạy nền. Để thực hiện những điều chỉnh thì người dùng hay quản trị phải chỉnh sửa hoặc tạo mới tệp `unit` một cách thủ công. Vị trí của các tệp `unit` đã được mô tả gồm 3 nơi [ở đây](#systemd), trong số đó `/etc/systemd/system/` được dành riêng để lưu trữ các tệp `unit` mà mở rộng theo nhu cầu của người dùng trong lúc vận hành hệ thống. 
 
@@ -3262,38 +3281,36 @@ Sep 28 22:55:41 huyvl-linux-training.novalocal systemd[1]: Started The Apache HT
 #### <a name="socket_unit"></a>Loại `unit` về `*.socket`
 Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
 ```shell
-[root@huyvl-linux-training ~]# cat hello.sh
-echo -n "Do you still want to connect? [Y/N] "
-read anwser
-echo "Welcome to socket unit!"
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet.socket
+[root@huyvl-linux-training system]# cat socket_demo.socket
 [Unit]
-Description=Welcome to port 5555
+Description=Systemd *.socket demo
 
 [Socket]
-ListenStream=5555
-Accept=Yes
-
-[Install]
-WantedBy=sockets.target
-[root@huyvl-linux-training ~]# cat /etc/systemd/system/greet@0.service
+ListenStream=2000
+Accept=true
+[root@huyvl-linux-training system]# cat socket_demo@.service
 [Unit]
-Description=Welcome to connect service
+Description=My Service
 
 [Service]
-ExecStart=/bin/bash /root/hello.sh
-StandardInput=socket
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# netstat -ntlp | grep 5555
-tcp6       0      0 :::5555                 :::*                    LISTEN      1/systemd
-[root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# socat - TCP6:localhost:5555
-Do you still want to connect? [Y/N] y
-Welcome to socket unit!
-[root@huyvl-linux-training ~]#
+ExecStart=/bin/bash -c "echo hello socket"
+StandardOutput=socket
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart socket_demo.socket
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# netstat -ntlp | grep 2000
+tcp6       0      0 :::2000                 :::*                    LISTEN      1/systemd
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# socat - TCP6:localhost:2000
+hello socket
+[root@huyvl-linux-training system]# socat - TCP6:localhost:2000
+hello socket
+[root@huyvl-linux-training system]# socat - TCP6:localhost:2000
+hello socket
+[root@huyvl-linux-training system]#
 ```
-
+Chú thích: tùy chọn `ListenStream=2000` mở lắng nghe tại cổng `0.0.0.0:2000`. Có thể chỉ định khác ví dụ như `ListenStream=127.0.0.1:2000`. Đối với chi tiết tệp `unit` cần phải rõ ràng, `systemd` sẽ không hiểu `ListenStream=localhost:2000`.
 #### <a name="path_unit"></a>Loại `unit` về `*.path`
 Liệt kê các `unit` loại `path` như sau:
 ```shell
