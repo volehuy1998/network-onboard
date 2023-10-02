@@ -27,7 +27,7 @@
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
     - [2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
-    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (::heavy_plus_sign::UPDATED 02/10/2023)](#instantiated_unit)
+    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 02/10/2023)](#instantiated_unit)
     - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
       - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
       - [2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
