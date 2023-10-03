@@ -3211,6 +3211,13 @@ Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: Failed to start onesh
 Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: Unit oneshot_type.service entered failed state.
 Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service failed.
 [root@huyvl-linux-training system]# vi oneshot_type.service
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo first"
+ExecStart=-/bin/false
+ExecStart=/bin/bash -c "echo second"
+[root@huyvl-linux-training system]#
 [root@huyvl-linux-training system]# systemctl daemon-reload
 [root@huyvl-linux-training system]# systemctl restart oneshot_type.service
 [root@huyvl-linux-training system]# systemctl status -l oneshot_type.service
