@@ -2758,16 +2758,16 @@ Ví dụ:
 Description=Start game chinese_jx1 %i instance
 
 [Service]
-ExecStart=/bin/bash -c "echo Accepted user=%i"
+ExecStart=/bin/bash -c "echo Inited worker=%i"
 [root@huyvl-linux-training system]# systemctl daemon-reload
-[root@huyvl-linux-training system]# systemctl start chinese_jx1@admin.service
-[root@huyvl-linux-training system]# systemctl start chinese_jx1@user_test.service
+[root@huyvl-linux-training system]# systemctl start chinese_jx1@worker1.service
+[root@huyvl-linux-training system]# systemctl start chinese_jx1@worker2.service
 [root@huyvl-linux-training system]# tail /var/log/messages
 Oct  3 16:15:34 huyvl-linux-training systemd: Reloading.
-Oct  3 16:15:40 huyvl-linux-training systemd: Started Start game chinese_jx1 admin instance.
-Oct  3 16:15:40 huyvl-linux-training bash: Accepted user=admin
-Oct  3 16:15:47 huyvl-linux-training systemd: Started Start game chinese_jx1 user_test instance.
-Oct  3 16:15:47 huyvl-linux-training bash: Accepted user=user_test
+Oct  3 16:15:40 huyvl-linux-training systemd: Started Start game chinese_jx1 worker1 instance.
+Oct  3 16:15:40 huyvl-linux-training bash: Inited worker=worker1
+Oct  3 16:15:47 huyvl-linux-training systemd: Started Start game chinese_jx1 worker2 instance.
+Oct  3 16:15:47 huyvl-linux-training bash: Inited worker=worker2
 [root@huyvl-linux-training system]#
 ```
 ### <a name="unit"></a>Chi tiết về tệp `unit`
