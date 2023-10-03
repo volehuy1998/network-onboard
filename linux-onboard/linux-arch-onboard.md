@@ -20,7 +20,7 @@
       - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
       - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
       - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 02/10/2023)](#linux_process)
+- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 03/10/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
     - [2.6.2 - Kiểm soát các `Job` (UPDATED 17/09/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
@@ -28,8 +28,8 @@
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
     - [2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
     - [2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 02/10/2023)](#instantiated_unit)
-    - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 01/10/2023)](#unit)
-      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 01/10/2023)](#service_unit)
+    - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 03/10/2023)](#unit)
+      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 03/10/2023)](#service_unit)
       - [2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
       - [2.6.8.3 - Loại `unit` về `*.path` (:arrow_up:UPDATED 2830/09/2023)](#path_unit)
 
@@ -3138,6 +3138,97 @@ Sep 28 14:49:57 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.
 [root@huyvl-linux-training system]#
 ```
 
+Có thể sử dụng nhiều `ExecStart=` nhưng chỉ áp dụng cho `Type=oneshot`.
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+ExecStart=/bin/bash -c "echo first"
+ExecStart=/bin/bash -c "echo second"
+ExecStart=/bin/bash -c "echo third"
+[root@huyvl-linux-training system]#
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl start oneshot_type.service
+Failed to start oneshot_type.service: Unit is not loaded properly: Invalid argument.
+See system logs and 'systemctl status oneshot_type.service' for details.
+[root@huyvl-linux-training system]# systemctl status -l oneshot_type.service
+● oneshot_type.service
+   Loaded: error (Reason: Invalid argument)
+   Active: inactive (dead)
+
+Oct 03 06:47:30 huyvl-linux-training.novalocal systemd[1]: Cannot add dependency job for unit oneshot_type.service, ignoring: Unit not found.
+Oct 03 15:15:23 huyvl-linux-training.novalocal systemd[1]: oneshot_type. service has more than one ExecStart= setting, which is only allowed for Type=oneshot services. Refusing.
+Oct 03 15:15:50 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service has more than one ExecStart= setting, which is only allowed for Type=oneshot services. Refusing.
+[root@huyvl-linux-training system]# vi oneshot_type.service
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo first"
+ExecStart=/bin/bash -c "echo second"
+ExecStart=/bin/bash -c "echo third"
+[root@huyvl-linux-training system]# systemctl start oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status oneshot_type.service
+● oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; enabled; vendor preset: disabled)
+   Active: inactive (dead) since Tue 2023-10-03 15:18:03 +07; 8s ago
+  Process: 5443 ExecStart=/bin/bash -c echo third (code=exited, status=0/SUCCESS)
+  Process: 5442 ExecStart=/bin/bash -c echo second (code=exited, status=0/SUCCESS)
+  Process: 5440 ExecStart=/bin/bash -c echo first (code=exited, status=0/SUCCESS)
+ Main PID: 5443 (code=exited, status=0/SUCCESS)
+
+Oct 03 15:18:03 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_typ...
+Oct 03 15:18:03 huyvl-linux-training.novalocal bash[5440]: first
+Oct 03 15:18:03 huyvl-linux-training.novalocal bash[5442]: second
+Oct 03 15:18:03 huyvl-linux-training.novalocal bash[5443]: third
+Oct 03 15:18:03 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type...
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@huyvl-linux-training system]#
+```
+
+Sử dụng `ExecStart=` giống như việc gọi nhiều lệnh thông qua kết nối `&&`, điểm yếu sẽ bị dừng toàn bộ phần sau nếu thực hiện bất kỳ một lệnh nào gặp lỗi. Trong một số trường hợp giải pháp sẽ là `ExecStart=-` mô tả hành vi giống với dấu chấm phẩy `";"`. Ví dụ sau sử dụng `/bin/false` để dừng `ExecStart=` cuối.
+```shell
+[root@huyvl-linux-training system]# cat oneshot_type.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo first"
+ExecStart=/bin/false
+ExecStart=/bin/bash -c "echo second"
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart oneshot_type.service
+Job for oneshot_type.service failed because the control process exited with error code. See "systemctl status oneshot_type.service" and "journalctl -xe" for details.
+[root@huyvl-linux-training system]# systemctl status -l oneshot_type.service
+● oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Tue 2023-10-03 15:22:31 +07; 3s ago
+  Process: 7164 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+  Process: 7162 ExecStart=/bin/bash -c echo first (code=exited, status=0/SUCCESS)
+ Main PID: 7164 (code=exited, status=1/FAILURE)
+
+Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Oct 03 15:22:31 huyvl-linux-training.novalocal bash[7162]: first
+Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service: main process exited, code=exited, status=1/FAILURE
+Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: Failed to start oneshot_type.service.
+Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: Unit oneshot_type.service entered failed state.
+Oct 03 15:22:31 huyvl-linux-training.novalocal systemd[1]: oneshot_type.service failed.
+[root@huyvl-linux-training system]# vi oneshot_type.service
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl restart oneshot_type.service
+[root@huyvl-linux-training system]# systemctl status -l oneshot_type.service
+● oneshot_type.service
+   Loaded: loaded (/etc/systemd/system/oneshot_type.service; enabled; vendor preset: disabled)
+   Active: inactive (dead) since Tue 2023-10-03 15:22:49 +07; 2s ago
+  Process: 7314 ExecStart=/bin/bash -c echo second (code=exited, status=0/SUCCESS)
+  Process: 7311 ExecStart=/bin/false (code=exited, status=1/FAILURE)
+  Process: 7310 ExecStart=/bin/bash -c echo first (code=exited, status=0/SUCCESS)
+ Main PID: 7314 (code=exited, status=0/SUCCESS)
+
+Oct 03 15:22:49 huyvl-linux-training.novalocal systemd[1]: Starting oneshot_type.service...
+Oct 03 15:22:49 huyvl-linux-training.novalocal bash[7310]: first
+Oct 03 15:22:49 huyvl-linux-training.novalocal bash[7314]: second
+Oct 03 15:22:49 huyvl-linux-training.novalocal systemd[1]: Started oneshot_type.service.
+[root@huyvl-linux-training system]#
+```
+
 Có một số loại dịch vụ thực hiện `ExecStart=` để khởi tạo các tài nguyên cần thiết và dọn dẹp chúng chỉ khi tắt hệ thống, nhu cầu này cần đồng thời `RemainAfterExit=yes` và `ExecStop=`. Mục `[Install]` chỉ có ý nghĩa với các lệnh `systemctl enable` và `systemctl disable`, còn các lệnh còn lại chỉ áp dụng với mục `[Unit]` và `[Service]`. Vì `/etc/systemd/system/multi-user.target.wants/` đã có sẵn nên sẽ không tạo thêm khi `systemctl enable` với khai báo `WantedBy=multi-user.target` và sau đó tạo `symbol link` trong thư mục đó. Ví dụ sau đây thể hiện một phần nói lên sự khác nhau giữa `soft/hard reboot` nói chung và sự đóng góp của `systemd` nói riêng.
 ```shell
 [root@huyvl-linux-training system]# cat oneshot_type.service
@@ -3310,7 +3401,7 @@ hello socket
 hello socket
 [root@huyvl-linux-training system]#
 ```
-Chú thích: tùy chọn `ListenStream=2000` mở lắng nghe tại cổng `0.0.0.0:2000`. Có thể chỉ định khác ví dụ như `ListenStream=127.0.0.1:2000`. Đối với chi tiết tệp `unit` cần phải rõ ràng, `systemd` sẽ không hiểu `ListenStream=localhost:2000`.
+Chú thích: tùy chọn `ListenStream=2000` mở lắng nghe tại cổng `2000` với `ipv6`. Có thể chỉ định khác ví dụ như `ListenStream=127.0.0.1:2000` để có `ipv4`. Đối với chi tiết tệp `unit` cần phải rõ ràng, `systemd` sẽ không hiểu `ListenStream=localhost:2000`.
 #### <a name="path_unit"></a>Loại `unit` về `*.path`
 Liệt kê các `unit` loại `path` như sau:
 ```shell
