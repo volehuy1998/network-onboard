@@ -27,7 +27,7 @@
     - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
     - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
     - [2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
-    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 02/10/2023)](#instantiated_unit)
+    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 03/10/2023)](#instantiated_unit)
     - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 03/10/2023)](#unit)
       - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 03/10/2023)](#service_unit)
       - [2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
@@ -2750,6 +2750,25 @@ Những ký tự `wildcard` cũng được sử dụng:
 | `%H` | Đại diện cho tên máy chủ `/etc/hostname`. |
 | `%t` | Đại diện cho thư mục hiện tại đang hoạt động hay `runtime`. |
 
+Ví dụ:
+```shell
+[root@huyvl-linux-training system]# vi chinese_jx1\@.service
+[root@huyvl-linux-training system]# cat chinese_jx1\@.service
+[Unit]
+Description=Start game chinese_jx1 %i instance
+
+[Service]
+ExecStart=/bin/bash -c "echo Accepted user=%i"
+[root@huyvl-linux-training system]# systemctl daemon-reload
+[root@huyvl-linux-training system]# systemctl start chinese_jx1@admin.service [root@huyvl-linux-training system]# systemctl start chinese_jx1@user_test.service
+[root@huyvl-linux-training system]# tail /var/log/messages
+Oct  3 16:15:34 huyvl-linux-training systemd: Reloading.
+Oct  3 16:15:40 huyvl-linux-training systemd: Started Start game chinese_jx1 admin instance.
+Oct  3 16:15:40 huyvl-linux-training bash: Accepted user=admin
+Oct  3 16:15:47 huyvl-linux-training systemd: Started Start game chinese_jx1 user_test instance.
+Oct  3 16:15:47 huyvl-linux-training bash: Accepted user=user_test
+[root@huyvl-linux-training system]#
+```
 ### <a name="unit"></a>Chi tiết về tệp `unit`
 Cấu hình tệp `unit` chứa các thông tin chỉ thị mô tả về thông tin của tệp `unit` đó và định nghĩa các hành động của nó. Lệnh `systemctl` sẽ làm việc với các tệp `unit` được chạy nền. Để thực hiện những điều chỉnh thì người dùng hay quản trị phải chỉnh sửa hoặc tạo mới tệp `unit` một cách thủ công. Vị trí của các tệp `unit` đã được mô tả gồm 3 nơi [ở đây](#systemd), trong số đó `/etc/systemd/system/` được dành riêng để lưu trữ các tệp `unit` mà mở rộng theo nhu cầu của người dùng trong lúc vận hành hệ thống. 
 

@@ -38,7 +38,7 @@
     - 2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)
     - 2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)
     - 2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)
-    - 2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 02/10/2023)
+    - 2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 03/10/2023)
     - 2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 03/10/2023)
         - 2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 03/10/2023)
         - 2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)
