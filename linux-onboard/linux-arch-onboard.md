@@ -2760,7 +2760,8 @@ Description=Start game chinese_jx1 %i instance
 [Service]
 ExecStart=/bin/bash -c "echo Accepted user=%i"
 [root@huyvl-linux-training system]# systemctl daemon-reload
-[root@huyvl-linux-training system]# systemctl start chinese_jx1@admin.service [root@huyvl-linux-training system]# systemctl start chinese_jx1@user_test.service
+[root@huyvl-linux-training system]# systemctl start chinese_jx1@admin.service
+[root@huyvl-linux-training system]# systemctl start chinese_jx1@user_test.service
 [root@huyvl-linux-training system]# tail /var/log/messages
 Oct  3 16:15:34 huyvl-linux-training systemd: Reloading.
 Oct  3 16:15:40 huyvl-linux-training systemd: Started Start game chinese_jx1 admin instance.
