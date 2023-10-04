@@ -15,23 +15,23 @@
     - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
     - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
     - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.5.4 - Tổng quan về quyền trên tệp tin (UPDATED 15/09/2023)](#file_permission)
+    - [2.5.4 - Tổng quan về quyền trên tệp tin (UPDATED 04/10/2023)](#file_permission)
       - [2.5.4.1 - Quản lý quyền tệp tin (UPDATED 13/09/2023)](#file_permission_management)
       - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
       - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
-      - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 13/09/2023)](#sticky_bit_permission)
-- [2.6 - Tổng quan tiến trình Linux (:arrow_up:UPDATED 03/10/2023)](#linux_process)
+      - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 04/09/2023)](#sticky_bit_permission)
+- [2.6 - Tổng quan tiến trình Linux (UPDATED 03/10/2023)](#linux_process)
     - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
-    - [2.6.2 - Kiểm soát các `Job` (UPDATED 17/09/2023)](#control_job)
+    - [2.6.2 - Kiểm soát các `Job` (UPDATED 04/10/2023)](#control_job)
     - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
-    - [2.6.4 - Dịch vụ hạ tầng (:arrow_up:UPDATED 21/09/2023)](#infra_service)
-    - [2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)](#systemd)
-    - [2.6.6 - Kiểm soát dịch vụ hệ thống (:arrow_up:UPDATED 02/10/2023)](#ctl_sys_svc)
-    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (:heavy_plus_sign:UPDATED 03/10/2023)](#instantiated_unit)
-    - [2.6.8 - Chi tiết tệp `unit` (:arrow_up:UPDATED 03/10/2023)](#unit)
-      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (:arrow_up:UPDATED 03/10/2023)](#service_unit)
-      - [2.6.8.2 - Loại `unit` về `*.socket` (:arrow_up:UPDATED 30/09/2023)](#socket_unit)
-      - [2.6.8.3 - Loại `unit` về `*.path` (:arrow_up:UPDATED 2830/09/2023)](#path_unit)
+    - [2.6.4 - Dịch vụ hạ tầng (UPDATED 21/09/2023)](#infra_service)
+    - [2.6.5 - Tổng quan về `systemd` (UPDATED 30/09/2023)](#systemd)
+    - [2.6.6 - Kiểm soát dịch vụ hệ thống (UPDATED 04/10/2023)](#ctl_sys_svc)
+    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (UPDATED 04/10/2023)](#instantiated_unit)
+    - [2.6.8 - Chi tiết tệp `unit` (UPDATED 04/10/2023)](#unit)
+      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
+      - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
+      - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 2830/09/2023)](#path_unit)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -1309,7 +1309,7 @@ rm: remove write-protected regular empty file ‘hn’? y
 rm: cannot remove ‘hn’: Operation not permitted
 [hcmoperator@huyvl-linux-training data]$
 ```
-Ký tự `T` lớn cho thấy `sticky bit` đã được kích hoạt và kèm theo những tài khoản ngoài chủ sở hữu và ngoài nhóm lớn `sysad` đều không có quyền truy cập vào thư mục này. Ngược lại khi ký tự là `t` nhỏ tức là `sticky bit` đã được kích hoạt và cho phép những tất cả các tài khoản nằm ngoài vùng phủ sóng có thể truy cấp, dùng lệnh `cd` đến được.
+Ký tự `T` lớn cho thấy `sticky bit` đã được kích hoạt và kèm theo những tài khoản ngoài chủ sở hữu và ngoài nhóm lớn `sysad` đều không có quyền truy cập vào thư mục này. Ngược lại khi ký tự là `t` nhỏ tức là `sticky bit` đã được kích hoạt và cho phép những tất cả các tài khoản nằm ngoài vùng phủ sóng có thể truy cập, dùng lệnh `cd` đến được.
 ```shell
 [sale@huyvl-linux-training ~]$ ll -d /data
 drwxrwx--T 2 root sysad 4096 Sep 13 16:49 /data
@@ -1908,16 +1908,15 @@ sleep 1000
 Để kiểm tra thông tin `job` cần lệnh `ps j` như sau:
 ```shell
 [root@huyvl-linux-training ~]# sleep 100 &
-[1] 18621
+[1] 31312
 [root@huyvl-linux-training ~]# ps j
  PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
-    1  1245  1245  1245 tty1      1245 Ss+      0   0:00 /sbin/agetty --noclear tty1 linux
-    1  1246  1246  1246 ttyS0     1246 Ss+      0   0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
-18270 18274 18274 18274 pts/0    18623 Ss       0   0:00 -bash
-18274 18621 18621 18274 pts/0    18623 S        0   0:00 sleep 100
-18274 18623 18623 18274 pts/0    18623 R+       0   0:00 ps j
-...
-...
+    1  1169  1169  1169 ttyS0     1169 Ss+      0   0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+    1  1170  1170  1170 tty1      1170 Ss+      0   0:00 /sbin/agetty --noclear tty1 linux
+30622 30627 30627 30627 pts/0    31321 Ss       0   0:00 bash -c export LESS="-X"; $SHELL -i
+30627 30638 30638 30627 pts/0    31321 S        0   0:00 /bin/bash -i
+30638 31312 31312 30627 pts/0    31321 S        0   0:00 sleep 100
+30638 31321 31321 30627 pts/0    31321 R+       0   0:00 ps j
 [root@huyvl-linux-training ~]#
 ```
 Liệt kê chính xác các tiến trình theo lệnh cụ thể thông qua lệnh `pidof` như sau:
@@ -2997,7 +2996,7 @@ Failed to create missing_start.service/start: Invalid argument
 [root@huyvl-linux-training system]#
 ```
 ### <a name="instantiated_unit"></a>Mẫu `unit` với ký hiệu `@`
-`systemd` cho phép khởi tạo nhiều `unit` từ một tệp cấu hình mẫu ngay tại thời điểm thực thi. Ký hiệu `@` trong tên tệp mẫu được sử dụng để đánh dấu sự liên kiết với các `unit` khác đến nó, ví dụ như `*.socket`, `*.path`, ... Thủ tục khai báo liên kết sử dụng `Wants=` hoặc `Requires=` để liên kết và chạy tệp cấu hình mẫu `template_name@instance_name.service`. Một số mẫu sử dụng chung mà không chỉ định `@instance_name` cụ thể sẽ có định dạng `template_name@.service`. Ví dụ khi chỉ định cụ thể:
+`systemd` cho phép khởi tạo nhiều `unit` từ một tệp cấu hình mẫu ngay tại thời điểm thực thi. Ký hiệu `@` trong tên tệp mẫu được sử dụng để đánh dấu sự liên kiết với các `unit` khác đến nó hoặc tự nó sẽ tạo ra các bản sao của riêng nó, ví dụ như `*.socket`, `*.path`, ... Thủ tục khai báo liên kết sử dụng `Wants=` hoặc `Requires=` để liên kết và chạy tệp cấu hình bản sao `template_name@instance_name.service` từ mẫu `template_name@.service`. Ví dụ khi chỉ định cụ thể:
 ```shell
 [root@huyvl-linux-training ~]# grep ^After /usr/lib/dracut/modules.d/98systemd/dracut-shutdown.service
 After=getty@tty1.service display-manager.service
@@ -3089,7 +3088,7 @@ Những lưu ý cần thiết:
   ```
   , mặc dù cả 2 cách đều không sai nhưng cách thứ 2 không có ý nghĩa vì `nginx` hiểu rất rõ ràng sự tồn tại của nó với việc khởi động máy tính đã được thiết lập từ trước.
 
-- Người dùng hoàn toàn có thể sử dụng `After/Before` mà không cần `Requires/Wants`.
+- Người dùng hoàn toàn có thể sử dụng `After/Before` mà không cần `Requires/Wants`, bởi vì như định nghĩa thì `After/Before` để chỉ sự sắp xếp thứ tự trong khi `Requires/Wants` sẽ khởi động danh sách các `unit` được khai báo.
 
 Ví dụ khởi động một dịch vụ khi nhận thấy tín hiệu `network` hoạt động:
 ```shell
@@ -3659,6 +3658,62 @@ Sep 28 22:55:31 huyvl-linux-training.novalocal bash[4831]: Handle before start h
 Sep 28 22:55:36 huyvl-linux-training.novalocal bash[4844]: Handle after start httpd
 Sep 28 22:55:41 huyvl-linux-training.novalocal systemd[1]: Started The Apache HTTP Server.
 [root@huyvl-linux-training httpd.service.d]#
+```
+Cấu hình `Conflic=` được sử dụng theo cách ngược lại với `Requires=`, nếu phát hiện trong danh sách `unit` được khai báo khởi chạy thì bản thân `unit` đó sẽ bị dừng lại. Ví dụ sau mô tả người dùng vô tình khởi động `sendmail` khi không biết có sự hiện diện của `postfix`, giải pháp cho việc tránh nhầm lẫn này là sử dụng `systemctl mask` như đã đề cập.
+```shell
+[root@huyvl-linux-training ~]# grep ^Conflic /usr/lib/systemd/system/postfix.service
+Conflicts=sendmail.service exim.service
+[root@huyvl-linux-training ~]# systemctl status postfix -l
+* postfix.service - Postfix Mail Transport Agent
+   Loaded: loaded (/usr/lib/systemd/system/postfix.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2023-10-03 22:32:00 +07; 24h ago
+ Main PID: 1041 (master)
+   CGroup: /system.slice/postfix.service
+           |- 1041 /usr/libexec/postfix/master -w
+           |- 1064 qmgr -l -t unix -u
+           `-26678 pickup -l -t unix -u
+
+Oct 03 22:31:59 huyvl-linux-training.novalocal systemd[1]: Starting Postfix Mail Transport Agent...
+Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/postfix-script[1025]: starting the Postfix mail system
+Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/master[1041]: daemon started -- version 2.10.1, configuration /etc/postfix
+Oct 03 22:32:00 huyvl-linux-training.novalocal systemd[1]: Started Postfix Mail Transport Agent.
+[root@huyvl-linux-training ~]# yum install sendmail &>/dev/null
+y
+[root@huyvl-linux-training ~]# grep ^Conflic /usr/lib/systemd/system/sendmail.service
+Conflicts=postfix.service exim.service
+[root@huyvl-linux-training ~]# systemctl status sendmail -l
+* sendmail.service - Sendmail Mail Transport Agent
+   Loaded: loaded (/usr/lib/systemd/system/sendmail.service; enabled; vendor preset: disabled)
+   Active: inactive (dead)
+[root@huyvl-linux-training ~]# systemctl start sendmail
+[root@huyvl-linux-training ~]# systemctl status sendmail -l
+* sendmail.service - Sendmail Mail Transport Agent
+   Loaded: loaded (/usr/lib/systemd/system/sendmail.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2023-10-04 23:25:29 +07; 1s ago
+  Process: 32466 ExecStart=/usr/sbin/sendmail -bd $SENDMAIL_OPTS $SENDMAIL_OPTARG (code=exited, status=0/SUCCESS)
+  Process: 32460 ExecStartPre=/etc/mail/make aliases (code=exited, status=0/SUCCESS)
+  Process: 32457 ExecStartPre=/etc/mail/make (code=exited, status=0/SUCCESS)
+ Main PID: 32476 (sendmail)
+   CGroup: /system.slice/sendmail.service
+           `-32476 sendmail: accepting connection
+
+Oct 04 23:25:29 huyvl-linux-training.novalocal systemd[1]: Starting Sendmail Mail Transport Agent...
+Oct 04 23:25:29 huyvl-linux-training.novalocal sendmail[32476]: starting daemon (8.14.7): SMTP+queueing@01:00:00
+Oct 04 23:25:29 huyvl-linux-training.novalocal systemd[1]: Started Sendmail Mail Transport Agent.
+[root@huyvl-linux-training ~]# systemctl status postfix -l
+* postfix.service - Postfix Mail Transport Agent
+   Loaded: loaded (/usr/lib/systemd/system/postfix.service; disabled; vendor preset: disabled)
+   Active: inactive (dead) since Wed 2023-10-04 23:25:29 +07; 7s ago
+  Process: 32458 ExecStop=/usr/sbin/postfix stop (code=exited, status=0/SUCCESS)
+ Main PID: 1041 (code=killed, signal=TERM)
+
+Oct 03 22:31:59 huyvl-linux-training.novalocal systemd[1]: Starting Postfix Mail Transport Agent...
+Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/postfix-script[1025]: starting the Postfix mail system
+Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/master[1041]: daemon started -- version 2.10.1, configuration /etc/postfix
+Oct 03 22:32:00 huyvl-linux-training.novalocal systemd[1]: Started Postfix Mail Transport Agent.
+Oct 04 23:25:29 huyvl-linux-training.novalocal systemd[1]: Stopping Postfix Mail Transport Agent...
+Oct 04 23:25:29 huyvl-linux-training.novalocal systemd[1]: Stopped Postfix Mail Transport Agent.
+[root@huyvl-linux-training ~]#
 ```
 #### <a name="socket_unit"></a>Loại `unit` về `*.socket`
 Ví dụ thực hiện một công việc được định nghĩa trong `*.service` được điều phối lệnh từ `*.socket` khi có một kết nối đi được thiết lập đến:
