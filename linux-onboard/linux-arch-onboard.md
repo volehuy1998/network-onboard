@@ -3671,14 +3671,13 @@ Conflicts=sendmail.service exim.service
    CGroup: /system.slice/postfix.service
            |- 1041 /usr/libexec/postfix/master -w
            |- 1064 qmgr -l -t unix -u
-           `-26678 pickup -l -t unix -u
+            -26678 pickup -l -t unix -u
 
 Oct 03 22:31:59 huyvl-linux-training.novalocal systemd[1]: Starting Postfix Mail Transport Agent...
 Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/postfix-script[1025]: starting the Postfix mail system
 Oct 03 22:32:00 huyvl-linux-training.novalocal postfix/master[1041]: daemon started -- version 2.10.1, configuration /etc/postfix
 Oct 03 22:32:00 huyvl-linux-training.novalocal systemd[1]: Started Postfix Mail Transport Agent.
-[root@huyvl-linux-training ~]# yum install sendmail &>/dev/null
-y
+[root@huyvl-linux-training ~]# yum install sendmail -y &>/dev/null
 [root@huyvl-linux-training ~]# grep ^Conflic /usr/lib/systemd/system/sendmail.service
 Conflicts=postfix.service exim.service
 [root@huyvl-linux-training ~]# systemctl status sendmail -l
@@ -3695,7 +3694,7 @@ Conflicts=postfix.service exim.service
   Process: 32457 ExecStartPre=/etc/mail/make (code=exited, status=0/SUCCESS)
  Main PID: 32476 (sendmail)
    CGroup: /system.slice/sendmail.service
-           `-32476 sendmail: accepting connection
+            -32476 sendmail: accepting connection
 
 Oct 04 23:25:29 huyvl-linux-training.novalocal systemd[1]: Starting Sendmail Mail Transport Agent...
 Oct 04 23:25:29 huyvl-linux-training.novalocal sendmail[32476]: starting daemon (8.14.7): SMTP+queueing@01:00:00
