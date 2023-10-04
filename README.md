@@ -36,7 +36,7 @@
     - 2.6.2 - Kiểm soát các `Job` (UPDATED 04/10/2023)
     - 2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)
     - 2.6.4 - Dịch vụ hạ tầng (UPDATED 21/09/2023)
-    - 2.6.5 - Tổng quan về `systemd` (:arrow_up:UPDATED 30/09/2023)
+    - 2.6.5 - Tổng quan về `systemd` (UPDATED 30/09/2023)
     - 2.6.6 - Kiểm soát dịch vụ hệ thống (UPDATED 04/10/2023)
     - 2.6.7 - Mẫu `unit` với ký hiệu `@` (UPDATED 04/10/2023)
     - 2.6.8 - Chi tiết tệp `unit` (UPDATED 04/10/2023)
