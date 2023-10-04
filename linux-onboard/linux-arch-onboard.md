@@ -610,13 +610,13 @@ cat: /etc/shadow: Permission denied
 [sudo] password for dev:
 dev is not in the sudoers file.  This incident will be reported.
 [dev@huyvl-linux-training ~]$
-...
-...
+```
+```shell
 [root@huyvl-linux-training ~]# usermod --append -G wheel dev
 [root@huyvl-linux-training ~]# groups dev
 dev : sysad wheel dev
-...
-...
+```
+```shell
 [dev@huyvl-linux-training ~]$ sudo cat /etc/shadow
 [sudo] password for dev:
 root:$1$WIK4jiKy$zduQomlM7t93yBZ8gWLO5.:19610:0:99999:7:::
@@ -664,8 +664,31 @@ Defaults    mailto="huyvl3@fpt.com"
 ```
 ```shell
 [dev@huyvl-linux-training ~]$ cat /etc/shadow
-...
-...
+root:$1$WIK4jiKy$zduQomlM7t93yBZ8gWLO5.:19610:0:99999:7:::
+bin:*:18353:0:99999:7:::
+daemon:*:18353:0:99999:7:::
+adm:*:18353:0:99999:7:::
+lp:*:18353:0:99999:7:::
+sync:*:18353:0:99999:7:::
+shutdown:*:18353:0:99999:7:::
+halt:*:18353:0:99999:7:::
+mail:*:18353:0:99999:7:::
+operator:*:18353:0:99999:7:::
+games:*:18353:0:99999:7:::
+ftp:*:18353:0:99999:7:::
+nobody:*:18353:0:99999:7:::
+systemd-network:!!:18760::::::
+dbus:!!:18760::::::
+polkitd:!!:18760::::::
+sshd:!!:18760::::::
+postfix:!!:18760::::::
+chrony:!!:18760::::::
+gluster:!!:18760::::::
+dev:$6$MSPq8owf$DPCLXYW1kZrA7Bnf6/cJe2FclE1VWBp4uak4ienAOU0cK3dF.nKX9mRnwqlLx4Di/AwU8cqWuKJUBewLV1Ty0.:19610:0:99999:7:::
+sysad:!!:19610:0:99999:7:::
+sysad2:!!:19610:0:99999:7:::
+intern_sysad:$1$SqZgOZ2H$mo2UzyEF1hMiyTsg4juT80:19610:0:99999:7:::
+[dev@huyvl-linux-training ~]$
 ```
 , nhật ký ghi nhận thư điện tử đã được gửi tới `huyvl3@fpt.com`:
 ```shell
@@ -1122,8 +1145,8 @@ uid=1001(dev) gid=1001(dev) groups=1001(dev)
 ```shell
 [root@huyvl-linux-training ~]# cp /usr/bin/id /home/dev/
 [root@huyvl-linux-training ~]# chmod u+s /home/dev/id
-...
-...
+```
+```shell
 [dev@huyvl-linux-training ~]$ ./id
 uid=1001(dev) gid=1001(dev) euid=0(root) groups=1001(dev)
 [dev@huyvl-linux-training ~]$
@@ -1435,19 +1458,90 @@ Mọi tiến trình đều có thể tạo tiến trình con của riêng nó, t
 ```shell
 [root@huyvl-linux-training ~]# ps aux
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.2 190920  3852 ?        Ss   Sep12   1:46 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
-root         2  0.0  0.0      0     0 ?        S    Sep12   0:00 [kthreadd]
-root         4  0.0  0.0      0     0 ?        S<   Sep12   0:00 [kworker/0:0H]
-root         5  0.0  0.0      0     0 ?        S    Sep12   0:00 [kworker/u4:0]
-root         6  0.0  0.0      0     0 ?        S    Sep12   0:00 [ksoftirqd/0]
-root         7  0.0  0.0      0     0 ?        S    Sep12   0:04 [migration/0]
-root         8  0.0  0.0      0     0 ?        S    Sep12   0:00 [rcu_bh]
-root         9  0.0  0.0      0     0 ?        S    Sep12   0:31 [rcu_sched]
-root        10  0.0  0.0      0     0 ?        S<   Sep12   0:00 [lru-add-drain]
-root        11  0.0  0.0      0     0 ?        S    Sep12   0:04 [watchdog/0]
-root        12  0.0  0.0      0     0 ?        S    Sep12   0:03 [watchdog/1]
-...
-...
+root         1  0.0  0.2 125516  3964 ?        Ss   Oct03   0:14 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+root         2  0.0  0.0      0     0 ?        S    Oct03   0:00 [kthreadd]
+root         4  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kworker/0:0H]
+root         5  0.0  0.0      0     0 ?        S    Oct03   0:00 [kworker/u4:0]
+root         6  0.0  0.0      0     0 ?        S    Oct03   0:00 [ksoftirqd/0]
+root         7  0.0  0.0      0     0 ?        S    Oct03   0:00 [migration/0]
+root         8  0.0  0.0      0     0 ?        S    Oct03   0:00 [rcu_bh]
+root         9  0.0  0.0      0     0 ?        S    Oct03   0:03 [rcu_sched]
+root        10  0.0  0.0      0     0 ?        S<   Oct03   0:00 [lru-add-drain]
+root        11  0.0  0.0      0     0 ?        S    Oct03   0:00 [watchdog/0]
+root        12  0.0  0.0      0     0 ?        S    Oct03   0:00 [watchdog/1]
+root        13  0.0  0.0      0     0 ?        S    Oct03   0:00 [migration/1]
+root        14  0.0  0.0      0     0 ?        S    Oct03   0:00 [ksoftirqd/1]
+root        16  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kworker/1:0H]
+root        18  0.0  0.0      0     0 ?        S    Oct03   0:00 [kdevtmpfs]
+root        19  0.0  0.0      0     0 ?        S<   Oct03   0:00 [netns]
+root        20  0.0  0.0      0     0 ?        S    Oct03   0:00 [khungtaskd]
+root        21  0.0  0.0      0     0 ?        S<   Oct03   0:00 [writeback]
+root        22  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kintegrityd]
+root        23  0.0  0.0      0     0 ?        S<   Oct03   0:00 [bioset]
+root        24  0.0  0.0      0     0 ?        S<   Oct03   0:00 [bioset]
+root        25  0.0  0.0      0     0 ?        S<   Oct03   0:00 [bioset]
+root        26  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kblockd]
+root        27  0.0  0.0      0     0 ?        S<   Oct03   0:00 [md]
+root        28  0.0  0.0      0     0 ?        S<   Oct03   0:00 [edac-poller]
+root        29  0.0  0.0      0     0 ?        S<   Oct03   0:00 [watchdogd]
+root        35  0.0  0.0      0     0 ?        S    Oct03   0:00 [kswapd0]
+root        36  0.0  0.0      0     0 ?        SN   Oct03   0:00 [ksmd]
+root        37  0.0  0.0      0     0 ?        SN   Oct03   0:00 [khugepaged]
+root        38  0.0  0.0      0     0 ?        S<   Oct03   0:00 [crypto]
+root        46  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kthrotld]
+root        47  0.0  0.0      0     0 ?        S    Oct03   0:00 [kworker/u4:1]
+root        48  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kmpath_rdacd]
+root        49  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kaluad]
+root        50  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kpsmoused]
+root        51  0.0  0.0      0     0 ?        S<   Oct03   0:00 [ipv6_addrconf]
+root        64  0.0  0.0      0     0 ?        S<   Oct03   0:00 [deferwq]
+root       100  0.0  0.0      0     0 ?        S    Oct03   0:00 [kauditd]
+root       238  0.0  0.0      0     0 ?        S<   Oct03   0:00 [ata_sff]
+root       242  0.0  0.0      0     0 ?        S    Oct03   0:00 [scsi_eh_0]
+root       243  0.0  0.0      0     0 ?        S<   Oct03   0:00 [scsi_tmf_0]
+root       244  0.0  0.0      0     0 ?        S    Oct03   0:00 [scsi_eh_1]
+root       245  0.0  0.0      0     0 ?        S<   Oct03   0:00 [scsi_tmf_1]
+root       250  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kworker/1:1H]
+root       261  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kworker/0:1H]
+root       262  0.0  0.0      0     0 ?        S    Oct03   0:01 [jbd2/vda1-8]
+root       263  0.0  0.0      0     0 ?        S<   Oct03   0:00 [ext4-rsv-conver]
+root       362  0.0  0.1  39060  3292 ?        Ss   Oct03   0:13 /usr/lib/systemd/systemd-journald
+root       384  0.0  0.0  45352  1840 ?        Ss   Oct03   0:00 /usr/lib/systemd/systemd-udevd
+root       421  0.0  0.0  55532  1088 ?        S<sl Oct03   0:02 /sbin/auditd
+root       427  0.0  0.0      0     0 ?        S    Oct03   0:00 [hwrng]
+root       477  0.0  0.0      0     0 ?        S<   Oct03   0:00 [ttm_swap]
+root       485  0.0  0.0      0     0 ?        S<   Oct03   0:00 [kvm-irqfd-clean]
+root       495  0.0  0.0      0     0 ?        S<   Oct03   0:00 [nfit]
+root       500  0.0  0.1  44168  2068 ?        Ss   Oct03   0:00 /usr/bin/qemu-ga --method=virtio-serial --path=/dev/virtio-ports/org.qemu.guest_agent.0 --b
+polkitd    503  0.0  0.6 612752 12876 ?        Ssl  Oct03   0:00 /usr/lib/polkit-1/polkitd --no-debug
+dbus       504  0.0  0.1  58216  2520 ?        Ss   Oct03   0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+root       512  0.0  0.0  21540  1272 ?        Ss   Oct03   0:01 /usr/sbin/irqbalance --foreground
+root       513  0.0  0.0  26384  1756 ?        Ss   Oct03   0:00 /usr/lib/systemd/systemd-logind
+root       529  0.0  0.0   4388   548 ?        Ss   Oct03   0:00 /usr/sbin/acpid
+root       580  0.0  0.5 550320 10908 ?        Ssl  Oct03   0:01 /usr/sbin/NetworkManager --no-daemon
+root       603  0.0  0.2 103004  5544 ?        S    Oct03   0:00 /sbin/dhclient -d -q -sf /usr/libexec/nm-dhcp-helper -pf /var/run/dhclient-eth0.pid -lf /va
+root       799  0.0  1.0 574284 19504 ?        Ssl  Oct03   0:07 /usr/bin/python2 -Es /usr/sbin/tuned -l -P
+root      1041  0.0  0.1  89804  2224 ?        Ss   Oct03   0:00 /usr/libexec/postfix/master -w
+postfix   1064  0.0  0.2  89976  4112 ?        S    Oct03   0:00 qmgr -l -t unix -u
+root      1145  0.0  0.3 289468  7084 ?        Ssl  Oct03   0:09 /usr/sbin/rsyslogd -n
+root      1169  0.0  0.0 110204   864 ttyS0    Ss+  Oct03   0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+root      1170  0.0  0.0 110204   856 tty1     Ss+  Oct03   0:00 /sbin/agetty --noclear tty1 linux
+root     18112  0.0  0.0 126388  1616 ?        Ss   Oct03   0:00 /usr/sbin/crond -n
+root     18142  0.0  0.2 113000  4344 ?        Ss   Oct03   0:03 /usr/sbin/sshd -D
+root     23893  0.0  0.0      0     0 ?        S    21:01   0:00 [kworker/0:2]
+postfix  26678  0.0  0.2  89908  4092 ?        S    21:53   0:00 pickup -l -t unix -u
+root     27116  0.0  0.0      0     0 ?        R    22:01   0:00 [kworker/0:0]
+root     27119  0.0  0.0      0     0 ?        S    22:01   0:00 [kworker/1:2]
+root     30570  0.0  0.2 113000  4268 ?        Ss   23:01   0:00 sshd: [accepted]
+root     30590  0.0  0.2 113000  4268 ?        Ss   23:02   0:00 sshd: [accepted]
+root     30622  0.0  0.3 157184  5804 ?        Ds   23:02   0:00 sshd: root@pts/0
+root     30625  0.0  0.3 158992  5824 ?        Ss   23:02   0:00 sshd: root@notty
+root     30627  0.0  0.0 113280  1580 pts/0    Ss   23:02   0:00 bash -c export LESS="-X"; $SHELL -i
+root     30638  0.0  0.1  11824  1916 pts/0    S    23:02   0:00 /bin/bash -i
+root     30654  0.0  0.1  72348  2888 ?        Ss   23:02   0:00 /usr/libexec/openssh/sftp-server
+root     30679  0.0  0.0  51732  1728 pts/0    R+   23:03   0:00 ps aux
+root     31811  0.0  0.0      0     0 ?        S    14:01   0:00 [kworker/1:1]
+[root@huyvl-linux-training ~]#
 ```
 
 Chú thích sơ lược
@@ -1464,38 +1558,177 @@ Lệnh `ps` của `Linux` hỗ trợ nhiều tùy chọn định dạng:
 Sử dụng tùy chọn `--forest` theo định dạng `GNU` để hiển thị danh sách tiến trình dạng cây hay mỗi liên hệ giữa các tiến trình con và tiến trình cha như sau:
 ```shell
 [root@huyvl-linux-training ~]# ps --forest ax
-...
-...
-18926 ?        Ss     0:00  \_ sshd: root@pts/0
-18930 pts/0    Ss+    0:00  |   \_ -bash
-18928 ?        Ss     0:00  \_ sshd: root@notty
-18948 ?        Ss     0:00  |   \_ /usr/libexec/openssh/sftp-server
-20881 ?        Ss     0:00  \_ sshd: root@pts/1
-20885 pts/1    Ss     0:00  |   \_ -bash
-22557 pts/1    S+     0:00  |       \_ tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
-20883 ?        Ss     0:00  \_ sshd: root@notty
-20903 ?        Ss     0:00      \_ /usr/libexec/openssh/sftp-server
-22603 ?        Ss     0:02 tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
-22605 pts/3    Ss     0:00  \_ /bin/bash
-25961 pts/3    R+     0:00  |   \_ ps --forest ax
-22689 pts/2    Ss     0:00  \_ /bin/bash
-22812 pts/2    S+     0:00      \_ top
+  PID TTY      STAT   TIME COMMAND
+    2 ?        S      0:00 [kthreadd]
+    4 ?        S<     0:00  \_ [kworker/0:0H]
+    5 ?        S      0:00  \_ [kworker/u4:0]
+    6 ?        S      0:00  \_ [ksoftirqd/0]
+    7 ?        S      0:00  \_ [migration/0]
+    8 ?        S      0:00  \_ [rcu_bh]
+    9 ?        S      0:03  \_ [rcu_sched]
+   10 ?        S<     0:00  \_ [lru-add-drain]
+   11 ?        S      0:00  \_ [watchdog/0]
+   12 ?        S      0:00  \_ [watchdog/1]
+   13 ?        S      0:00  \_ [migration/1]
+   14 ?        S      0:00  \_ [ksoftirqd/1]
+   16 ?        S<     0:00  \_ [kworker/1:0H]
+   18 ?        S      0:00  \_ [kdevtmpfs]
+   19 ?        S<     0:00  \_ [netns]
+   20 ?        S      0:00  \_ [khungtaskd]
+   21 ?        S<     0:00  \_ [writeback]
+   22 ?        S<     0:00  \_ [kintegrityd]
+   23 ?        S<     0:00  \_ [bioset]
+   24 ?        S<     0:00  \_ [bioset]
+   25 ?        S<     0:00  \_ [bioset]
+   26 ?        S<     0:00  \_ [kblockd]
+   27 ?        S<     0:00  \_ [md]
+   28 ?        S<     0:00  \_ [edac-poller]
+   29 ?        S<     0:00  \_ [watchdogd]
+   35 ?        S      0:00  \_ [kswapd0]
+   36 ?        SN     0:00  \_ [ksmd]
+   37 ?        SN     0:00  \_ [khugepaged]
+   38 ?        S<     0:00  \_ [crypto]
+   46 ?        S<     0:00  \_ [kthrotld]
+   47 ?        S      0:00  \_ [kworker/u4:1]
+   48 ?        S<     0:00  \_ [kmpath_rdacd]
+   49 ?        S<     0:00  \_ [kaluad]
+   50 ?        S<     0:00  \_ [kpsmoused]
+   51 ?        S<     0:00  \_ [ipv6_addrconf]
+   64 ?        S<     0:00  \_ [deferwq]
+  100 ?        S      0:00  \_ [kauditd]
+  238 ?        S<     0:00  \_ [ata_sff]
+  242 ?        S      0:00  \_ [scsi_eh_0]
+  243 ?        S<     0:00  \_ [scsi_tmf_0]
+  244 ?        S      0:00  \_ [scsi_eh_1]
+  245 ?        S<     0:00  \_ [scsi_tmf_1]
+  250 ?        S<     0:00  \_ [kworker/1:1H]
+  261 ?        S<     0:00  \_ [kworker/0:1H]
+  262 ?        S      0:01  \_ [jbd2/vda1-8]
+  263 ?        S<     0:00  \_ [ext4-rsv-conver]
+  427 ?        S      0:00  \_ [hwrng]
+  477 ?        S<     0:00  \_ [ttm_swap]
+  485 ?        S<     0:00  \_ [kvm-irqfd-clean]
+  495 ?        S<     0:00  \_ [nfit]
+31811 ?        S      0:00  \_ [kworker/1:1]
+23893 ?        S      0:00  \_ [kworker/0:2]
+27116 ?        R      0:00  \_ [kworker/0:0]
+27119 ?        S      0:00  \_ [kworker/1:2]
+    1 ?        Ss     0:14 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+  362 ?        Ss     0:13 /usr/lib/systemd/systemd-journald
+  384 ?        Ss     0:00 /usr/lib/systemd/systemd-udevd
+  421 ?        S<sl   0:02 /sbin/auditd
+  500 ?        Ss     0:00 /usr/bin/qemu-ga --method=virtio-serial --path=/dev/virtio-ports/org.qemu.guest_agent.0 --blacklist=guest-file-open,guest-file-cl
+  503 ?        Ssl    0:00 /usr/lib/polkit-1/polkitd --no-debug
+  504 ?        Ss     0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+  512 ?        Ss     0:01 /usr/sbin/irqbalance --foreground
+  513 ?        Ss     0:00 /usr/lib/systemd/systemd-logind
+  529 ?        Ss     0:00 /usr/sbin/acpid
+  580 ?        Ssl    0:01 /usr/sbin/NetworkManager --no-daemon
+  603 ?        S      0:00  \_ /sbin/dhclient -d -q -sf /usr/libexec/nm-dhcp-helper -pf /var/run/dhclient-eth0.pid -lf /var/lib/NetworkManager/dhclient-5fb0
+  799 ?        Ssl    0:07 /usr/bin/python2 -Es /usr/sbin/tuned -l -P
+ 1041 ?        Ss     0:00 /usr/libexec/postfix/master -w
+ 1064 ?        S      0:00  \_ qmgr -l -t unix -u
+26678 ?        S      0:00  \_ pickup -l -t unix -u
+ 1145 ?        Ssl    0:09 /usr/sbin/rsyslogd -n
+ 1169 ttyS0    Ss+    0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+ 1170 tty1     Ss+    0:00 /sbin/agetty --noclear tty1 linux
+18112 ?        Ss     0:00 /usr/sbin/crond -n
+18142 ?        Ss     0:03 /usr/sbin/sshd -D
+30570 ?        Ss     0:00  \_ sshd: [accepted]
+30622 ?        Ss     0:00  \_ sshd: root@pts/0
+30627 pts/0    Ss     0:00  |   \_ bash -c export LESS="-X"; $SHELL -i
+30638 pts/0    S      0:00  |       \_ /bin/bash -i
+30743 pts/0    R+     0:00  |           \_ ps --forest ax
+30625 ?        Ss     0:00  \_ sshd: root@notty
+30654 ?        Ss     0:00      \_ /usr/libexec/openssh/sftp-server
+[root@huyvl-linux-training ~]#
 [root@huyvl-linux-training ~]#
 [root@huyvl-linux-training ~]# ps fax
-...
-...
- 1292 ?        Ss     0:05 /usr/sbin/sshd -D
- 8887 ?        Ss     0:00  \_ sshd: root@pts/0
- 8892 pts/0    Ss     0:00  |   \_ -bash
- 9020 pts/0    R+     0:00  |       \_ ps fax
- 8890 ?        Ss     0:00  \_ sshd: root@notty
- 8910 ?        Ss     0:00      \_ /usr/libexec/openssh/sftp-server
-22603 ?        Ss     0:59 tmux -2 -f /usr/share/byobu/profiles/tmuxrc new-session -n - /usr/bin/byobu-shell
-22605 pts/3    Ss     0:00  \_ /bin/bash
-29044 pts/3    S+     0:00  |   \_ man ps
-29053 pts/3    S+     0:00  |       \_ less -s
-22689 pts/2    Ss     0:00  \_ /bin/bash
-22812 pts/2    S+     1:03      \_ top
+  PID TTY      STAT   TIME COMMAND
+    2 ?        S      0:00 [kthreadd]
+    4 ?        S<     0:00  \_ [kworker/0:0H]
+    5 ?        S      0:00  \_ [kworker/u4:0]
+    6 ?        S      0:00  \_ [ksoftirqd/0]
+    7 ?        S      0:00  \_ [migration/0]
+    8 ?        S      0:00  \_ [rcu_bh]
+    9 ?        R      0:03  \_ [rcu_sched]
+   10 ?        S<     0:00  \_ [lru-add-drain]
+   11 ?        S      0:00  \_ [watchdog/0]
+   12 ?        S      0:00  \_ [watchdog/1]
+   13 ?        S      0:00  \_ [migration/1]
+   14 ?        S      0:00  \_ [ksoftirqd/1]
+   16 ?        S<     0:00  \_ [kworker/1:0H]
+   18 ?        S      0:00  \_ [kdevtmpfs]
+   19 ?        S<     0:00  \_ [netns]
+   20 ?        S      0:00  \_ [khungtaskd]
+   21 ?        S<     0:00  \_ [writeback]
+   22 ?        S<     0:00  \_ [kintegrityd]
+   23 ?        S<     0:00  \_ [bioset]
+   24 ?        S<     0:00  \_ [bioset]
+   25 ?        S<     0:00  \_ [bioset]
+   26 ?        S<     0:00  \_ [kblockd]
+   27 ?        S<     0:00  \_ [md]
+   28 ?        S<     0:00  \_ [edac-poller]
+   29 ?        S<     0:00  \_ [watchdogd]
+   35 ?        S      0:00  \_ [kswapd0]
+   36 ?        SN     0:00  \_ [ksmd]
+   37 ?        SN     0:00  \_ [khugepaged]
+   38 ?        S<     0:00  \_ [crypto]
+   46 ?        S<     0:00  \_ [kthrotld]
+   47 ?        S      0:00  \_ [kworker/u4:1]
+   48 ?        S<     0:00  \_ [kmpath_rdacd]
+   49 ?        S<     0:00  \_ [kaluad]
+   50 ?        S<     0:00  \_ [kpsmoused]
+   51 ?        S<     0:00  \_ [ipv6_addrconf]
+   64 ?        S<     0:00  \_ [deferwq]
+  100 ?        S      0:00  \_ [kauditd]
+  238 ?        S<     0:00  \_ [ata_sff]
+  242 ?        S      0:00  \_ [scsi_eh_0]
+  243 ?        S<     0:00  \_ [scsi_tmf_0]
+  244 ?        S      0:00  \_ [scsi_eh_1]
+  245 ?        S<     0:00  \_ [scsi_tmf_1]
+  250 ?        S<     0:00  \_ [kworker/1:1H]
+  261 ?        S<     0:00  \_ [kworker/0:1H]
+  262 ?        S      0:01  \_ [jbd2/vda1-8]
+  263 ?        S<     0:00  \_ [ext4-rsv-conver]
+  427 ?        S      0:00  \_ [hwrng]
+  477 ?        S<     0:00  \_ [ttm_swap]
+  485 ?        S<     0:00  \_ [kvm-irqfd-clean]
+  495 ?        S<     0:00  \_ [nfit]
+31811 ?        S      0:00  \_ [kworker/1:1]
+23893 ?        S      0:00  \_ [kworker/0:2]
+27116 ?        S      0:00  \_ [kworker/0:0]
+27119 ?        S      0:00  \_ [kworker/1:2]
+    1 ?        Ss     0:14 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+  362 ?        Ss     0:13 /usr/lib/systemd/systemd-journald
+  384 ?        Ss     0:00 /usr/lib/systemd/systemd-udevd
+  421 ?        S<sl   0:02 /sbin/auditd
+  500 ?        Ss     0:00 /usr/bin/qemu-ga --method=virtio-serial --path=/dev/virtio-ports/org.qemu.guest_agent.0 --blacklist=guest-file-open,guest-file-cl
+  503 ?        Ssl    0:00 /usr/lib/polkit-1/polkitd --no-debug
+  504 ?        Ss     0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+  512 ?        Ss     0:01 /usr/sbin/irqbalance --foreground
+  513 ?        Ss     0:00 /usr/lib/systemd/systemd-logind
+  529 ?        Ss     0:00 /usr/sbin/acpid
+  580 ?        Ssl    0:01 /usr/sbin/NetworkManager --no-daemon
+  603 ?        S      0:00  \_ /sbin/dhclient -d -q -sf /usr/libexec/nm-dhcp-helper -pf /var/run/dhclient-eth0.pid -lf /var/lib/NetworkManager/dhclient-5fb0
+  799 ?        Ssl    0:07 /usr/bin/python2 -Es /usr/sbin/tuned -l -P
+ 1041 ?        Ss     0:00 /usr/libexec/postfix/master -w
+ 1064 ?        S      0:00  \_ qmgr -l -t unix -u
+26678 ?        S      0:00  \_ pickup -l -t unix -u
+ 1145 ?        Ssl    0:09 /usr/sbin/rsyslogd -n
+ 1169 ttyS0    Ss+    0:00 /sbin/agetty --keep-baud 115200,38400,9600 ttyS0 vt220
+ 1170 tty1     Ss+    0:00 /sbin/agetty --noclear tty1 linux
+18112 ?        Ss     0:00 /usr/sbin/crond -n
+18142 ?        Ss     0:03 /usr/sbin/sshd -D
+30622 ?        Ss     0:00  \_ sshd: root@pts/0
+30627 pts/0    Ss     0:00  |   \_ bash -c export LESS="-X"; $SHELL -i
+30638 pts/0    S      0:00  |       \_ /bin/bash -i
+30780 pts/0    R+     0:00  |           \_ ps fax
+30625 ?        Ss     0:00  \_ sshd: root@notty
+30654 ?        Ss     0:00  |   \_ /usr/libexec/openssh/sftp-server
+30775 ?        Ss     0:00  \_ sshd: unknown [priv]
+30776 ?        S      0:00  |   \_ sshd: unknown [net]
+30781 ?        Rs     0:00  \_ /usr/sbin/sshd -D -R
 [root@huyvl-linux-training ~]#
 ```
 ### <a name="process_states"></a>Các trạng thái của tiến trình `Linux`
@@ -1556,21 +1789,54 @@ echo "You just put: $something"
 Khi chạy lệnh `top` thì một `job` sẽ được sinh ra và chạy ở chế độ `foreground`. Sử dụng tổ hợp phím `Ctrl-Z` để đưa tiến trình đang chạy vào trạng thái `stopped` như sau:
 ```shell
 [root@huyvl-linux-training ~]# top
-%Cpu(s):  3.2 us,  0.0 sy,  0.0 ni, 96.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-KiB Mem :  1881832 total,   952836 free,   167840 used,   761156 buff/cache
-KiB Swap:        0 total,        0 free,        0 used.  1508828 avail Mem
+top - 23:05:51 up 1 day, 34 min,  1 user,  load average: 0.00, 0.01, 0.05
+Tasks:  85 total,   1 running,  84 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1881632 total,   675620 free,   104372 used,  1101640 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  1532156 avail Mem
 
   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
-11785 sshd      20   0  112940   2232   1168 S   6.7  0.1   0:00.01 sshd
-11786 root      20   0  162104   2204   1540 R   6.7  0.1   0:00.01 top
-    1 root      20   0  190920   3852   2596 S   0.0  0.2   2:04.82 systemd
+30824 root      20   0   58288   2148   1500 R   0.3  0.1   0:00.02 top
+    1 root      20   0  125516   3964   2616 S   0.0  0.2   0:14.15 systemd
     2 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kthreadd
     4 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/0:0H
-    5 root      20   0       0      0      0 S   0.0  0.0   0:00.88 kworker/u4:0
-    6 root      20   0       0      0      0 S   0.0  0.0   0:01.15 ksoftirqd/0
-...
-...
-[2]+  Stopped                 top
+    5 root      20   0       0      0      0 S   0.0  0.0   0:00.42 kworker/u4:0
+    6 root      20   0       0      0      0 S   0.0  0.0   0:00.05 ksoftirqd/0
+    7 root      rt   0       0      0      0 S   0.0  0.0   0:00.15 migration/0
+    8 root      20   0       0      0      0 S   0.0  0.0   0:00.00 rcu_bh
+    9 root      20   0       0      0      0 S   0.0  0.0   0:03.01 rcu_sched
+   10 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 lru-add-drain
+   11 root      rt   0       0      0      0 S   0.0  0.0   0:00.37 watchdog/0
+   12 root      rt   0       0      0      0 S   0.0  0.0   0:00.31 watchdog/1
+   13 root      rt   0       0      0      0 S   0.0  0.0   0:00.06 migration/1
+   14 root      20   0       0      0      0 S   0.0  0.0   0:00.09 ksoftirqd/1
+   16 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/1:0H
+   18 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kdevtmpfs
+   19 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 netns
+   20 root      20   0       0      0      0 S   0.0  0.0   0:00.01 khungtaskd
+   21 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 writeback
+   22 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kintegrityd
+   23 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 bioset
+   24 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 bioset
+   25 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 bioset
+   26 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kblockd
+   27 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 md
+   28 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 edac-poller
+   29 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 watchdogd
+   35 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kswapd0
+   36 root      25   5       0      0      0 S   0.0  0.0   0:00.00 ksmd
+   37 root      39  19       0      0      0 S   0.0  0.0   0:00.25 khugepaged
+   38 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 crypto
+   46 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kthrotld
+   47 root      20   0       0      0      0 S   0.0  0.0   0:00.45 kworker/u4:1
+   48 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kmpath_rdacd
+   49 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kaluad
+   50 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kpsmoused
+   51 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 ipv6_addrconf
+   64 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 deferwq
+  100 root      20   0       0      0      0 S   0.0  0.0   0:00.64 kauditd
+[1]+  Stopped                 top
+[root@huyvl-linux-training ~]#
 ```
 , sau khi `Ctrl-Z` thì `ID` của `job` trả về là `2`, liệt kê các tiến trình hiện có để kiểm tra trạng thái của tiến trình `top` vừa được `stopped` với ký hiệu `T` như sau:
 ```shell
@@ -1587,8 +1853,6 @@ root     22812  0.1  0.1 162100  2296 pts/2    S+   Sep16   1:07 top
 , quay trở lại với chương trình `top` cần `foreground` giá trị `2` như sau:
 ```shell
 [root@huyvl-linux-training ~]# fg %2
-...
-...
 top - 12:25:58 up 5 days,  2:11,  1 user,  load average: 0.00, 0.01, 0.05
 Tasks:  85 total,   3 running,  81 sleeping,   1 stopped,   0 zombie
 %Cpu(s):  0.1 us,  0.1 sy,  0.0 ni, 99.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
