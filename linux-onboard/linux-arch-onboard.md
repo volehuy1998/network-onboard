@@ -4,34 +4,40 @@
 - [2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)](#linux_kernel_job)
 - [2.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)](#interrupt)
 - [2.4 - Quản lý người dùng và nhóm (UPDATED 17/09/2023)](#user_and_group)
-    - [2.4.1 - Khái niệm `User` (UPDATED 17/09/2023)](#user)
-    - [2.4.2 - Khái niệm về nhóm, chính và phụ (UPDATED 12/09/2023)](#group)
-    - [2.4.3 - Thay đổi tài khoản người dùng (UPDATED 13/09/2023)](#switch_user)
-    - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm(UPDATED 11/09/2023)](#user_and_group_control)
-    - [2.4.5 - Hạn chế quyền truy cập người dùng (UPDATED 13/09/2023)](#user_restrict_access)
-    - [2.4.6 - Cấp quyền `sudo` tự do (UPDATED 11/09/2023)](#grant_free_sudo)
-    - [2.4.7 - Cấp quyền `sudo` với lệnh cụ thể (UPDATED 11/09/2023)](#grant_command_sudo)
+  - [2.4.1 - Khái niệm `User` (UPDATED 17/09/2023)](#user)
+  - [2.4.2 - Khái niệm về nhóm, chính và phụ (UPDATED 12/09/2023)](#group)
+  - [2.4.3 - Thay đổi tài khoản người dùng (UPDATED 13/09/2023)](#switch_user)
+  - [2.4.4 - Các thao tác quản lý trên người dùng và nhóm(UPDATED 11/09/2023)](#user_and_group_control)
+  - [2.4.5 - Hạn chế quyền truy cập người dùng (UPDATED 13/09/2023)](#user_restrict_access)
+  - [2.4.6 - Cấp quyền `sudo` tự do (UPDATED 11/09/2023)](#grant_free_sudo)
+  - [2.4.7 - Cấp quyền `sudo` với lệnh cụ thể (UPDATED 11/09/2023)](#grant_command_sudo)
 - [2.5 - Hệ thống tệp tin (UPDATED 04/10/2023)](#fs)
-    - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
-    - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
-    - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
-    - [2.5.4 - Tổng quan về quyền trên tệp tin (UPDATED 04/10/2023)](#file_permission)
-      - [2.5.4.1 - Quản lý quyền tệp tin (UPDATED 13/09/2023)](#file_permission_management)
-      - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
-      - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
-      - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 04/09/2023)](#sticky_bit_permission)
+  - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
+  - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
+  - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
+  - [2.5.4 - Tổng quan về quyền trên tệp tin (UPDATED 04/10/2023)](#file_permission)
+    - [2.5.4.1 - Quản lý quyền tệp tin (UPDATED 13/09/2023)](#file_permission_management)
+    - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
+    - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
+    - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 04/09/2023)](#sticky_bit_permission)
 - [2.6 - Tổng quan tiến trình Linux (UPDATED 04/10/2023)](#linux_process)
-    - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
-    - [2.6.2 - Kiểm soát các `Job` (UPDATED 04/10/2023)](#control_job)
-    - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
-    - [2.6.4 - Dịch vụ hạ tầng (UPDATED 21/09/2023)](#infra_service)
-    - [2.6.5 - Tổng quan về `systemd` (UPDATED 30/09/2023)](#systemd)
-    - [2.6.6 - Kiểm soát dịch vụ hệ thống (UPDATED 04/10/2023)](#ctl_sys_svc)
-    - [2.6.7 - Mẫu `unit` với ký hiệu `@` (UPDATED 04/10/2023)](#instantiated_unit)
-    - [2.6.8 - Chi tiết tệp `unit` (UPDATED 04/10/2023)](#unit)
-      - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
-      - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
-      - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
+  - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
+  - [2.6.2 - Kiểm soát các `Job` (UPDATED 04/10/2023)](#control_job)
+  - [2.6.3 - Kết thúc tiến trình (UPDATED 18/09/2023)](#kill_process)
+  - [2.6.4 - Dịch vụ hạ tầng (UPDATED 21/09/2023)](#infra_service)
+  - [2.6.5 - Tổng quan về `systemd` (UPDATED 30/09/2023)](#systemd)
+  - [2.6.6 - Kiểm soát dịch vụ hệ thống (UPDATED 04/10/2023)](#ctl_sys_svc)
+  - [2.6.7 - Mẫu `unit` với ký hiệu `@` (UPDATED 04/10/2023)](#instantiated_unit)
+  - [2.6.8 - Chi tiết tệp `unit` (UPDATED 04/10/2023)](#unit)
+    - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
+    - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
+    - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
+- [2.7 - Điều khiển an toàn từ xa (:heavy_plus_sign:UPDATED 05/10/2023)](#remote_connection)
+  - [2.7.1 - Tổng quan về giao thức `SSH` (:heavy_plus_sign:UPDATED 05/10/2023)](#ssh_protocol)
+  - [2.7.2 - Tổng quan về `OpenSSH` (:heavy_plus_sign:UPDATED 05/10/2023)](#openssh_overview)
+  - [2.7.3 - Cấu hình `ssh` trên máy chủ và máy khách (:heavy_plus_sign:UPDATED 05/10/2023)](#config_ssh)
+
+
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -3801,3 +3807,20 @@ Sep 21 10:47:11 huyvl-linux-training postfix/qmgr[1053]: 4052180E38: removed
 ```
 
 <div style="text-align:center"><img src="../images/systemd_path_ex.png" /></div>
+
+## <a name="remote_connection"></a>Điều khiển an toàn từ xa
+Việc truy cập máy tính từ xa đã trở thành một sự cần thiết từ rất lâu bởi vì nhưng chính sách an toàn bảo mật áp dụng lên máy tính này. Có nhiều cách thiết lập kết nối từ xa tùy thuộc vào hiệu điều hành mà người dùng đang sử dụng, có `2` trong số các giao thức phổ biến nhất là:
+
+- `SSH (Secure Shell)` dành cho `Linux`.
+- `RDP (Remote Desktop Protocol)` dành cho `Windows`.
+
+Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
+
+- Máy tính được kết nối phải luôn trong tình trạng đang chạy và có kết nối mạng.
+- Phần mềm kết nối phải được cài đặt.
+- Người dùng phải được cấp quyền để có thể kết nối.
+
+### <a name="ssh_protocol"></a>Tổng quan về giao thức `SSH`
+`SSH (Secure Shell)` là một giao thức cho phép truy cập từ xa một cách an toàn hoặc một số dịch vụ mạng khác như truyền dữ liệu tệp tin, ...
+### <a name="openssh_overview"></a>Tổng quan về `OpenSSH`
+### <a name="config_ssh"></a>Cấu hình `ssh` trên máy chủ và máy khách 
