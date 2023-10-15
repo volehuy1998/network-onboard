@@ -32,8 +32,8 @@
     - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
-- [2.7 - Điều khiển an toàn từ xa (:heavy_plus_sign:UPDATED 05/10/2023)](#remote_connection)
-  - [2.7.1 - Tổng quan về giao thức `SSH` (:heavy_plus_sign:UPDATED 05/10/2023)](#ssh_protocol)
+- [2.7 - Điều khiển an toàn từ xa (:heavy_plus_sign:UPDATED 16/10/2023)](#remote_connection)
+  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:heavy_plus_sign:UPDATED 16/10/2023)](#ssh_protocol)
   - [2.7.2 - Tổng quan về `OpenSSH` (:heavy_plus_sign:UPDATED 05/10/2023)](#openssh_overview)
   - [2.7.3 - Cấu hình `ssh` trên máy chủ và máy khách (:heavy_plus_sign:UPDATED 05/10/2023)](#config_ssh)
 
@@ -3820,7 +3820,46 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
 - Phần mềm kết nối phải được cài đặt.
 - Người dùng phải được cấp quyền để có thể kết nối.
 
-### <a name="ssh_protocol"></a>Tổng quan về giao thức `SSH`
-`SSH (Secure Shell)` là một giao thức cho phép truy cập từ xa một cách an toàn hoặc một số dịch vụ mạng khác như truyền dữ liệu tệp tin, ...
+### <a name="ssh_protocol"></a>Tổng quan về kiến trúc giao thức `SSH`
+`SSH (Secure Shell)` là một giao thức cho phép truy cập từ xa một cách an toàn hoặc một số dịch vụ mạng khác như truyền dữ liệu tệp tin, ... Kiến trúc giao thức bao gồm `4` cấu tạo chính:
+
+- `Security Properties`: sự minh bạch, mục đích của giao thức `SSH` là cải thiện tính bảo mật của tất cả dịch vụ mà nó có thể được áp dụng trên môi trường mạng kém an toàn ngày nay.
+  
+  - Tất cả thuật toán mã hóa, toàn vẹn, ... được sử dụng đều là các công trình khoa học nổi tiếng, phổ biến và được công nhận bởi tổ chức uy tín.
+  - Tất cả thuật toán mật mã đều sử dụng kích thước khóa phù hợp và đủ dài được cho là có thể bảo vệ thậm chí chống lại những kẻ giỏi nhất trong các trường hợp tấn công trong nhiều thập kỷ qua.
+  - Tất cả thuật toán đều được đàm phán để đi đến nhất trí giữa các bối cảnh khác nhau, vì trong một số trường hợp thuật toán được cho là lỗi thời, kém an toàn thì có thể dễ dàng chuyển sang thuật toán khác một cách tự động, đương nhiên nếu không có thuật toán nào phù hợp giữa gói phần mềm cài đặt trên máy chủ và người dùng thì không có kết nối nào được tạo.
+
+- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó để giả mạo, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt `NIST (US National Institute of Standards and Technology)`. `Finger print` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận rằng `finger print` có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `finger print` gửi ngược lại máy chủ để tiến hành quy trình so sánh với `host key` (tất nhiên máy chủ cần băm `host key` để so sánh với `finger print` từ người dùng gửi đến).
+
+- `Extensibility`: khả năng mở rộng, tác giả `Tatu Ylönen` nhà khoa học máy tính Phần Lan tin rằng giao thức này cần được mở rộng vì một số tổ chức lớn muốn sử dụng riêng các thuật toán xác thực, mã hóa, phương pháp trao đổi khóa, ... của chính họ tạo ra.
+
+- `Policy Issues`: các vấn đề về chính sách
+
+  - Thuật toán mã hóa, toàn vẹn, nén phải được chỉ định sự ưu tiên, ví dụ mỗi danh mục mặc định sẽ ưu tiên thứ tự đầu tiên.
+  - Phương pháp xác thực được yêu cầu bởi máy chủ trên tất cả các tài khoản người dùng. Chính sách trên máy chủ cho phép áp dụng nhiều phương pháp xác thực cho một hoặc tất cả người dùng.
+  - Những việc vận hành mà người dùng được cho phép trên giao thức kết nối. Một số vấn đề liên quan đến bảo mật, ví dụ: không nên cho phép máy chủ thực thi lệnh ngược lại vào máy người dùng, ...
+
+Những xem xét bảo mật về khía cạnh truyền dẫn `(transport)`:
+
+- `Privacy`, `Confidentiality`: tính bí mật, dữ liệu thật sự được mã hóa thông mật mã đối xứng.
+
+  - Tại thời điểm viết tài liệu tiêu chuẩn phiên bản đầu tiên `RFC-4251` thì các mật mã đối xứng thường được sử dụng là `Triple-DES (3DES)`, `DES`, `IDEA`, `Blowfish`, ... nhưng sau đó vào tháng 11/2001 thì `AES (Advanced Encryption Standard)` đã được công bố bởi `NIST` và cộng đồng mật mã đã chấp nhận `AES`. Như thường lệ thì người triển khai nên cập nhật tin tức thường xuyên để đảm bảo rằng gần đây không xảy ra lỗ hổng nào trong các mật mã được, theo đặc tính mở rộng kể trên của giao thức `SSH` thì các tổ chức, doanh nghiệp có thể tùy chọn mật mã khác mà họ tin tưởng ngoài `AES`. Dữ liệu không được mã hóa chỉ xảy ra khi người triển khai không áp dụng loại mật mã nào `(none cipher)` trong lúc `debug` thông tin và tùy chọn này không nên được sử dụng ngoại trừ mục đích đó.
+  - Chế độ mã hóa của mật mã đối xứng là `CBC (Cipher Block Chaining)` và `CTR (Short For Counter)`, đây là các loại mà chúng ưu việt hơn `ECB (Electronic Code Book)`. Có 2 tài liệu mô tả rõ ràng về điểm yếu trong cách vận hành của `CBC` của một số mật mã nhất định là `Applied Cryptography (Bruce Schneier)` và `Network Security (Charlie Kaufman)`, tuy nhiên nếu chọn kích thước khối hay độ dài khóa có giá trị lớn thì việc tấn công sẽ rất khó khăn nếu không muốn nói là bất khả thi. Thêm vào đó nếu các gói tin thuộc loại `SSH_MSG_IGNORE` được chèn vào sẽ giúp giảm thiểu các cuộc tấn công nhằm vào `CBC mode`, các gói này được biết đến như nhịp tim được sinh ra với tên gọi `null packet` để giữ cho phiên làm việc hoạt động xuyên suốt.
+
+- `Data Integrity`: tính toàn vẹn dữ liệu để chắn chắn rằng dữ liệu nhận được không bị thay đổi. Mặc dù giao thức `SSH` dựa trên cơ sở `TCP` là giao thức được biết đến đã đính kèm tính năng thực hiện kiểm tra tính toàn vẹn trên "mỗi gói" để phát hiện thay đổi do sự cố mạng như: nhiễu tín hiệu điện làm thay đổi giá trị tín hiệu, mất gói tin do lưu lượng quá lớn, ... Nhưng những tính năng này của `TCP` không hiệu quả trước thủ đoạn giả mạo tinh vi như kỹ thuật `replay attack`, trong ngữ cảnh rằng việc lặp lại dữ liệu là hiển nhiên cho phép ví dụ người dùng có thể thường xuyên sử dụng lại câu lệnh nào đó, kẻ tấn công đã phát hiện sự phóng khoáng này, họ không cần phải sửa đổi hay giải mã lưu lượng dữ liệu mà chỉ cần sao chép lại tất cả các tín hiệu `bit` và phát lại chính xác chúng vào trong phiên làm việc hiện tại của nạn nhân (vì mỗi phiên sẽ có định danh riêng nên việc tấn công phát lại vào phiên mới sẽ không được chấp nhận), việc này là vấn đề nghiêm trọng nếu đó là lệnh xóa dữ liệu, ... Rõ ràng việc kiểm tra tính toàn vẹn nên được áp dụng ở quy mô lớn hơn, cụ thể là trên "toàn bộ gói" hay luồng dữ liệu và đảm bảo không được trùng lặp. Trong lịch sử `SSH-1` sử dụng phương pháp kiểm tra không được đánh giá cao là `CRC-32`, các phiên bản sau được thay thế bằng `SHA` kết hợp với `HMAC`.
+
+- `Traffic Analysis`: phân tích lưu lượng, giám sát lưu lượng ở bất kỳ giao thức nào cũng có thể mang lại cho kẻ tấn công những thông tin hữu ích như phiên làm việc, giao thức cụ thể, ... Ví dụ tài liệu `SSH Traffic Analysis Attacks (Solar Designer)` và `Timing Analysis of Keystrokes and SSH Timing Attacks` đã chứng minh được việc phân tích lưu lượng của phiên `SSH` có thể mang lại thông tin về độ dài mật khẩu.
+
+Những xem xét bảo mật về khía cạnh xác thực `(authentication)` và ủy quyền `(authorization)`:
+
+- Cách thức xác thực: mỗi kết nối `SSH` đều có chính xác `2` lần xác thực
+
+  - Xác thực đầu: người dùng xác minh danh tính của máy chủ hay gọi là `server authentication` dựa trên `host key` như mô tả phía trên.
+  - Xác thực cuối: máy chủ xác minh danh tính của người dùng đang gửi yêu cầu truy cập, gọi tắt là `user authentication`. Truyền thống xác thực thường sẽ là mật khẩu và bị đánh giá là kém an toàn vì thường dễ dàng ghi nhớ thì người dùng sẽ cài đặt nó có ý nghĩa theo cách nào đó và điểm quan trọng là nó ngắn gọn, tuy nhiên đây là tính năng vượt trội so với thế hệ `telnet` tiền nhiệm. Thay vì sử dụng mật khẩu, `SSH` cung cấp cơ chế khác mạnh mẻ và dễ quản lý hơn: chữ ký số. Ngoài ra `SSH` hỗ trợ thêm `PAM (Pluggable Authentication Modules)`, `Kerberos`, `S/Key one-time passwords`, ...
+
+  , máy chủ có thể đặt ra giới hạn khi yêu cầu truy cập của người dùng liên tiếp thất bại.
+
+- `Authorization`: chính sách này sẽ áp dụng ngay khi việc xác thực thành công vì đơn giản rằng hệ thống không thể cấp quyền khi chưa biết rõ chức vụ, danh tính người kết nối. Quản trị viên được khuyến khích triển khai các chính sách an ninh nói chung, dành cho cụ thể người dùng nói riêng. Thiết lập chính sách thắt chặt an ninh mô tả rằng những gì có thể làm hoặc không thể làm. `SSH` có nhiều cách khác nhau để hạn chế hành vi của người dùng như: chuyển tiếp khóa bí mật `(key agent forwarding)`, ... Việc kiểm soát có thể triển khai ở cấp độ toàn cục hoặc cụ thể người dùng, và chúng có liên quan đến cơ chế xác thực `(user authentication)`.
+
 ### <a name="openssh_overview"></a>Tổng quan về `OpenSSH`
-### <a name="config_ssh"></a>Cấu hình `ssh` trên máy chủ và máy khách 
+### <a name="config_ssh"></a>Cấu hình `ssh` trên máy chủ và máy khách
