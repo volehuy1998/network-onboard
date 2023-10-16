@@ -4012,3 +4012,77 @@ server,10.10.0.242 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzd
 hcmoperator@server password:
 [hcmoperator@server ~]$
 ```
+Khi người dùng bị chặn truy cập vì `finger print` tại máy cục bộ và `host key` tại máy chủ không tương thích với nhau. Trường hợp này xảy ra cũng có thể do quản trị viên không thực hiện lưu giữ bản sao khi bản chính bị mất tại thư mục `/etc/ssh/`,  các `host key` sẽ được `OpenSSH` tự sinh trở lại khi chúng không được tìm thấy. Sau khi xác minh được vấn đề không phải bị tấn công, người dùng có thể chấp nhận `finger print` mới:
+```shell
+[root@server ssh]# ll
+total 608
+-rw-r--r--  1 root root     581843 Aug  4 23:00 moduli
+-rw-r--r--  1 root root       2276 Aug  4 23:00 ssh_config
+-rw-r-----  1 root ssh_keys    227 Oct 16 13:18 ssh_host_ecdsa_key
+-rw-r--r--  1 root root        162 Oct 16 13:18 ssh_host_ecdsa_key.pub
+-rw-r-----  1 root ssh_keys    387 Oct 16 13:18 ssh_host_ed25519_key
+-rw-r--r--  1 root root         82 Oct 16 13:18 ssh_host_ed25519_key.pub
+-rw-r-----  1 root ssh_keys   1675 Oct 16 13:18 ssh_host_rsa_key
+-rw-r--r--  1 root root        382 Oct 16 13:18 ssh_host_rsa_key.pub
+-rw-------  1 root root       3907 Aug  4 23:00 sshd_config
+-rw-------. 1 root root       3904 Oct 15 12:18 sshd_config.rpmsave
+[root@server ssh]# rm -f ssh_host_*
+[root@server ssh]# ll
+total 584
+-rw-r--r--  1 root root 581843 Aug  4 23:00 moduli
+-rw-r--r--  1 root root   2276 Aug  4 23:00 ssh_config
+-rw-------  1 root root   3907 Aug  4 23:00 sshd_config
+-rw-------. 1 root root   3904 Oct 15 12:18 sshd_config.rpmsave
+[root@server ssh]# systemctl restart sshd
+[root@server ssh]# ll
+total 608
+-rw-r--r--  1 root root     581843 Aug  4 23:00 moduli
+-rw-r--r--  1 root root       2276 Aug  4 23:00 ssh_config
+-rw-r-----  1 root ssh_keys    227 Oct 16 13:20 ssh_host_ecdsa_key
+-rw-r--r--  1 root root        162 Oct 16 13:20 ssh_host_ecdsa_key.pub
+-rw-r-----  1 root ssh_keys    387 Oct 16 13:20 ssh_host_ed25519_key
+-rw-r--r--  1 root root         82 Oct 16 13:20 ssh_host_ed25519_key.pub
+-rw-r-----  1 root ssh_keys   1679 Oct 16 13:20 ssh_host_rsa_key
+-rw-r--r--  1 root root        382 Oct 16 13:20 ssh_host_rsa_key.pub
+-rw-------  1 root root       3907 Aug  4 23:00 sshd_config
+-rw-------. 1 root root       3904 Oct 15 12:18 sshd_config.rpmsave
+[root@server ssh]#
+```
+```shell
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+hcmoperator@server password:
+[hcmoperator@server ~]$ exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:fL5naH38GF+tP0ofYRsMyzjVUGIQ+7kbiCLwZ7N04Qs.
+Please contact your system administrator.
+Add correct host key in /root/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /root/.ssh/known_hosts:1
+ECDSA host key for server has changed and you have requested strict checking.
+Host key verification failed.
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+server,10.10.0.242 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ2emQSy5e9aWjuPAxATljePPXxq+NPsFCjjffaYAfSBA+xAqvrcTbc2hMAJgdhdMp+OnHBGyKQ2AA909u0FZhk=
+[root@huyvl-linux-training ~]# vi .ssh/known_hosts
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+[root@huyvl-linux-training ~]# ll .ssh/known_hosts
+-rw-r--r-- 1 root root 0 Oct 16 13:29 .ssh/known_hosts
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+The authenticity of host 'server (10.10.0.242)' cant be established.
+ECDSA key fingerprint is SHA256:fL5naH38GF+tP0ofYRsMyzjVUGIQ+7kbiCLwZ7N04Qs.
+ECDSA key fingerprint is MD5:d2:7f:1e:13:d8:30:41:77:f4:97:61:85:30:77:37:55.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'server,10.10.0.242' (ECDSA) to the list of known hosts.
+hcmoperator@server password:
+[hcmoperator@server ~]$
+[hcmoperator@server ~]$
+```
