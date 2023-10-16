@@ -4047,6 +4047,9 @@ total 608
 -rw-------  1 root root       3907 Aug  4 23:00 sshd_config
 -rw-------. 1 root root       3904 Oct 15 12:18 sshd_config.rpmsave
 [root@server ssh]#
+[root@server ssh]# ssh-keygen -lf ssh_host_ecdsa_key.pub
+256 SHA256:fL5naH38GF+tP0ofYRsMyzjVUGIQ+7kbiCLwZ7N04Qs no comment (ECDSA)
+[root@server ssh]#
 ```
 ```shell
 [root@huyvl-linux-training ~]# ssh hcmoperator@server
