@@ -45,5 +45,4 @@
         - 2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)
 - 2.7 - Điều khiển an toàn từ xa (:heavy_plus_sign:UPDATED 16/10/2023)
   - 2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:heavy_plus_sign:UPDATED 16/10/2023)
-  - 2.7.2 - Tổng quan về `OpenSSH` (:heavy_plus_sign:UPDATED 05/10/2023)
-  - 2.7.3 - Cấu hình `ssh` trên máy chủ và máy khách (:heavy_plus_sign:UPDATED 05/10/2023)
+  - 2.7.2 - Tổng quan về `OpenSSH` và cấu hình(:heavy_plus_sign:UPDATED 05/10/2023)
