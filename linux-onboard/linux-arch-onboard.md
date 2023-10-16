@@ -32,9 +32,9 @@
     - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
-- [2.7 - Điều khiển an toàn từ xa (:heavy_plus_sign:UPDATED 16/10/2023)](#remote_connection)
-  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:heavy_plus_sign:UPDATED 16/10/2023)](#ssh_protocol)
-  - [2.7.2 - Tổng quan về `OpenSSH` và cấu hình (:heavy_plus_sign:UPDATED 05/10/2023)](#openssh_overview)
+- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 16/10/2023)](#remote_connection)
+  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 16/10/2023)](#ssh_protocol)
+  - [2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 05/10/2023)](#openssh_overview)
 
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
@@ -3860,3 +3860,155 @@ Những xem xét bảo mật về khía cạnh xác thực `(authentication)` v�
 - `Authorization`: chính sách này sẽ áp dụng ngay khi việc xác thực thành công vì đơn giản rằng hệ thống không thể cấp quyền khi chưa biết rõ chức vụ, danh tính người kết nối. Quản trị viên được khuyến khích triển khai các chính sách an ninh nói chung, dành cho cụ thể người dùng nói riêng. Thiết lập chính sách thắt chặt an ninh mô tả rằng những gì có thể làm hoặc không thể làm. `SSH` có nhiều cách khác nhau để hạn chế hành vi của người dùng như: chuyển tiếp khóa bí mật `(key agent forwarding)`, ... Việc kiểm soát có thể triển khai ở cấp độ toàn cục hoặc cụ thể người dùng, và chúng có liên quan đến cơ chế xác thực `(user authentication)`.
 
 ### <a name="openssh_overview"></a>Tổng quan về `OpenSSH` và cấu hình
+`OpenSSH` là một dữ án mã nguồn mở được triển khai dựa trên giao thức `SSH`, ban đầu nó được chính tác giả lập trình sau đó có thêm sự đóng góp của đội ngũ phát triển `OpenBSD` và cộng đồng. Dự án khác tương tự là `Tectia SSH` nhưng thiên hướng thương mại hóa trong khi `OpenSSH` thì miễn phí.
+
+Thực hiện cài đặt `OpenSSH` trên máy chủ:
+```shell
+[root@server ~]# yum install openssh-server -y
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirrors.nhanhoa.com
+ * epel: mirror.01link.hk
+ * extras: mirrors.nhanhoa.com
+ * updates: mirrors.nhanhoa.com
+Package openssh-server-7.4p1-23.el7_9.x86_64 already installed and latest version
+Nothing to do
+[root@server ~]#
+```
+Kiểm tra phiên bản hiện hành trên máy chủ:
+```shell
+[root@server ~]# sshd --help
+unknown option -- -
+OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017
+usage: sshd [-46DdeiqTt] [-C connection_spec] [-c host_cert_file]
+            [-E log_file] [-f config_file] [-g login_grace_time]
+            [-h host_key_file] [-o option] [-p port] [-u len]
+[root@server ~]#
+```
+Kiểm tra phiên bản hiện hành trên máy người dùng:
+```shell
+[root@huyvl-linux-training ~]# ssh
+-bash: ssh: command not found
+[root@huyvl-linux-training ~]# yum install openssh-clients -y
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirrors.nhanhoa.com
+ * epel: mirror.01link.hk
+ * extras: mirrors.nhanhoa.com
+ * updates: mirrors.nhanhoa.com
+Resolving Dependencies
+--> Running transaction check
+---> Package openssh-clients.x86_64 0:7.4p1-23.el7_9 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=================================================================================================
+ Package                    Arch              Version                   Repository          Size
+=================================================================================================
+Installing:
+ openssh-clients            x86_64            7.4p1-23.el7_9            updates            655 k
+
+Transaction Summary
+=================================================================================================
+Install  1 Package
+
+Total download size: 655 k
+Installed size: 2.5 M
+Downloading packages:
+openssh-clients-7.4p1-23.el7_9.x86_64.rpm                                 | 655 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : openssh-clients-7.4p1-23.el7_9.x86_64                                         1/1
+  Verifying  : openssh-clients-7.4p1-23.el7_9.x86_64                                         1/1
+
+Installed:
+  openssh-clients.x86_64 0:7.4p1-23.el7_9
+
+Complete!
+[root@huyvl-linux-training ~]# ssh -V
+OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017
+[root@huyvl-linux-training ~]# echo ~ | nc localhost 22
+SSH-2.0-OpenSSH_7.4
+Protocol mismatch.
+[root@huyvl-linux-training ~]#
+```
+Tại máy chủ cần có tài khoản để người dùng có thể kết nối từ xa:
+```shell
+[root@server ~]# useradd -m hcmoperator
+[root@server ~]# id hcmoperator
+uid=1000(hcmoperator) gid=1000(hcmoperator) groups=1000(hcmoperator)
+[root@server ~]# passwd hcmoperator
+Changing password for user hcmoperator.
+New password:
+BAD PASSWORD: The password contains the user name in some form
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@server ~]#
+```
+, thực hiện kết nối lần đầu tiên đến máy chủ thông qua mật khẩu với tài khoản vừa tạo:
+```shell
+[root@huyvl-linux-training ~]# ll .ssh/
+total 4
+-rw------- 1 root root 573 Oct 16 09:42 authorized_keys
+[root@huyvl-linux-training ~]# grep server /etc/hosts
+10.10.0.242 server
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+The authenticity of host 'server (10.10.0.242)' cant be established.
+ECDSA key fingerprint is SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8.
+ECDSA key fingerprint is MD5:aa:49:3f:20:f1:62:90:5a:4b:2e:89:e3:32:85:bf:1a.
+Are you sure you want to continue connecting (yes/no)?
+```
+, quản trị viên tại máy chủ có thể trích xuất được thông tin `finger print` từ khóa công khai hay còn gọi là `host key` hoặc khóa bí mật như sau:
+```shell
+[root@server ~]# cd /etc/ssh
+[root@server ssh]# ll
+total 608
+-rw-r--r--  1 root root     581843 Aug  4 23:00 moduli
+-rw-r--r--  1 root root       2276 Aug  4 23:00 ssh_config
+-rw-r-----  1 root ssh_keys    227 Oct 15 12:18 ssh_host_ecdsa_key
+-rw-r--r--  1 root root        162 Oct 15 12:18 ssh_host_ecdsa_key.pub
+-rw-r-----  1 root ssh_keys    387 Oct 15 12:18 ssh_host_ed25519_key
+-rw-r--r--  1 root root         82 Oct 15 12:18 ssh_host_ed25519_key.pub
+-rw-r-----  1 root ssh_keys   1675 Oct 15 12:18 ssh_host_rsa_key
+-rw-r--r--  1 root root        382 Oct 15 12:18 ssh_host_rsa_key.pub
+-rw-------  1 root root       3907 Aug  4 23:00 sshd_config
+-rw-------. 1 root root       3904 Oct 15 12:18 sshd_config.rpmsave
+[root@server ssh]# cat ssh_host_ecdsa_key.pub
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM6/a8dNRnv5B4qaErWmbgCNGjO4fEXiD5mmzO33SkC/TCgh3nPaH1fevMHJBolzf6ARNh95ITnesgfzB/2QFnE=
+[root@server ssh]#
+[root@server ssh]# ssh-keygen -lf ssh_host_ecdsa_key.pub
+256 SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8 no comment (ECDSA)
+[root@server ssh]#
+[root@server ssh]# ssh-keygen -lf ssh_host_ecdsa_key
+256 SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8 ssh_host_ecdsa_key.pub (ECDSA)
+[root@server ssh]#
+```
+, thay vì vội vàng đồng ý `finger print` thì người dùng cần có thông tin `finger print` được gửi/thông báo chính thống từ quản trị viên để đồng kiểm, giao thức `SSH` đã được thiết kế rất an toàn nhưng tất cả sẽ phí công nếu như người dùng chấp nhận `finger print` từ kẻ mạo danh, nội dung `SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8` hiển thị ở máy người dùng đúng như trên máy chủ, chấp nhận `finger print` và tiến hành điền mật khẩu để đăng nhập như sau:
+```shell
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+The authenticity of host 'server (10.10.0.242)' cant be established.
+ECDSA key fingerprint is SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8.
+ECDSA key fingerprint is MD5:aa:49:3f:20:f1:62:90:5a:4b:2e:89:e3:32:85:bf:1a.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'server,10.10.0.242' (ECDSA) to the list of known hosts.
+hcmoperator@server password:
+[hcmoperator@server ~]$
+```
+, nội dung khóa công khai đã được lưu trữ tại tệp `.ssh/known_hosts` trên máy người dùng, tệp không tồn tại sẽ tạo mới.
+```shell
+[hcmoperator@server ~]$ exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# ll .ssh/
+total 8
+-rw------- 1 root root 573 Oct 16 09:42 authorized_keys
+-rw-r--r-- 1 root root 180 Oct 16 11:10 known_hosts
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+server,10.10.0.242 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM6/a8dNRnv5B4qaErWmbgCNGjO4fEXiD5mmzO33SkC/TCgh3nPaH1fevMHJBolzf6ARNh95ITnesgfzB/2QFnE=
+[root@huyvl-linux-training ~]# ssh hcmoperator@server
+hcmoperator@server password:
+[hcmoperator@server ~]$
+```
