@@ -3859,7 +3859,7 @@ Những xem xét bảo mật về khía cạnh xác thực `(authentication)` v�
 
 - `Authorization`: chính sách này sẽ áp dụng ngay khi việc xác thực thành công vì đơn giản rằng hệ thống không thể cấp quyền khi chưa biết rõ chức vụ, danh tính người kết nối. Quản trị viên được khuyến khích triển khai các chính sách an ninh nói chung, dành cho cụ thể người dùng nói riêng. Thiết lập chính sách thắt chặt an ninh mô tả rằng những gì có thể làm hoặc không thể làm. `SSH` có nhiều cách khác nhau để hạn chế hành vi của người dùng như: chuyển tiếp khóa bí mật `(key agent forwarding)`, ... Việc kiểm soát có thể triển khai ở cấp độ toàn cục hoặc cụ thể người dùng, và chúng có liên quan đến cơ chế xác thực `(user authentication)`.
 
-### <a name="openssh_overview"></a>Tổng quan về `OpenSSH` và cấu hình
+### <a name="openssh_overview"></a>Tổng quan về `OpenSSH`, kết nối và cấu hình
 `OpenSSH` là một dữ án mã nguồn mở được triển khai dựa trên giao thức `SSH`, ban đầu nó được chính tác giả lập trình sau đó có thêm sự đóng góp của đội ngũ phát triển `OpenBSD` và cộng đồng. Dự án khác tương tự là `Tectia SSH` nhưng thiên hướng thương mại hóa trong khi `OpenSSH` thì miễn phí.
 
 Thực hiện cài đặt `OpenSSH` trên máy chủ:
