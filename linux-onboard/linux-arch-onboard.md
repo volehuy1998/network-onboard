@@ -4260,7 +4260,7 @@ hcmoperator@server password:
 [hcmoperator@server ~]$
 [hcmoperator@server ~]$
 ```
-Sử dụng chế độ khắc khe tức chỉ ngăn chặn việc thêm `finger print` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
+Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `finger print` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
 ```shell
 [root@huyvl-linux-training ~]# cat .ssh/known_hosts
 [root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
