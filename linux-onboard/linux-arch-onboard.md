@@ -33,9 +33,13 @@
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
 - [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 16/10/2023)](#remote_connection)
-  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 16/10/2023)](#ssh_protocol)
-  - [2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 05/10/2023)](#openssh_overview)
-
+  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 19/10/2023)](#ssh_protocol)
+    - [2.7.1.1 - Kiến trúc giao thức `SSH` (:heavy_plus_sign:UPDATED 19/10/2023)](#ssh_arch)
+    - [2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (:heavy_plus_sign:UPDATED 19/10/2023)](#secu_in_transport)
+    - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:heavy_plus_sign:UPDATED 19/10/2023)](#secu_in_auth)
+  - [2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 19/10/2023)](#openssh_overview)
+    - [2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:heavy_plus_sign:UPDATED 19/10/2023)](#show_finger_print)
+    - [2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -3837,8 +3841,7 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
   - Phương pháp xác thực được yêu cầu bởi máy chủ trên tất cả các tài khoản người dùng. Chính sách trên máy chủ cho phép áp dụng nhiều phương pháp xác thực cho một hoặc tất cả người dùng.
   - Những việc vận hành mà người dùng được cho phép trên giao thức kết nối. Một số vấn đề liên quan đến bảo mật, ví dụ: không nên cho phép máy chủ thực thi lệnh ngược lại vào máy người dùng, ...
 
-Những xem xét bảo mật về khía cạnh truyền dẫn `(transport)`:
-
+#### <a name="secu_in_transport"></a>Những xem xét bảo mật về khía cạnh truyền dẫn
 - `Privacy`, `Confidentiality`: tính bí mật, dữ liệu thật sự được mã hóa thông qua mật mã đối xứng.
 
   - Tại thời điểm viết tài liệu tiêu chuẩn phiên bản đầu tiên `RFC-4251` thì các mật mã đối xứng thường được sử dụng là `Triple-DES (3DES)`, `DES`, `IDEA`, `Blowfish`, ... nhưng sau đó vào tháng 11/2001 thì `AES (Advanced Encryption Standard)` đã được công bố bởi `NIST` và cộng đồng mật mã đã chấp nhận `AES`. Như thường lệ thì người triển khai nên cập nhật tin tức thường xuyên để đảm bảo rằng gần đây không xảy ra lỗ hổng nào trong các mật mã, theo đặc tính mở rộng kể trên của giao thức `SSH` thì các tổ chức, doanh nghiệp có thể tùy chọn mật mã khác mà họ tin tưởng ngoài `AES`. Dữ liệu không được mã hóa chỉ xảy ra khi người triển khai không áp dụng loại mật mã nào `(none cipher)` trong lúc `debug` thông tin và tùy chọn này không nên được sử dụng ngoại trừ mục đích đó.
@@ -3848,6 +3851,7 @@ Những xem xét bảo mật về khía cạnh truyền dẫn `(transport)`:
 
 - `Traffic Analysis`: phân tích lưu lượng, giám sát lưu lượng ở bất kỳ giao thức nào cũng có thể mang lại cho kẻ tấn công những thông tin hữu ích như phiên làm việc, giao thức cụ thể, ... Ví dụ tài liệu [SSH Traffic Analysis Attacks (Solar Designer)](https://www.slideshare.net/dugsong/ssh-traffic-analysis-attacks) và [Timing Analysis of Keystrokes and SSH Timing Attacks (Dawn Xiaodong Song)](https://sites.cs.ucsb.edu/~bultan/courses/595-F16/Week2.PDF) đã chứng minh được việc phân tích lưu lượng của phiên `SSH` có thể mang lại thông tin về độ dài mật khẩu.
 
+#### <a name="secu_in_auth"></a>Những xem xét bảo mật về khía cạnh xác thực
 Những xem xét bảo mật về khía cạnh xác thực `(authentication)` và ủy quyền `(authorization)`:
 
 - Cách thức xác thực: mỗi kết nối `SSH` đều có chính xác `2` lần xác thực
@@ -3935,6 +3939,173 @@ SSH-2.0-OpenSSH_7.4
 Protocol mismatch.
 [root@huyvl-linux-training ~]#
 ```
+Khi không chỉ định tài khoản thì mặc định sẽ kết nối với máy chủ có tài khoản tương ứng như sau:
+```shell
+[root@huyvl-linux-training ~]# ssh root@10.10.1.168
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# ssh 10.10.1.168
+[root@huyvl-server ~]# useradd -m hcmoperator
+[root@huyvl-server ~]# passwd hcmoperator
+Changing password for user hcmoperator.
+New password:
+BAD PASSWORD: The password contains the user name in some form
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# su - hcmoperator
+Last login: Thu Oct 19 15:42:20 +07 2023 on pts/0
+[hcmoperator@huyvl-linux-training ~]$ ssh 10.10.1.168
+hcmoperator@10.10.1.168 password:
+[hcmoperator@huyvl-server ~]$
+```
+#### <a name="show_finger_print"></a>Thông tin về `finger print` tại máy khách và máy chủ
+Chỉ định thuật toán băm cần hiện diện ngay khi lần đầu tiên kết nối như sau:
+```shell
+[root@huyvl-linux-training ~]# ll .ssh/
+total 4
+-rw------- 1 root root 573 Oct 18 20:33 authorized_keys
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ssh 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E.
+ECDSA key fingerprint is MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# rm -rf .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o FingerprintHash=sha256 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# rm -rf .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o FingerprintHash=md5 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]#
+```
+Đôi khi sử dụng hình ảnh biểu diễn dưới dạng `ASCII` sẽ dễ nhận biết hơn nhiều so với chuỗi băm:
+```shell
+[root@huyvl-linux-training ~]# ll .ssh/
+total 4
+-rw------- 1 root root 573 Oct 18 20:33 authorized_keys
+[root@huyvl-linux-training ~]# ssh -o VisualHostkey=yes -o FingerprintHash=md5 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76.
++---[ECDSA 256]---+
+|     .  .o.  ..  |
+|      o.o  .  .. |
+|       +oo..o... |
+|       .o.+o o. .|
+|        S .o.  . |
+|         ...  .  |
+|        o E. .   |
+|       . o. .    |
+|           .     |
++------[MD5]------+
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# rm -rf .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o VisualHostkey=yes -o FingerprintHash=sha256 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E.
++---[ECDSA 256]---+
+|      oo.  +O*+ +|
+|     . o.  ..*oO*|
+|      ......+o=oB|
+|     . +.... .oo |
+|    + = S   . o  |
+|   + *   .   .   |
+|    +.+          |
+|    .o...        |
+|    .Eoo         |
++----[SHA256]-----+
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+e[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# rm -rf .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o VisualHostkey=yes 10.10.1.168
+The authenticity of host '10.10.1.168 (10.10.1.168)' cant be established.
+ECDSA key fingerprint is SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E.
++---[ECDSA 256]---+
+|      oo.  +O*+ +|
+|     . o.  ..*oO*|
+|      ......+o=oB|
+|     . +.... .oo |
+|    + = S   . o  |
+|   + *   .   .   |
+|    +.+          |
+|    .o...        |
+|    .Eoo         |
++----[SHA256]-----+
+ECDSA key fingerprint is MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76.
++---[ECDSA 256]---+
+|     .  .o.  ..  |
+|      o.o  .  .. |
+|       +oo..o... |
+|       .o.+o o. .|
+|        S .o.  . |
+|         ...  .  |
+|        o E. .   |
+|       . o. .    |
+|           .     |
++------[MD5]------+
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]#
+```
+Trích xuất thông tin `finger print` tại máy chủ để kiểm chứng với người dùng trước khi người dùng chấp nhận `finger print`, mặc định `sha256` nếu không chỉ định thuật toán như sau:
+```shell
+[root@huyvl-server ~]# cd /etc/ssh
+[root@huyvl-server ssh]# ll
+total 604
+-rw-r--r--. 1 root root     581843 Nov 24  2021 moduli
+-rw-r--r--. 1 root root       2276 Nov 24  2021 ssh_config
+-rw-r-----  1 root ssh_keys    227 Oct 19 15:12 ssh_host_ecdsa_key
+-rw-r--r--  1 root root        162 Oct 19 15:12 ssh_host_ecdsa_key.pub
+-rw-r-----  1 root ssh_keys    387 Oct 19 15:12 ssh_host_ed25519_key
+-rw-r--r--  1 root root         82 Oct 19 15:12 ssh_host_ed25519_key.pub
+-rw-r-----  1 root ssh_keys   1675 Oct 19 15:12 ssh_host_rsa_key
+-rw-r--r--  1 root root        382 Oct 19 15:12 ssh_host_rsa_key.pub
+-rw-------. 1 root root       3904 Oct 19 15:12 sshd_config
+[root@huyvl-server ssh]# ssh-keygen -l -f ssh_host_ecdsa_key
+256 SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E ssh_host_ecdsa_key.pub (ECDSA)
+[root@huyvl-server ssh]# ssh-keygen -l -E sha256 -f ssh_host_ecdsa_key
+256 SHA256:UxV0dM6l2AEUvylhXd7dKYcBKxLB0qvvKcEsM3Wm6+E ssh_host_ecdsa_key.pub (ECDSA)
+[root@huyvl-server ssh]# ssh-keygen -l -E md5 -f ssh_host_ecdsa_key
+256 MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76 ssh_host_ecdsa_key.pub (ECDSA)
+[root@huyvl-server ssh]# ssh-keygen -lv -E md5 -f ssh_host_ecdsa_key
+256 MD5:43:7c:5b:03:90:c2:4f:db:93:bb:57:85:44:ab:2a:76 ssh_host_ecdsa_key.pub (ECDSA)
++---[ECDSA 256]---+
+|     .  .o.  ..  |
+|      o.o  .  .. |
+|       +oo..o... |
+|       .o.+o o. .|
+|        S .o.  . |
+|         ...  .  |
+|        o E. .   |
+|       . o. .    |
+|           .     |
++------[MD5]------+
+[root@huyvl-server ssh]#
+```
+#### <a name="std_prac_ssh"></a>Hành vi xử lý chuẩn kết nối đến máy chủ
 Tại máy chủ cần có tài khoản để người dùng có thể kết nối từ xa:
 ```shell
 [root@server ~]# useradd -m hcmoperator
@@ -3986,7 +4157,7 @@ ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM6/a8dN
 256 SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8 ssh_host_ecdsa_key.pub (ECDSA)
 [root@server ssh]#
 ```
-, thay vì vội vàng đồng ý `finger print` thì người dùng cần có thông tin `finger print` được gửi/thông báo chính thống từ quản trị viên để đồng kiểm, giao thức `SSH` đã được thiết kế rất an toàn nhưng tất cả sẽ phí công nếu như người dùng chấp nhận `finger print` từ kẻ mạo danh, nội dung `SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8` hiển thị ở máy người dùng đúng như trên máy chủ, chấp nhận `finger print` và tiến hành điền mật khẩu để đăng nhập như sau:
+, thay vì vội vàng đồng ý `finger print` thì người dùng cần có thông tin `finger print` được gửi qua kênh chính thống (ví dụ như thư điện tử, ...) từ quản trị viên để đồng kiểm, giao thức `SSH` đã được thiết kế rất an toàn nhưng tất cả sẽ phí công nếu như người dùng chấp nhận `finger print` từ kẻ mạo danh, nội dung `SHA256:IifmVciMeWdAqURa5/bUKUYEmEbasibHn0/1GJBATT8` hiển thị ở máy người dùng đúng như trên máy chủ, chấp nhận `finger print` và tiến hành điền mật khẩu để đăng nhập như sau:
 ```shell
 [root@huyvl-linux-training ~]# ssh hcmoperator@server
 The authenticity of host 'server (10.10.0.242)' cant be established.
@@ -4088,4 +4259,23 @@ Warning: Permanently added 'server,10.10.0.242' (ECDSA) to the list of known hos
 hcmoperator@server password:
 [hcmoperator@server ~]$
 [hcmoperator@server ~]$
+```
+Sử dụng chế độ khắc khe tức chỉ ngăn chặn việc thêm `finger print` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
+```shell
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
+Host key verification failed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=no root@10.10.1.168
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
+[root@huyvl-linux-training ~]#
 ```
