@@ -51,3 +51,4 @@
   - 2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 19/10/2023)
     - 2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:heavy_plus_sign:UPDATED 19/10/2023)
     - 2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)
+    - 2.7.2.3 - Cấu hình `ssh client` (:heavy_plus_sign:UPDATED 19/10/2023)

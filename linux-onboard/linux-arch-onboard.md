@@ -40,6 +40,7 @@
   - [2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 19/10/2023)](#openssh_overview)
     - [2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:heavy_plus_sign:UPDATED 19/10/2023)](#show_finger_print)
     - [2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
+    - [2.7.2.3 - Cấu hình `ssh client` (:heavy_plus_sign:UPDATED 19/10/2023)](#ssh_client_config)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -4278,4 +4279,70 @@ Connection to 10.10.1.168 closed.
 [root@huyvl-linux-training ~]# cat .ssh/known_hosts
 10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
 [root@huyvl-linux-training ~]#
+```
+#### <a name="ssh_client_config"></a>Cấu hình `ssh client`
+Cấu hình toàn cục tại `/etc/ssh/ssh_config` để áp dụng cho tất cả các tài khoản người dùng như sau:
+```shell
+[root@huyvl-linux-training ~]# grep ^[^#] /etc/ssh/ssh_config
+Host *
+        GSSAPIAuthentication yes
+        #ForwardX11Trusted yes
+        ForwardAgent no
+        StrictHostKeyChecking yes
+        SendEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+        SendEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+        SendEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+        SendEnv XMODIFIERS
+[root@huyvl-linux-training ~]# rm -rf .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh 10.10.1.168
+No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
+Host key verification failed.
+[root@huyvl-linux-training ~]# ssh 10.10.1.168 -o StrictHostKeyChecking=no
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# ssh-add -L
+Could not open a connection to your authentication agent.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# ssh 10.10.1.168 -o ForwardAgent=yes
+[root@huyvl-server ~]# ssh-add -L
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
+[root@huyvl-server ~]#
+```
+Cấu hình cục bộ `~/.ssh/config` ghi đè lên `/etc/ssh/sshd_config` như sau:
+```shell
+[root@huyvl-linux-training ~]# cat .ssh/config
+Host server
+        User hcmoperator
+        ForwardAgent no
+[root@huyvl-linux-training ~]# grep ^[^#] /etc/ssh/ssh_config
+Host *
+        GSSAPIAuthentication yes
+        #ForwardX11Trusted yes
+        ForwardAgent yes
+        StrictHostKeyChecking yes
+        SendEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+        SendEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+        SendEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+        SendEnv XMODIFIERS
+[root@huyvl-linux-training ~]# grep server /etc/hosts
+10.10.1.168 server
+[root@huyvl-linux-training ~]# ssh server
+hcmoperator@server password:
+[hcmoperator@huyvl-server ~]$ ssh-add -L
+Could not open a connection to your authentication agent.
+[hcmoperator@huyvl-server ~]$ exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# vi .ssh/config
+[root@huyvl-linux-training ~]# cat .ssh/config
+Host server
+        User hcmoperator
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ssh server
+hcmoperator@server password:
+[hcmoperator@huyvl-server ~]$ ssh-add -L
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
+[hcmoperator@huyvl-server ~]$
+
 ```
