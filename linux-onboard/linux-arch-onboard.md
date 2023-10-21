@@ -3832,7 +3832,7 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
   - Tất cả thuật toán mật mã đều sử dụng kích thước khóa phù hợp và đủ dài được cho là có thể bảo vệ thậm chí chống lại những kẻ giỏi nhất trong các trường hợp tấn công trong nhiều thập kỷ qua.
   - Tất cả thuật toán đều được đàm phán để đi đến nhất trí giữa các bối cảnh khác nhau, vì trong một số trường hợp thuật toán được cho là lỗi thời, kém an toàn thì có thể dễ dàng chuyển sang thuật toán khác một cách tự động, đương nhiên nếu không có thuật toán nào phù hợp giữa gói phần mềm cài đặt trên máy chủ và người dùng thì không có kết nối nào được tạo.
 
-- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó giả mạo để sử dụng cho việc so sánh, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Host key` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận rằng `finger print` được hiện diện trên màn hình rằng nó có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `host key` để giải mã thông điệp xác thực đã được mã hóa nởi `private key` trên máy chủ.
+- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó giả mạo được sử dụng cho việc so sánh trước khi người dùng chấp nhận `host key`, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Host key` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận `finger print` đang hiện diện trên màn hình rằng nó có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `host key` để giải mã thông điệp xác thực đã được mã hóa nởi `private key` trên máy chủ.
 
 - `Extensibility`: khả năng mở rộng, tác giả tin rằng giao thức này cần được mở rộng vì một số tổ chức lớn muốn sử dụng riêng các thuật toán xác thực, mã hóa, phương pháp trao đổi khóa, ... của chính họ tạo ra.
 
@@ -3846,7 +3846,7 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
 - `Privacy`, `Confidentiality`: tính bí mật, dữ liệu thật sự được mã hóa thông qua mật mã đối xứng.
 
   - Tại thời điểm viết tài liệu tiêu chuẩn phiên bản đầu tiên `RFC-4251` thì các mật mã đối xứng thường được sử dụng là `Triple-DES (3DES)`, `DES`, `IDEA`, `Blowfish`, ... nhưng sau đó vào tháng 11/2001 thì `AES (Advanced Encryption Standard)` đã được công bố bởi `NIST` và cộng đồng mật mã đã chấp nhận `AES`. Như thường lệ thì người triển khai nên cập nhật tin tức thường xuyên để đảm bảo rằng gần đây không xảy ra lỗ hổng nào trong các mật mã, theo đặc tính mở rộng kể trên của giao thức `SSH` thì các tổ chức, doanh nghiệp có thể tùy chọn mật mã khác mà họ tin tưởng ngoài `AES`. Dữ liệu không được mã hóa chỉ xảy ra khi người triển khai không áp dụng loại mật mã nào `(none cipher)` trong lúc `debug` thông tin và tùy chọn này không nên được sử dụng ngoại trừ mục đích đó.
-  - Chế độ mã hóa của mật mã đối xứng là `CBC (Cipher Block Chaining)` và `CTR (Short For Counter)`, đây là các loại mà chúng ưu việt hơn `ECB (Electronic Code Book)`. Có 2 tài liệu mô tả rõ ràng về điểm yếu trong cách vận hành của `CBC` trong một số mật mã nhất định là `Applied Cryptography (Bruce Schneier)` và `Network Security (Charlie Kaufman)`, tuy nhiên nếu chọn kích thước khối hay độ dài khóa có giá trị lớn thì việc tấn công sẽ rất khó khăn nếu không muốn nói là bất khả thi. Thêm vào đó nếu các gói tin thuộc loại `SSH_MSG_IGNORE` được chèn vào sẽ giúp giảm thiểu các cuộc tấn công nhằm vào `CBC mode`, các gói này được biết đến như nhịp tim được sinh ra với tên gọi `null packet` để giữ cho phiên làm việc hoạt động xuyên suốt.
+  - Chế độ mã hóa của mật mã đối xứng là `CBC (Cipher Block Chaining)` và `CTR (Short For Counter)`, đây là các loại mà chúng ưu việt hơn `ECB (Electronic Code Book)`. Có 2 tài liệu mô tả rõ ràng về điểm yếu trong cách vận hành của `CBC` trong một số mật mã nhất định là [Applied Cryptography (Bruce Schneier)](https://github.com/volehuy1998/Crypto-Document/blob/master/Ti%E1%BA%BFng%20Anh%20-%20Bruce%20Schneier%20-%20Applied%20Cryptography.pdf) và [Network Security (Charlie Kaufman)](https://github.com/volehuy1998/Crypto-Document/blob/master/Ti%E1%BA%BFng%20Anh%20-%20Charlie%20Kaufman%20-%20Network%20Security%20Private%20Communication%20in%20a%20Public%20World.pdf), tuy nhiên nếu chọn kích thước khối hay độ dài khóa có giá trị lớn thì việc tấn công sẽ rất khó khăn nếu không muốn nói là bất khả thi. Thêm vào đó nếu các gói tin thuộc loại `SSH_MSG_IGNORE` được chèn vào sẽ giúp giảm thiểu các cuộc tấn công nhằm vào `CBC mode`, các gói này được biết đến như nhịp tim được sinh ra với tên gọi `null packet` để giữ cho phiên làm việc hoạt động xuyên suốt.
 
 - `Data Integrity`: tính toàn vẹn dữ liệu để chắn chắn rằng dữ liệu nhận được không bị thay đổi. Mặc dù giao thức `SSH` dựa trên cơ sở `TCP` là giao thức được biết đến đã đính kèm tính năng thực hiện kiểm tra tính toàn vẹn trên "mỗi gói" để phát hiện thay đổi do sự cố mạng như: nhiễu tín hiệu điện làm thay đổi giá trị tín hiệu, mất gói tin do lưu lượng quá lớn, ... Nhưng những tính năng này của `TCP` không hiệu quả trước thủ đoạn giả mạo tinh vi như kỹ thuật `replay attack`, trong ngữ cảnh rằng việc lặp lại dữ liệu là hiển nhiên cho phép ví dụ người dùng có thể thường xuyên sử dụng lại câu lệnh nào đó, kẻ tấn công đã phát hiện sự phóng khoáng này, họ không cần phải sửa đổi hay giải mã lưu lượng dữ liệu mà chỉ cần sao chép lại tất cả các tín hiệu `bit` và phát lại chính xác chúng vào trong phiên làm việc hiện tại của nạn nhân (vì mỗi phiên sẽ có định danh riêng nên việc tấn công phát lại vào phiên mới sẽ không được chấp nhận), việc này là vấn đề nghiêm trọng nếu đó là lệnh xóa dữ liệu, ... Rõ ràng việc kiểm tra tính toàn vẹn nên được áp dụng ở quy mô lớn hơn, cụ thể là trên "toàn bộ gói" hay luồng dữ liệu và đảm bảo không được trùng lặp. Trong lịch sử `SSH-1` sử dụng phương pháp kiểm tra không được đánh giá cao là `CRC-32`, phiên bản sau `SSH-2` được thay thế bằng `SHA` kết hợp với `HMAC`.
 
@@ -4261,25 +4261,6 @@ hcmoperator@server password:
 [hcmoperator@server ~]$
 [hcmoperator@server ~]$
 ```
-Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `host key` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
-```shell
-[root@huyvl-linux-training ~]# cat .ssh/known_hosts
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
-No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
-Host key verification failed.
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=no root@10.10.1.168
-Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
-[root@huyvl-server ~]# exit
-logout
-Connection to 10.10.1.168 closed.
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
-[root@huyvl-server ~]# exit
-logout
-Connection to 10.10.1.168 closed.
-[root@huyvl-linux-training ~]# cat .ssh/known_hosts
-10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
-[root@huyvl-linux-training ~]#
-```
 #### <a name="ssh_client_config"></a>Cấu hình `ssh client`
 Cấu hình toàn cục tại `/etc/ssh/ssh_config` để áp dụng cho tất cả các tài khoản người dùng như sau:
 ```shell
@@ -4344,5 +4325,23 @@ hcmoperator@server password:
 [hcmoperator@huyvl-server ~]$ ssh-add -L
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
 [hcmoperator@huyvl-server ~]$
-
+```
+Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `host key` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
+```shell
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
+Host key verification failed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=no root@10.10.1.168
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
+[root@huyvl-linux-training ~]#
 ```
