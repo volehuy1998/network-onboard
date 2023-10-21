@@ -3832,7 +3832,7 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
   - Tất cả thuật toán mật mã đều sử dụng kích thước khóa phù hợp và đủ dài được cho là có thể bảo vệ thậm chí chống lại những kẻ giỏi nhất trong các trường hợp tấn công trong nhiều thập kỷ qua.
   - Tất cả thuật toán đều được đàm phán để đi đến nhất trí giữa các bối cảnh khác nhau, vì trong một số trường hợp thuật toán được cho là lỗi thời, kém an toàn thì có thể dễ dàng chuyển sang thuật toán khác một cách tự động, đương nhiên nếu không có thuật toán nào phù hợp giữa gói phần mềm cài đặt trên máy chủ và người dùng thì không có kết nối nào được tạo.
 
-- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó để giả mạo, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Finger print` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận rằng `finger print` có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `finger print` gửi ngược lại máy chủ để tiến hành quy trình so sánh với `host key` (tất nhiên máy chủ cần băm `host key` để so sánh với `finger print` từ người dùng gửi đến).
+- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó giả mạo để sử dụng cho việc so sánh, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Host key` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận rằng `finger print` được hiện diện trên màn hình rằng nó có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `host key` để giải mã thông điệp xác thực đã được mã hóa nởi `private key` trên máy chủ.
 
 - `Extensibility`: khả năng mở rộng, tác giả tin rằng giao thức này cần được mở rộng vì một số tổ chức lớn muốn sử dụng riêng các thuật toán xác thực, mã hóa, phương pháp trao đổi khóa, ... của chính họ tạo ra.
 
@@ -4184,7 +4184,7 @@ server,10.10.0.242 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzd
 hcmoperator@server password:
 [hcmoperator@server ~]$
 ```
-Khi người dùng bị chặn truy cập vì `finger print` tại máy cục bộ và `host key` tại máy chủ không tương thích với nhau. Trường hợp này xảy ra cũng có thể do quản trị viên không thực hiện lưu giữ bản sao khi bản chính bị mất tại thư mục `/etc/ssh/`,  các `host key` sẽ được `OpenSSH` tự sinh trở lại khi chúng không được tìm thấy. Sau khi xác minh được vấn đề không phải bị tấn công, người dùng có thể chấp nhận `finger print` mới:
+Khi người dùng bị chặn truy cập vì `host key` tại máy cục bộ không thể giải mã thông điệp xác thực từ máy chủ, tức là nó và `private key` tại máy chủ không tương thích với nhau. Trường hợp này xảy ra cũng có thể do quản trị viên không thực hiện lưu giữ bản sao khi bản chính bị mất tại thư mục `/etc/ssh/`,  các `host key` sẽ được `OpenSSH` tự sinh trở lại khi chúng không được tìm thấy. Sau khi xác minh được vấn đề không phải bị tấn công, người dùng có thể chấp nhận `host key` mới:
 ```shell
 [root@server ssh]# ll
 total 608
@@ -4261,7 +4261,7 @@ hcmoperator@server password:
 [hcmoperator@server ~]$
 [hcmoperator@server ~]$
 ```
-Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `finger print` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
+Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `host key` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
 ```shell
 [root@huyvl-linux-training ~]# cat .ssh/known_hosts
 [root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
