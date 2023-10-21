@@ -46,7 +46,7 @@
 - 2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 21/10/2023)
   - 2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 21/10/2023)
     - 2.7.1.1 - Kiến trúc giao thức `SSH` (:arrow_up:UPDATED 21/10/2023)
-    - 2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (::arrow_up:UPDATED 19/10/2023)
+    - 2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (:arrow_up:UPDATED 19/10/2023)
     - 2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:arrow_up:UPDATED 19/10/2023)
   - 2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 21/10/2023)
     - 2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)
