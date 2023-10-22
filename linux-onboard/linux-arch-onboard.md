@@ -32,13 +32,13 @@
     - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
-- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 22/10/2023)](#remote_connection)
+- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 23/10/2023)](#remote_connection)
   - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_protocol)
     - [2.7.1.1 - Kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_arch)
     - [2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (:arrow_up:UPDATED 19/10/2023)](#secu_in_transport)
     - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:arrow_up:UPDATED 19/10/2023)](#secu_in_auth)
     - [2.7.1.4 - Giao thức `SSH-1`, `SSH-2` và sự cải tiến (:arrow_up:UPDATED 22/10/2023)](#ssh1_2)
-  - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 21/10/2023)](#openssh_overview)
+  - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 23/10/2023)](#openssh_overview)
     - [2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)](#show_finger_print)
     - [2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
     - [2.7.2.3 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
@@ -4103,23 +4103,73 @@ Connection to 103.176.147.14 closed.
 
 (gedit:1697): dconf-WARNING **: 00:37:12.022: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
 ```
-Sử dụng `Port Forwarding` ở trường hợp `Local Forwarding`, mọi lưu lượng truy cập vào máy cục bộ với cổng được chỉ định sẽ được chuyển hướng đến một cổng của hệ thống khác. Ví dụ sau đây người dùng sử dụng `Windows` còn máy chủ web là `103.176.147.14`.
+
+Sử dụng `Port Forwarding` ở trường hợp `Local Forwarding`, mọi lưu lượng truy cập vào máy cục bộ với cổng được chỉ định sẽ được chuyển hướng đến một cổng của hệ thống khác. 
+
+<div style="text-align:center"><img src="../images/simple_local_port_forwarding.png" /></div>
+
 ```shell
-[root@huyvl-client ~]# curl localhost:12345
-curl: (7) Failed connect to localhost:12345; Connection refused
-[root@huyvl-client ~]# netstat -ntlp | grep 12345
-[root@huyvl-client ~]# ssh localhost -L 127.0.0.1:12345:server:80
-[root@huyvl-client ~]# netstat -ntlp | grep 12345
-tcp        0      0 127.0.0.1:12345         0.0.0.0:*               LISTEN      2935/ssh
-[root@huyvl-client ~]# curl localhost:12345
-Lab Server Web
-[root@huyvl-client ~]# exit
+[root@client ~]# grep web /etc/hosts
+10.10.1.8   web
+[root@client ~]# ssh -L 8080:localhost:80 root@web
+[root@web ~]#
+```
+```shell
+[root@client ~]# netstat -ntlp | grep 8080
+tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      18931/ssh          
+tcp6       0      0 ::1:8080                :::*                    LISTEN      18931/ssh          
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]#
+```
+
+Máy `bastion` như ảnh mô tả sau được thiết kế đặc biệt, nó vừa đại diện cho việc quản lý truy cập vào hệ thống nội bộ vừa chống lại các cuộc tấn công từ bên ngoài. Ngoài ra còn được gọi với các tên khác như `gateway`, `jump`, `proxy`, `load balancer`, ...
+
+<div style="text-align:center"><img src="../images/complex_local_forwarding.png" /></div>
+
+```shell
+[root@client ~]# grep "10." /etc/hosts
+10.10.1.228 jump
+[root@client ~]# ssh jump
+[root@jump ~]#
+[root@jump ~]#
+[root@jump ~]# grep web /etc/hosts
+[root@jump ~]# exit
 logout
-Connection to localhost closed.
-[root@huyvl-client ~]# ssh localhost -L 12345:server:80
-[root@huyvl-client ~]# curl localhost:12345
-Lab Server Web
-[root@huyvl-client ~]#
+Connection to jump closed.
+[root@client ~]# ssh -L 8080:web:80 root@jump
+[root@jump ~]#
+```
+```shell
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]#
+```
+, lý do lỗi vì `jump` sẽ làm trung gian nhưng trong `DNS` cục bộ không tìm thấy `web`. Cập nhật `DNS` cục bộ tại `jump` và tiến hành thử lại như sau:
+```shell
+[root@jump ~]# vi /etc/hosts
+[root@jump ~]# grep web /etc/hosts
+10.10.1.8 web
+[root@jump ~]# exit
+logout
+Connection to jump closed.
+[root@client ~]# ssh -L 8080:web:80 root@jump
+[root@jump ~]#
+```
+```shell
+[root@client ~]# netstat -ntlp | grep 8080
+tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      11764/ssh          
+tcp6       0      0 ::1:8080                :::*                    LISTEN      11764/ssh          
+[root@client ~]#
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]#
 ```
 #### <a name="show_finger_print"></a>Thông tin về `finger print` tại máy khách và máy chủ
 Chỉ định thuật toán băm cần hiện diện ngay khi lần đầu tiên kết nối như sau:
