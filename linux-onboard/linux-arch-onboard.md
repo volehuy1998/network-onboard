@@ -3898,6 +3898,8 @@ Các khóa được sử dụng trong `SSH-1`:
 
 - `Session key` được sinh ra tại người dùng, nó được mã hóa kép bởi `host key` và `server key` khi trung chuyển đến máy chủ. Cụ thể hơn là `Encrypt(ServerK,Encrypt(HostK, SessionK))`.
 
+Lưu ý: `server key` và `Diffie-Hellman` được ứng dụng dựa trên thuật ngữ `Perfect Forward Secrecy` , tức việc yếu tố bí mật dài hạn (ví dụ khóa bí mật tại máy chủ) bị rò rỉ cũng không làm ảnh hưởng đến `session key`.
+
 Sự cải tiến trong `SSH-2` so với `SSH-1`:
 
 | `SSH-1` | `SSH-2` |
@@ -4020,6 +4022,104 @@ Last login: Thu Oct 19 15:42:20 +07 2023 on pts/0
 [hcmoperator@huyvl-linux-training ~]$ ssh 10.10.1.168
 hcmoperator@10.10.1.168 password:
 [hcmoperator@huyvl-server ~]$
+```
+Hoặc sử dụng tùy chọn `-l` để chỉ định tên tài khoản mà không cần sử dụng ký tự `@`:
+```shell
+[root@huyvl-linux-training ~]# ssh -l hcmoperator server
+hcmoperator@server password:
+[hcmoperator@huyvl-server ~]$ exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]#
+```
+Thực thi lệnh từ xa mà không cần dấu nhắc `shell` như sau:
+```shell
+[root@huyvl-linux-training ~]# ssh server ls -al
+total 44
+dr-xr-x---.  4 root root 4096 Oct 19 15:13 .
+dr-xr-xr-x. 18 root root 4096 Oct 22 10:44 ..
+-rw-------   1 root root 4299 Oct 22 23:01 .bash_history
+-rw-r--r--.  1 root root   18 Dec 29  2013 .bash_logout
+-rw-r--r--.  1 root root  176 Dec 29  2013 .bash_profile
+-rw-r--r--.  1 root root  387 May 17 16:53 .bashrc
+-rw-r--r--.  1 root root  100 Dec 29  2013 .cshrc
+drwxr-----.  3 root root 4096 May 17 16:11 .pki
+drwx------   2 root root 4096 Oct 22 18:17 .ssh
+-rw-r--r--.  1 root root  129 Dec 29  2013 .tcshrc
+[root@huyvl-linux-training ~]#
+```
+Sử dụng `Single Sign-On (SSO)` như sau:
+```shell
+[root@huyvl-linux-training ~]# grep server /etc/hosts
+10.10.1.168 server
+[root@huyvl-linux-training ~]# ssh server
+[root@huyvl-server ~]# ssh-add -L
+Could not open a connection to your authentication agent.
+[root@huyvl-server ~]# exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# ssh server -A
+[root@huyvl-server ~]# ssh-add -L
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
+[root@huyvl-server ~]# exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# ssh server -o ForwardAgent=yes
+[root@huyvl-server ~]# ssh-add -L
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
+[root@huyvl-server ~]# exit
+logout
+Connection to server closed.
+[root@huyvl-linux-training ~]# ssh server -o ForwardAgent=no
+[root@huyvl-server ~]# ssh-add -L
+Could not open a connection to your authentication agent.
+[root@huyvl-server ~]#
+```
+Sử dụng `X11Forwarding` để hiển thị giao diện tại máy người dùng, đối với trường hợp người dùng sử dụng `Windows` thì cần cài đặt phần mềm [Xming X Server for Windows](https://sourceforge.net/projects/xming/) trước.
+```shell
+[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
+#X11Forwarding no
+#       X11Forwarding no
+[root@huyvl-client ~]# vi /etc/ssh/sshd_config
+[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
+X11Forwarding yes
+#       X11Forwarding no
+[root@huyvl-client ~]# systemctl reload sshd
+[root@huyvl-client ~]# exit
+logout
+Connection to 103.176.147.14 closed.
+                                                                                                                                  ✔
+
+ > 23/10/2023 > 00:37.02 > /home/mobaxterm > echo $DISPLAY
+127.0.0.1:0.0
+                                                                                                                                  ✔
+
+ > 23/10/2023 > 00:37.05 > /home/mobaxterm > ssh root@103.176.147.14 -X
+[root@huyvl-client ~]# gedit
+
+(gedit:1697): GLib-GIO-CRITICAL **: 00:37:11.928: g_dbus_proxy_new_sync: assertion 'G_IS_DBUS_CONNECTION (connection)' failed
+
+(gedit:1697): dconf-WARNING **: 00:37:11.938: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
+
+(gedit:1697): dconf-WARNING **: 00:37:12.022: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
+```
+Sử dụng `Port Forwarding` ở trường hợp `Local Forwarding`, mọi lưu lượng truy cập vào máy cục bộ với cổng được chỉ định sẽ được chuyển hướng đến một cổng của hệ thống khác. Ví dụ sau đây người dùng sử dụng `Windows` còn máy chủ web là `103.176.147.14`.
+```shell
+[root@huyvl-client ~]# curl localhost:12345
+curl: (7) Failed connect to localhost:12345; Connection refused
+[root@huyvl-client ~]# netstat -ntlp | grep 12345
+[root@huyvl-client ~]# ssh localhost -L 127.0.0.1:12345:server:80
+[root@huyvl-client ~]# netstat -ntlp | grep 12345
+tcp        0      0 127.0.0.1:12345         0.0.0.0:*               LISTEN      2935/ssh
+[root@huyvl-client ~]# curl localhost:12345
+Lab Server Web
+[root@huyvl-client ~]# exit
+logout
+Connection to localhost closed.
+[root@huyvl-client ~]# ssh localhost -L 12345:server:80
+[root@huyvl-client ~]# curl localhost:12345
+Lab Server Web
+[root@huyvl-client ~]#
 ```
 #### <a name="show_finger_print"></a>Thông tin về `finger print` tại máy khách và máy chủ
 Chỉ định thuật toán băm cần hiện diện ngay khi lần đầu tiên kết nối như sau:
