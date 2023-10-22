@@ -39,9 +39,11 @@
     - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:arrow_up:UPDATED 19/10/2023)](#secu_in_auth)
     - [2.7.1.4 - Giao thức `SSH-1`, `SSH-2` và sự cải tiến (:arrow_up:UPDATED 22/10/2023)](#ssh1_2)
   - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 23/10/2023)](#openssh_overview)
-    - [2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)](#show_finger_print)
-    - [2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
-    - [2.7.2.3 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
+    - [2.7.2.1 - Sử dụng công cụ cơ bản (:arrow_up:UPDATED 19/10/2023)](#openssh_basic)
+    - [2.7.2.2 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)](#show_finger_print)
+    - [2.7.2.3 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
+    - [2.7.2.4 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
+    - [2.7.2.5 - Sử dụng `X11 Forwarding` và `Port Forwarding` (:arrow_up:UPDATED 23/10/2023)](#x11_port_forwarding)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -3913,6 +3915,7 @@ Sự cải tiến trong `SSH-2` so với `SSH-1`:
 | Không | Đổi `session key` theo chu kỳ. |
 
 ### <a name="openssh_overview"></a>Cài đặt `OpenSSH`, kết nối và cấu hình
+#### <a name="openssh_basic"></a>Sử dụng công cụ cơ bản
 Thực hiện cài đặt `OpenSSH` trên máy chủ:
 ```shell
 [root@server ~]# yum install openssh-server -y
@@ -4075,102 +4078,7 @@ Connection to server closed.
 Could not open a connection to your authentication agent.
 [root@huyvl-server ~]#
 ```
-Sử dụng `X11Forwarding` để hiển thị giao diện tại máy người dùng, đối với trường hợp người dùng sử dụng `Windows` thì cần cài đặt phần mềm [Xming X Server for Windows](https://sourceforge.net/projects/xming/) trước.
-```shell
-[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
-#X11Forwarding no
-#       X11Forwarding no
-[root@huyvl-client ~]# vi /etc/ssh/sshd_config
-[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
-X11Forwarding yes
-#       X11Forwarding no
-[root@huyvl-client ~]# systemctl reload sshd
-[root@huyvl-client ~]# exit
-logout
-Connection to 103.176.147.14 closed.
-                                                                                                                                  ✔
 
- > 23/10/2023 > 00:37.02 > /home/mobaxterm > echo $DISPLAY
-127.0.0.1:0.0
-                                                                                                                                  ✔
-
- > 23/10/2023 > 00:37.05 > /home/mobaxterm > ssh root@103.176.147.14 -X
-[root@huyvl-client ~]# gedit
-
-(gedit:1697): GLib-GIO-CRITICAL **: 00:37:11.928: g_dbus_proxy_new_sync: assertion 'G_IS_DBUS_CONNECTION (connection)' failed
-
-(gedit:1697): dconf-WARNING **: 00:37:11.938: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
-
-(gedit:1697): dconf-WARNING **: 00:37:12.022: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
-```
-
-Sử dụng `Port Forwarding` ở trường hợp `Local Forwarding`, mọi lưu lượng truy cập vào máy cục bộ với cổng được chỉ định sẽ được chuyển hướng đến một cổng của hệ thống khác. 
-
-<div style="text-align:center"><img src="../images/simple_local_port_forwarding.png" /></div>
-
-```shell
-[root@client ~]# grep web /etc/hosts
-10.10.1.8   web
-[root@client ~]# ssh -L 8080:localhost:80 root@web
-[root@web ~]#
-```
-```shell
-[root@client ~]# netstat -ntlp | grep 8080
-tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      18931/ssh          
-tcp6       0      0 ::1:8080                :::*                    LISTEN      18931/ssh          
-[root@client ~]# curl localhost:8080
-web lab
-[root@client ~]#
-```
-
-Máy `bastion` như ảnh mô tả sau được thiết kế đặc biệt, nó vừa đại diện cho việc quản lý truy cập vào hệ thống nội bộ vừa chống lại các cuộc tấn công từ bên ngoài. Ngoài ra còn được gọi với các tên khác như `gateway`, `jump`, `proxy`, `load balancer`, ...
-
-<div style="text-align:center"><img src="../images/complex_local_forwarding.png" /></div>
-
-```shell
-[root@client ~]# grep "10." /etc/hosts
-10.10.1.228 jump
-[root@client ~]# ssh jump
-[root@jump ~]#
-[root@jump ~]#
-[root@jump ~]# grep web /etc/hosts
-[root@jump ~]# exit
-logout
-Connection to jump closed.
-[root@client ~]# ssh -L 8080:web:80 root@jump
-[root@jump ~]#
-```
-```shell
-[root@client ~]# curl localhost:8080
-curl: (52) Empty reply from server
-[root@client ~]# curl localhost:8080
-curl: (52) Empty reply from server
-[root@client ~]# curl localhost:8080
-curl: (52) Empty reply from server
-[root@client ~]#
-```
-, lý do lỗi vì `jump` sẽ làm trung gian nhưng trong `DNS` cục bộ không tìm thấy `web`. Cập nhật `DNS` cục bộ tại `jump` và tiến hành thử lại như sau:
-```shell
-[root@jump ~]# vi /etc/hosts
-[root@jump ~]# grep web /etc/hosts
-10.10.1.8 web
-[root@jump ~]# exit
-logout
-Connection to jump closed.
-[root@client ~]# ssh -L 8080:web:80 root@jump
-[root@jump ~]#
-```
-```shell
-[root@client ~]# netstat -ntlp | grep 8080
-tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      11764/ssh          
-tcp6       0      0 ::1:8080                :::*                    LISTEN      11764/ssh          
-[root@client ~]#
-[root@client ~]# curl localhost:8080
-web lab
-[root@client ~]# curl localhost:8080
-web lab
-[root@client ~]#
-```
 #### <a name="show_finger_print"></a>Thông tin về `finger print` tại máy khách và máy chủ
 Chỉ định thuật toán băm cần hiện diện ngay khi lần đầu tiên kết nối như sau:
 ```shell
@@ -4552,4 +4460,101 @@ hcmoperator@server password:
 [hcmoperator@huyvl-server ~]$ ssh-add -L
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
 [hcmoperator@huyvl-server ~]$
+```
+#### <a name="x11_port_forwarding"></a>Sử dụng `X11-Forwarding` và `Port-Forwarding`
+Sử dụng `X11Forwarding` để hiển thị giao diện tại máy người dùng, đối với trường hợp người dùng sử dụng `Windows` thì cần cài đặt phần mềm [Xming X Server for Windows](https://sourceforge.net/projects/xming/) trước.
+```shell
+[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
+#X11Forwarding no
+#       X11Forwarding no
+[root@huyvl-client ~]# vi /etc/ssh/sshd_config
+[root@huyvl-client ~]# grep X11For /etc/ssh/sshd_config
+X11Forwarding yes
+#       X11Forwarding no
+[root@huyvl-client ~]# systemctl reload sshd
+[root@huyvl-client ~]# exit
+logout
+Connection to 103.176.147.14 closed.
+                                                                                                                                  ✔
+
+ > 23/10/2023 > 00:37.02 > /home/mobaxterm > echo $DISPLAY
+127.0.0.1:0.0
+                                                                                                                                  ✔
+
+ > 23/10/2023 > 00:37.05 > /home/mobaxterm > ssh root@103.176.147.14 -X
+[root@huyvl-client ~]# gedit
+
+(gedit:1697): GLib-GIO-CRITICAL **: 00:37:11.928: g_dbus_proxy_new_sync: assertion 'G_IS_DBUS_CONNECTION (connection)' failed
+
+(gedit:1697): dconf-WARNING **: 00:37:11.938: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
+
+(gedit:1697): dconf-WARNING **: 00:37:12.022: failed to commit changes to dconf: Failed to execute child process ?dbus-launch? (No such file or directory)
+```
+
+Sử dụng `Port Forwarding` ở trường hợp `Local Forwarding`, mọi lưu lượng truy cập vào máy cục bộ với cổng được chỉ định sẽ được chuyển hướng đến một cổng của hệ thống khác. 
+
+<div style="text-align:center"><img src="../images/simple_local_port_forwarding.png" /></div>
+
+```shell
+[root@client ~]# grep web /etc/hosts
+10.10.1.8   web
+[root@client ~]# ssh -L 8080:localhost:80 root@web
+[root@web ~]#
+```
+```shell
+[root@client ~]# netstat -ntlp | grep 8080
+tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      18931/ssh          
+tcp6       0      0 ::1:8080                :::*                    LISTEN      18931/ssh          
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]#
+```
+
+Máy `bastion` như ảnh mô tả sau được thiết kế đặc biệt, nó vừa đại diện cho việc quản lý truy cập vào hệ thống nội bộ vừa chống lại các cuộc tấn công từ bên ngoài. Ngoài ra còn được gọi với các tên khác như `gateway`, `jump`, `proxy`, `load balancer`, ...
+
+<div style="text-align:center"><img src="../images/complex_local_forwarding.png" /></div>
+
+```shell
+[root@client ~]# grep "10." /etc/hosts
+10.10.1.228 jump
+[root@client ~]# ssh jump
+[root@jump ~]#
+[root@jump ~]#
+[root@jump ~]# grep web /etc/hosts
+[root@jump ~]# exit
+logout
+Connection to jump closed.
+[root@client ~]# ssh -L 8080:web:80 root@jump
+[root@jump ~]#
+```
+```shell
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]# curl localhost:8080
+curl: (52) Empty reply from server
+[root@client ~]#
+```
+, lý do lỗi vì `jump` sẽ làm trung gian nhưng trong `DNS` cục bộ không tìm thấy `web`. Cập nhật `DNS` cục bộ tại `jump` và tiến hành thử lại như sau:
+```shell
+[root@jump ~]# vi /etc/hosts
+[root@jump ~]# grep web /etc/hosts
+10.10.1.8 web
+[root@jump ~]# exit
+logout
+Connection to jump closed.
+[root@client ~]# ssh -L 8080:web:80 root@jump
+[root@jump ~]#
+```
+```shell
+[root@client ~]# netstat -ntlp | grep 8080
+tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      11764/ssh          
+tcp6       0      0 ::1:8080                :::*                    LISTEN      11764/ssh          
+[root@client ~]#
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]# curl localhost:8080
+web lab
+[root@client ~]#
 ```
