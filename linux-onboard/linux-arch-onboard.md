@@ -32,12 +32,13 @@
     - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
-- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 21/10/2023)](#remote_connection)
-  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 21/10/2023)](#ssh_protocol)
-    - [2.7.1.1 - Kiến trúc giao thức `SSH` (:arrow_up:UPDATED 21/10/2023)](#ssh_arch)
+- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 22/10/2023)](#remote_connection)
+  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_protocol)
+    - [2.7.1.1 - Kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_arch)
     - [2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (:arrow_up:UPDATED 19/10/2023)](#secu_in_transport)
     - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:arrow_up:UPDATED 19/10/2023)](#secu_in_auth)
-  - [2.7.2 - Tổng quan về `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 21/10/2023)](#openssh_overview)
+    - [2.7.1.4 - Giao thức `SSH-1`, `SSH-2` và sự cải tiến (:arrow_up:UPDATED 22/10/2023)](#ssh1_2)
+  - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 21/10/2023)](#openssh_overview)
     - [2.7.2.1 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)](#show_finger_print)
     - [2.7.2.2 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
     - [2.7.2.3 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
@@ -3824,7 +3825,18 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
 - Người dùng phải được cấp quyền để có thể kết nối.
 
 ### <a name="ssh_protocol"></a>Tổng quan về kiến trúc giao thức `SSH`
-`SSH (Secure Shell)` là một giao thức cho phép truy cập từ xa một cách an toàn hoặc một số dịch vụ mạng khác như truyền dữ liệu tệp tin, ... được phát minh bởi nhà khoa học máy tính [Tatu Ylönen](https://ylonen.org/index.html) người Phần Lan. Kiến trúc giao thức bao gồm `4` cấu tạo chính:
+`SSH (Secure Shell)` là một giao thức cho phép truy cập từ xa một cách an toàn hoặc một số dịch vụ mạng khác như truyền dữ liệu tệp tin, ... được phát minh bởi nhà khoa học máy tính [Tatu Ylönen](https://ylonen.org/index.html) người Phần Lan tại Trường Đại học Bách Khoa `Helsinki`. Các mật mã được sử dụng:
+
+- `Asymmetric cryptography`: hệ mật mã bất đối xứng, một cặp khóa công khai và bí mật tương thích với nhau. Nhược điểm, chỉ mã hóa có kích thước xác định Ưu điểm, từ khóa công khai rất khó suy ra được khóa bí mật. Có `2` cách sử dụng:
+
+  - `Asymmetric encryption`: sử dụng khóa công khai để mã hóa, khóa bí mật để giải mã.
+  - `Asymmetric signing`: hoán đổi vai trò giữa 2 khóa, khóa bí mật để mã hóa còn khóa công khai giải mã.
+
+- `Symmetric cryptography`: hệ mật mã đối xứng, chỉ có một khóa duy nhất để thực hiện 2 công việc mã hóa và giải mã. Ưu điểm, mã hóa nhanh với độ dài tùy ý. Nhược điểm, dễ bị đánh cắp nên thường được hộ tống bởi `asymmetric cryptography`.
+
+- `Hash cryptography`: hàm băm, dữ liệu với độ dài tùy ý có đầu ra kích thước cố định. Ưu điểm, không thể tìm dữ liệu gốc từ kết quả băm. Nhược điểm, nhiều đầu vào có thể giống nhau về đầu ra nhưng xác suất là rất nhỏ.
+
+Kiến trúc giao thức bao gồm `4` cấu tạo chính:
 
 - `Security Properties`: sự minh bạch, mục đích của giao thức `SSH` là cải thiện tính bảo mật của tất cả dịch vụ mà nó có thể được áp dụng trên môi trường mạng kém an toàn ngày nay.
   
@@ -3832,7 +3844,7 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
   - Tất cả thuật toán mật mã đều sử dụng kích thước khóa phù hợp và đủ dài được cho là có thể bảo vệ thậm chí chống lại những kẻ giỏi nhất trong các trường hợp tấn công trong nhiều thập kỷ qua.
   - Tất cả thuật toán đều được đàm phán để đi đến nhất trí giữa các bối cảnh khác nhau, vì trong một số trường hợp thuật toán được cho là lỗi thời, kém an toàn thì có thể dễ dàng chuyển sang thuật toán khác một cách tự động, đương nhiên nếu không có thuật toán nào phù hợp giữa gói phần mềm cài đặt trên máy chủ và người dùng thì không có kết nối nào được tạo.
 
-- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó giả mạo được sử dụng cho việc so sánh trước khi người dùng chấp nhận `host key`, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Host key` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận `finger print` đang hiện diện trên màn hình rằng nó có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `host key` để giải mã thông điệp xác thực đã được mã hóa nởi `private key` trên máy chủ.
+- `Host key`: khóa công khai được sinh ra tại máy chủ, nhiều máy chủ có thể sử dụng chung khóa này. Về mục đích cơ bản để chắc chắn rằng sự kết nối đang diễn ra đúng nơi mong muốn, tránh khỏi tai nạn truyền dữ liệu đến sai chỗ, ví dụ như trường hợp `man in the middle` làm giả `DNS (Domain Name System)` và đứng giữa đánh lừa cả 2 bên để đọc tất cả lưu lượng truy cập, ... `Host key` sẽ thông qua quá trình băm tiêu chuẩn - `Secure Hash Standard (SHS)` để tạo thành `finger print` là cái rất khó giả mạo được sử dụng cho việc so sánh trước khi người dùng chấp nhận `host key`, quy trình băm này được công bố bởi Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ, viết tắt [NIST (US National Institute of Standards and Technology)](https://www.nist.gov/). `Host key` được gửi đến ở dạng xin cấp phép để lưu vào máy người dùng chỉ khi lần đầu kết nối, khi nhận được câu hỏi này người dùng cần tìm đến quản trị viên để xác nhận `finger print` đang hiện diện trên màn hình rằng nó có thuộc về máy chủ của tổ chức. Ở những lần kết nối sau thì ứng dụng `ssh` phía người dùng sẽ tự động sử dụng `host key` để giải mã thông điệp xác thực đã được mã hóa bởi `private key` trên máy chủ.
 
 - `Extensibility`: khả năng mở rộng, tác giả tin rằng giao thức này cần được mở rộng vì một số tổ chức lớn muốn sử dụng riêng các thuật toán xác thực, mã hóa, phương pháp trao đổi khóa, ... của chính họ tạo ra.
 
@@ -3852,6 +3864,8 @@ Một số điều kiện tiên quyết để thiết lập kết nối từ xa:
 
 - `Traffic Analysis`: phân tích lưu lượng, giám sát lưu lượng ở bất kỳ giao thức nào cũng có thể mang lại cho kẻ tấn công những thông tin hữu ích như phiên làm việc, giao thức cụ thể, ... Ví dụ tài liệu [SSH Traffic Analysis Attacks (Solar Designer)](https://www.slideshare.net/dugsong/ssh-traffic-analysis-attacks) và [Timing Analysis of Keystrokes and SSH Timing Attacks (Dawn Xiaodong Song)](https://sites.cs.ucsb.edu/~bultan/courses/595-F16/Week2.PDF) đã chứng minh được việc phân tích lưu lượng của phiên `SSH` có thể mang lại thông tin về độ dài mật khẩu.
 
+<div style="text-align:center"><img src="../images/ssh_full_procedure.png" /></div>
+
 #### <a name="secu_in_auth"></a>Những xem xét bảo mật về khía cạnh xác thực
 Những xem xét bảo mật về khía cạnh xác thực `(authentication)` và ủy quyền `(authorization)`:
 
@@ -3864,9 +3878,39 @@ Những xem xét bảo mật về khía cạnh xác thực `(authentication)` v�
 
 - `Authorization`: chính sách này sẽ áp dụng ngay khi việc xác thực thành công vì đơn giản rằng hệ thống không thể cấp quyền khi chưa biết rõ chức vụ, danh tính người kết nối. Quản trị viên được khuyến khích triển khai các chính sách an ninh nói chung, dành cho cụ thể người dùng nói riêng. Thiết lập chính sách thắt chặt an ninh mô tả rằng những gì có thể làm hoặc không thể làm. `SSH` có nhiều cách khác nhau để hạn chế hành vi của người dùng như: chuyển tiếp khóa bí mật `(key agent forwarding)`, ... Việc kiểm soát có thể triển khai ở cấp độ toàn cục hoặc cụ thể người dùng, và chúng có liên quan đến cơ chế xác thực `(user authentication)`.
 
-### <a name="openssh_overview"></a>Tổng quan về `OpenSSH`, kết nối và cấu hình
-`OpenSSH` là một dữ án mã nguồn mở được triển khai dựa trên giao thức `SSH`, ban đầu nó được chính tác giả lập trình sau đó có thêm sự đóng góp của đội ngũ phát triển `OpenBSD` và cộng đồng. Dự án khác tương tự là `Tectia SSH` nhưng thiên hướng thương mại hóa trong khi `OpenSSH` thì miễn phí.
+#### <a name="ssh1_2"></a>Giao thức `SSH-1`, `SSH-2` và sự cải tiến
+Bối cảnh ý tưởng nảy sinh sau khi mạng lưới trường đại học là nạn nhân trong việc tấn công nghe lén mật khẩu vào đầu năm 1995, `Ylönen` đã tự mình lập trình nên `SSH-1`. Tháng 7 cùng năm ông đã phát hành `SSH-1` dưới dạng miễn phí có kèm mã nguồn. Vào cuối năm 1995 ước tính có hơn 20.000 người dùng trên 50 quốc gia đã sử dụng `SSH-1`, vào thời điểm này `Ylönen` đã quyết định thành lập công ty [SSH Communications Security, Ltd., (SCS)](https://www.ssh.com/) để duy trì, hỗ trợ, tiếp tục phát triển và thương mại hóa. Song song đó ông cũng đã viết bản thảo tài liệu giao thức `SSH-1`. 
 
+Một số vấn đề và hạn chế đã được tìm thấy nhưng chúng không thể sửa chữa, vì thế năm 1996 công ty của ông đã giới thiệu phiên bản mới `SSH-2` với mô tả rằng hỗ trợ nhiều thuật toán hơn và điểm quan trọng là nó không tương thích với `SSH-1`. Đáp lại màn giới thiệu này, tổ chức `Internet Engineering Task Force (IETF)` đã thành lập nhóm `SECSH (Secure Shell)` để chuẩn hóa hơn cho giao thức. Vào tháng 2/1997 nhóm `SECSH` đã đệ trình bản thảo giao thức `SSH-2` để `IETF` xem xét, sau đó gửi đến biên tập viên `RFC` để xuất bản. 
+
+Năm 1998, `SCS` phát hành sản phẩm phần mềm `SSH Secure Shell (SSH2)`. `SSH-2` chỉ miễn phí đối với tổ chức giáo dục. Cuối năm 2000, `SCS` đã mở rộng giấy phép sử dụng phần mềm để cho phép sử dụng miễn phí cho cá nhân, một số hệ điều hành như `Linux`, `NetBSD`, `FreeBSD`, ... Vào thời điểm đó, phần mềm [OpenSSH](https://www.openssh.com/) đã trở nên nổi bật khi triển khai nhánh chóng từ nhánh phiên bản cuối cùng của `SSH-1` là `v1.2.12`, nó được phát triển dựa trên sự bảo trợ của `OpenBSD` và miễn phí cho tất cả mọi người. Mặc dù có nhiều đóng góp vào `OpenSSH` nhưng phần lớn là của lập trình viên [Markus Friedl](https://wwwcip.informatik.uni-erlangen.de/~msfriedl/).
+
+Các khóa được sử dụng trong `SSH-1`:
+
+| Tên | Vòng đời | Tạo bởi | Loại hình | Mục đích |
+| --- | --- | --- | --- | --- |
+| `User key` | Xuyên suốt quá trình sử dụng | Người dùng | `Public key` | Xác minh danh tính tài khoản truy cập máy chủ |
+| `Session key` | Trong phiên kết nối | Người dùng và máy chủ | `Secret key` | Mã hóa dữ liệu trung chuyển |
+| `Host key` | Xuyên suốt quá trình sử dụng | Quản trị viên | `Public key` | Xác minh danh tính máy chủ từ người dùng |
+| `Server key` | Một tiếng | Máy chủ | `Public key` | Bảo vệ `session key` |
+
+- `Server key` là một khóa tạm thời chỉ được sử dụng trong giao thức `SSH-1` và `OpenSSH/1`, . Nó được tái tạo tự động bởi máy chủ dựa trên chu kỳ, mặc định `1` tiếng và có thể điều chỉnh. `Server key` sẽ bảo vệ `session key` để thiết lập kênh liên lạc an toàn. Thông thường `server key` sẽ bị nhầm lẫn với `host key`, khóa này không được mô tả rõ ràng về việc nơi tồn tại trên ổ cứng.
+
+- `Session key` được sinh ra tại người dùng, nó được mã hóa kép bởi `host key` và `server key` khi trung chuyển đến máy chủ. Cụ thể hơn là `Encrypt(ServerK,Encrypt(HostK, SessionK))`.
+
+Sự cải tiến trong `SSH-2` so với `SSH-1`:
+
+| `SSH-1` | `SSH-2` |
+| --- | --- |
+| Không `module` hóa | Đã chia ra thành các phần: `connection`, `transport` và `authentication`. |
+| Kiểm tra tính toàn vẹn yếu vì sử dụng `CRC-32` | Sử dụng các thuật toán tốt hơn như `HMAC` kết hợp với `SHA` để bảo vệ dữ liệu trong phiên. |
+| Ít thuật toán để đàm phán | Hỗ trợ nhiều thuật toán đàm phán hơn chia theo hạng mục: nén, trao đổi khóa, mã hóa, xác thực, băm. |
+| Chỉ có phương pháp xác thực: `public-key (RSA only)` | Mở rộng thêm `DSA` và `PGP`. |
+| Sử dụng `server key` để bảo vệ `session key` | Sử dụng `Diffie-Hellman`. |
+| Không | Hỗ trợ xác thực qua chứng chỉ. |
+| Không | Đổi `session key` theo chu kỳ. |
+
+### <a name="openssh_overview"></a>Cài đặt `OpenSSH`, kết nối và cấu hình
 Thực hiện cài đặt `OpenSSH` trên máy chủ:
 ```shell
 [root@server ~]# yum install openssh-server -y
@@ -3889,6 +3933,20 @@ usage: sshd [-46DdeiqTt] [-C connection_spec] [-c host_cert_file]
             [-E log_file] [-f config_file] [-g login_grace_time]
             [-h host_key_file] [-o option] [-p port] [-u len]
 [root@server ~]#
+```
+, hoặc có thể sử dụng `telnet` từ máy người dùng:
+```shell
+[root@huyvl-linux-training ~]# grep server /etc/hosts
+10.10.1.168 server
+[root@huyvl-linux-training ~]# telnet server 22
+Trying 10.10.1.168...
+Connected to server.
+Escape character is '^]'.
+SSH-2.0-OpenSSH_7.4
+
+Protocol mismatch.
+Connection closed by foreign host.
+[root@huyvl-linux-training ~]#
 ```
 Kiểm tra phiên bản hiện hành trên máy người dùng:
 ```shell
@@ -4262,6 +4320,25 @@ hcmoperator@server password:
 [hcmoperator@server ~]$
 ```
 #### <a name="ssh_client_config"></a>Cấu hình `ssh client`
+Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `host key` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
+```shell
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
+Host key verification failed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=no root@10.10.1.168
+Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
+[root@huyvl-server ~]# exit
+logout
+Connection to 10.10.1.168 closed.
+[root@huyvl-linux-training ~]# cat .ssh/known_hosts
+10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
+[root@huyvl-linux-training ~]#
+```
 Cấu hình toàn cục tại `/etc/ssh/ssh_config` để áp dụng cho tất cả các tài khoản người dùng như sau:
 ```shell
 [root@huyvl-linux-training ~]# grep ^[^#] /etc/ssh/ssh_config
@@ -4325,23 +4402,4 @@ hcmoperator@server password:
 [hcmoperator@huyvl-server ~]$ ssh-add -L
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClzuZw92uV872b1N7Rpa3J51xi/nUS+for49aEWvJnSN0X8eMWamib09adSe9ZE2NaTcykArG5wJr6VqkQ6etvTxC1Cd+sIQm1Wp0jIb9is6VwbkDYJQNqJqGl4yocLMw5ooEWj3FxhTb6zHkDwqP4zXzBr+IlbpYNI+BQZMdKeUc8PMQFn21ttDYqT+tAW7SM/9i4t7GKhAeo3IEhXFP8Y/sLzo0Tzb5kazxi/7sywZoQS7sES4fXrNPfCJ14dk4JfL4UDfg6zQ6RYKG6/hCDshMaeyp898FyF/MLNnG6oXuY2zJOROyQrzwnzg5sMy60DJaBqvFyyN/Fi4sQX8NQkFuVx8sXnMQa1HbNX17z4n2yRsNRIpz5CGbxqehZpV7xkjsye3TThsUgXDTqozYjYQyOymLHvijSaMaf9ExAZZMuVY6s8AshQxtiQB1/KSCGC+u0NcYPQdxWhSx1J+GPT3qoEKUuMeDtLYnKskA1cg0i97NzhQk1BPYxHZ2vSKc= admin@SNG-PC-HUYVL3
 [hcmoperator@huyvl-server ~]$
-```
-Sử dụng chế độ khắc khe tức ngăn chặn việc thêm `host key` vào `.ssh/known_hosts` và chỉ phép các máy chủ được hiện diện trong `.ssh/known_hosts`, mặc định `StrictHostKeyChecking=no` hoặc không cần khai báo trong câu lệnh
-```shell
-[root@huyvl-linux-training ~]# cat .ssh/known_hosts
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
-No ECDSA host key is known for 10.10.1.168 and you have requested strict checking.
-Host key verification failed.
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=no root@10.10.1.168
-Warning: Permanently added '10.10.1.168' (ECDSA) to the list of known hosts.
-[root@huyvl-server ~]# exit
-logout
-Connection to 10.10.1.168 closed.
-[root@huyvl-linux-training ~]# ssh -o StrictHostKeyChecking=yes root@10.10.1.168
-[root@huyvl-server ~]# exit
-logout
-Connection to 10.10.1.168 closed.
-[root@huyvl-linux-training ~]# cat .ssh/known_hosts
-10.10.1.168 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCOQalf7UYJ3XSr4kdVv1IvDXHX78ldKbSWnF0IMOckYE2g0ux7prgxp9kcuATMMrYYdwLU7hYePaKcAas+9VJw=
-[root@huyvl-linux-training ~]#
 ```
