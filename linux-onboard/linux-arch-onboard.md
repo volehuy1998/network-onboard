@@ -44,6 +44,12 @@
     - [2.7.2.3 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
     - [2.7.2.4 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
     - [2.7.2.5 - Sử dụng `X11 Forwarding` và `Port Forwarding` (:arrow_up:UPDATED 23/10/2023)](#x11_port_forwarding)
+- [2.8 - Tổng quan về quản lý mạng (:heavy_plus_sign:UPDATED 25/10/2023)](#network_manage)
+  - [2.8.1 - Mô hình `TCP/IP` (:heavy_plus_sign:UPDATED 25/10/2023)](#tcp_ip)
+  - [2.8.2 - Mô tả về `Network Interface` (:heavy_plus_sign:UPDATED 01/11/2023)](#net_interface_overview)
+  - [2.8.3 - Địa chỉ `v4` (:heavy_plus_sign:UPDATED 25/10/2023)](#ipv4)
+  - [2.8.4 - Địa chỉ `v6` (:heavy_plus_sign:UPDATED 25/10/2023)](#ipv6)
+  - [2.8.5 - Thông tin về `network interface`(:heavy_plus_sign:UPDATED 25/10/2023)](#net_interface_info)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -4557,4 +4563,170 @@ web lab
 [root@client ~]# curl localhost:8080
 web lab
 [root@client ~]#
+```
+## <a name="network_manage"></a>Tổng quan về quản lý mạng
+### <a name="tcp_ip"></a>Mô hình `TCP/IP`
+Mô hình mạng `TCP/IP` là một giao thức liên lạc gồm 4 lớp để mô tả về việc làm cách nào để dữ liệu liên lạc được đóng gói, truyền tải, định tuyến, đánh địa chỉ và nhận giữa các máy tính trong mạng. Giao thức được định nghĩa tại `RFC 1122, Requirements for Internet Hosts - Communication Layers`.
+
+- Lớp ứng dụng - `Application`: mỗi ứng dụng đều có những cấu hình cho việc giao tiếp vì vậy máy chủ và máy khách có thể liên lạc đa nền tảng. Các giao thức phổ biến bao gồm: `SSH`, `HTTPS`, `FTP` và `SMTP`.
+
+- Lớp truyền dẫn - `Transport`: giao thức `TCP` và `UDP` đều là giao thức truyền dẫn. Với `TCP` hướng đến kết nối tin cậy còn `UDP` thì ngược lại. Các giao thức ứng dụng có thể chọn cổng `TCP` hoặc `UDP`. Danh sách các cổng phổ biến và đã đăng ký nằm trong `/etc/services`.
+```shell
+[root@huyvl-linux-training ~]# tail /etc/services
+3gpp-cbsp       48049/tcp               # 3GPP Cell Broadcast Service Protocol
+isnetserv       48128/tcp               # Image Systems Network Services
+isnetserv       48128/udp               # Image Systems Network Services
+blp5            48129/tcp               # Bloomberg locator
+blp5            48129/udp               # Bloomberg locator
+com-bardac-dw   48556/tcp               # com-bardac-dw
+com-bardac-dw   48556/udp               # com-bardac-dw
+iqobject        48619/tcp               # iqobject
+iqobject        48619/udp               # iqobject
+matahari        49000/tcp               # Matahari Broker
+[root@huyvl-linux-training ~]#
+```
+, khi một gói tin được gửi ra mạng thì sự kết hợp giữa địa chỉ và cổng tạo thành `socket`. Mỗi gói tin đều có chứa `socket` nguồn và `socket` đích đến, những thông tin này được sử dụng để giám sát hoặc lọc gói tin.
+
+- Lớp mạng - `Internet`: còn được gọi là lớp `internet` đảm nhận việc mang dữ liệu từ nguồn tới đích. Giao thức `IPv4` và `IPv6` đều là giao thức lớp `internet`.
+
+- Lớp liên kết - `Link`: cung cấp kết nối thông qua thiết bị vật lý. Các loại phổ biến nhất là kết nối có dây `Ethernet (802.3)` và không dây `Wifi (802.11)`. Mỗi thiết bị vật lý đều cung cấp `1` địa chỉ `Media Access Control (MAC)`.
+
+<div style="text-align:center"><img src="../images/tcpip_osi_model.png" /></div>
+
+### <a name="net_interface_overview"></a>Mô tả về tên `Network Interface`
+Mỗi một cổng mạng trên hệ thống đều có tên, những tên này sẽ được sử dụng để cấu hình và nhận biết. Những phiên bản trước của `Linux` sử dụng ký hiệu `eth` cho mỗi `network interface`, ví dụ như `eth0` là cổng đầu tiên, `eth1` là cổng thứ hai...tuy nhiên khi các thiết bị được thêm/tháo thì cơ chế phát hiện và đặt lại tên cho thiết bị sẽ thay đổi tên `interface` với `network interface`.
+
+Ở những phiên bản cổ điển thì `interface` sẽ được đặt `eth`, ngày nay sơ đồ đặt tên cổ điển này đã được thay thế bởi định dạng khác kết hợp bởi nhiều thông tin `firmware`, công nghệ `PCI` và loại thiết bị mạng. Tên được bắt đầu:
+
+- `Ethernet interface` bắt đầu với `en`. Nếu là cổng mạng được hàn sẵn trên thiết bị bo mạch chủ được đặt tên `eno (ethernet onboard)`, ngược lại với những cổng mạng có thể gắn/tháo được đặt tên `ens (ethernet slot)`, hoặc vị trí đầu nối thiết bị `enps`. Ví dụ:
+
+  - `eno1`: cổng mạng được hàn trên bo mạch chủ vị trí `1`.
+  - `ens1`: card mạng được mô-đun hóa có thể gắn/tháo dựa trên khe `PCI` vị trí `1`.
+  - `enp2s0`: được gắn trên thiết bị `PCI` với tần số `bus=2` vị trí `slot=0`.
+
+- `WLAN interface (Wireless LAN)` bắt đầu với `wl`. Có thể ghép nối như ví dụ trên: `wlp2s0`, ...
+
+- `WWAN interface (Wireless WAN)` bắt đầu với `ww`.
+### <a name="ipv4"></a>Địa chỉ `v4`
+Là loại địa chỉ được triển khai phổ biến nhất hiện nay. Địa chỉ `IPv4` bao gồm `32` bit được chia đều mỗi 4 `octet`. Mỗi `octet` thể hiện bằng số thập phân giá trị từ `0` đến `255` và ngăn cách nhau bởi dấu `.`. Hậu tố `prefix` sau địa chỉ thể hiện cho số lượng `bit` dành cho quản lý mạng, còn lại để đặt cho thiết bị trên lớp mạng đó. Tất cả các `host` trong cùng mạng sẽ đều có cùng hậu tố `prefix` và chúng có thể liên lạc trực tiếp với nhau mà không cần thông qua thiết bị định tuyến, ví dụ như `router`, ... `Gateway` của mạng dùng để liên lạc giữa các mạng khác nhau.
+
+<div style="text-align:center"><img src="../images/ipv4_address.png" /></div>
+
+Một số mạng được chia theo lớp A có 8 bit, B có 16 bit, C 24 bit. Hiện nay số lượng bit mạng thường biến động không cố định theo lớp cổ điển, số lượng bit mạng có thể là bất kỳ số nào nằm trong phạm vị được hỗ trợ và nó được gọi là `Classless Inter-Domain Routing (CIDR)`.
+
+`Netmask` dùng để chỉ số lượng bit thuộc về phần mạng. Càng nhiều bit ở phần mạng thì có thể chia nhiều mạng con nhưng mỗi mạng con có ít địa chỉ đặt cho thiết bị và ngược lại. Có `2` cách biểu thị:
+
+- Cách đầu tiên được biết đến là `CIDR`, thêm vào phần cuối địa chỉ với `/<prefix>`.
+
+- Cách thứ hai, hiển thị số lượng bit ở dạng nhị phân với trạng thái `1` ở phần mạng và trạng thái `0` ở phần host.
+
+`Network Address` là địa chỉ mà tất cả các bit ở phần host đều ở trạng thái `0`. `Broadcast address` là địa chỉ mà tất cả các bit ở phần host ở trạng thái `1`. `Gateway address` là địa chỉ bất kỳ trong phạm vi `host`, thông thường sẽ là địa chỉ đầu tiên.
+
+Bảng định tuyến của `IPv4`: gói tin di chuyển từ `host` tới `host` trong cùng mạng hoặc khác mạng thông qua thiết bị chuyển mạch. Mỗi `host` đều có bảng định tuyến dùng để xác định chính xác `NIC` nào để gửi gói đi. Từng dòng trong bảng định tuyến liệt kê thông tin: mạng đích, `NIC` trên host, địa chỉ `gateway` của thiết bị định tuyến để chuyển tiếp gói tin. Nếu không khớp với bất kỳ dòng nào trong bảng thì `default route 0.0.0.0/0` sẽ được sử dụng. Khi thiết bị định tuyến nhận được gói mà địa chỉ không phải của nó thì nó sẽ chuyển tiếp dựa trên bảng định tuyến của chính nó. Việc chuyển tiếp có thể gửi trực tiếp đến nơi nhận nếu thiết bị định tuyến có liên kết với `gateway` của mạng đích, ngược lại gói tin sẽ tiếp tục được chuyển tiếp đến thiết bị định tuyến khác.
+
+Máy tính có thể tự cấu hình `IPv4` bằng cách liên lạc đến máy chủ `DHCP`. `DHCP client` ở máy cục bộ sẽ truy vấn đến máy chủ `DHCP` để đàm phán về một địa chỉ `IPv4` chưa được sử dụng và thuê nó trong khoản thời gian nhất định. Ngoài ra người dùng có thể chỉ định `IPv4` từ tệp cục bộ, cách làm này phù hợp với quản trị viên vì có cái nhìn bao quát về không gian mạng mà họ quản lý để tránh xung đột bất ngờ.
+### <a name="ipv6"></a>Địa chỉ `v6`
+Trong tầm nhìn thấy được `IP Public` sẽ mau chóng cạn kiệt thì `IPv6` được phát minh để mở rộng. `IPv6` và `IPv4` không xung đột với nhau, người dùng có thể sử dụng song song cả 2 mặc dù `IPv6` vẫn được ưu tiên hơn.
+
+<div style="text-align:center"><img src="../images/ipv4_ex_wifi.jpg" /><img src="../images/ipv6_ex_lte.jpg" /></div>
+
+`IPv6` bao gồm `128` bit được biểu diễn với dạng thập lục phân, chia đều theo 8 nhóm, mỗi nhóm cấu tạo bởi `4 nibble`, mỗi nhóm cách nhau bởi dấu `:` thay vì dấu `.` như trong `IPv4`. `IPv6` cho phép rút gọn nhóm như sau:
+
+- Nguyên thể: `2001:0db8:0000:0010:0000:0000:0000:0001`.
+
+- Rút gọn cách 1: `2001:db8:0:10:0:0:0:1`.
+
+- Rút gọn cách 2: `2001:db8:0:10::1`.
+
+Một số lời khuyên rút gọn `IPv6` tường minh:
+
+- Loại bỏ các số nibble `0` đứng đầu trong mỗi nhóm.
+- Sử dụng dấu `::` để rút ngắn nếu có nhiều nhóm `0` liền kề.
+
+<div style="text-align:center"><img src="../images/ipv6_address.png" /></div>
+
+| Địa chỉ `IPv6` | Mục đích | Mô tả |
+| --- | --- | --- |
+| `::1/128` | `localhost` | `Loopback interface` tương đương với `127.0.0.1/8`. | 
+| `::` | Địa chỉ không xác định | Tương đương với `0.0.0.0`, với dịch vụ mạng thì nó đang lắng nghe trên tất cả các địa chỉ. |
+| `::/0` | `default route` | Tương đương với `0.0.0.0/0`.
+| `2000::/3` | Địa chỉ `unicast` toàn cục | |
+| `fd00::/8` | Địa chỉ cục bộ duy nhất theo `RFC4193` | |
+| `fe80::/10` | Địa chỉ `link-local` | |
+| `ff00::/8` | `Multicast` | Tương đương với `224.0.0.0/4`.
+
+### <a name="net_interface_info"></a>Thông tin về `Network Interface`
+Hiển thị tất cả thông tin về `NIC` như sau:
+```shell
+[root@huyvl-linux-training ~]# ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether fa:16:3e:60:3c:07 brd ff:ff:ff:ff:ff:ff
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether fa:16:3e:e6:ea:f1 brd ff:ff:ff:ff:ff:ff
+[root@huyvl-linux-training ~]#
+```
+Hiện thị thông tin địa chỉ của `eth0` như sau:
+```shell
+[root@huyvl-linux-training ~]# ip addr show eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:60:3c:07 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.161/16 brd 10.10.255.255 scope global noprefixroute dynamic eth0
+       valid_lft 410677sec preferred_lft 410677sec
+    inet6 fe80::f816:3eff:fe60:3c07/64 scope link
+       valid_lft forever preferred_lft forever
+[root@huyvl-linux-training ~]# ip addr show eth1
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:e6:ea:f1 brd ff:ff:ff:ff:ff:ff
+    inet 15.15.15.88/24 brd 15.15.15.255 scope global noprefixroute dynamic eth1
+       valid_lft 604690sec preferred_lft 604690sec
+    inet6 fe80::edbe:5f06:827:a89b/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+```
+
+Chú thích: 
+
+- `interface` đang ở trạng thái hoạt động `state UP`
+- `link/ether` thông báo địa chỉ `MAC` là `fa:16:3e:60:3c:07`.
+- `inet` biểu diễn địa chỉ `IPv4`
+- `inet6` biểu diễn địa chỉ `IPv6`.
+
+Hiển thị thông tin hiệu suất của `eth0` với `RX` là nhận và `TX` là gửi đi như sau:
+```shell
+[root@huyvl-linux-training ~]# ip -s link show eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether fa:16:3e:60:3c:07 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    2025331    33415    0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    8024088    53486    0       0       0       0
+[root@huyvl-linux-training ~]#
+```
+Hiển thị thông tin ở dạng rút gọn `-br (brief)` hoặc đầy đủ như sau:
+```shell
+[root@huyvl-linux-training ~]# ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+eth0             UP             10.10.1.161/16 fe80::f816:3eff:fe60:3c07/64
+eth1             UP             15.15.15.88/24 fe80::edbe:5f06:827:a89b/64
+[root@huyvl-linux-training ~]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:60:3c:07 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.161/16 brd 10.10.255.255 scope global noprefixroute dynamic eth0
+       valid_lft 409983sec preferred_lft 409983sec
+    inet6 fe80::f816:3eff:fe60:3c07/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:e6:ea:f1 brd ff:ff:ff:ff:ff:ff
+    inet 15.15.15.88/24 brd 15.15.15.255 scope global noprefixroute dynamic eth1
+       valid_lft 603998sec preferred_lft 603998sec
+    inet6 fe80::edbe:5f06:827:a89b/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+[root@huyvl-linux-training ~]#
 ```

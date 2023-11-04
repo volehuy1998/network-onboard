@@ -55,3 +55,6 @@
     - 2.7.2.3 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)
     - 2.7.2.4 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)
     - 2.7.2.5 - Sử dụng `X11-Forwarding` và `Port-Forwarding` (:arrow_up:UPDATED 23/10/2023)
+- 2.8 - Tổng quan về địa chỉ `v4` và `v6` (:heavy_plus_sign:UPDATED 25/10/2023)
+  - 2.8.1 - Địa chỉ `v4` (:heavy_plus_sign:UPDATED 25/10/2023)
+  - 2.8.2 - Địa chỉ `v6` (:heavy_plus_sign:UPDATED 25/10/2023)
