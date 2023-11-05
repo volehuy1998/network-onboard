@@ -32,24 +32,26 @@
     - [2.6.8.1 - Loại `unit` phổ biến `*.service` (UPDATED 03/10/2023)](#service_unit)
     - [2.6.8.2 - Loại `unit` về `*.socket` (UPDATED 30/09/2023)](#socket_unit)
     - [2.6.8.3 - Loại `unit` về `*.path` (UPDATED 30/09/2023)](#path_unit)
-- [2.7 - Điều khiển an toàn từ xa (:arrow_up:UPDATED 23/10/2023)](#remote_connection)
-  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_protocol)
-    - [2.7.1.1 - Kiến trúc giao thức `SSH` (:arrow_up:UPDATED 22/10/2023)](#ssh_arch)
-    - [2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (:arrow_up:UPDATED 19/10/2023)](#secu_in_transport)
-    - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (:arrow_up:UPDATED 19/10/2023)](#secu_in_auth)
-    - [2.7.1.4 - Giao thức `SSH-1`, `SSH-2` và sự cải tiến (:arrow_up:UPDATED 22/10/2023)](#ssh1_2)
-  - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (:arrow_up:UPDATED 23/10/2023)](#openssh_overview)
-    - [2.7.2.1 - Sử dụng công cụ cơ bản (:arrow_up:UPDATED 19/10/2023)](#openssh_basic)
-    - [2.7.2.2 - Thông tin về `finger print` tại máy khách và máy chủ (:arrow_up:UPDATED 19/10/2023)](#show_finger_print)
-    - [2.7.2.3 - Hành vi xử lý chuẩn kết nối đến máy chủ (:arrow_up:UPDATED 19/10/2023)](#std_prac_ssh)
-    - [2.7.2.4 - Cấu hình `ssh client` (:arrow_up:UPDATED 21/10/2023)](#ssh_client_config)
-    - [2.7.2.5 - Sử dụng `X11 Forwarding` và `Port Forwarding` (:arrow_up:UPDATED 23/10/2023)](#x11_port_forwarding)
-- [2.8 - Tổng quan về quản lý mạng (:heavy_plus_sign:UPDATED 25/10/2023)](#network_manage)
+- [2.7 - Điều khiển an toàn từ xa (UPDATED 23/10/2023)](#remote_connection)
+  - [2.7.1 - Tổng quan về kiến trúc giao thức `SSH` (UPDATED 22/10/2023)](#ssh_protocol)
+    - [2.7.1.1 - Kiến trúc giao thức `SSH` (UPDATED 22/10/2023)](#ssh_arch)
+    - [2.7.1.2 - Những xem xét bảo mật về khía cạnh truyền dẫn (UPDATED 19/10/2023)](#secu_in_transport)
+    - [2.7.1.3 - Những xem xét bảo mật về khía cạnh xác thực (UPDATED 19/10/2023)](#secu_in_auth)
+    - [2.7.1.4 - Giao thức `SSH-1`, `SSH-2` và sự cải tiến (UPDATED 22/10/2023)](#ssh1_2)
+  - [2.7.2 - Cài đặt `OpenSSH`, kết nối và cấu hình (UPDATED 23/10/2023)](#openssh_overview)
+    - [2.7.2.1 - Sử dụng công cụ cơ bản (UPDATED 19/10/2023)](#openssh_basic)
+    - [2.7.2.2 - Thông tin về `finger print` tại máy khách và máy chủ (UPDATED 19/10/2023)](#show_finger_print)
+    - [2.7.2.3 - Hành vi xử lý chuẩn kết nối đến máy chủ (UPDATED 19/10/2023)](#std_prac_ssh)
+    - [2.7.2.4 - Cấu hình `ssh client` (UPDATED 21/10/2023)](#ssh_client_config)
+    - [2.7.2.5 - Sử dụng `X11 Forwarding` và `Port Forwarding` (UPDATED 23/10/2023)](#x11_port_forwarding)
+- [2.8 - Tổng quan về quản lý mạng (:heavy_plus_sign:UPDATED 05/11/2023)](#network_manage)
   - [2.8.1 - Mô hình `TCP/IP` (:heavy_plus_sign:UPDATED 25/10/2023)](#tcp_ip)
   - [2.8.2 - Mô tả về `Network Interface` (:heavy_plus_sign:UPDATED 01/11/2023)](#net_interface_overview)
   - [2.8.3 - Địa chỉ `v4` (:heavy_plus_sign:UPDATED 25/10/2023)](#ipv4)
   - [2.8.4 - Địa chỉ `v6` (:heavy_plus_sign:UPDATED 25/10/2023)](#ipv6)
   - [2.8.5 - Thông tin về `network interface`(:heavy_plus_sign:UPDATED 25/10/2023)](#net_interface_info)
+  - [2.8.6 - Công cụ quản lý `nmcli`(:heavy_plus_sign:UPDATED 05/11/2023)](#nmcli)
+  - [2.8.7 - Cấu hình và quản lý `hostname`(:heavy_plus_sign:UPDATED 05/11/2023)](#hostname)
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -4729,4 +4731,377 @@ eth1             UP             15.15.15.88/24 fe80::edbe:5f06:827:a89b/64
     inet6 fe80::edbe:5f06:827:a89b/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
 [root@huyvl-linux-training ~]#
+```
+Thay đổi tên `interface` dựa trên `udev` như sau:
+```shell
+[root@huyvl-linux-training ~]# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:fb:0e:a0 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.3.197/16 brd 10.10.255.255 scope global noprefixroute dynamic eth0
+       valid_lft 604793sec preferred_lft 604793sec
+    inet6 fe80::f816:3eff:fefb:ea0/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:4b:9c:3c brd ff:ff:ff:ff:ff:ff
+    inet 15.15.15.50/24 brd 15.15.15.255 scope global noprefixroute dynamic eth1
+       valid_lft 604793sec preferred_lft 604793sec
+    inet6 fe80::3808:44aa:f88d:c322/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+[root@huyvl-linux-training ~]# cat /sys/class/net/eth0/type
+1
+[root@huyvl-linux-training ~]# vi /etc/udev/rules.d/00-persistent-internal-instead-of-eth0.rules
+[root@huyvl-linux-training ~]# cat /etc/udev/rules.d/00-persistent-internal-instead-of-eth0.rules
+SUBSYSTEM=="net",ACTION=="add",ATTR{address}=="fa:16:3e:fb:0e:a0",ATTR{type}=="1",NAME="internal"
+[root@huyvl-linux-training ~]# cd /etc/sysconfig/network-scripts/
+[root@huyvl-linux-training network-scripts]# ll | grep route-
+[root@huyvl-linux-training network-scripts]# vi route-internal
+[root@huyvl-linux-training network-scripts]# cat route-internal
+default via 10.10.3.197 dev internal
+[root@huyvl-linux-training network-scripts]# systemctl enable network
+network.service is not a native service, redirecting to /sbin/chkconfig.
+Executing /sbin/chkconfig network on
+[root@huyvl-linux-training network-scripts]# cd
+[root@huyvl-linux-training ~]# reboot
+...
+[root@huyvl-linux-training ~]# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: internal: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:6e:50:1c brd ff:ff:ff:ff:ff:ff
+    inet 10.10.3.207/16 brd 10.10.255.255 scope global noprefixroute dynamic internal
+       valid_lft 604780sec preferred_lft 604780sec
+    inet6 fe80::1aae:5361:7d1b:23d7/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether fa:16:3e:ca:65:d1 brd ff:ff:ff:ff:ff:ff
+    inet 15.15.15.214/24 brd 15.15.15.255 scope global noprefixroute dynamic eth1
+       valid_lft 604780sec preferred_lft 604780sec
+    inet6 fe80::f816:3eff:feca:65d1/64 scope link
+       valid_lft forever preferred_lft forever
+[root@huyvl-linux-training ~]#
+```
+, hoặc thay đổi dựa trên `/etc/systemd/network/*.link`, vì `udev` có độ ưu tiên cao hơn nên cần xóa cấu hình trước khi sử dụng phương pháp này
+```shell
+[root@huyvl-linux-training ~]# rm -f /etc/udev/rules.d/00-persistent-internal-instead-of-eth0.rules
+[root@huyvl-linux-training ~]# mkdir -p /etc/systemd/network/
+[root@huyvl-linux-training ~]# vi /etc/systemd/network/00-api.link
+[root@huyvl-linux-training ~]# cat /etc/systemd/network/00-api.link
+[Match]
+MACAddress=fa:16:3e:6e:50:1c
+
+[Link]
+Name=api
+[root@huyvl-linux-training ~]# reboot
+...
+[root@huyvl-linux-training ~]# ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: api: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether fa:16:3e:6e:50:1c brd ff:ff:ff:ff:ff:ff
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether fa:16:3e:ca:65:d1 brd ff:ff:ff:ff:ff:ff
+[root@huyvl-linux-training ~]#
+```
+### <a name="nmcli"></a>Công cụ quản lý `nmcli`
+Liệt kê tất cả kết nối:
+```shell
+[root@huyvl-linux-training ~]# nmcli con show
+NAME         UUID                                  TYPE      DEVICE
+System eth0  5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03  ethernet  eth0
+[root@huyvl-linux-training ~]#
+```
+Chi tiết hồ sơ `System eth0` như sau:
+```shell
+[root@huyvl-linux-training ~]# nmcli con show "System eth0"
+connection.id:                          System eth0
+connection.uuid:                        5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03
+connection.stable-id:                   --
+connection.type:                        802-3-ethernet
+connection.interface-name:              eth0
+connection.autoconnect:                 yes
+connection.autoconnect-priority:        0
+connection.autoconnect-retries:         -1 (default)
+connection.multi-connect:               0 (default)
+connection.auth-retries:                -1
+connection.timestamp:                   1699189782
+connection.read-only:                   no
+connection.permissions:                 --
+connection.zone:                        --
+connection.master:                      --
+connection.slave-type:                  --
+connection.autoconnect-slaves:          -1 (default)
+connection.secondaries:                 --
+connection.gateway-ping-timeout:        0
+connection.metered:                     unknown
+connection.lldp:                        default
+connection.mdns:                        -1 (default)
+connection.llmnr:                       -1 (default)
+802-3-ethernet.port:                    --
+802-3-ethernet.speed:                   0
+802-3-ethernet.duplex:                  --
+802-3-ethernet.auto-negotiate:          no
+802-3-ethernet.mac-address:             --
+802-3-ethernet.cloned-mac-address:      --
+802-3-ethernet.generate-mac-address-mask:--
+802-3-ethernet.mac-address-blacklist:   --
+802-3-ethernet.mtu:                     auto
+802-3-ethernet.s390-subchannels:        --
+802-3-ethernet.s390-nettype:            --
+802-3-ethernet.s390-options:            --
+802-3-ethernet.wake-on-lan:             default
+802-3-ethernet.wake-on-lan-password:    --
+ipv4.method:                            auto
+ipv4.dns:                               --
+ipv4.dns-search:                        --
+ipv4.dns-options:                       ""
+ipv4.dns-priority:                      0
+ipv4.addresses:                         --
+ipv4.gateway:                           --
+ipv4.routes:                            --
+ipv4.route-metric:                      -1
+ipv4.route-table:                       0 (unspec)
+ipv4.routing-rules:                     --
+ipv4.ignore-auto-routes:                no
+ipv4.ignore-auto-dns:                   no
+ipv4.dhcp-client-id:                    --
+ipv4.dhcp-timeout:                      0 (default)
+ipv4.dhcp-send-hostname:                yes
+ipv4.dhcp-hostname:                     --
+ipv4.dhcp-fqdn:                         --
+ipv4.never-default:                     no
+ipv4.may-fail:                          yes
+ipv4.dad-timeout:                       -1 (default)
+ipv6.method:                            ignore
+ipv6.dns:                               --
+ipv6.dns-search:                        --
+ipv6.dns-options:                       ""
+ipv6.dns-priority:                      0
+ipv6.addresses:                         --
+ipv6.gateway:                           --
+ipv6.routes:                            --
+ipv6.route-metric:                      -1
+ipv6.route-table:                       0 (unspec)
+ipv6.routing-rules:                     --
+ipv6.ignore-auto-routes:                no
+ipv6.ignore-auto-dns:                   no
+ipv6.never-default:                     no
+ipv6.may-fail:                          yes
+ipv6.ip6-privacy:                       -1 (unknown)
+ipv6.addr-gen-mode:                     stable-privacy
+ipv6.dhcp-duid:                         --
+ipv6.dhcp-send-hostname:                yes
+ipv6.dhcp-hostname:                     --
+ipv6.token:                             --
+proxy.method:                           none
+proxy.browser-only:                     no
+proxy.pac-url:                          --
+proxy.pac-script:                       --
+GENERAL.NAME:                           System eth0
+GENERAL.UUID:                           5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03
+GENERAL.DEVICES:                        eth0
+GENERAL.STATE:                          activated
+GENERAL.DEFAULT:                        yes
+GENERAL.DEFAULT6:                       no
+GENERAL.SPEC-OBJECT:                    --
+GENERAL.VPN:                            no
+GENERAL.DBUS-PATH:                      /org/freedesktop/NetworkManager/ActiveConnection/1
+GENERAL.CON-PATH:                       /org/freedesktop/NetworkManager/Settings/1
+GENERAL.ZONE:                           --
+GENERAL.MASTER-PATH:                    --
+IP4.ADDRESS[1]:                         10.10.1.162/16
+IP4.GATEWAY:                            10.10.0.1
+IP4.ROUTE[1]:                           dst = 169.254.169.254/32, nh = 10.10.0.2, mt = 100
+IP4.ROUTE[2]:                           dst = 0.0.0.0/0, nh = 10.10.0.1, mt = 100
+IP4.ROUTE[3]:                           dst = 10.10.0.0/16, nh = 0.0.0.0, mt = 100
+IP4.DNS[1]:                             8.8.8.8
+DHCP4.OPTION[1]:                        broadcast_address = 10.10.255.255
+DHCP4.OPTION[2]:                        dhcp_lease_time = 604800
+DHCP4.OPTION[3]:                        dhcp_message_type = 5
+DHCP4.OPTION[4]:                        dhcp_server_identifier = 10.10.0.1
+DHCP4.OPTION[5]:                        domain_name_servers = 8.8.8.8
+DHCP4.OPTION[6]:                        expiry = 1699769982
+DHCP4.OPTION[7]:                        interface_mtu = 1500
+DHCP4.OPTION[8]:                        ip_address = 10.10.1.162
+DHCP4.OPTION[9]:                        network_number = 10.10.0.0
+DHCP4.OPTION[10]:                       next_server = 0.0.0.0
+DHCP4.OPTION[11]:                       requested_broadcast_address = 1
+DHCP4.OPTION[12]:                       requested_classless_static_routes = 1
+DHCP4.OPTION[13]:                       requested_domain_name = 1
+DHCP4.OPTION[14]:                       requested_domain_name_servers = 1
+DHCP4.OPTION[15]:                       requested_domain_search = 1
+DHCP4.OPTION[16]:                       requested_host_name = 1
+DHCP4.OPTION[17]:                       requested_interface_mtu = 1
+DHCP4.OPTION[18]:                       requested_ms_classless_static_routes = 1
+DHCP4.OPTION[19]:                       requested_nis_domain = 1
+DHCP4.OPTION[20]:                       requested_nis_servers = 1
+DHCP4.OPTION[21]:                       requested_ntp_servers = 1
+DHCP4.OPTION[22]:                       requested_rfc3442_classless_static_routes = 1
+DHCP4.OPTION[23]:                       requested_root_path = 1
+DHCP4.OPTION[24]:                       requested_routers = 1
+DHCP4.OPTION[25]:                       requested_static_routes = 1
+DHCP4.OPTION[26]:                       requested_subnet_mask = 1
+DHCP4.OPTION[27]:                       requested_time_offset = 1
+DHCP4.OPTION[28]:                       requested_wpad = 1
+DHCP4.OPTION[29]:                       rfc3442_classless_static_routes = 32 169 254 169 254 10 10 0 2 0 10 10
+DHCP4.OPTION[30]:                       routers = 10.10.0.1
+DHCP4.OPTION[31]:                       subnet_mask = 255.255.0.0
+IP6.ADDRESS[1]:                         fe80::f816:3eff:fe93:7683/64
+IP6.GATEWAY:                            --
+IP6.ROUTE[1]:                           dst = ff00::/8, nh = ::, mt = 256, table=255
+IP6.ROUTE[2]:                           dst = fe80::/64, nh = ::, mt = 256
+[root@huyvl-linux-training ~]#
+```
+Hiển thị trạng thái của các thiết bị như sau:
+```shell
+[root@huyvl-linux-training ~]# nmcli dev status
+DEVICE  TYPE      STATE      CONNECTION
+eth0    ethernet  connected  System eth0
+lo      loopback  unmanaged  --
+[root@huyvl-linux-training ~]#
+```
+Hiển thị cài đặt của thiết bị `eth0` như sau:
+```shell
+[root@huyvl-linux-training ~]# nmcli dev show eth0
+GENERAL.DEVICE:                         eth0
+GENERAL.TYPE:                           ethernet
+GENERAL.HWADDR:                         FA:16:3E:28:CC:2D
+GENERAL.MTU:                            1500
+GENERAL.STATE:                          100 (connected)
+GENERAL.CONNECTION:                     System eth0
+GENERAL.CON-PATH:                       /org/freedesktop/NetworkManager/ActiveConnection/1
+WIRED-PROPERTIES.CARRIER:               on
+IP4.ADDRESS[1]:                         10.10.2.245/16
+IP4.GATEWAY:                            10.10.0.1
+IP4.ROUTE[1]:                           dst = 169.254.169.254/32, nh = 10.10.0.2, mt = 100
+IP4.ROUTE[2]:                           dst = 0.0.0.0/0, nh = 10.10.0.1, mt = 100
+IP4.ROUTE[3]:                           dst = 10.10.0.0/16, nh = 0.0.0.0, mt = 100
+IP4.DNS[1]:                             8.8.8.8
+IP6.ADDRESS[1]:                         fe80::f816:3eff:fe28:cc2d/64
+IP6.GATEWAY:                            --
+IP6.ROUTE[1]:                           dst = ff00::/8, nh = ::, mt = 256, table=255
+IP6.ROUTE[2]:                           dst = fe80::/64, nh = ::, mt = 256
+[root@huyvl-linux-training ~]#
+```
+Thay đổi sang dạng cấu hình tĩnh như sau:
+```shell
+[root@huyvl-linux-training ~]# nmcli con add con-name "Static eth0" \
+> ifname eth0 type ethernet ipv4.method manual ipv4.dns 8.8.8.8 \
+> ipv4.address 10.10.2.245/16 ipv4.gateway 10.10.0.1 \
+> connection.autoconnect yes
+Connection 'Static eth0' (7f1d36aa-a388-4f68-be97-255ab6877b3e) successfully added.
+[root@huyvl-linux-training ~]# nmcli con show
+NAME         UUID                                  TYPE      DEVICE
+System eth0  5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03  ethernet  eth0
+Static eth0  7f1d36aa-a388-4f68-be97-255ab6877b3e  ethernet  --
+[root@huyvl-linux-training ~]# nmcli con modify "System eth0" connection.autoconnect no
+[root@huyvl-linux-training ~]# systemctl reboot
+```
+```shell
+[root@huyvl-linux-training ~]# nmcli con show --active
+NAME         UUID                                  TYPE      DEVICE
+Static eth0  7f1d36aa-a388-4f68-be97-255ab6877b3e  ethernet  eth0
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# cd /etc/sysconfig/network-scripts/
+[root@huyvl-linux-training network-scripts]# ll | grep eth0
+-rw-r--r--  1 root root   347 Nov  5 20:31 ifcfg-Static_eth0
+-rw-r--r--. 1 root root   193 Nov  5 20:31 ifcfg-eth0
+[root@huyvl-linux-training network-scripts]# cat ifcfg-Static_eth0
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+IPADDR=10.10.2.245
+PREFIX=16
+GATEWAY=10.10.0.1
+DNS1=8.8.8.8
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME="Static eth0"
+UUID=7f1d36aa-a388-4f68-be97-255ab6877b3e
+DEVICE=eth0
+ONBOOT=yes
+[root@huyvl-linux-training network-scripts]#
+```
+### <a name="hostname"></a>Cấu hình và quản lý `hostname`
+Xem thông tin `hostname` hiện tại và cấu hình thay đổi `hostname` như sau:
+```shell
+[root@huyvl-linux-training ~]# hostname
+huyvl-linux-training.novalocal
+[root@huyvl-linux-training ~]# hostnamectl status
+   Static hostname: huyvl-linux-training.novalocal
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 4627877ac600a902ac91b27042bbed2e
+           Boot ID: 02f530a49a524ce3b24ba015bf731a0e
+    Virtualization: kvm
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-1160.90.1.el7.x86_64
+      Architecture: x86-64
+[root@huyvl-linux-training ~]# hostnamectl set-hostname huyvl3-linux-training
+[root@huyvl-linux-training ~]# hostnamectl status
+   Static hostname: huyvl3-linux-training
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 4627877ac600a902ac91b27042bbed2e
+           Boot ID: 02f530a49a524ce3b24ba015bf731a0e
+    Virtualization: kvm
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-1160.90.1.el7.x86_64
+      Architecture: x86-64
+[root@huyvl-linux-training ~]# cat /etc/hostname
+huyvl3-linux-training
+[root@huyvl-linux-training ~]# reboot
+...
+[root@huyvl3-linux-training ~]# hostname
+huyvl3-linux-training
+```
+Thay đổi `hostname` tạm thời như sau:
+```shell
+[root@huyvl3-linux-training ~]# hostname huyvl-linux-training
+[root@huyvl3-linux-training ~]# hostnamectl status
+   Static hostname: huyvl3-linux-training
+Transient hostname: huyvl-linux-training
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 4627877ac600a902ac91b27042bbed2e
+           Boot ID: 2d4ade358a274b01aa6f0310d8b804d0
+    Virtualization: kvm
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-1160.102.1.el7.x86_64
+      Architecture: x86-64
+[root@huyvl3-linux-training ~]# hostname
+huyvl-linux-training
+[root@huyvl3-linux-training ~]# reboot
+...
+[root@huyvl3-linux-training ~]# hostname
+[root@huyvl3-linux-training ~]# hostnamectl status
+   Static hostname: huyvl3-linux-training
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 4627877ac600a902ac91b27042bbed2e
+           Boot ID: 19159ee4191440ff9b312d9d724ba6b1
+    Virtualization: kvm
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-1160.102.1.el7.x86_64
+      Architecture: x86-64
+[root@huyvl3-linux-training ~]#
 ```
