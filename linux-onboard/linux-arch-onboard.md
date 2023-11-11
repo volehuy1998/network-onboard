@@ -11,7 +11,7 @@
   - [2.4.5 - Hạn chế quyền truy cập người dùng (UPDATED 13/09/2023)](#user_restrict_access)
   - [2.4.6 - Cấp quyền `sudo` tự do (UPDATED 11/09/2023)](#grant_free_sudo)
   - [2.4.7 - Cấp quyền `sudo` với lệnh cụ thể (UPDATED 11/09/2023)](#grant_command_sudo)
-- [2.5 - Hệ thống tệp tin (UPDATED 04/10/2023)](#fs)
+- [2.5 - Hệ thống tệp tin (UPDATED 07/11/2023)](#fs)
   - [2.5.1 - Phân cấp hệ thống tệp tin (UPDATED 26/08/2023)](#fhs)
   - [2.5.2 - RPM Package và phân loại (UPDATED 24/08/2023)](#rpm_package)
   - [2.5.3 - Kernel RPM Package (UPDATED 24/08/2023)](#kernel_rpm_package)
@@ -20,6 +20,7 @@
     - [2.5.4.2 - Quyền đặc biệt dành cho chủ sở hữu (SUID) và lỗ hổng leo thang đặc quyền (UPDATED 10/09/2023)](#suid_permission)
     - [2.5.4.3 - Quyền đặc biệt dành cho nhóm (UPDATED 10/09/2023)](#sgid_permission)
     - [2.5.4.4 - Quyền đặc biệt Sticky bit (UPDATED 04/09/2023)](#sticky_bit_permission)
+  - [2.5.5 - Xác định hệ thống tệp tin và thiết bị (UPDATED 07/11/2023)](#fs_device)
 - [2.6 - Tổng quan tiến trình Linux (UPDATED 04/10/2023)](#linux_process)
   - [2.6.1 - Trạng thái của tiến trình Linux (UPDATED 17/09/2023)](#process_states)
   - [2.6.2 - Kiểm soát các `Job` (UPDATED 04/10/2023)](#control_job)
@@ -797,6 +798,117 @@ Chi tiết về `/etc`: các tệp cấu hình được chứa trong đây, chú
 - `hosts.allow`: danh sách được cho phép truy cập dựa trên `TCP`.
 - `hosts.deny`: danh sách từ chối truy cập dựa trên `TCP`.
 - `hosts.equiv`: danh sách các máy chủ và người dùng được tin tưởng hoặc từ chối khi sử dụng `r-command` như `rlogin`, `rsh` hoặc `rcp`... truy cập vào hệ thống mà không cần cung cấp mật khẩu - cơ chế xác thực người dùng cơ bản.
+### <a name="rpm_package"></a>RPM package và phân loại
+`RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
+
+- Những tệp tin.
+- Tiêu đề `RPM` hay `RPM header`, `metadata` của gói chứa tại đây.
+- Người quản lý gói `RPM` sử dụng `metadata` để xác định những thành phần phụ thuộc, nơi chứa các tệp cài đặt và các thông tin khác.
+
+Có 2 loại `RPM package`, tất cả chúng đều chia sẻ định dạng và công cụ nhưng có những nội dung khác nhau để phục vụ các mục đích khác nhau:
+
+- Nguồn của `RPM package` viết tắt `SRPM`, thông tin này chứa mã nguồn và cấu hình tệp nơi mà mô tả làm thế nào để xây dựng được gói `RPM binary`. Thêm vào đó `SRPM` có thông tin các bản vá lỗi cho đoạn mã được bao gồm.
+- Tệp `RPM binary` chứa tệp `binary` được xây dựng từ mã nguồn.
+### <a name="kernel_rpm_package"></a>Tổng quan về `RPM package` của `Linux kernel`
+`Kernel RPM` là loại `RPM` đặc biệt, nó không chứa bất kỳ tệp nào nhưng nó bắt buộc các gói phụ thuộc phải được cài đặt đúng cách. `Kernel core` chứa các mẫu `binary` hay `binary image` của `kernel`, tất cả các đối tượng liên quan đến `initramfs` khởi động cùng hệ thống, số lượng `kernel-module` tối thiểu để đảm bảo chức năng cốt lõi. `Kernel modules` chứa những `kernel modules` còn lại không nằm trong `kernel core`.
+
+Một nhóm nhỏ các gói phụ thuộc của `kernel` bên trên nhằm mục đích cung cấp công cụ, môi trường để quản trị viên bảo trì, đặc biệt trong môi trường ảo hóa. Các `kernel package` được tùy chọn thêm gồm có:
+
+- `kernel-modules-extra` chứa các `kernel module` dành cho các loại phần cứng đặc biệt, hiếm gặp hoặc các `module` bị vô hiệu hóa theo mặc định.
+- `kernel-debug` chứa các chức năng `debug` được kích hoạt để chuẩn đoán lỗi nhưng điều này làm giảm hiệu suất.
+- `kernel-tools` chứa các công cụ để thao tác với `Linux kernel` và hỗ trợ tài liệu.
+- `kernel-devel` chứa các `kernel header` và `makefiles` dành cho các lập trình viên phát triển xây dựng `module` dựa trên `kernel package`.
+- `kernel-abi-stablelists` chứa các thông tin liên quan đến `ABI kernel` dành riêng cho `RHEL`.
+- `kernel-headers` chứa các `header` của ngôn ngữ C mô tả cách thức giao tiếp giữa `Linux kernel` và thư viện dành cho `user space`. Các tệp `header` này đã được định nghĩa nhiều cấu trúc `struct` và các hằng số `const` cần thiết để lập trình viên phát triển các ứng dụng.
+
+Cài đặt `vim` để liệt kê các `rpm` phụ thuộc như sau:
+```shell
+[root@huyvl-linux-training ~]# yum install --downloadonly --downloaddir=/tmp/vim-rpm/ vim
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.bizflycloud.vn
+ * extras: mirror.bizflycloud.vn
+ * updates: mirror.bizflycloud.vn
+Resolving Dependencies
+--> Running transaction check
+---> Package vim-enhanced.x86_64 2:7.4.629-8.el7_9 will be installed
+...
+...
+(28/31): vim-enhanced-7.4.629-8.el7_9.x86_64.rpm    | 1.1 MB  00:00:00
+(29/31): vim-filesystem-7.4.629-8.el7_9.x86_64.rpm  |  11 kB  00:00:00
+(30/31): vim-common-7.4.629-8.el7_9.x86_64.rpm      | 5.9 MB  00:00:00
+(31/31): perl-Carp-1.26-244.el7.noarch.rpm          |  19 kB  00:00:01
+----------------------------------------------------------------------
+Total                                       16 MB/s |  18 MB  00:00:01
+exiting because "Download Only" specified
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# ls -al /tmp/vim-rpm/
+total 19036
+drwxr-xr-x  2 root root    4096 Aug 23 10:29 .
+drwxrwxrwt. 9 root root    4096 Aug 23 10:29 ..
+-rw-r--r--  1 root root   33120 Aug 23  2019 gpm-libs-1.20.7-6.el7.x86_64.rpm
+-rw-r--r--  1 root root 8360316 Feb  3  2021 perl-5.16.3-299.el7_9.x86_64.rpm
+-rw-r--r--  1 root root   19672 Jul  4  2014 perl-Carp-1.26-244.el7.noarch.rpm
+-rw-r--r--  1 root root   19244 Jul  4  2014 perl-constant-1.27-2.el7.noarch.rpm
+-rw-r--r--  1 root root 1545440 Jul  4  2014 perl-Encode-2.51-7.el7.x86_64.rpm
+-rw-r--r--  1 root root   29092 Jul  4  2014 perl-Exporter-5.68-3.el7.noarch.rpm
+...
+...
+```
+Tiến hành phân tích tệp `rpm` đã được tải về của `vim` như sau:
+```shell
+[root@huyvl-linux-training vim-rpm]# rpm -qlp gpm-libs-1.20.7-6.el7.x86_64.rpm
+/usr/lib64/libgpm.so.2
+/usr/lib64/libgpm.so.2.1.0
+[root@huyvl-linux-training vim-rpm]#
+```
+Thường thì lệnh `update` sẽ cập nhật những `kernel` như sau:
+```shell
+[root@huyvl-linux-training ~]# yum update --downloadonly --downloaddir=/tmp/update/
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.bizflycloud.vn
+ * extras: mirror.bizflycloud.vn
+ * updates: mirror.bizflycloud.vn
+Resolving Dependencies
+--> Running transaction check
+...
+...
+```
+Phân tích `kernel rpm` thấy được như sau:
+```shell
+[root@huyvl-linux-training ~]# cd /tmp/update/
+[root@huyvl-linux-training update]# ls -al | grep kernel
+-rw-r--r--   1 root root 54180012 Jul 28 21:53 kernel-3.10.0-1160.95.1.el7.x86_64.rpm
+-rw-r--r--   1 root root  8579092 Jul 28 21:54 kernel-tools-3.10.0-1160.95.1.el7.x86_64.rpm
+-rw-r--r--   1 root root  8469692 Jul 28 21:54 kernel-tools-libs-3.10.0-1160.95.1.el7.x86_64.rpm
+[root@huyvl-linux-training update]# rpm -qlp kernel-3.10.0-1160.95.1.el7.x86_64.rpm
+/boot/.vmlinuz-3.10.0-1160.95.1.el7.x86_64.hmac
+/boot/System.map-3.10.0-1160.95.1.el7.x86_64
+/boot/config-3.10.0-1160.95.1.el7.x86_64
+/boot/initramfs-3.10.0-1160.95.1.el7.x86_64.img
+/boot/symvers-3.10.0-1160.95.1.el7.x86_64.gz
+/boot/vmlinuz-3.10.0-1160.95.1.el7.x86_64
+/etc/ld.so.conf.d/kernel-3.10.0-1160.95.1.el7.x86_64.conf
+/etc/modprobe.d/dccp-blacklist.conf
+/lib/modules/3.10.0-1160.95.1.el7.x86_64
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/build
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/extra
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/ablk_helper.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/aesni-intel.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/blowfish-x86_64.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx-x86_64.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx2.ko.xz
+/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-x86_64.ko.xz
+...
+...
+```
 ### <a name="file_permission"></a>Tổng quan về quyền trên tệp tin
 Là khả năng về việc kiểm soát quyền hạn của trên tệp tin hoặc thư mục của người dùng hoặc nhóm các người dùng như:
 
@@ -922,7 +1034,7 @@ drwxr-xr-x 2 root root 4096 Sep  9 17:47 new-directory
 | Quyền mặc định       | rw-r--​r-- | 644 |
 | `umask` của mặc định | rwxr-xr-x | 022 |
 | Quyền cơ bản         | rw-rw-rw- | 666 |
-### <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
+#### <a name="file_permission_management"></a>Quản lý quyền truy cập tệp tin
 Người dùng có thể sử dụng công cụ `chmod` với `octal` hoặc các `symbolic` kèm phép toán sau để thay đổi quyền:
 
 - `+`: thêm quyền dựa trên các quyền hiện hành.
@@ -1347,117 +1459,82 @@ Last login: Wed Sep 13 16:55:41 +07 2023 on pts/0
 [sale@huyvl-linux-training ~]$ cd /data
 [sale@huyvl-linux-training data]$
 ```
-### <a name="rpm_package"></a>RPM package và phân loại
-`RPM package` là một tệp chứa nhiều tệp con và `metadata` của chúng(thông tin về các tệp kéo theo/cần thiết bởi hệ thống). Cụ thể thì mỗi gói `RPM` đã bao gồm tệp nén `cpio`, trong tệp nén này chứa:
+### <a name="fs_device"></a>Xác định hệ thống tệp tin và thiết bị
+`Storage device` còn được biết đến với cái tên thông dụng hơn là `block device`. Từ `block` được đặt là bởi vì thiết bị lưu trữ được tổ chức thành nhiều khối dữ liệu. Quản trị viên có thể chia nhỏ nó ra thành các đơn vị có thể quản lý, được gọi là `partition`. Kiến trúc sẽ giúp cho nhà quản trị phân biệt được giữa `main device` và `block device`, các tệp đại diện cho thiết bị sẽ được tạo bên trong thư mục đặc biệt đó gọi là `/dev`.
 
-- Những tệp tin.
-- Tiêu đề `RPM` hay `RPM header`, `metadata` của gói chứa tại đây.
-- Người quản lý gói `RPM` sử dụng `metadata` để xác định những thành phần phụ thuộc, nơi chứa các tệp cài đặt và các thông tin khác.
+- `main device` được đặt tên ví dụ là `sda`, `sdb`, ... có thể được sử dụng cho thiết bị `USB` hoặc `SCSI`, ...
 
-Có 2 loại `RPM package`, tất cả chúng đều chia sẻ định dạng và công cụ nhưng có những nội dung khác nhau để phục vụ các mục đích khác nhau:
+- `block device` được đặt với tên ví dụ là `sda1`, `sda2`, `sdb1`, ...
 
-- Nguồn của `RPM package` viết tắt `SRPM`, thông tin này chứa mã nguồn và cấu hình tệp nơi mà mô tả làm thế nào để xây dựng được gói `RPM binary`. Thêm vào đó `SRPM` có thông tin các bản vá lỗi cho đoạn mã được bao gồm.
-- Tệp `RPM binary` chứa tệp `binary` được xây dựng từ mã nguồn.
-### <a name="kernel_rpm_package"></a>Tổng quan về `RPM package` của `Linux kernel`
-`Kernel RPM` là loại `RPM` đặc biệt, nó không chứa bất kỳ tệp nào nhưng nó bắt buộc các gói phụ thuộc phải được cài đặt đúng cách. `Kernel core` chứa các mẫu `binary` hay `binary image` của `kernel`, tất cả các đối tượng liên quan đến `initramfs` khởi động cùng hệ thống, số lượng `kernel-module` tối thiểu để đảm bảo chức năng cốt lõi. `Kernel modules` chứa những `kernel modules` còn lại không nằm trong `kernel core`.
+| Loại thiết bị | Mẫu đặt tên thiết bị |
+| --- | --- |
+| Bộ nhớ `SATA`, `SAS`, `USB` | `/dev/sda`, `/dev/sdb`, `/dev/sdc`, ... |
+| Bộ nhớ ảo hóa `virtio-blk` | `/dev/vda`, `/dev/vdb`, `/dev/vdc`, ... |
+| Bộ nhớ ảo hóa `virtio-scsi` | `/dev/sda`, `/dev/sdb`, `/dev/sdc`, ... |
+| Bộ nhớ `NVME` | `/dev/nvme0`, `/dev/nvme1`, ... |
+| Bộ nhớ `SD`, `MMC`, `eMMC` | `/dev/mmcblk0`, `/dev/mmcblk1`, ... |
 
-Một nhóm nhỏ các gói phụ thuộc của `kernel` bên trên nhằm mục đích cung cấp công cụ, môi trường để quản trị viên bảo trì, đặc biệt trong môi trường ảo hóa. Các `kernel package` được tùy chọn thêm gồm có:
+Khi người dùng muốn lưu trữ dữ liệu vào `block device` thì bắt buộc cần có hệ thống tệp tin, quản trị hoàn toàn có thể cấu hình/cài đặt hệ thống tệp tin lên `main device` mà không cần phải phân vùng nhưng việc phân vùng sẽ giúp tổ chức dữ liệu tốt hơn. Ví dụ:
 
-- `kernel-modules-extra` chứa các `kernel module` dành cho các loại phần cứng đặc biệt, hiếm gặp hoặc các `module` bị vô hiệu hóa theo mặc định.
-- `kernel-debug` chứa các chức năng `debug` được kích hoạt để chuẩn đoán lỗi nhưng điều này làm giảm hiệu suất.
-- `kernel-tools` chứa các công cụ để thao tác với `Linux kernel` và hỗ trợ tài liệu.
-- `kernel-devel` chứa các `kernel header` và `makefiles` dành cho các lập trình viên phát triển xây dựng `module` dựa trên `kernel package`.
-- `kernel-abi-stablelists` chứa các thông tin liên quan đến `ABI kernel` dành riêng cho `RHEL`.
-- `kernel-headers` chứa các `header` của ngôn ngữ C mô tả cách thức giao tiếp giữa `Linux kernel` và thư viện dành cho `user space`. Các tệp `header` này đã được định nghĩa nhiều cấu trúc `struct` và các hằng số `const` cần thiết để lập trình viên phát triển các ứng dụng.
+- Loại hệ thống tệp tin `xfs` được tạo trên `/dev/sda1` cũng có thể coi là loại `ext4`. Nó có chức năng `Read-Write-Once`, tức là một hệ thống có thể đọc và ghi tại cùng một thời điểm.
 
-Cài đặt `vim` để liệt kê các `rpm` phụ thuộc như sau:
+- Loại hệ thống tệp tin `gfs2` được tạo trên `/dev/sda2` có chức năng `Read-Write-Many`, giúp cho nhiều máy chủ có thể đọc và ghi vào cùng một thời điểm.
+
+`mount` là cách dùng tạo nên `file system`. `mountpoint` là nơi trốn của `file system`, được biết đến như thư mục. Hay nói cách khác khi `file system` được kích hoạt. để có thể truy suất thì được gọi là `mountpoint`.
+
+Hiện thị các `block device` trên hệ thống và tìm `UUID` dựa trên tên `block device` như sau:
 ```shell
-[root@huyvl-linux-training ~]# yum install --downloadonly --downloaddir=/tmp/vim-rpm/ vim
-Loaded plugins: fastestmirror
-Loading mirror speeds from cached hostfile
- * base: mirror.bizflycloud.vn
- * extras: mirror.bizflycloud.vn
- * updates: mirror.bizflycloud.vn
-Resolving Dependencies
---> Running transaction check
----> Package vim-enhanced.x86_64 2:7.4.629-8.el7_9 will be installed
-...
-...
-(28/31): vim-enhanced-7.4.629-8.el7_9.x86_64.rpm    | 1.1 MB  00:00:00
-(29/31): vim-filesystem-7.4.629-8.el7_9.x86_64.rpm  |  11 kB  00:00:00
-(30/31): vim-common-7.4.629-8.el7_9.x86_64.rpm      | 5.9 MB  00:00:00
-(31/31): perl-Carp-1.26-244.el7.noarch.rpm          |  19 kB  00:00:01
-----------------------------------------------------------------------
-Total                                       16 MB/s |  18 MB  00:00:01
-exiting because "Download Only" specified
+[root@huyvl-linux-training ~]# lsblk --fs
+NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
+vda
+-vda1 ext4         6948487b-5a72-4ac8-833c-c02789ac1713 /
 [root@huyvl-linux-training ~]#
+[root@huyvl-linux-training ~]# blkid /dev/vda1
+/dev/vda1: UUID="6948487b-5a72-4ac8-833c-c02789ac1713" TYPE="ext4"
 [root@huyvl-linux-training ~]#
+```
+Chú thích:
+
+- `/dev/vda1` là `file system` định dạng `ext4`.
+- `UUID (Universally Unique Identifier)` là định danh của `file system`.
+- `mountpoint` là nơi để truy cập vào nội dung `file system`.
+
+Sử dụng công cụ phân tích dữ liệu `df`, với tùy chọn `-h (human-readable)` sẽ chuyển đổi ở hệ nhị phân như `KiB`, `MiB` hoặc `GiB`, ngược lại `-H` sẽ chuyển đổi ở hệ thập phân `KB`, `MB`, `GB` (đơn vị `SI` này thường được sử dụng để quảng cáo).
+```shell
+[root@huyvl-linux-training ~]# df /
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/vda1       10189076 2009564   7638892  21% /
+[root@huyvl-linux-training ~]# df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       9.8G  2.0G  7.3G  21% /
+[root@huyvl-linux-training ~]# df -H /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        11G  2.1G  7.9G  21% /
 [root@huyvl-linux-training ~]#
-[root@huyvl-linux-training ~]# ls -al /tmp/vim-rpm/
-total 19036
-drwxr-xr-x  2 root root    4096 Aug 23 10:29 .
-drwxrwxrwt. 9 root root    4096 Aug 23 10:29 ..
--rw-r--r--  1 root root   33120 Aug 23  2019 gpm-libs-1.20.7-6.el7.x86_64.rpm
--rw-r--r--  1 root root 8360316 Feb  3  2021 perl-5.16.3-299.el7_9.x86_64.rpm
--rw-r--r--  1 root root   19672 Jul  4  2014 perl-Carp-1.26-244.el7.noarch.rpm
--rw-r--r--  1 root root   19244 Jul  4  2014 perl-constant-1.27-2.el7.noarch.rpm
--rw-r--r--  1 root root 1545440 Jul  4  2014 perl-Encode-2.51-7.el7.x86_64.rpm
--rw-r--r--  1 root root   29092 Jul  4  2014 perl-Exporter-5.68-3.el7.noarch.rpm
-...
-...
 ```
-Tiến hành phân tích tệp `rpm` đã được tải về của `vim` như sau:
+
+Tìm kiếm các thông tin về `mountpoint` hiện có:
 ```shell
-[root@huyvl-linux-training vim-rpm]# rpm -qlp gpm-libs-1.20.7-6.el7.x86_64.rpm
-/usr/lib64/libgpm.so.2
-/usr/lib64/libgpm.so.2.1.0
-[root@huyvl-linux-training vim-rpm]#
+[root@huyvl-linux-training ~]# findmnt -s
+TARGET SOURCE                                    FSTYPE OPTIONS
+/      UUID=6948487b-5a72-4ac8-833c-c02789ac1713 ext4   defaults
+[root@huyvl-linux-training ~]#
 ```
-Thường thì lệnh `update` sẽ cập nhật những `kernel` như sau:
+Chú thích:
+- `mountpoint` là `/`.
+- Định danh `UUID` có loại `ext4`.
+- Cách thức `default` được `mount` vào hệ thống là tự động.
+
+Sử dụng công cụ `du` để kiểm tra vùng bộ nhớ đã sử dụng, thư mục `/usr` chiếm `1.3G` trong tổng số `2.0G` được sử dụng.
 ```shell
-[root@huyvl-linux-training ~]# yum update --downloadonly --downloaddir=/tmp/update/
-Loaded plugins: fastestmirror
-Loading mirror speeds from cached hostfile
- * base: mirror.bizflycloud.vn
- * extras: mirror.bizflycloud.vn
- * updates: mirror.bizflycloud.vn
-Resolving Dependencies
---> Running transaction check
-...
-...
+[root@huyvl-linux-training ~]# df -h /usr
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       9.8G  2.0G  7.3G  21% /
+[root@huyvl-linux-training ~]# du -sh /usr
+1.3G    /usr
+[root@huyvl-linux-training ~]#
 ```
-Phân tích `kernel rpm` thấy được như sau:
-```shell
-[root@huyvl-linux-training ~]# cd /tmp/update/
-[root@huyvl-linux-training update]# ls -al | grep kernel
--rw-r--r--   1 root root 54180012 Jul 28 21:53 kernel-3.10.0-1160.95.1.el7.x86_64.rpm
--rw-r--r--   1 root root  8579092 Jul 28 21:54 kernel-tools-3.10.0-1160.95.1.el7.x86_64.rpm
--rw-r--r--   1 root root  8469692 Jul 28 21:54 kernel-tools-libs-3.10.0-1160.95.1.el7.x86_64.rpm
-[root@huyvl-linux-training update]# rpm -qlp kernel-3.10.0-1160.95.1.el7.x86_64.rpm
-/boot/.vmlinuz-3.10.0-1160.95.1.el7.x86_64.hmac
-/boot/System.map-3.10.0-1160.95.1.el7.x86_64
-/boot/config-3.10.0-1160.95.1.el7.x86_64
-/boot/initramfs-3.10.0-1160.95.1.el7.x86_64.img
-/boot/symvers-3.10.0-1160.95.1.el7.x86_64.gz
-/boot/vmlinuz-3.10.0-1160.95.1.el7.x86_64
-/etc/ld.so.conf.d/kernel-3.10.0-1160.95.1.el7.x86_64.conf
-/etc/modprobe.d/dccp-blacklist.conf
-/lib/modules/3.10.0-1160.95.1.el7.x86_64
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/build
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/extra
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/ablk_helper.ko.xz
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/aesni-intel.ko.xz
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/blowfish-x86_64.ko.xz
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx-x86_64.ko.xz
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-aesni-avx2.ko.xz
-/lib/modules/3.10.0-1160.95.1.el7.x86_64/kernel/arch/x86/crypto/camellia-x86_64.ko.xz
-...
-...
-```
+
 ## <a name="linux_process"></a>Tổng quan về tiến trình
 Tiến trình là tên gọi đại diện cho sự trừu tượng hóa hay nhóm các tài nguyên sau:
 
