@@ -53,6 +53,9 @@
   - [2.8.5 - Thông tin về `network interface`(:heavy_plus_sign:UPDATED 25/10/2023)](#net_interface_info)
   - [2.8.6 - Công cụ quản lý `nmcli`(:heavy_plus_sign:UPDATED 05/11/2023)](#nmcli)
   - [2.8.7 - Cấu hình và quản lý `hostname`(:heavy_plus_sign:UPDATED 05/11/2023)](#hostname)
+- [2.9 - Kiến trúc nhật ký hệ thống (:heavy_plus_sign:UPDATED 24/11/2023)](#sys_log_arch)
+  - [2.9.1 - Tổng quan (:heavy_plus_sign:UPDATED 24/11/2023)](#log_overview)
+
 
 # <a name="linux_arch"></a>Tổng quan về kiến trúc Linux
 ## <a name="linux_kernel"></a>Tổng quan `Linux kernel`
@@ -5182,3 +5185,10 @@ huyvl-linux-training
       Architecture: x86-64
 [root@huyvl3-linux-training ~]#
 ```
+## <a name="sys_log_arch"></a>Kiến trúc nhật ký hệ thống
+### <a name="log_overview"></a>Tổng quan 
+Nhân hệ điều hành và các tiến trình khác đều ghi nhận lại nhật ký sự kiện xảy ra khi hệ thống đang chạy. Những nhật ký này được sử dụng để kiểm tra và khắc phục sự cố, người dùng có thể sử dụng công cụ `less` hoặc `tail` để kiểm tra nhật ký.
+
+`systemd` là nền tảng để xây dựng nên `journald`. Dịch vụ `journald` kiến trúc thông điệp thành một định dạng tiêu chuẩn và viết nó một cách có cấu trúc, đánh chỉ mục,... và đưa vào kho dữ liệu để người dùng có thể truy vấn thông tin một cách tiện lợi thông qua `journalctl`. Mặc định nhật ký sẽ được xóa mỗi khi khởi động lại.
+
+`rsyslog` có một chút khác biệt với `journald` bởi vì nó gửi dữ liệu tới các tệp nhật ký truyền thống như `/var/log`.
