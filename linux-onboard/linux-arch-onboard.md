@@ -5191,4 +5191,14 @@ Nhân hệ điều hành và các tiến trình khác đều ghi nhận lại nh
 
 `systemd` là nền tảng để xây dựng nên `journald`. Dịch vụ `journald` kiến trúc thông điệp thành một định dạng tiêu chuẩn và viết nó một cách có cấu trúc, đánh chỉ mục,... và đưa vào kho dữ liệu để người dùng có thể truy vấn thông tin một cách tiện lợi thông qua `journalctl`. Mặc định nhật ký sẽ được xóa mỗi khi khởi động lại.
 
-`rsyslog` có một chút khác biệt với `journald` bởi vì nó gửi dữ liệu tới các tệp nhật ký truyền thống như `/var/log`.
+`rsyslog` có một chút khác biệt với `journald` bởi vì nó gửi dữ liệu tới các tệp nhật ký truyền thống như `/var/log`. `rsyslog` sắp xếp, chỉ định tệp nhật ký cụ thể theo loại chương trình và xem xét mức độ ưu tiên của từng thông tin. Ngoài các tệp tin nhất ký hệ thống, thư mục `/var/log` còn chứa các tệp nhật ký từ những dịch vụ khác trên hệ thống.
+
+| Tệp nhật ký | Loại tin nhắn được lưu trữ |
+| --- | --- |
+| `/var/log/messages` | Hầu hết các thông tin nhật ký hệ thống đều được lưu trữ tại đây. Ngoại trừ các thông tin về xác thực, xử lý thư điện tử, `job` được lập lịch, thông tin liên quan đến `debug`. |
+| `/var/log/secure` | Lưu giữ các thông tin nhật ký hệ thống về sự kiện bảo mật, xác thực. |
+| `/var/log/maillog` | Thông tin nhật ký về máy chủ thư điện tử. |
+| `/var/log/cron` | Thông tin nhật ký về `job` lập lịch. |
+| `/var/log/boot.log` | Liên quan đến khởi động hệ thống. | 
+
+Một số dịch vụ không sử dụng dịch vụ `syslog` để quản lý nhật ký. Ví dụ như `Apache Web Server` lưu giữ nhật ký vào tệp con trong thư mục `/var/log`.
