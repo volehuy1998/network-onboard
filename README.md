@@ -1,5 +1,5 @@
 # network-onboard
-[Phần 1 - Lịch sử hình thành và phát triển Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/1.0-linux-history-onboard.md)
+[Phần 1 - Lịch sử hình thành và phát triển Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/1.0%20-%20linux-history-onboard.md)
 
 - 1.1 - Những thập niên 1969 (UPDATED 21/08/2023)
 - 1.2 - Những thập niên 1980 (UPDATED 21/08/2023)
@@ -8,7 +8,7 @@
 - 1.5 - Khái niệm phân phối (UPDATED 21/08/2023)
 - 1.6 - Giấy phép lưu hành (UPDATED 21/08/2023)
 
-[Phần 2 - Kiến trúc Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.0-linux-arch-onboard.md)
+[Phần 2 - Kiến trúc Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.0%20-%20linux-arch-onboard.md)
 
 - 2.1 - Linux Kernel (UPDATED 27/08/2023)
 - 2.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)
