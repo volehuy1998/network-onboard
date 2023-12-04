@@ -11,8 +11,8 @@
 [Phần 2 - Kiến trúc Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.0%20-%20linux-arch-onboard.md)
 
 - [2.1 - Linux Kernel (UPDATED 27/08/2023)](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.1%20-%20linux-arch-onboard.md#linux_kernel)
-  - 2.1.2 - Vai trò của Linux Kernel (UPDATED 24/08/2023)
-  - 2.1.3 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)
+  - 2.1.1 - Vai trò của Linux Kernel (UPDATED 24/08/2023)
+  - 2.1.2 - Tổng quan về Interrupt - Ngắt (UPDATED 05/09/2023)
 - [2.2 - Quản lý người dùng và nhóm (UPDATED 17/09/2023)](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.2%20-%20linux-user-management.md#user_and_group)
   - 2.2.1 - Khái niệm `User` (UPDATED 17/09/2023)
   - 2.2.2 - Khái niệm về nhóm, chính và phụ (UPDATED 12/09/2023)
