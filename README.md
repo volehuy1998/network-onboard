@@ -70,5 +70,5 @@
   - 2.7.4 - Đồng bộ thời gian ( :arrow_up: UPDATED 17/12/2023)
     - 2.7.4.1 - Tổng quan `Network Time Protocol` ( :arrow_up: UPDATED 17/12/2023)
     - 2.7.4.2 - Công cụ `datetimectl` ( :heavy_plus_sign: UPDATED 10/12/2023)
-    - 2.7.4.3 - Cấu hình `NTP` sử dụng `chrony` ( :heavy_plus_sign: UPDATED 17/12/2023)
+    - 2.7.4.3 - Cấu hình `NTP` sử dụng `chrony` ( :arrow_up: UPDATED 17/12/2023)
     - 2.7.4.4 - Cấu hình `NTP` sử dụng `ntpd` ( :heavy_plus_sign: UPDATED 10/12/2023)
