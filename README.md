@@ -64,7 +64,7 @@
   - 2.6.6 - Công cụ quản lý `nmcli`(UPDATED 05/11/2023)
   - 2.6.7 - Cấu hình và quản lý `hostname`(UPDATED 05/11/2023)
 - [2.7 - Kiến trúc nhật ký hệ thống (UPDATED 17/12/2023)](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.7%20-%20linux-system-log-architecture-overview.md#sys_log_arch)
-  - 2.7.1 - Tổng quan ( :heavy_plus_sign: UPDATED 03/12/2023)
+  - 2.7.1 - Tổng quan (UPDATED 03/12/2023)
   - 2.7.2 - Cách sử dụng `rsyslog` (UPDATED 06/12/2023)
   - 2.7.3 - Cách sử dụng `systemd-journald` (UPDATED 10/12/2023)
   - 2.7.4 - Đồng bộ thời gian (UPDATED 17/12/2023)
