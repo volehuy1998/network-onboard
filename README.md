@@ -85,3 +85,8 @@
       - 2.8.4.2.1 - Cách sử dụng `systemd-tmpfiles --create` ( :heavy_plus_sign: UPDATED 01/01/2024)
       - 2.8.4.2.2 - Cách sử dụng `systemd-tmpfiles --clean` ( :heavy_plus_sign: UPDATED 01/01/2024)
       - 2.8.4.2.3 - Cách sử dụng `systemd-tmpfiles --remove` ( :heavy_plus_sign: UPDATED 01/01/2024)
+- 2.9 - Quản lý tệp đóng gói và nén với công cụ `tar` ( :heavy_plus_sign: UPDATED 07/01/2024)
+    - 2.9.1 - Tạo và quản lý tệp đóng gói ( :heavy_plus_sign: UPDATED 07/01/2024)
+    - 2.9.2 - Tạo và quản lý tệp nén đóng gói ( :heavy_plus_sign: UPDATED 07/01/2024)
+    - 2.9.3 - Chuyển tệp giữa các hệ thống một cách an toàn ( :heavy_plus_sign: UPDATED 07/01/2024)
+    - 2.9.4 - Đồng bộ giữa các hệ thống một cách an toàn ( :heavy_plus_sign: UPDATED 07/01/2024)
