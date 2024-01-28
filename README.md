@@ -1,6 +1,6 @@
 # network-onboard
 
-:pushpin: Lưu ý bài viết sau sử dụng môi trường thực hành lý tưởng là bản phân phối [Red Hat Enterprise Linux 7](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.0/x86_64/product-software), có thể sử dụng [CentOS 7](http://centos-hcm.viettelidc.com.vn/7/isos/x86_64/) để thay thế nhưng không khuyến khích.
+:pushpin: Lưu ý bài viết sau sử dụng môi trường thực hành lý tưởng là bản phân phối [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.3/x86_64/product-software), có thể sử dụng [CentOS 9](https://cloud.centos.org/centos/9-stream/x86_64/images/) để thay thế nhưng không khuyến khích.
 
 [Phần 1 - Lịch sử hình thành và phát triển Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/1.0%20-%20linux-history-onboard.md)
 
