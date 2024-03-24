@@ -2,11 +2,10 @@
 
 - [1.0 - Loại mạng ( :heavy_plus_sign: UPDATED 25/03/2024)](#network_types)
     - [1.0.1 - Mọi thứ đều trực tuyến ( :heavy_plus_sign: UPDATED 25/03/2024)](#online_intro)
-    - [1.0.2 - Ai sở hữu Internet? ( :heavy_plus_sign: UPDATED 25/03/2024)](#internet_owner)
-    - [1.0.3 - Mạng cục bộ ( :heavy_plus_sign: UPDATED 25/03/2024)](#local_network)
-    - [1.0.4 - Thiết bị di dộng ( :heavy_plus_sign: UPDATED 25/03/2024)](#mobile_device)
-    - [1.0.5 - Các kết nối trong thiết bị gia đình ( :heavy_plus_sign: UPDATED 25/03/2024)](#connected_home_dev)
-    - [1.0.6 - Các thiết bị kết nối khác ( :heavy_plus_sign: UPDATED 25/03/2024)](#other_connected_dev)
+    - [1.0.2 - Mạng cục bộ ( :heavy_plus_sign: UPDATED 25/03/2024)](#local_network)
+    - [1.0.3 - Thiết bị di dộng ( :heavy_plus_sign: UPDATED 25/03/2024)](#mobile_device)
+    - [1.0.4 - Các kết nối trong thiết bị gia đình ( :heavy_plus_sign: UPDATED 25/03/2024)](#connected_home_dev)
+    - [1.0.5 - Các thiết bị kết nối khác ( :heavy_plus_sign: UPDATED 25/03/2024)](#other_connected_dev)
 - [1.1 - Truyền dữ liệu ( :heavy_plus_sign: UPDATED 25/03/2024)](#data_transmition)
     - [1.1.1 - Các loại dữ liệu cá nhân ( :heavy_plus_sign: UPDATED 25/03/2024)](#types_persional_data)
     - [1.1.2 - Bit ( :heavy_plus_sign: UPDATED 25/03/2024)](#the_bit)
@@ -24,17 +23,15 @@
 
 Có bao nhiêu người trong chúng ta băn khoăn về việc liệu bản thân có đang trong trạng thái trực tuyến? Chúng ta kỳ vọng mọi thiết bị như điện thoại, máy tính bảng, máy tính xách tay luôn được kết nối tới mạng toàn cầu. Mọi người sử dụng mạng để tương tác với bạn bè, cửa hàng, chia sẻ hình ảnh, kiến thức và kinh nghiệm. `Internet` trở thành một phần cuộc sống hằng ngày đến mức chúng ta xem nó là điều hiển nhiên. Thông thường khi mọi người sử dụng thuật ngữ `Internet`, họ không đề cập đến các kết nối vật lý trong thế giới thực. Thay vào đó, mọi người có xu hướng nghĩ nó là một kết nổi ảo không có hình dạng, cái nơi mà mọi người đến để tìm kiếm và chia sẻ thông tin.
 
-### <a name="internet_owner"></a>Ai sở hữu Internet?
-
-`Internet` không thuộc sở hữu của cá nhân hay tổ chức nào. `Internet` là một tập hợp các mạng được kết nối với nhau trên toàn thế giới, nó được viết tắt của `Internetwork`, chúng hợp tác với nhau để chia sẻ thông tin bằng cách sử dụng một tiêu chuẩn chung. Người dùng internet có thể trao đổi thông tin với nhiều hình thức khác nhau hay còn gọi là môi trường truyền dẫn, ví dụ như: cáp quang, dây điện thoại, đường truyền không dây hoặc thông qua vệ tinh.
-
 <div style="text-align:center"><img src="../images/the_internet.png" alt/></div>
 
 ### <a name="local_network"></a>Mạng cục bộ
 
-Mạng cục bộ đề cập đến nhiều yếu tổ, không hẳn thuộc về kích thước vì nó có thể được triển khai ở mọi hình dạng. Mô hình đơn giản có thể liên tưởng từ 2 máy tính hoặc lớn hơn là mạng kết nối hàng trăm thiết bị. Mạng cục bộ được thiết lập ở văn phòng và nhà riêng, chúng được gọi là `SOHO (Small Office/Home Office)`. Mạng SOHO cho phép bạn chia sẻ tài nguyên như máy in, tài liệu, hình ảnh, nhạc giữa các người dùng cục bộ.
+<div style="text-align:center"><img src="../images/network_of_many_size.png" alt/></div>
 
-Trong kinh doanh thường sử dụng những mạng lưới lớn để phục vụ quảng cáo, bán sản phẩm, cung cấp giải pháp và liên lạc với khách hàng. Giao tiếp qua mạng hiệu quả và ít tốn kém hơn so với giao tiếp truyền thống ví dụ như gọi thoại hoặc gửi thư điện tử thay vì bay đến quốc gia người nhận để trao đổi. Lợi thế của mạng là tốc độ, bạn có thể gửi thư điện tử hoặc tin nhắn một cách tức thì. Đồng thời nó cũng cung cấp sự hợp nhất, phân quyền truy cập vào thông tin được lưu trữ trên máy chủ.
+Mạng cục bộ đơn giản được thiết lập trong hộ gia đình để cho phép chia sẻ tài nguyên như máy tính, tài liệu, hình ảnh và âm nhạc giữa các máy tính với nhau. Mạng gia đình cũng có thể kết nối ra ngoài internet từ các thiết bị.. Mạng cục bộ đề cập đến nhiều yếu tổ, không hẳn thuộc về kích thước vì nó có thể được triển khai ở mọi hình dạng. Mô hình đơn giản có thể liên tưởng từ 2 máy tính. Loại hình này cũng có thể được thiết lập ở văn phòng nhỏ, chúng được gọi là `SOHO (Small Office/Home Office)`.
+
+Trong môi trường kinh doanh và tổ chức lớn, mạng có thể được sử dụng ở quy mô rộng hơn để cho phép nhân viên truy cập thông tin trên các máy chủ. Mạng cũng cho phép truy cập nhanh chóng như thư điện tử, nhắn tin tức thời. Ngoài lợi ích nội bộ của tổ chức, nhiều tổ chức còn sử dụng mạng để cung cấp phục vụ quảng cáo, bán sản phẩm, cung cấp giải pháp và liên lạc với khách hàng thông qua kết nối internet. Giao tiếp qua mạng hiệu quả và ít tốn kém hơn so với giao tiếp truyền thống. Lợi thế của mạng là tốc độ, bạn có thể gửi thư điện tử hoặc tin nhắn một cách tức thì. Đồng thời nó cũng cung cấp sự hợp nhất, phân quyền truy cập vào thông tin được lưu trữ trên máy chủ.
 
 ### <a name="mobile_device"></a>Thiết bị di dộng
 
