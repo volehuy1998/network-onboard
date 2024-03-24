@@ -124,7 +124,7 @@ Cơ sở hạ tầng mạng khác nhau rất nhiều về:
 - `Wireless LAN (WLAN)`: tương tự như `LAN` nhưng kết nối không dây giữa người dùng và thiết bị cuối.
 - `Storage-are network (SAN)`: cơ sở hạ tầng mạng được thiết kế để hỗ trợ các máy chủ tệp tin, cung cấp khả năng lưu trữ, truy xuất và sao chép dữ liệu. Nó liên quan đến các máy chủ cao cấp, sử dụng nhiều ổ cứng và công nghệ kết nối tốc độ cao như quang.
 
-<div style="text-align:center"><img src="../images/lan_wan.png" alt/></div>
+<div style="text-align:center"><img src="../images/lan_wan.jpg" alt/></div>
 
 ## <a name="internet"></a>Internet
 
