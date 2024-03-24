@@ -46,15 +46,13 @@ Nhược điểm:
 - Không thể mở rộng.
 - Hiệu suất khả năng cao sẽ thấp bởi vì một PC mang cả 2 vai trò máy khách lẫn máy chủ.
 
-<div style="text-align:center"><img src="../images/p2p_network
-.png" alt/></div>
+<div style="text-align:center"><img src="../images/p2p_network.png" alt/></div>
 
 ### <a name="p2p_app"></a>Ứng dụng P2P
 
 Ứng dụng P2P cho phép một thiết bị tương tác như thể nó vừa là máy khách vừa là máy chủ. Ứng dụng P2P được cài đặt trên PC sẽ có giao diện vai trò máy khách lẫn dịch vụ chạy nền. Một số ứng dụng P2P chạy ở dạng lai với mô hình Client-Server, tức là nó vẫn theo nguyên tắc không tập trung tài nguyên tại một PC nào đó nhưng vẫn có chỉ mục được lưu trữ tập trung - mỗi khi cần PC sẽ truy cập vào chỉ mục đó để lấy ra vị trí tài nguyên được lưu trữ ở PC khác.
 
-<div style="text-align:center"><img src="../images/p2p_app
-.png" alt/></div>
+<div style="text-align:center"><img src="../images/p2p_app.png" alt/></div>
 
 ### <a name="multi_role"></a>Các vai trò trong mạng
 
@@ -62,8 +60,7 @@ Một máy tính có thể chạy nhiều phần mềm máy chủ. Trường h�
 
 Trường hợp phổ biến, một máy tính có thể chạy nhiều phần mềm máy khách. Với nhiều phần mềm được cài đặt như vậy thì máy tính này có thể kết nối nhiều máy chủ cùng lúc. Ví dụ bạn có thể đọc mail song song với việc lướt web trong khi đang nhắn tin, nghe nhạc trực tuyến.
 
-<div style="text-align:center"><img src="../images/multi_role_in_host
-.png" alt/></div>
+<div style="text-align:center"><img src="../images/multi_role_in_host.png" alt/></div>
 
 ## <a name="network_component"></a>Các thành phần trong mạng
 
