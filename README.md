@@ -139,6 +139,7 @@
       - 1.2.1 - Băng thông (:heavy_plus_sign: UPDATED 25/03/2024)
       - 1.2.2 - Thông lượng (:heavy_plus_sign: UPDATED 25/03/2024)
   - 1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau (:heavy_plus_sign: UPDATED 25/03/2024)
+  
 [Cisco Module 2 - Các thành phần trong mạng, loại của chúng và các kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/CCNA-onboard/network-onboard/cisco%20module%202%20-%20network-component-and-connections.md)
   - 2.0 - Vai trò máy khách và máy chủ (:heavy_plus_sign: UPDATED 25/03/2024)
     - 2.0.1 - Giới thiệu (:heavy_plus_sign: UPDATED 25/03/2024)
