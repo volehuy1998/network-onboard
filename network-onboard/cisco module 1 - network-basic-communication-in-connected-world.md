@@ -1,22 +1,22 @@
 [Cisco Module 1 - Mạng cơ bản, thông tin liên lạc trong thế giới kết nối lẫn nhau](#module1_intro)
 
-- [1.0 - Loại mạng (UPDATED 21/08/2023)](#network_types)
-    - [1.0.1 - Mọi thứ đều trực tuyến](#online_intro)
-    - [1.0.2 - Ai sở hữu Internet?](#internet_owner)
-    - [1.0.3 - Mạng cục bộ](#local_network)
-    - [1.0.4 - Thiết bị di dộng](#mobile_device)
-    - [1.0.5 - Các kết nối trong thiết bị gia đình](#connected_home_dev)
-    - [1.0.6 - Các thiết bị kết nối khác](#other_connected_dev)
-- [1.1 - Truyền dữ liệu (UPDATED 21/08/2023)](#data_transmition)
-    - [1.1.1 - Các loại dữ liệu cá nhân (UPDATED 21/08/2023)](#types_persional_data)
-    - [1.1.2 - Bit (UPDATED 21/08/2023)](#the_bit)
-    - [1.1.3 - Phương pháp phổ biến truyền tải dữ liệu (UPDATED 21/08/2023)](#common_method_data_transmission)
-- [1.2 - Băng thông và thông lượng (UPDATED 21/08/2023)](#bw_tp)
-    - [1.2.1 - Băng thông (UPDATED 21/08/2023)](#bandwidth)
-    - [1.2.2 - Thông lượng (UPDATED 21/08/2023)](#throughput)
-- [1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau (UPDATED 21/08/2023)](#intro_summary)
+- [1.0 - Loại mạng (:heavy_plus_sign: UPDATED 25/03/2024)](#network_types)
+    - [1.0.1 - Mọi thứ đều trực tuyến (:heavy_plus_sign: UPDATED 25/03/2024)](#online_intro)
+    - [1.0.2 - Ai sở hữu Internet? (:heavy_plus_sign: UPDATED 25/03/2024)](#internet_owner)
+    - [1.0.3 - Mạng cục bộ (:heavy_plus_sign: UPDATED 25/03/2024)](#local_network)
+    - [1.0.4 - Thiết bị di dộng (:heavy_plus_sign: UPDATED 25/03/2024)](#mobile_device)
+    - [1.0.5 - Các kết nối trong thiết bị gia đình (:heavy_plus_sign: UPDATED 25/03/2024)](#connected_home_dev)
+    - [1.0.6 - Các thiết bị kết nối khác (:heavy_plus_sign: UPDATED 25/03/2024)](#other_connected_dev)
+- [1.1 - Truyền dữ liệu (:heavy_plus_sign: UPDATED 25/03/2024)](#data_transmition)
+    - [1.1.1 - Các loại dữ liệu cá nhân (:heavy_plus_sign: UPDATED 25/03/2024)](#types_persional_data)
+    - [1.1.2 - Bit (:heavy_plus_sign: UPDATED 25/03/2024)](#the_bit)
+    - [1.1.3 - Phương pháp phổ biến truyền tải dữ liệu (:heavy_plus_sign: UPDATED 25/03/2024)](#common_method_data_transmission)
+- [1.2 - Băng thông và thông lượng (:heavy_plus_sign: UPDATED 25/03/2024)](#bw_tp)
+    - [1.2.1 - Băng thông (:heavy_plus_sign: UPDATED 25/03/2024)](#bandwidth)
+    - [1.2.2 - Thông lượng (:heavy_plus_sign: UPDATED 25/03/2024)](#throughput)
+- [1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau (:heavy_plus_sign: UPDATED 25/03/2024)](#intro_summary)
 
-# <a name="communication"></a>Cisco Module 1 - Mạng cơ bản, thông tin liên lạc trong thế giới kết nối lẫn nhau
+# <a name="module1_intro"></a>Cisco Module 1 - Mạng cơ bản, thông tin liên lạc trong thế giới kết nối lẫn nhau
 
 ## <a name="network_types"></a>Loại mạng
 
