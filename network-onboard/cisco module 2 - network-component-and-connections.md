@@ -8,11 +8,14 @@
 - [2.1 - Các thành phần trong mạng ( :heavy_plus_sign: UPDATED 25/03/2024)](#network_component)
     - [2.1.1 - Hạ tầng mạng ( :heavy_plus_sign: UPDATED 25/03/2024)](#network_infra)
     - [2.1.2 - Thiết bị cuối ( :heavy_plus_sign: UPDATED 25/03/2024)](#end_dev)
-- [2.2 - ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp)
-    - [2.2.1 - Dịch vụ ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp_service)
-    - [2.2.2 - Kết nối ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp_connection)
-    - [2.2.3 - Cáp và kết nối DSL ( :heavy_plus_sign: UPDATED 25/03/2024)](#capble_dsl_connection)
-    - [2.2.3 - Kết nối bổ sung ( :heavy_plus_sign: UPDATED 25/03/2024)](#add_connection)
+    - [2.1.3 - Thiết bị trung gian ( :heavy_plus_sign: UPDATED 25/03/2024)](#intermediary_net_dev)
+- [2.2 - LAN và WAN ( :heavy_plus_sign: UPDATED 25/03/2024)](#lan_wan)
+- [2.3 - Internet ( :heavy_plus_sign: UPDATED 25/03/2024)](#internet)
+- [2.4 - ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp)
+    - [2.4.1 - Dịch vụ ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp_service)
+    - [2.4.2 - Kết nối ISP ( :heavy_plus_sign: UPDATED 25/03/2024)](#isp_connection)
+    - [2.4.3 - Công nghệ truy cập Internet ( :heavy_plus_sign: UPDATED 25/03/2024)](#internet_access_technologies)
+    - [2.4.3 - Kết nối bổ sung ( :heavy_plus_sign: UPDATED 25/03/2024)](#add_connection)
 
 # <a name="module2_intro"></a>Các thành phần trong mạng, loại của chúng và các kết nối
 
@@ -90,6 +93,56 @@ Các thiết bị mạng mà người dùng quen thuộc được gọi là `dev
 
 Thiết bị cuối có thể là nơi phát sinh hoặc nhận thông tin trong mạng. Sử dụng địa chỉ để nhận dạng các thiết bị. Khi một `host` khởi tạo một kênh liên lạc, nó cần có địa chỉ của `host` nhận để chỉ định cho thông tin biết nó cần gửi tới đâu.
 
+### <a name="intermediary_net_dev"></a>Thiết bị trung gian
+
+Được dùng để kết nối các thiết bị cuối. Ví dụ các thiết bị trung gian có thể được sử dụng để kết nối các máy chủ riêng lẻ và kết nối nhiều mạng riêng lẻ tạo tạo thành mạng lưới lớn hơn. Một số ví dụ về thiết bị trung gian:
+
+- `Network access`: truy cập mạng, ví dụ: switch (có dây) hoặc access point (không dây).
+- `Security`: bảo mật, ví dụ: tường lửa.
+- `Internetworking`: để kết nối các mạng khác nhau, ví dụ: router hay còn gọi là thiết bị định tuyến.
+
+Quản lý dữ liệu khi nó truyền thông qua mạng cũng là vai trò của thiết bị trung gian. Các thiết bị trung gian điều khiển đường dẫn của dữ liệu nhưng không tạo ra hay thay đổi nội dung dữ liệu. Các thiết bị này sử dụng địa chỉ của máy nhận, cùng với thông tin về kết nối mạng để xác định đường dẫn mà các dữ liệu sẽ đi qua. Các quy trình chạy trên thiết bị trung gian thực hiện các chức năng sau:
+
+- Tái tạo và truyền lại tín hiệu dữ liệu.
+- Duy trì thông tin về những đường dẫn tồn tại trong mạng và liên mạng.
+- Thông báo cho các thiết bị khác về lỗi giao tiếp.
+- Truyền dữ liệu theo các đường thay thế khi có lỗi liên kết.
+- Phân loại và gửi dữ liệu trực tiếp dựa trên QoS.
+- Cho phép hoặc từ chối luồng dữ liệu dựa trên cấu hình.
+
+## <a name="lan_wan"></a>LAN và WAN
+
+Cơ sở hạ tầng mạng khác nhau rất nhiều về:
+
+- Quy mô phủ sóng.
+- Số lượng người dùng kết nối.
+- Số lượng và loại dịch vụ cung cấp.
+
+`Local-area network (LAN)`: loại hạ tầng mạng cung cấp truy cập cho người dùng và thiết bị cuối ở trong khu vực địa lý. Mạng `LAN` kết nối trong một khu vực giới hạn như nhà riêng, trường học, tòa nhà văn phòng hoặc khuôn viên trường học, nó được quản lý bởi tổ chức nhỏ hoặc cá nhân. Ngoài ra `LAN` cung cấp băng thông tốc độ cao cho các thiết bị nội bộ. Trong khi đó `Wide-area network (WAN)` cung cấp truy cấp đến những mạng nằm bên ngoài khu vực, được quản lý bởi nhiều IS (nhà cung cấp dịch vụ) hoặc ISP (nhà cung cấp dịch vụ internet). Các tính năng cụ thể của `WAN` bao gồm kết nối các mạng `LAN` thành khu vực phủ sóng rộng lớn. Về tốc độ thì `WAN` chậm  hơn `LAN` rất nhiều. Các loại không phổ biến khác như:
+
+- `Metropolitan-area network (MAN)`: trải rộng trên một khu vực địa lý lớn hơn mạng `LAN` nhưng nhỏ hơn `WAN`, ví dụ như thành phố. `MAN` thường được kiểm soát bởi các tổ chức lớn.
+- `Wireless LAN (WLAN)`: tương tự như `LAN` nhưng kết nối không dây giữa người dùng và thiết bị cuối.
+- `Storage-are network (SAN)`: cơ sở hạ tầng mạng được thiết kế để hỗ trợ các máy chủ tệp tin, cung cấp khả năng lưu trữ, truy xuất và sao chép dữ liệu. Nó liên quan đến các máy chủ cao cấp, sử dụng nhiều ổ cứng và công nghệ kết nối tốc độ cao như quang.
+
+<div style="text-align:center"><img src="../images/lan_wan.jpg" alt/></div>
+
+## <a name="internet"></a>Internet
+
+Thông qua các lợi ích của việc sử dụng LAN và WAN, hầu hết các cá nhân cần liên lạc với các tài nguyên ở một mạng khác, nằm ngoài mạng cục bộ ví dụ như nhà riêng, tổ chức. Khái niệm `Internet` ra đời, nó là một tập các mạng lưới kết nối với nhau trên toàn thế giới, trao đổi với nhau tuân thủ theo tiêu chuẩn chung. Thông qua tất cả phương tiện truyền dẫn như cáp quang, đường truyền không dây, ... người dùng internet có thể trao đổi thông tin dưới nhiều hình thức khác nhau như dạy học, xem video, chơi game, nghiên cứu, nghe nhạc.
+
+`Internet` là một tập các mạng và không thuộc sở hữu của bất kỳ cá nhân hay tổ chức nào. Việc đảm bảo truyền tải hiệu quả và ổn định trên sự đa dạng về cơ sở hạ tầng đòi hỏi phải áp dụng các công nghệ, tuân thủ nghiêm ngặt tiêu chuẩn nhất quán và được công nhận rộng rãi. Các tổ chức được thành lập có chuyên môn duy trì cấu trúc, tiêu chuẩn hóa các giao thức, quy trình và cải thiện. Những tổ chức lớn được đề cập như [IETF](#https://www.ietf.org/), [ICANN](#https://www.icann.org/), [IAB](#https://www.iab.com/).
+
+<div style="text-align:center"><img src="../images/internet.jpg" alt/></div>
+
+<i>Lưu ý: thuật ngữ `internet` (chữ i) chỉ đơn giản là mô tả nhiều mạng kết nối với nhau. Khi đề đến sự toàn cầu hóa của các mạng máy tính được kết nối với nhau, ví dụ sử dụng WWW thì thuật ngữ `Internet` (chữ I) được sử dụng.</i>
+
+Có hai loại thuật ngữ khác tương tự với `Internet` như
+
+- `Intranet` thường được sử dụng để đề cập đến kết nối riêng tư của mạng LAN và WAN thuộc về một tổ chức, cái mà chỉ được truy cập bởi các thành viên trong tổ chức hoặc những người khác nếu được ủy quyền. `Intranet` cơ bản là một mạng internet được sử dụng truy cập ở bên trong tổ chức. Các tổ chức xuát bản các trang web trên intranet về những sự kiện nội bộ, ví dụ như chính sách sức khỏe và an toàn, bản tin nhân viên và danh bạ điện thoại liên lạc của họ. Trường học cũng có thể có intranet bao gồm thông tin lịch học, chương trình giảng dạy, diễn đàn thảo luận và thông tin về giảng viên. Khi nhân viên làm việc ngoài vẫn có thể truy cập vào mạng nội bộ bằng cách sử dụng các kết nối an toàn.
+- `Extranet` tương tự như `intranet`, thuật ngữ này trở nên phổ biến vào những năm 2000 khi một số tổ chức sử dụng nó để mô tả kho lưu trữ được chia sẻ mà chỉ các thành viên của tổ chức khác được ủy quyền mới có thể truy cập một cách an toàn và bảo mật. Ví dụ khác như ứng dụng trong việc duy trì liên lạc giữa nhà cung cấp và nhà phân phối, hợp tác chéo giữa các cơ quan chính phủ khác nhau.
+
+<div style="text-align:center"><img src="../images/intranet_extranet.jpg" alt/></div>
+
 ## <a name="isp"></a>ISP
 
 ### <a name="isp_service"></a>Dịch vụ ISP
@@ -108,14 +161,34 @@ Phần trên cùng của hình hiển thị kết nối ISP đơn giản nhất.
 
 <div style="text-align:center"><img src="../images/isp_connection.png" alt/></div>
 
-### <a name="capble_dsl_connection"></a>Cáp và kết nối DSL
+### <a name="internet_access_technologies"></a>Công nghệ truy cập Internet
 
 <div style="text-align:center"><img src="../images/cable_dsl_fiber.png" alt/></div>
 
-Hầu hết mạng trong hộ gia định không kết nối tới ISP bằng cáp quang. Hai phương pháp phổ biến nhất là:
+DSL và cáp đồng trục là hai phương pháp kết nối đến ISP mà không cần sử dụng các dịch vụ chuyên dụng đắt tiền như Frac-T1/T1. Cả hai đều đạt được kết quả tương đương nhau, chúng có một số sự khác biệt.
 
-- `Cable`: tín hiệu dữ liệu internet được truyền trên cùng một cáp đồng trục của nhà cung cấp truyền hình cáp. Có một số loại đặc biệt hơn vì nó tách tín hiệu dữ liệu internet khỏi các tín hiệu khác.
-- `DSL - Digital Subscriber Line`: yêu cầu một `modem` để tách tín hiệu DSL khỏi tín hiệu điện thoại và cung cấp kết nối Ethernet tới các `host`. Tuy DSL chạy trên đường dây điện thoại nhưng không bắt buộc người dùng phải có dịch vụ thoại để có DSL. Đường dây này được chia thành 3 kênh, đặc điểm này tạo nên cái gọi là `"always on"` - sự đột phá so với `Dial-up Telephone`. Một kênh được sử dụng cho gọi thoại, kênh này cho phép cá nhân nhận các cuộc gọi mà không cần ngắt kết nối internet. Kênh thứ hai được sử dụng để nhận thông tin từ internet. Kênh cuối được sử dụng để tải thông tin lên hoặc tải xuống. Chất lượng và tốc độ kết nối DSL phụ thuộc chủ yếu vào chất lượng đường dây điện thoại và khoảng cách địa lý. Tốc độ của DSL thấp hơn cáp đồng trục nhưng bù lại bảo mật hơn, quan trọng hơn hết là giá thành rẻ nên DSL phổ biến nhất thế giới. 
+`DSL - Digital Subscriber Line` là công nghệ modem sử dụng đường dây điện thoại kết cấu dây đồng xoắn đôi để mang lại băng thông ứng dụng tốc độ cao như xem trực tuyến video hoặc chơi game thời gian thực. Thuật ngữ `xDSL` bao gồm một số công nghệ `DSL` chẳng hạn như:
+
+- `ADSL (Asymmetrical Digital Subscriber Line)`: bất đối xứng băng thông giữa tải về và tải lên từ phía người dùng. Giá thành rẻ và phổ biến hơn `SDSL`.
+- `SDSL (Symmetrical Digital Subscriber Line)`: một phiên bản khác của `HDSL`, băng thông bằng nhau giữa tải về và tải lên từ phía người dùng.
+- `Hi-Speed Digital Subscriber Line (HDSL)`: được phát triển bởi [Belcore](#https://bellcore.com.au/), công nghệ tốc độ cao T1/E1 được chuẩn hóa [ANSI](#https://www.ansi.org/) của Hoa kỳ và [ETSI](#https://www.etsi.org/) của Âu Châu.
+- `ISDN Digital Subscriber Line (IDSL)`.
+- `Very-High-Data-Rate Digital Subscriber Line (VDSL)`: chủ yếu truyền băng thông cao trong phạm vi ngắn, 
+
+Dịch vụ `xDSL` được triển khai giữa nhà cung cấp dịch vụ mạng và địa điểm của bạn, chúng cũng có thể được triển khai trong khuôn viên trường học hoặc nội bộ tòa nhà văn phòng. `xDSL` cung cấp hai lợi ích chính so với `Dial-Up Telephone`:
+
+- `Dial-Up` bị giới hạn ở băng thông 53.3 Kbps, được đánh giá là rất thấp so với thời điểm hiện tại mặc dù nó phổ biến nhất trong những thập niên 1990.
+- `Dial-Up` khởi tạo kết nối theo yêu cầu của khách hàng, tức là bạn phải gọi đến số của ISP để nhận được sự cho phép kết nối internet. Thay vào đó `xDSL` luôn luôn sẵn sàng cho việc kết nối internet.
+
+`ADSL` thường được triển khai trong môi trường `SOHO` và là dịch vụ truyền thống khi triển khai tại khu dân cư. Sự bất xứng được nhắc đến trong `ADSL` nhắm tới việc môi trường này có phần nhỏ băng thông `upstream` được sử dụng bởi các yêu cầu truy cập internet, ví dụ như duyệt web. Ngược lại, nhu cầu `downstream` rất lớn ví dụ như tải về rất nhiều gói tin. Công nghệ này tạo ra nhiều băng thông cho `downstream` hơn là `upstream`, cái mà ngược lại với công nghệ `SDSL`. Giải pháp này là một sự lựa chọn tốt để lướt web, mạng nội bộ, xem video trực tuyến hoặc truy cập từ xa bởi vì người dùng các ứng dụng có nhu cầu tải xuống nhiều hơn tải lên.
+
+Đường dây này có ba kênh dữ liệu:
+
+- Kênh `downstream` tốc độ cao: phạm vi từ 1.5 đến 9 Mbps.
+- Kênh `upstream` tốc độ thấp: phạm vi từ 16 đến 640 Kbps.
+- Kênh thoại cơ bản: vì được tách ra khỏi kênh truyền internet nên sẽ không bị gián đoạn khi sử dụng đồng thời gọi thoại và truy cập internet.
+
+Giải pháp phổ biến khác là cáp đồng trục hay còn gọi là `Cable`. Truyền hình cáp (CATV) là phương tiện một chiều mang các kênh video tín hiệu analog phát sóng đến nhiều khách hàng nhất có thể với chi phí thấp nhất. Kể từ khi CATV được giới thiệu vào hơn 50 năm trước, cho đến nay không được ghi nhận những cải tiến vượt bậc. Vào những năm 1990, CATV đã nhận thức được ưu điểm vượt bậc của DSL khi vừa được giới thiệu. CATV đã định hướng cải tiến để duy trì hiệu quả kinh tế bằng cách khai thác mọi công nghệ để cho ra sản phẩm có khả năng cung cấp dịch vụ dựa trên cơ sở hạ tầng CATV sẵn có. Để giải quyết vấn đề này, công ty `Multimedia Cable Network Parters, Ltd (MCNS)` được thành lập, họ có nhiệm vụ xác định chương trình xây dựng và nâng cấp để cung cấp chức năng hai chiều cho khách hàng qua cơ sở CATV.
 
 <div style="text-align:center"><img src="../images/connection_types.png" alt/></div>
 
