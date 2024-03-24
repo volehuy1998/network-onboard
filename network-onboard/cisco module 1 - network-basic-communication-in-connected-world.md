@@ -27,7 +27,7 @@ Có bao nhiêu người trong chúng ta băn khoăn về việc liệu bản th�
 
 ### <a name="local_network"></a>Mạng cục bộ
 
-<div style="text-align:center"><img src="../images/network_of_many_size.png" alt/></div>
+<div style="text-align:center"><img src="../images/network_of_many_size.jpg" alt/></div>
 
 Mạng cục bộ đơn giản được thiết lập trong hộ gia đình để cho phép chia sẻ tài nguyên như máy tính, tài liệu, hình ảnh và âm nhạc giữa các máy tính với nhau. Mạng gia đình cũng có thể kết nối ra ngoài internet từ các thiết bị.. Mạng cục bộ đề cập đến nhiều yếu tổ, không hẳn thuộc về kích thước vì nó có thể được triển khai ở mọi hình dạng. Mô hình đơn giản có thể liên tưởng từ 2 máy tính. Loại hình này cũng có thể được thiết lập ở văn phòng nhỏ, chúng được gọi là `SOHO (Small Office/Home Office)`.
 
