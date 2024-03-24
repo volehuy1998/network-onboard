@@ -1,4 +1,4 @@
-[Cisco Module 1 - Mạng cơ bản, thông tin liên lạc trong thế giới kết nối lẫn nhau](#module1_intro)
+[Cisco Module 1 - Mạng cơ bản, thông tin liên lạc trong thế giới kết nối lẫn nhau ( :heavy_plus_sign: UPDATED 25/03/2024)](#module1_intro)
 
 - [1.0 - Loại mạng ( :heavy_plus_sign: UPDATED 25/03/2024)](#network_types)
     - [1.0.1 - Mọi thứ đều trực tuyến ( :heavy_plus_sign: UPDATED 25/03/2024)](#online_intro)

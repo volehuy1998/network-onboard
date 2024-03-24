@@ -123,7 +123,7 @@
 
 # Cisco - Mạng cơ bản
 
-[Module 1 - Liên lạc trong thế giới kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/CCNA-onboard/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
+[Cisco Module 1 - Liên lạc trong thế giới kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/CCNA-onboard/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
   - 1.0 - Loại mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 1.0.1 - Mọi thứ đều trực tuyến ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 1.0.2 - Ai sở hữu Internet? ( :heavy_plus_sign: UPDATED 25/03/2024)
