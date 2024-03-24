@@ -113,7 +113,7 @@
     - 2.10.5 - Quản lý không gian `Swap` ( :heavy_plus_sign: UPDATED 05/01/2024)
       - 2.10.5.1 - Khái niệm không gian `Swap` ( :heavy_plus_sign: UPDATED 05/01/2024)
       - 2.10.5.2 - Tạo phân vùng `swap` ( :heavy_plus_sign: UPDATED 05/01/2024)
-    - 2.10.6 - Tăng giảm kích thước phân vùng ( :heavy_plus_sign: UPDATED 07/02/2024)(#resize_partition)
+    - 2.10.6 - Tăng giảm kích thước phân vùng ( :heavy_plus_sign: UPDATED 07/02/2024)
 - [2.12 - Quản lý lưu trữ nâng cao ( :heavy_plus_sign: UPDATED 09/02/2024)](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.12%20-%20linux-manage-advance-storage.md#manage_advance_storage)
   - 2.12.1 - Tổng quan Logical Volume Manager (LVM) ( :heavy_plus_sign: UPDATED 09/02/2024)
   - 2.12.2 - Xây dựng hệ thống lưu trữ LVM ( :heavy_plus_sign: UPDATED 09/02/2024)
