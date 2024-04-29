@@ -1,6 +1,6 @@
 # network-onboard
 
-:pushpin: Lưu ý bài viết sau sử dụng môi trường thực hành lý tưởng là bản phân phối [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.3/x86_64/product-software), có thể sử dụng [CentOS 9](https://cloud.centos.org/centos/9-stream/x86_64/images/) để thay thế nhưng không khuyến khích.
+:pushpin: Lưu ý bài viết sau sử dụng môi trường thực hành lý tưởng là bản phân phối [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.3/x86_64/product-software), có thể sử dụng [CentOS 9](https://cloud.centos.org/centos/9-stream/x86_64/images/) để thay thế nhưng không khuyến khích. Ngoài ra có thể tạo tài khoản Red Hat để đọc tài liệu chính hãng miễn phí, tham gia thảo luận tại [cộng đồng học viên](https://learn.redhat.com/) hoặc [tại đây](https://access.redhat.com/discussions) (dành cho khách hàng sử dụng sản phẩm RHEL).
 
 [Phần 1 - Lịch sử hình thành và phát triển Linux](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/1.0%20-%20linux-history-onboard.md)
 
@@ -106,14 +106,14 @@
       - 2.11.2.1 - Quản lý phân vùng định dạng MBR (UPDATED 07/02/2024)
       - 2.11.2.2 - Quản lý phân vùng định dạng GPT (UPDATED 05/01/2024)
       - 2.11.2.3 - So sanh giữa tạo phân vùng GPT và MBR (UPDATED 07/02/2024)
-    - 2.10.3 - Tạo tệp hệ thống (UPDATED 05/01/2024)
-    - 2.10.4 - Mount tệp hệ thống (UPDATED 05/01/2024)
-      - 2.10.4.1 - Mount thủ công tệp hệ thống (UPDATED 05/01/2024)
-      - 2.10.4.2 - Mount tự vĩnh viễn tệp hệ thống (UPDATED 05/01/2024)
-    - 2.10.5 - Quản lý không gian `Swap` (UPDATED 05/01/2024)
-      - 2.10.5.1 - Khái niệm không gian `Swap` (UPDATED 05/01/2024)
-      - 2.10.5.2 - Tạo phân vùng `swap` (UPDATED 05/01/2024)
-    - 2.10.6 - Tăng giảm kích thước phân vùng (UPDATED 07/02/2024)
+    - 2.11.3 - Tạo tệp hệ thống (UPDATED 05/01/2024)
+    - 2.11.4 - Mount tệp hệ thống (UPDATED 05/01/2024)
+      - 2.11.4.1 - Mount thủ công tệp hệ thống (UPDATED 05/01/2024)
+      - 2.11.4.2 - Mount tự vĩnh viễn tệp hệ thống (UPDATED 05/01/2024)
+    - 2.11.5 - Quản lý không gian `Swap` (UPDATED 05/01/2024)
+      - 2.11.5.1 - Khái niệm không gian `Swap` (UPDATED 05/01/2024)
+      - 2.11.5.2 - Tạo phân vùng `swap` (UPDATED 05/01/2024)
+    - 2.11.6 - Tăng giảm kích thước phân vùng (UPDATED 07/02/2024)
 - [2.12 - Quản lý lưu trữ nâng cao (UPDATED 09/02/2024)](https://github.com/volehuy1998/network-onboard/blob/master/linux-onboard/2.12%20-%20linux-manage-advance-storage.md#manage_advance_storage)
   - 2.12.1 - Tổng quan Logical Volume Manager (LVM) (UPDATED 09/02/2024)
   - 2.12.2 - Xây dựng hệ thống lưu trữ LVM (UPDATED 09/02/2024)
