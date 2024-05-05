@@ -134,9 +134,9 @@ Thông qua các lợi ích của việc sử dụng LAN và WAN, hầu hết cá
 
 <div style="text-align:center"><img src="../images/internet.jpg" alt/></div>
 
-<i>Lưu ý: thuật ngữ `internet` (chữ i) chỉ đơn giản là mô tả nhiều mạng kết nối với nhau. Khi đề đến sự toàn cầu hóa của các mạng máy tính được kết nối với nhau, ví dụ sử dụng WWW thì thuật ngữ `Internet` (chữ I) được sử dụng.</i>
+<i>Lưu ý: thuật ngữ `internet` (chữ `i` thường) chỉ đơn giản là mô tả nhiều mạng kết nối với nhau. Khi đề đến sự toàn cầu hóa của các mạng máy tính được kết nối với nhau, ví dụ sử dụng WWW thì thuật ngữ `Internet` (chữ `I` in) được sử dụng.</i>
 
-Có hai loại thuật ngữ khác tương tự với `Internet` như
+Có hai loại thuật ngữ khác tương tự với `Internet` như:
 
 - `Intranet` thường được sử dụng để đề cập đến kết nối riêng tư của mạng LAN và WAN thuộc về một tổ chức, cái mà chỉ được truy cập bởi các thành viên trong tổ chức hoặc những người khác nếu được ủy quyền. `Intranet` cơ bản là một mạng internet được sử dụng truy cập ở bên trong tổ chức. Các tổ chức xuát bản các trang web trên intranet về những sự kiện nội bộ, ví dụ như chính sách sức khỏe và an toàn, bản tin nhân viên và danh bạ điện thoại liên lạc của họ. Trường học cũng có thể có intranet bao gồm thông tin lịch học, chương trình giảng dạy, diễn đàn thảo luận và thông tin về giảng viên. Khi nhân viên làm việc ngoài vẫn có thể truy cập vào mạng nội bộ bằng cách sử dụng các kết nối an toàn.
 - `Extranet` tương tự như `intranet`, thuật ngữ này trở nên phổ biến vào những năm 2000 khi một số tổ chức sử dụng nó để mô tả kho lưu trữ được chia sẻ mà chỉ các thành viên của tổ chức khác được ủy quyền mới có thể truy cập một cách an toàn và bảo mật. Ví dụ khác như ứng dụng trong việc duy trì liên lạc giữa nhà cung cấp và nhà phân phối, hợp tác chéo giữa các cơ quan chính phủ khác nhau.
