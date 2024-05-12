@@ -35,12 +35,12 @@ Phần mềm máy khách và máy chủ thường chạy tách biệt ở mức 
 
 Mạng P2P đơn giản nhất sẽ chỉ bao gồm 2 máy tính kết nối trực tiếp với nhau có dây hoặc không dây. Nhiều máy tính cá nhân (PCs) đều có thể kết nối với nhau để tạo ra mạng P2P lớn nhưng có thể sẽ yêu cầu thiết bị chuyển mạch như switch để kết nối các máy tính.
 
-Vấn đề lớn nhất của môi trường P2P là hiệu suất của một `host` có thể bị chậm lại nếu nó hoạt động trên cả hai nhiệm vụ khách và chủ cùng một thời điểm. Đối với doanh nghiệp lớn, bởi vì sẽ có lúc xảy ra tình huống lưu lượng mạng bị dâng cao nên thường sẽ triển khai máy chủ chuyên dụng để hỗ trợ các yêu cầu chuyển tới.
+Vấn đề lớn nhất của môi trường P2P là hiệu suất của một `host` có thể bị chậm lại nếu nó hoạt động trên cả hai nhiệm vụ khách và chủ cùng một thời điểm. Đối với doanh nghiệp lớn, bởi vì sẽ có lúc xảy ra tình huống lưu lượng mạng bị dâng cao nên thường sẽ triển khai máy chủ chuyên dụng để xử lý các yêu cầu được chuyển đến.
 
 Ưu điểm của P2P:
 
 - Dễ dàng thiết lặp.
-- Chi phí thấp bởi vì các thiết bị chuyển mạch hoặc máy chủ chuyên dụng có thể sẽ không bị yêu cầu.
+- Chi phí thấp bởi vì các thiết bị mạng hoặc máy chủ chuyên dụng mắc tiền có thể sẽ không bị yêu cầu.
 
 Nhược điểm:
 
