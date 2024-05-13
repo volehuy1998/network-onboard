@@ -6,7 +6,7 @@
 
 # <a name="ine_5_what_is_poe"></a>5.1 - Khái niệm PoE
 
-Thông thường cáp Ethernet sẽ chỉ mang dữ liệu. Bất kể thiết bị đó là máy tính xách tay, máy tính cá nhân, máy in, thiết bị IoT, điện thoại bàn thì chúng đều có riêng cổng nguồn AC. Nhưng đôi khi rất khó khăn để tìm kiếm ổ cắm ở gần cho thiết bị. Ý tượng của `PoE` là thay thế đầu cắm nguồn AC và sử dụng chung cáp Ethernet.
+Thông thường cáp Ethernet sẽ chỉ mang dữ liệu. Bất kể thiết bị đó là máy tính xách tay, máy tính cá nhân, máy in, thiết bị IoT, điện thoại bàn thì chúng đều có riêng cổng nguồn AC. Nhưng đôi khi rất khó khăn để tìm kiếm ổ cắm ở gần cho thiết bị. Ý tượng của `PoE` là thay thế đầu cắm nguồn và sử dụng chung cáp Ethernet.
 
 Các chuẩn PoE gồm có các chuẩn sau:
 
@@ -17,7 +17,7 @@ Các chuẩn PoE gồm có các chuẩn sau:
 | 802.3bt / Cisco UPoE | 3 | 60W |
 | IEEE 802.3bt / UPoE+ | 4 | 90-95W |
 
-Dây ethernet được cấu tạo gồm 8 dây được xoắn đôi thành cặp (4 cặp). Tiêu chuẩn truyền thống `802.3af` và `802.3at` ban đầu phân hoạch rõ ràng giữa dây mang năng lượng các dây còn lại sẽ mang dữ liệu. Sau đó Cisco đã ra mắt hai chuẩn mới là `UPoE` và `UPoE+` cho phép tất cả 8 dây được đồng thời mang năng lượng và dữ liệu.
+Dây ethernet được cấu tạo gồm 8 dây được xoắn đôi thành cặp (4 cặp). Tiêu chuẩn truyền thống `802.3af` và `802.3at` ban đầu phân hoạch rõ ràng giữa dây cấp nguồn và các dây còn lại sẽ mang dữ liệu. Sau đó Cisco đã ra mắt hai chuẩn mới là `UPoE` và `UPoE+` cho phép cả 8 dây đều có thể cấp nguồn và mang dữ liệu.
 
 <div style="text-align:center"><img src="../images/ine_28_poe.jpg" alt/></div>
 
@@ -49,7 +49,7 @@ Trong thiết lập PoE gồm có 2 loại thiết bị:
 Khi có một thứ gì đó cắm vào ethernet switch có hỗ trợ PoE thì switch sẽ trải qua một số bước để nhận biết thứ đó cần được cấp nguồn hoặc ngược lại. Ví dụ một máy tính xách tay cắm vào switch và vì nó đã có thiết kế AC riêng nên không cần cấp nguồn từ switch thông qua dây ethernet. Quá trình bao gồm:
 
 - Xác định thiết bị cần cấp nguồn từ PSE là PD: PSE sẽ phát ra một lượng năng lượng nhỏ để kiểm tra đối phương có điện trở hay không bởi vì nếu không phải là thiết bị PD ví dụ như laptop thì năng lượng vừa phát đó sẽ quay ngược trở lại đồng thời với năng lượng nhỏ như vậy hoàn toàn không thể phá hủy cổng mạng của laptop. Ngược lại, nếu năng lượng phát ra đó không quay trở về hoặc có nhưng ở ngưỡng rất nhỏ so với nguồn phát thì tức là nó đã bị tiêu thụ, kết luận thiết bị đối phương là PD cần được cấp nguồn.
-- Xác định công suất cần truyền tải: sau khi xác nhận đối phương là PD, PSE sẽ phát thêm một chút năng lượng vừa đủ giống cho việc khởi đầu, sau đó gia tăng và lặp đi lặp lại việc này để cảm nhận được lực cản và xác định ngưỡng công suất. Đối với thiết bị Cisco còn được triển khai thêm giao thức `CDP` cho biết thêm rất nhiều thông tin ví dụ như phạm vi công suất nguồn, chi tiết thông tin thiết bị.
+- Xác định công suất cần truyền tải: sau khi xác nhận đối phương là PD, PSE sẽ phát thêm một chút năng lượng vừa đủ, sau đó gia tăng và lặp đi lặp lại việc này để cảm nhận được lực cản và xác định ngưỡng công suất. Đối với thiết bị Cisco còn được triển khai thêm giao thức `CDP` cho biết thêm rất nhiều thông tin ví dụ như phạm vi công suất nguồn, chi tiết thông tin thiết bị.
 
 <div style="text-align:center"><img src="../images/ine_29_cdp_message.png" alt/></div>
 

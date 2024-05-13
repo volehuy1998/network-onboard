@@ -1,6 +1,6 @@
 [INE - 2. Các thành phần trong mạng máy tính? ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_components_of_computer_networks)
 
-:pushpin: nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: máy khách, máy chủ, cáp đồng trục, dây DSL.
+:pushpin: Nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: máy khách, máy chủ, cáp đồng trục, dây DSL.
 
 - [2.1 - Máy khách và máy chủ ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_1_client_server)
 - [2.2 - Tài nguyên cục bộ và từ xa ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_2_local_n_remote_resource)

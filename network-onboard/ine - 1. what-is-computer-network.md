@@ -1,6 +1,6 @@
 [INE - 1. Mạng máy tính là gì? ( :heavy_plus_sign: UPDATED 30/03/2024)](#ine_1_what_is_computer_network)
 
-:pushpin: nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: LAN, WAN, internet, Internet.
+:pushpin: Nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: LAN, WAN, internet, Internet.
 
 # <a name="ine_1_what_is_computer_network"></a>1. Mạng máy tính là gì?
 
@@ -22,7 +22,7 @@ Thay vì mọi người sử dụng chung dây dẫn duy nhất thì giờ đây
 
 <div style="text-align:center"><img src="../images/ine_3_connect_two_segment.png" alt/></div>
 
-Hình ảnh trên mô tả 2 người đang kết nối không dây thông qua thiết bị `Access Point (AP)` và họ muốn trao đổi thông tin với nhóm người phía trên. Vẫn sử dụng phương pháp cũ kết nối giữa hai `switch` là điều hoàn toàn có thể làm được nhưng lúc này quản trị viên phát sinh thêm nhu cầu, họ nhận thức được quy mô và cần một cách nào đó để phân chia một cách lô ríc cho dễ quản lý. Ví dụ thiết bị của một người nào đó được kết nối vào mạng thì không chỉ có thông tin nó được kết nối bằng có dây hoặc không dây, mà còn mô tả nó nằm trong phần nào của mạng, bộ phận hoặc phòng ban nào trong công ty. Ví dụ: phòng kế toán có thể trao đổi thông tin với phòng nhân sự nhưng không thể trao đổi với bộ phận khác. Để làm được như vậy thiết bị đó gọi là `router`.
+Hình ảnh trên mô tả 2 người đang kết nối không dây thông qua thiết bị `Access Point (AP)` và họ muốn trao đổi thông tin với nhóm người phía trên. Vẫn sử dụng phương pháp cũ kết nối giữa hai `switch` là điều hoàn toàn có thể làm được nhưng lúc này quản trị viên phát sinh thêm nhu cầu, họ nhận thức được quy mô và cần giải pháp nào đó để phân chia một cách lô ríc cho dễ quản lý. Ví dụ thiết bị của một người nào đó được kết nối vào mạng thì không chỉ có thông tin nó được kết nối bằng có dây hoặc không dây, mà còn mô tả nó nằm trong phần nào của mạng, bộ phận hoặc phòng ban nào trong công ty. Ví dụ: phòng kế toán có thể trao đổi thông tin với phòng nhân sự nhưng không thể trao đổi với bộ phận khác. Để làm được như vậy thiết bị đó gọi là `router`.
 
 <div style="text-align:center"><img src="../images/ine_4_datacenter.png" alt/></div>
 
