@@ -154,5 +154,5 @@
   - 2.4 - ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
       - 2.4.1 - Dịch vụ ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
       - 2.4.2 - Kết nối ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.4.3 - Cáp và kết nối DSL ( :heavy_plus_sign: UPDATED 25/03/2024)
+      - 2.4.3 - Công nghệ truy cập Internet ( :heavy_plus_sign: UPDATED 25/03/2024)
       - 2.4.3 - Kết nối bổ sung ( :heavy_plus_sign: UPDATED 25/03/2024)
