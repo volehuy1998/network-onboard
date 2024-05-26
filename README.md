@@ -123,7 +123,7 @@
 
 # Cisco - Mạng cơ bản
 
-[Cisco Module 1 - Liên lạc trong thế giới kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/CCNA-onboard/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
+[Cisco Module 1 - Liên lạc trong thế giới kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
   - 1.0 - Loại mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 1.0.1 - Mọi thứ đều trực tuyến ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 1.0.2 - Mạng cục bộ ( :heavy_plus_sign: UPDATED 25/03/2024)
@@ -139,7 +139,7 @@
       - 1.2.2 - Thông lượng ( :heavy_plus_sign: UPDATED 25/03/2024)
   - 1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau ( :heavy_plus_sign: UPDATED 25/03/2024)
 
-[Cisco Module 2 - Các thành phần trong mạng, loại của chúng và các kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/CCNA-onboard/network-onboard/cisco%20module%202%20-%20network-component-and-connections.md)
+[Cisco Module 2 - Các thành phần trong mạng, loại của chúng và các kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%202%20-%20network-component-and-connections.md)
   - 2.0 - Vai trò máy khách và máy chủ ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 2.0.1 - Giới thiệu ( :heavy_plus_sign: UPDATED 25/03/2024)
     - 2.0.2 - Mạng P2P ( :heavy_plus_sign: UPDATED 25/03/2024)
@@ -157,15 +157,15 @@
       - 2.4.3 - Công nghệ truy cập Internet ( :heavy_plus_sign: UPDATED 25/03/2024)
       - 2.4.3 - Kết nối bổ sung ( :heavy_plus_sign: UPDATED 25/03/2024)
 
-[INE - 1. Mạng máy tính là gì? ( :heavy_plus_sign: UPDATED 30/03/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%201.%20what-is-computer-network.md)
+[INE - 1. Mạng máy tính là gì? ( :heavy_plus_sign: UPDATED 30/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%201.%20what-is-computer-network.md)
 
-[INE - 2. Các thành phần trong mạng máy tính? ( :heavy_plus_sign: UPDATED 30/04/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%202.%20components-of-computer-networks.md)
+[INE - 2. Các thành phần trong mạng máy tính? ( :heavy_plus_sign: UPDATED 30/04/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%202.%20components-of-computer-networks.md)
 
-[INE - 3. Các vị trí trong nghành mạng máy tính? ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%203.%20network-job-roles.md)
+[INE - 3. Các vị trí trong nghành mạng máy tính? ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%203.%20network-job-roles.md)
   - 3.1 - Kiến trúc sư, kỹ sư và quản trị viên ( :heavy_plus_sign: UPDATED 02/05/2024)
   - 3.2 - Chuyên môn ( :heavy_plus_sign: UPDATED 02/05/2024)
 
-[INE - 4. Kiến trúc topo ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%204.%20network-topology-architectures.md)
+[INE - 4. Kiến trúc topo ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%204.%20network-topology-architectures.md)
   - 4.1 - Tổng quan kiến trúc mạng ( :heavy_plus_sign: UPDATED 02/05/2024)
   - 4.2 - Kiến trúc 2-Tier và 3-Tier ( :heavy_plus_sign: UPDATED 02/05/2024)
   - 4.3 - Kiến trúc Spine-Leaf ( :heavy_plus_sign: UPDATED 02/05/2024)
@@ -173,12 +173,12 @@
   - 4.5 - Kiến trúc SOHO ( :heavy_plus_sign: UPDATED 02/05/2024)
   - 4.6 - Kiến trúc On-Premise và Cloud-Based ( :heavy_plus_sign: UPDATED 02/05/2024)
 
-[INE - 5. Power Over Ethernet ( :heavy_plus_sign: UPDATED 12/05/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%205.%20power-over-ethernet.md)
+[INE - 5. Power Over Ethernet ( :heavy_plus_sign: UPDATED 12/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%205.%20power-over-ethernet.md)
   - 5.1 - Khái niệm PoE ( :heavy_plus_sign: UPDATED 12/05/2024)
   - 5.2 - Lợi ích của việc sử dụng PoE ( :heavy_plus_sign: UPDATED 12/05/2024)
   - 5.3 - PSE và PD ( :heavy_plus_sign: UPDATED 12/05/2024)
 
-[INE - 6. Lịch sử và mục đích của Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)](https://github.com/volehuy1998/network-onboard/blob/network/ine-ccna-onboard/network-onboard/ine%20-%206.%20history-and-purpose-of-ip.md)
+[INE - 6. Lịch sử và mục đích của Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%206.%20history-and-purpose-of-ip.md)
   - 6.1 - Lịch sử phát triển chuyển mạch gói tin ( :heavy_plus_sign: UPDATED 20/05/2024)
   - 6.2 - Khái niệm chuyển mạch gói ( :heavy_plus_sign: UPDATED 23/05/2024)
   - 6.3 - Tổng quan về Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)
