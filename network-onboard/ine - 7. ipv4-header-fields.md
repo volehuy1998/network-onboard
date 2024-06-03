@@ -1,5 +1,10 @@
 [INE - 7. Các trường trong tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 27/05/2024)](#ine_7_ipv4_header_fields)
 
+- [7.1 - Tổng quan thông tin tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 20/05/2024)](#ine_7_header_field_overview)
+- [7.2 - Ví dụ tìm vị trí fragment ( :heavy_plus_sign: UPDATED 23/05/2024)](#ine_7_example_determine_fragment_offset)
+
+# <a name="ine_7_header_field_overview"></a>7.1 - Tổng quan thông tin tiêu đề IPv4
+
 Trong phần này chúng ta tập trung vào việc tìm hiểu sơ lược các trường trong cấu trúc/tiêu đề của IPv4 và mục đích sử dụng của chúng.
 
 <div style="text-align:center"><img src="../images/ine_33_ip_packet_structure.svg" alt/></div>
@@ -27,7 +32,11 @@ Trong mô hình OSI, bất kể loại dữ liệu của nó là TCP hay UDP th�
 - `Don't fragment`: giá trị 1 yêu cầu thiết bị kế tiếp không phân mảnh và hủy gói tin đó đi nếu lớn hơn MTU. Lợi ích của việc này là tránh sử dụng tài nguyên CPU để phân mảnh và tái tạo lại gói tin, tối ưu thông lượng cho những dịch vụ khác. Thông thường chức năng này được sử dụng để xác định thông số MTU card mạng thông qua công cụ ping.
 - `More fragments`: nếu mảnh không phải cuối cùng thì giá trị bằng 0.
 
-Ví dụ một gói tin IP có `IP header` cố định 20 bytes, `IP payload` là 5120 bytes. Trung chuyển qua thiết bị có MTU là 1500, tìm vị trí của các fragment?
+# <a name="ine_7_example_determine_fragment_offset"></a>7.2 - Ví dụ tìm vị trí fragment
+
+<div style="text-align:center"><img src="../images/ine_35_example_about_fragment.png" alt/></div>
+
+[Lấy ví dụ của trang cisco](https://www.cisco.com/c/en/us/support/docs/ip/generic-routing-encapsulation-gre/25885-pmtud-ipfrag.html): một gói tin IP có `IP header` cố định 20 bytes, `IP payload` là 5120 bytes. Trung chuyển qua thiết bị có MTU là 1500, tìm vị trí của các fragment?
 
 1) Tổng số lượng fragment: (5120 / 1480) + 1 = 3.45 + 1 = 4
 2) Vị trí fragment đầu luôn là 0
@@ -36,14 +45,12 @@ Ví dụ một gói tin IP có `IP header` cố định 20 bytes, `IP payload` l
 5) Vị trí fragment cuối: 185 * 3 = 555
 6) Kích thước fragment cuối cùng: 5120 % 1480 = 680 (chưa bao gồm header)
 
-<div style="text-align:center"><img src="../images/ine_35_example_about_fragment.png" alt/></div>
+<div style="text-align:center"><img src="../images/ine_36_example2_about_fragment.png" alt/></div>
 
-Ví dụ một gói tin IP có `IP header` cố định 20 bytes, `IP payload` là 10000 bytes. Trung chuyển qua thiết bị có MTU là 4000, tìm vị trí của các fragment?
+[Lấy ví dụ của trang wiki](https://en.wikipedia.org/wiki/IP_fragmentation#): một gói tin IP có `IP header` cố định 20 bytes, `IP payload` là 10000 bytes. Trung chuyển qua thiết bị có MTU là 4000, tìm vị trí của các fragment?
 
 1) Tổng số lượng fragment: (10000 / 3980) + 1 = 3
 2) Vị trí fragment đầu luôn là 0
 3) Vị trí fragment thứ hai: (3980 / 8) * 1 = 497.5 <b>(số lẻ)</b> vì thế làm tròn 497
 4) Tính toán lại kích thước `IP Payload` của các fragment đầu là 497 * 8 = 3976 bytes, fragment cuối có độ dài 10000 % 3976 = 2048
 4) Vị trí fragment thứ ba: 497 * 2 = 994
-
-<div style="text-align:center"><img src="../images/ine_36_example2_about_fragment.png" alt/></div>
