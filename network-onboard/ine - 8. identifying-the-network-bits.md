@@ -1,10 +1,11 @@
-INE - 8. Xác định các bit thuộc phần Network ( :heavy_plus_sign: UPDATED 07/07/2024)
+INE - 8. Xác định các bit thuộc phần Network ( :heavy_plus_sign: UPDATED 15/07/2024)
 
 - [8.1 - Các lớp địa chỉ IPv4 ( :heavy_plus_sign: UPDATED 07/07/2024)](#ine_8_ipv4_address_classes)
 - [8.2 - Khái niệm về `subnet mask` ( :heavy_plus_sign: UPDATED 07/07/2024)](#ine_8_subnet_mask)
 - [8.3 - Các loại địa chỉ IPv4 ( :heavy_plus_sign: UPDATED 07/07/2024)](#ine_8_ipv4_address_types)
     - [8.3.1 - Unicast ( :heavy_plus_sign: UPDATED 13/07/2024)](#ine_8_unicast)
     - [8.3.2 - Multicast ( :heavy_plus_sign: UPDATED 14/07/2024)](#ine_8_multicast)
+    - [8.3.3 - Broadcast ( :heavy_plus_sign: UPDATED 15/07/2024)](#ine_8_broadcast)
 
 # <a name="ine_8_ipv4_address_classes"></a>8.1 - Các lớp địa chỉ IPv4
 
@@ -44,13 +45,22 @@ Ví dụ:
 - Liên lạc giữa one-to-one. Ví dụ như liên lạc giữa 1 máy khách và 1 máy chủ.
 - Sử dụng không gian địa chỉ trong lớp A,B và C. Có nhiều người cho rằng kể từ khi ra đời khái niệm subnet mask, CIDR nói riêng hoặc `classless` nói chung thì chúng ta nên vứt bỏ khái niệm về các lớp A, B, C nhưng điều này là sai vì trong hệ điều hành không cho phép đặt địa chỉ IP ngoài 3 lớp kể trên ra. Ví dụ như cố gắng điền địa chỉ của lớp D là `255.7.7.10` hoặc tương tự vào thiết bị thì hệ điều hành sẽ không chấp nhận và hiển thị thông báo lỗi ngay lập tức, như vậy sự bổ túc kiến thức về lịch sử sẽ giúp chúng ta tránh được những cấu hình không được cho phép.
 
+<div style="text-align:center"><img src="../images/ine_38_basically_unicast.png" alt/></div>
+
 Một điều đặc biệt khi chúng ta bước chân vào thế giới kỹ thuật định tuyến tức là cách mà thiết bị định tuyến hoạt động thì sẽ được học về thứ gọi là tóm tắt tuyến (route summarization). Kỹ thuật này sẽ được mổ xẻ kỹ ở bài sau nhưng giải thích ngắn gọn trong phần Unicast cũng là một điều cần thiết. Không phải tất cả các giao thức định nhưng hầu hết trong số chúng đều có 2 cách để hỗ trợ việc này là tự động và thủ công. Việc tóm tắt tuyến này sẽ giúp giảm số lượng cần ghi nhớ trong bảng định tuyến của router. Ví dụ ta có nhiều lớp mạng 10.10.10.5.32/21 và 10.10.10.100/24 đều kết nối vào router A, bằng kỹ thuật phân tích nhanh chọn ra lớp mạng đại diện `10.10.0.0/16` đủ để bao gồm 2 lớp mạng trên để gửi cho router B với ngụ ý rằng bất kể khi nào nó nhận được gói tin có đích đến nằm trong lớp mạng `10.10.0.0/16` thì hãy gửi cho router A để điều phối tiếp vì nó biết ai là người phù hợp sẽ nhận gói tin.
 
 <div style="text-align:center"><img src="../images/ine_37_basically_routing_sumarization.png" alt/></div>
 
 ## <a name="ine_8_multicast"></a>8.3.2 - Multicast
 
-Được sử dụng để:
-- Liên lạc giữa one-to-many.
-- Sử dụng không gian địa chỉ lớp D.
+Được sử dụng để liên lạc giữa one-to-many và khác với unicast thì multicast sử dụng không gian địa chỉ lớp D.
 
+Ví dụ chúng ta có một máy chủ đặc thù của nhà nước dùng để phát tin tức liên tục 24/7 và một số máy tính cá nhân, dĩ nhiên tất cả chúng đều được đặt IP nằm trong các dải A,B và C (chúng ta không xét cụ thể địa chỉ IP vì có là gì cũng không quan trọng). Nhu cầu đầu tiên phát sinh khi máy tính A và B muốn nhận được bản tin thời sự khi chỉ có công nghệ Unicast? Chúng ta sẽ điều phối luồng dữ liệu đến máy A và tạo ra một bản sao lưu luồng dữ liệu đó đến máy B, điều này thực sự dễ đoán nhưng nếu mở rộng quy mô toàn quốc thì luồng dữ liệu được nhân lên với số lượng tương ứng và hậu quả gây ra là trì trệ ở phía khách hàng do băng thông không đủ đáp ứng ở phía máy chủ, tiêu tốn nhiều tài nguyên khác. Unicast không được sinh ra để giải quyết nhu cầu này. Trước khi multicast được phát minh bởi [Steve Deering](https://en.wikipedia.org/wiki/Steve_Deering) vào năm 1988 thì phương thức truyền tin broadcast đã có trước bởi [Guglielmo Marconi](https://www.bbc.com/news/uk-england-somerset-61327062), đặc tính của broadcast là truyền dữ liệu đến toàn bộ người nhận dù họ có muốn hay không. Vậy nếu áp dụng broadcast thì tất cả máy tính không muốn nhận dữ liệu sẽ bị gián đoạn công việc của nó. Lúc này ta sử dụng multicast, trong gói tin địa chỉ đích sẽ thuộc lớp D nằm trong dải từ `224.0.0.1` đến `239.255.255.255`. Khi máy A và B muốn xem tin tức thì thiết bị sẽ phát gói tin unicast đến `Directory Server` để mô tả nhu cầu. Thay vì phân phối dữ liệu đến tận nhà thì `Directory Server` sẽ cho địa chỉ mà tin tức đó đang được phát, lúc này thiết bị chỉ cần gửi gói tin multicast có đích nhận đã được hướng dẫn.
+
+<div style="text-align:center"><img src="../images/ine_39_basically_multicast.png" alt/></div>
+
+## <a name="ine_8_broadcast"></a>8.3.3 - Broadcast
+
+Truyền tin broadcast có tính chất người nhận sẽ nhận được cho dù có muốn hay không. Chúng ta có 2 cách:
+- Broadcast truyền thống (general broadcast): sử dụng 255.255.255.255 để mô tả lớp mạng 0.0.0.0/0, dĩ nhiên bất kỳ mạng nào thuộc mạng này đều sẽ nhận được gói tin.
+- Broadcast theo chỉ định (directed broadcast): ví dụ 1.1.255.255 vậy thì giờ đây lớp mạng nào thược 1.1.0.0/16 sẽ nhận được dữ liệu.

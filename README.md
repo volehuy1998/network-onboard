@@ -187,9 +187,10 @@
   - 7.1 - Tổng quan thông tin tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 20/05/2024)
   - 7.2 - Ví dụ tìm vị trí fragment ( :heavy_plus_sign: UPDATED 23/05/2024)
 
-[INE - 8. Xác định các bit thuộc phần Network ( :heavy_plus_sign: UPDATED 07/07/2024)]()
+[INE - 8. Xác định các bit thuộc phần Network ( :heavy_plus_sign: UPDATED 15/07/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%208.%20identifying-the-network-bits.md)
   - 8.1 - Các lớp địa chỉ IPv4 ( :heavy_plus_sign: UPDATED 07/07/2024)
   - 8.2 - Khái niệm về `subnet mask` ( :heavy_plus_sign: UPDATED 07/07/2024)
   - 8.3 - Các loại địa chỉ IPv4 ( :heavy_plus_sign: UPDATED 07/07/2024)
       - 8.3.1 - Unicast ( :heavy_plus_sign: UPDATED 13/07/2024)
       - 8.3.2 - Multicast ( :heavy_plus_sign: UPDATED 14/07/2024)
+      - 8.3.3 - Broadcast ( :heavy_plus_sign: UPDATED 15/07/2024)
