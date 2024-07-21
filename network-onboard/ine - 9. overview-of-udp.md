@@ -18,9 +18,10 @@ Cổng trên TCP và UDP:
 - Là những thực thể lô ríc, không phải phần cứng. Ví dụ chúng ta mở một tab chrome như trên để duyệt web, thì hệ thống sẽ gán cho tab đó 1 cổng và ngược lại khi ta tắt tab đó thì cổng liên kết với tab cũng sẽ được trả về cho hệ thống và tái sử dụng.
 - Được sử dụng bởi ứng dụng, cụ thể để gán vào các phiên làm việc của ứng dụng.
 
-Mỗi TCP segment hoặc UDP datagram đều có cổng phát và cổng nhận. Theo [Internet Assigned Numbers Authority](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) (cơ quan cấp phát số hiệu Internet) thì chia chúng ra thành ba phạm vị riêng biệt, cổng từ 0 đến 1023 dùng cho các dịch vụ phổ biến ví dụ như SSH, SMTP, HTTP, HTTPS, cổng từ 1024 đến 49.151 đã được đăng ký sử dụng cho tương lai và còn lại đến cổng 65.535 có thể sử dụng tùy ý bởi người dùng.
-- Cổng nhận đứng từ góc nhìn máy tính cá nhân chúng ta đang duyệt web hoặc nhắn tin thì cổng đích sẽ là số cổng phổ biến trên HTTP, HTTPS, SMTP.
-- Cổng nguồn thường sẽ là số được lấy một cách ngẫu nhiên.
+Mỗi TCP segment hoặc UDP datagram đều có cổng phát và cổng nhận. Theo [Internet Assigned Numbers Authority](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) (cơ quan cấp phát số hiệu Internet) thì chia chúng ra thành ba phạm vị riêng biệt. Sự thật là không gì có thể ngăn cản nếu chúng ta cố tính chiếm lấy bất kỳ cổng nào trong 3 phạm vi sau:
+- `Well Known Ports`: cổng từ 0 đến 1023 dùng cho các dịch vụ phổ biến hoặc hệ thống, ví dụ như SSH, SMTP, HTTP, HTTPS. 
+- `Registed Ports`: cổng từ 1024 đến 49.151 dành cho phần mềm khác để tránh xung đột với các cổng Well Known vì vốn dĩ phạm vi của chúng đã quá ít.
+- `Dynamic Ports`: còn lại đến cổng 65.535. Ví dụ khi duyệt web cổng nguồn được lấy một cách ngẫu nhiên từ phạm vi này và cổng đích sẽ là HTTP hoặc HTTPS.
 
 Ví dụ sau mô tả cơ bản cách thức mà cổng hoạt động:
 
