@@ -1,10 +1,10 @@
-[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 22/07/2024)](#ine_10_overview_tcp)
-- [10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 22/07/2024)](#ine_10_intro_tcp)
-- [10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 22/07/2024)](#ine_10_connection_oriented)
-- [10.3 - Tổng quan về cờ PSH và URG](#ine_10_psh_n_urg)
-- [10.4 - Tổng quan về Window Size vs Maximum Segment Size (MSS)](#ine_10_window_size_n_mss)
-- [10.5 - Tổng quan bắt tay 3 bước](#ine_10_tcp_handshake)
-- [10.6 - Tổng quan cơ chế truyền lại](#ine_10_tcp_retransmission)
+[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_overview_tcp)
+- [10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_intro_tcp)
+- [10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_connection_oriented)
+- [10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_psh_n_urg)
+- [10.4 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_window_size_n_mss)
+- [10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_tcp_handshake)
+- [10.6 - Tổng quan cơ chế truyền lại ( :heavy_plus_sign: UPDATED 05/07/2024)](#ine_10_tcp_retransmission)
 
 # <a name="ine_10_intro_tcp"></a>10.1 - Giới thiệu TCP
 
