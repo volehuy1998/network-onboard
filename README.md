@@ -199,7 +199,7 @@
   - 9.1 - Giới thiệu UDP ( :heavy_plus_sign: UPDATED 18/07/2024)
   - 9.2 - Các cổng ở tầng transport ( :heavy_plus_sign: UPDATED 18/07/2024)
 
-[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 22/07/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%2010.%20overview-of-tcp.md)
+[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 05/07/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%2010.%20overview-of-tcp.md)
   - 10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 05/08/2024)
   - 10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 05/08/2024) ( :heavy_plus_sign: UPDATED 05/08/2024)
   - 10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 05/08/2024)
