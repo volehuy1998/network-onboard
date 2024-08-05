@@ -12,6 +12,8 @@ Trước khi tìm hiểu về UDP ta cần có một số lý do để biết v�
 
 UDP là viết tắt của User Datagram Protocol, về mặt cơ bản UDP cho chúng ta tiêu đề chứa thông tin cổng nguồn và cổng nhận. Đơn vị dữ liệu ([UDP](https://datatracker.ietf.org/doc/html/rfc768)) trong giao thức UDP được gọi là `Datagram` và tài liệu về UDP được biên soạn ở [RFC 768](https://datatracker.ietf.org/doc/html/rfc768). UDP và IP có một điểm chung là khi ta sử dụng dịch vụ của các giao thức đó thì nó không bảo đảm đích đến có nhận được dữ liệu hay không. Công việc của UDP rất đơn giản, nhận dữ liệu và gắn tiêu đề UDP vào và gửi nó đi và UDP không có trách nhiệm đảm bảo người nhận thực sự có nhận được dữ liệu hay không.
 
+<div style="text-align:center"><img src="../images/ine_54_connections_between_sockets.png" alt/></div>
+
 # <a name="ine_9_transport_layer_port_numbers"></a>9.2 - Các cổng ở tầng transport
 
 Cổng trên TCP và UDP:
