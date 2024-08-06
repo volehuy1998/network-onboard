@@ -208,6 +208,6 @@
       - 10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)
   - 10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)
   - 10.6 - Tổng quan cơ chế truyền lại ( :heavy_plus_sign: UPDATED 06/08/2024)
-      - 10.6.1 - Khái niệm truyền lại gói tin(:heavy_plus_sign: UPDATED 06/08/2024)
+      - 10.6.1 - Khái niệm truyền lại gói tin( :heavy_plus_sign: UPDATED 06/08/2024)
       - 10.6.2 - Truyền lại dựa trên đồng hồ chờ ack ( :heavy_plus_sign: UPDATED 06/08/2024)
       - 10.6.3 - Truyền lại dựa trên fast retransmit ( :heavy_plus_sign: UPDATED 06/08/2024)
