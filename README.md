@@ -123,69 +123,69 @@
 
 # Cisco - Mạng cơ bản
 
-[Cisco Module 1 - Liên lạc trong thế giới kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
-  - 1.0 - Loại mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 1.0.1 - Mọi thứ đều trực tuyến ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 1.0.2 - Mạng cục bộ ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 1.0.3 - Thiết bị di dộng ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 1.0.4 - Các kết nối trong thiết bị gia đình ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 1.0.5 - Các thiết bị kết nối khác ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 1.1 - Truyền dữ liệu ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 1.1.1 - Các loại dữ liệu cá nhân ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 1.1.2 - Bit ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 1.1.3 - Phương pháp phổ biến truyền tải dữ liệu ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 1.2 - Băng thông và thông lượng ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 1.2.1 - Băng thông ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 1.2.2 - Thông lượng ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau ( :heavy_plus_sign: UPDATED 25/03/2024)
+[Cisco Module 1 - Liên lạc trong thế giới kết nối](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%201%20-%20network-basic-communication-in-connected-world.md)
+  - 1.0 - Loại mạng
+    - 1.0.1 - Mọi thứ đều trực tuyến
+    - 1.0.2 - Mạng cục bộ
+    - 1.0.3 - Thiết bị di dộng
+    - 1.0.4 - Các kết nối trong thiết bị gia đình
+    - 1.0.5 - Các thiết bị kết nối khác
+  - 1.1 - Truyền dữ liệu
+      - 1.1.1 - Các loại dữ liệu cá nhân
+      - 1.1.2 - Bit
+      - 1.1.3 - Phương pháp phổ biến truyền tải dữ liệu
+  - 1.2 - Băng thông và thông lượng
+      - 1.2.1 - Băng thông
+      - 1.2.2 - Thông lượng
+  - 1.3 - Thông tin liên lạc trong thế giới kết nối lẫn nhau
 
-[Cisco Module 2 - Các thành phần trong mạng, loại của chúng và các kết nối ( :heavy_plus_sign: UPDATED 25/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%202%20-%20network-component-and-connections.md)
-  - 2.0 - Vai trò máy khách và máy chủ ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 2.0.1 - Giới thiệu ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 2.0.2 - Mạng P2P ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 2.0.3 - Ứng dụng P2P ( :heavy_plus_sign: UPDATED 25/03/2024)
-    - 2.0.4 - Các vai trò trong mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 2.1 - Các thành phần trong mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.1.1 - Hạ tầng mạng ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.1.2 - Thiết bị cuối ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.1.3 - Thiết bị trung gian ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 2.2 - LAN và WAN ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 2.3 - Internet ( :heavy_plus_sign: UPDATED 25/03/2024)
-  - 2.4 - ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.4.1 - Dịch vụ ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.4.2 - Kết nối ISP ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.4.3 - Công nghệ truy cập Internet ( :heavy_plus_sign: UPDATED 25/03/2024)
-      - 2.4.3 - Kết nối bổ sung ( :heavy_plus_sign: UPDATED 25/03/2024)
+[Cisco Module 2 - Các thành phần trong mạng, loại của chúng và các kết nối](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/cisco%20module%202%20-%20network-component-and-connections.md)
+  - 2.0 - Vai trò máy khách và máy chủ
+    - 2.0.1 - Giới thiệu
+    - 2.0.2 - Mạng P2P
+    - 2.0.3 - Ứng dụng P2P
+    - 2.0.4 - Các vai trò trong mạng
+  - 2.1 - Các thành phần trong mạng
+      - 2.1.1 - Hạ tầng mạng
+      - 2.1.2 - Thiết bị cuối
+      - 2.1.3 - Thiết bị trung gian
+  - 2.2 - LAN và WAN
+  - 2.3 - Internet
+  - 2.4 - ISP
+      - 2.4.1 - Dịch vụ ISP
+      - 2.4.2 - Kết nối ISP
+      - 2.4.3 - Công nghệ truy cập Internet
+      - 2.4.3 - Kết nối bổ sung
 
-[INE - 1. Mạng máy tính là gì? ( :heavy_plus_sign: UPDATED 30/03/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%201.%20what-is-computer-network.md)
+[INE - 1. Mạng máy tính là gì?](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%201.%20what-is-computer-network.md)
 
-[INE - 2. Các thành phần trong mạng máy tính? ( :heavy_plus_sign: UPDATED 30/04/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%202.%20components-of-computer-networks.md)
+[INE - 2. Các thành phần trong mạng máy tính?](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%202.%20components-of-computer-networks.md)
 
-[INE - 3. Các vị trí trong nghành mạng máy tính? ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%203.%20network-job-roles.md)
-  - 3.1 - Kiến trúc sư, kỹ sư và quản trị viên ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 3.2 - Chuyên môn ( :heavy_plus_sign: UPDATED 02/05/2024)
+[INE - 3. Các vị trí trong nghành mạng máy tính?](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%203.%20network-job-roles.md)
+  - 3.1 - Kiến trúc sư, kỹ sư và quản trị viên
+  - 3.2 - Chuyên môn
 
-[INE - 4. Kiến trúc topo ( :heavy_plus_sign: UPDATED 02/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%204.%20network-topology-architectures.md)
-  - 4.1 - Tổng quan kiến trúc mạng ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 4.2 - Kiến trúc 2-Tier và 3-Tier ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 4.3 - Kiến trúc Spine-Leaf ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 4.4 - Kiến trúc WAN ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 4.5 - Kiến trúc SOHO ( :heavy_plus_sign: UPDATED 02/05/2024)
-  - 4.6 - Kiến trúc On-Premise và Cloud-Based ( :heavy_plus_sign: UPDATED 02/05/2024)
+[INE - 4. Kiến trúc topo](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%204.%20network-topology-architectures.md)
+  - 4.1 - Tổng quan kiến trúc mạng
+  - 4.2 - Kiến trúc 2-Tier và 3-Tier
+  - 4.3 - Kiến trúc Spine-Leaf
+  - 4.4 - Kiến trúc WAN
+  - 4.5 - Kiến trúc SOHO
+  - 4.6 - Kiến trúc On-Premise và Cloud-Based
 
-[INE - 5. Power Over Ethernet ( :heavy_plus_sign: UPDATED 12/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%205.%20power-over-ethernet.md)
-  - 5.1 - Khái niệm PoE ( :heavy_plus_sign: UPDATED 12/05/2024)
-  - 5.2 - Lợi ích của việc sử dụng PoE ( :heavy_plus_sign: UPDATED 12/05/2024)
-  - 5.3 - PSE và PD ( :heavy_plus_sign: UPDATED 12/05/2024)
+[INE - 5. Power Over Ethernet](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%205.%20power-over-ethernet.md)
+  - 5.1 - Khái niệm PoE
+  - 5.2 - Lợi ích của việc sử dụng PoE
+  - 5.3 - PSE và PD
 
-[INE - 6. Lịch sử và mục đích của Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%206.%20history-and-purpose-of-ip.md)
-  - 6.1 - Lịch sử phát triển chuyển mạch gói tin ( :heavy_plus_sign: UPDATED 20/05/2024)
-  - 6.2 - Khái niệm chuyển mạch gói ( :heavy_plus_sign: UPDATED 23/05/2024)
-  - 6.3 - Tổng quan về Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)
+[INE - 6. Lịch sử và mục đích của Internet Protocol](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%206.%20history-and-purpose-of-ip.md)
+  - 6.1 - Lịch sử phát triển chuyển mạch gói tin
+  - 6.2 - Khái niệm chuyển mạch gói
+  - 6.3 - Tổng quan về Internet Protocol
 
-[INE - 7. Các trường trong tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 27/05/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%207.%20ipv4-header-fields.md)
-  - 7.1 - Tổng quan thông tin tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 20/05/2024)
-  - 7.2 - Ví dụ tìm vị trí fragment ( :heavy_plus_sign: UPDATED 23/05/2024)
+[INE - 7. Các trường trong tiêu đề IPv4](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%207.%20ipv4-header-fields.md)
+  - 7.1 - Tổng quan thông tin tiêu đề IPv4
+  - 7.2 - Ví dụ tìm vị trí fragment
 
 [INE - 8. Xác định các bit thuộc phần Network ( :heavy_plus_sign: UPDATED 15/07/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%208.%20identifying-the-network-bits.md)
   - 8.1 - Các lớp địa chỉ IPv4 ( :heavy_plus_sign: UPDATED 07/07/2024)
@@ -199,10 +199,15 @@
   - 9.1 - Giới thiệu UDP ( :heavy_plus_sign: UPDATED 18/07/2024)
   - 9.2 - Các cổng ở tầng transport ( :heavy_plus_sign: UPDATED 18/07/2024)
 
-[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 05/07/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%2010.%20overview-of-tcp.md)
-  - 10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 05/08/2024)
-  - 10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 05/08/2024) ( :heavy_plus_sign: UPDATED 05/08/2024)
-  - 10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 05/08/2024)
-  - 10.4 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 05/08/2024)
-  - 10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 05/08/2024)
-  - 10.6 - Tổng quan cơ chế truyền lại ( :heavy_plus_sign: UPDATED 05/08/2024)
+[INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 06/08/2024)](https://github.com/volehuy1998/network-onboard/blob/master/network-onboard/ine%20-%2010.%20overview-of-tcp.md)
+  - 10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 06/08/2024)
+  - 10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 06/08/2024)
+  - 10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 06/08/2024)
+  - 10.4 - Tổng quan về kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)
+      - 10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 06/08/2024)(#ine_10_window_size_n_mss)
+      - 10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)(#ine_10_distinguish_types_of_flow_control)
+  - 10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)
+  - 10.6 - Tổng quan cơ chế truyền lại ( :heavy_plus_sign: UPDATED 06/08/2024)
+      - 10.6.1 - Khái niệm truyền lại gói tin(:heavy_plus_sign: UPDATED 06/08/2024)
+      - 10.6.2 - Truyền lại dựa trên đồng hồ chờ ack ( :heavy_plus_sign: UPDATED 06/08/2024)
+      - 10.6.3 - Truyền lại dựa trên fast retransmit ( :heavy_plus_sign: UPDATED 06/08/2024)

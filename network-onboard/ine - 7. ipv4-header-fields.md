@@ -1,7 +1,7 @@
-[INE - 7. Các trường trong tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 27/05/2024)](#ine_7_ipv4_header_fields)
+[INE - 7. Các trường trong tiêu đề IPv4](#ine_7_ipv4_header_fields)
 
-- [7.1 - Tổng quan thông tin tiêu đề IPv4 ( :heavy_plus_sign: UPDATED 20/05/2024)](#ine_7_header_field_overview)
-- [7.2 - Ví dụ tìm vị trí fragment ( :heavy_plus_sign: UPDATED 23/05/2024)](#ine_7_example_determine_fragment_offset)
+- [7.1 - Tổng quan thông tin tiêu đề IPv4](#ine_7_header_field_overview)
+- [7.2 - Ví dụ tìm vị trí fragment](#ine_7_example_determine_fragment_offset)
 
 # <a name="ine_7_header_field_overview"></a>7.1 - Tổng quan thông tin tiêu đề IPv4
 

@@ -1,14 +1,14 @@
-[INE - 2. Các thành phần trong mạng máy tính? ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_components_of_computer_networks)
+[INE - 2. Các thành phần trong mạng máy tính?](#ine_2_components_of_computer_networks)
 
 :pushpin: Nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: máy khách, máy chủ, cáp đồng trục, dây DSL.
 
-- [2.1 - Máy khách và máy chủ ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_1_client_server)
-- [2.2 - Tài nguyên cục bộ và từ xa ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_2_local_n_remote_resource)
-- [2.3 - Network Interface Card (NIC) ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_3_nic)
-- [2.4 - Switch ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_4_switch)
-- [2.5 - Router ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_5_router)
-- [2.6 - Tường lửa và thiết bị chống xâm nhập ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_6_firewall_n_ips)
-- [2.7 - Wifi Access Point ( :heavy_plus_sign: UPDATED 30/04/2024)](#ine_2_7_wifi_ap)
+- [2.1 - Máy khách và máy chủ](#ine_2_1_client_server)
+- [2.2 - Tài nguyên cục bộ và từ xa](#ine_2_2_local_n_remote_resource)
+- [2.3 - Network Interface Card (NIC)](#ine_2_3_nic)
+- [2.4 - Switch](#ine_2_4_switch)
+- [2.5 - Router](#ine_2_5_router)
+- [2.6 - Tường lửa và thiết bị chống xâm nhập](#ine_2_6_firewall_n_ips)
+- [2.7 - Wifi Access Point](#ine_2_7_wifi_ap)
 
 # <a name="ine_2_1_client_server"></a>2.1 - Máy khách và máy chủ
 

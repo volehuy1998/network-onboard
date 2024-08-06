@@ -1,7 +1,7 @@
-[INE - 3. Các vị trí trong nghành mạng máy tính? ( :heavy_plus_sign: UPDATED 02/05/2024)](#ine_3_network_job_roles)
+[INE - 3. Các vị trí trong nghành mạng máy tính?](#ine_3_network_job_roles)
 
-- [3.1 - Kiến trúc sư, kỹ sư và quản trị viên ( :heavy_plus_sign: UPDATED 02/05/2024)](#ine_3_1_network_job_roles)
-- [3.2 - Chuyên môn ( :heavy_plus_sign: UPDATED 02/05/2024)](#ine_3_2_network_job_specialities)
+- [3.1 - Kiến trúc sư, kỹ sư và quản trị viên](#ine_3_1_network_job_roles)
+- [3.2 - Chuyên môn](#ine_3_2_network_job_specialities)
 
 # <a name="ine_3_1_network_job_roles"></a>3.1 - Kiến trúc sư, kỹ sư và quản trị viên
 
