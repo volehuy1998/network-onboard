@@ -1,8 +1,8 @@
-[INE - 6. Lịch sử và mục đích của Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)](#ine_6_history_n_purpose_of_ip)
+[INE - 6. Lịch sử và mục đích của Internet Protocol](#ine_6_history_n_purpose_of_ip)
 
-- [6.1 - Lịch sử phát triển chuyển mạch gói tin ( :heavy_plus_sign: UPDATED 20/05/2024)](#ine_6_history_of_packet_switching)
-- [6.2 - Khái niệm chuyển mạch gói ( :heavy_plus_sign: UPDATED 23/05/2024)](#ine_6_concept_of_packet_switching)
-- [6.3 - Tổng quan về Internet Protocol ( :heavy_plus_sign: UPDATED 26/05/2024)](#ine_6_overview_of_internet_protocol)
+- [6.1 - Lịch sử phát triển chuyển mạch gói tin](#ine_6_history_of_packet_switching)
+- [6.2 - Khái niệm chuyển mạch gói](#ine_6_concept_of_packet_switching)
+- [6.3 - Tổng quan về Internet Protocol](#ine_6_overview_of_internet_protocol)
 
 # <a name="ine_6_history_of_packet_switching"></a>6.1 - Lịch sử phát triển chuyển mạch gói tin
 

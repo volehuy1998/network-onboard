@@ -1,8 +1,8 @@
-[INE - 5. Power Over Ethernet ( :heavy_plus_sign: UPDATED 12/05/2024)](#ine_5_poe)
+[INE - 5. Power Over Ethernet](#ine_5_poe)
 
-- [5.1 - Khái niệm PoE ( :heavy_plus_sign: UPDATED 12/05/2024)](#ine_5_what_is_poe)
-- [5.2 - Lợi ích của việc sử dụng PoE ( :heavy_plus_sign: UPDATED 12/05/2024)](#ine_5_benefits_of_poe)
-- [5.3 - PSE và PD ( :heavy_plus_sign: UPDATED 12/05/2024)](#ine_5_pse_pd)
+- [5.1 - Khái niệm PoE](#ine_5_what_is_poe)
+- [5.2 - Lợi ích của việc sử dụng PoE](#ine_5_benefits_of_poe)
+- [5.3 - PSE và PD](#ine_5_pse_pd)
 
 # <a name="ine_5_what_is_poe"></a>5.1 - Khái niệm PoE
 

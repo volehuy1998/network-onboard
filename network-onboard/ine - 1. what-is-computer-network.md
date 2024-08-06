@@ -1,4 +1,4 @@
-[INE - 1. Mạng máy tính là gì? ( :heavy_plus_sign: UPDATED 30/03/2024)](#ine_1_what_is_computer_network)
+[INE - 1. Mạng máy tính là gì?](#ine_1_what_is_computer_network)
 
 :pushpin: Nên đọc 2 module cisco trước phần này vì một số khái niệm bị lược bỏ để tránh trùng lặp như: LAN, WAN, internet, Internet.
 
