@@ -3,14 +3,11 @@ INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 06/08/2024)
 - [10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_intro_tcp)
 - [10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_connection_oriented)
 - [10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_psh_n_urg)
-- [10.4 - Tổng quan về kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_flow_control_protocols)
+- [10.4 - Tổng quan kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_flow_control_protocols)
     - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_window_size_n_mss)
     - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_distinguish_types_of_flow_control)
 - [10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_tcp_handshake)
-- [10.6 - Tổng quan cơ chế truyền lại ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_overview_tcp_retransmit)
-    - [10.6.1 - Khái niệm truyền lại gói tin( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_tcp_retransmit_theory)
-    - [10.6.2 - Truyền lại dựa trên đồng hồ chờ ack ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_ack_clocking)
-    - [10.6.3 - Truyền lại dựa trên fast retransmit ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_fast_retransmit)
+- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_congestion_control)
 
 # <a name="ine_10_intro_tcp"></a>10.1 - Giới thiệu TCP
 
@@ -66,7 +63,7 @@ Lấy ví dụ khi chúng ta gõ phím trên ứng dụng notepad của máy tí
 <div style="text-align:center"><img src="../images/ine_49_psh_flag_after_establish_tcp_connection_ex2.png" alt/></div>
 
 
-# <a name="ine_10_flow_control_protocols"></a>10.4 - Tổng quan về kỹ thuật kiểm soát luồng
+# <a name="ine_10_flow_control_protocols"></a>10.4 - Tổng quan kỹ thuật kiểm soát luồng
 
 ## <a name="ine_10_window_size_n_mss"></a>10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS)
 
@@ -93,11 +90,9 @@ Kỹ thuật cửa sổ trượt (sliding window) gồm có 3 loại:
 - `Stop and Wait ARQ` gửi một và nhận một ack, nếu không nhận được ack sẽ gửi lại. Đây là trường hợp WS=1 nên hiệu suất rất kém.
 - `Go Back N ARQ` là trường hợp WS > 1 nhưng về cơ bản gửi lại toàn bộ bắt đầu từ TCP Segment không nhận được ack. Đối với kỹ thuật này có thể nhìn nhận theo hướng khác tức là phía đầu thu chỉ nhận gói tin theo thứ tự.
 - `Selective Repeat ARQ` cũng là trường hợp WS > 1 nhưng khác phục được nhược điểm của Go Back N ARQ vì có sự chọn lọc, tức là chỉ gửi lại TCP Segment nào không nhận được ack.
-- Ba kỹ thuật trên được nằm trong khuôn khổ truyền tin một chiều vì nó mô tả dữ liệu chỉ truyền đi từ A sang B trong khi thực tế có thể từ máy B sang A. Ngày nay chúng ta không sử dụng 3 kỹ thuật trên nữa mà chuyển sang kỹ thuật `High Level Data Link Control HDLC`, kỹ thuật này cũng triển khai dựa trên cơ chế ARQ chạy ở dạng 2 chế độ `Normal response mode (NRM)` và `Asynchronous balanced mode (ABM)`. ABM chính là mode thế giới hiện tại đang chạy.
-
+- Ba kỹ thuật trên được nằm trong khuôn khổ truyền tin một chiều vì nó mô tả dữ liệu chỉ truyền đi từ A sang B trong khi thực tế có thể từ máy B sang A. Ngày nay chúng ta không sử dụng 3 kỹ thuật trên nữa mà chuyển sang kỹ thuật `High Level Data Link Control (HDLC)`, kỹ thuật này cũng triển khai dựa trên cơ chế ARQ chạy ở dạng 2 chế độ `Normal response mode (NRM)` và `Asynchronous balanced mode (ABM)`. ABM chính là mode mà ngày nay chúng ta đang sử dụng.
 
 <div style="text-align:center"><img src="../images/ine_62_compare_all_control_flow.png" alt/></div>
-
 
 # <a name="ine_10_tcp_handshake"></a>10.5 - Tổng quan bắt tay 3 bước
 
@@ -111,23 +106,6 @@ Quy trình ngắt kết nối TCP có sự tham gia của 2 cờ ACK và FIN.
 
 <div style="text-align:center"><img src="../images/ine_58_example_wireshark_fin_ssh.png" alt/></div>
 
-# <a name="ine_10_overview_tcp_retransmit"></a>10.6 - Tổng quan cơ chế truyền lại
-
-## <a name="ine_10_tcp_retransmit_theory"></a>10.6.1 - Khái niệm truyền lại gói tin
-
-<div style="text-align:center"><img src="../images/ine_55_retransmission_basic.png" alt/></div>
-
-Nếu chúng ta không chỉ xem xét một kênh truyền duy nhất mà còn có kênh truyền trải qua nhiều thiết bị mạng trung gian thì chúng ta sẽ nhận ra nhiều loại lỗi ngoài việc rớt gói tin. Có rất nhiều vấn đề phát sinh ở những router trung gian như trùng lặp gói tin, trì hoãn hoặc thậm chí liên quan đến sự sắp xếp thứ tự gói tin. Một giao thức sửa chữa lỗi được thiết kế phải đảm bảo xử lý được hết các loại lỗi này. Khi nghiên cứu sâu vào điều này chúng ta sẽ khám phá ra được cách nó được TCP vật hành.
-
-Phương pháp đơn giản nhất để giải quyết rớt gói tin là truyền lại cho đến khi nào đầu thu nhận được gói tin đó. Những yêu cầu này được sử dụng để xác định đầu thu có nhận được gói tin hay không và gói tin mà nó nhận được có thực sự xuất phát từ người gửi. Để làm được điều này bắt buộc đầu thu phải phản hồi một loại tín hiệu cho đầu phát biết rằng nó đã nhận được dữ liệu, tín hiệu này gọi là `ACK (acknowledgment)`. Muốn gửi gói tin tiếp theo thì đầu phát phải chờ nhận được phản hồi ack. Một số vấn đề xoay quanh ack: 
-- Đầu phát có thể bỏ ra thời gian tối đa là bao lâu để chờ ack?
-- Chuyện gì sẽ xảy ra nếu mất gói ack?
-- Nếu gói tin dữ liệu đã nhận có vấn đề thì sẽ xử lý như thế nào?
-
-Đứng ở khía cạnh đầu phát, thật sự rất khó để phân biệt được giữa hai trường hợp rằng trục trặc khi gửi gói tin dữ liệu đến đầu thu khiến nó không thể ack? Hay đầu thu đã nhận được dữ liệu nhưng gói tin phản hồi ack bị rớt. Câu trả lời là kể từ khi gửi gói tin dữ liệu thì nó sẽ bật một đồng hồ, nếu thời gian chờ kết thúc mà vẫn không nhận được ack thì sẽ phát lại gói tin. Dĩ nhiên ở đầu thu lúc này sẽ gặp trường hợp trùng lặp gói tin vì thế nó phải so sánh `sequence number` vì quy tắc mỗi gói tin được tạo ở đầu phát sẽ có số thứ tự duy nhất cho dù gói tin đó được truyền lần đầu tiên hay truyền lại do sự cố. Với trường hợp gói tin đã nhận mà có vấn đề thì chúng ta sẽ sử dụng một đoạn mã checksum, nếu đầu thu phân tích gói tin mà không có kết quả giống checksum của đầu phát thì cần hủy gói này ngay vì nó đã bị can thiệp.
-
-## <a name="ine_10_ack_clocking"></a>10.6.1 - Truyền lại dựa trên đồng hồ chờ ack
-
-## <a name="ine_10_fast_retransmit"></a>10.6.2 - Truyền lại dựa trên fast retransmit
-
-<div style="text-align:center"><img src="../images/ine_60_tcp_retransmission.png" alt/></div>
+# <a name="ine_10_overview_tcp_retransmit"></a>10.6 - Tổng quan kỹ thuật kiểm soát nghẽn
+ 
+(Sẽ sớm cập nhật!)
