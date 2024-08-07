@@ -7,7 +7,7 @@ INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 06/08/2024)
     - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_window_size_n_mss)
     - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_distinguish_types_of_flow_control)
 - [10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_tcp_handshake)
-- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_congestion_control)
+- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :construction: UPDATED 06/08/2024)](#ine_10_congestion_control)
 
 # <a name="ine_10_intro_tcp"></a>10.1 - Giới thiệu TCP
 
