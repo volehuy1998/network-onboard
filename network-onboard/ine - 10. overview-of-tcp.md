@@ -1,13 +1,13 @@
-INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 06/08/2024)
+INE - 10. Tổng quan TCP ( :arrow_up: UPDATED 25/10/2024)
 
-- [10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_intro_tcp)
-- [10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_connection_oriented)
-- [10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_psh_n_urg)
-- [10.4 - Tổng quan kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_flow_control_protocols)
-    - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_window_size_n_mss)
-    - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_distinguish_types_of_flow_control)
-- [10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_tcp_handshake)
-- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :construction: UPDATED 06/08/2024)](#ine_10_congestion_control)
+- [10.1 - Giới thiệu TCP ( :arrow_up: UPDATED 25/10/2024)](#ine_10_intro_tcp)
+- [10.2 - Khái niệm giao thức hướng kết nối ( :arrow_up: UPDATED 25/10/2024)](#ine_10_connection_oriented)
+- [10.3 - Tổng quan về cờ PSH và URG ( :arrow_up: UPDATED 25/10/2024)](#ine_10_psh_n_urg)
+- [10.4 - Tổng quan kỹ thuật kiểm soát luồng (  :arrow_up: UPDATED 25/10/2024)](#ine_10_flow_control_protocols)
+    - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :arrow_up: UPDATED 25/10/2024)](#ine_10_window_size_n_mss)
+    - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :arrow_up: UPDATED 25/10/2024)](#ine_10_distinguish_types_of_flow_control)
+- [10.5 - Tổng quan bắt tay 3 bước ( :arrow_up: UPDATED 25/10/2024)](#ine_10_tcp_handshake)
+- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :arrow_up: UPDATED 25/10/2024)](#ine_10_congestion_control)
 
 # <a name="ine_10_intro_tcp"></a>10.1 - Giới thiệu TCP
 
@@ -15,13 +15,15 @@ Hiện nay thế giới mạng máy tính sử dụng một mô hình mạng g�
 
 Một nổ lực khác ít chính thức hơn nảy sinh từ hợp đồng của Bộ Quốc phòng Hoa Kỳ ([U.S. Department of Defense](https://www.defense.gov/)). Vào những thập niên 1970, với tư cách là trợ lý giáo sư tại Đại học Standford ở Vương Quốc Anh, [Vint Cerf](https://engineering.stanford.edu/about/heroes/2011-heroes/vint-cerf) cộng tác với các sinh viên ưu tú nhất của mình và kỹ sư người Mỹ tên [Robert Kahn](https://www.internethalloffame.org/inductee/robert-kahn/) (hay Bob Kahn) trực thuộc Cơ quan Chỉ đạo Các Dự án Nghiên cứu Quốc phòng Tiên tiến ([Defense Advanced Research Projects Agency](https://www.darpa.mil/)) của Bộ Quốc phòng Hoa Kỳ cùng nhau tạo ra một chương trình có thể kiểm soát đường truyền Internet hay còn gọi là `Internet Transmission Control Program (TCP)`, đây là cách để xác định làm thế nào gói tin di chuyển trong Internet mà ngày nay trong trường học gọi là Bộ giao thức Internet. Trong những phiên bản đầu tiên của công nghệ này không hề có tên gọi hiện đại như ngày nay `Transmission Control Protocol` và được ghi lại ở tài liệu số [RFC 675](https://datatracker.ietf.org/doc/html/rfc675). Về mặt lịch sử `Transmission Control Protocol` hiện đại và `Internet Protocol` là đều có chung một nguồn gốc hay một phần trong tiêu chuẩn TCP, vào thời điểm đó các nhà khoa học không cố gắng phân biệt hay tách biệt chúng ra khỏi nhau. Ít lâu sau một thành phần trong chương trình này đã được tách ra và đặt tên là `Transmission Control Protocol` được định nghĩa ở tài liệu [RFC 793](https://datatracker.ietf.org/doc/html/rfc793), cái mà trường đại học phổ cập cho chúng ta ngày nay.
 
-<div style="text-align:center"><img src="../images/ine_44_internet_protocol_suite.png" alt/></div>
+<div style="text-align:center"><img src="../images/ine_44_tcp_history_detail.png" alt/></div>
 
 Kể từ giờ trở đi khi nhắc đến `TCP` chúng ta không cần nhớ đến `Internet Transmission Control Program` nữa mà thay vào đó là tập trung vào `Transmission Control Protocol`. Trong `TCP/IP` sẽ có hai phần chính, `Transmission Control Protocol` là thành phần thu thập và tập hợp các gói dữ liệu thì `Internet Protocol` chịu trách nhiệm mô tả đích đến của gói tin. Vậy thì TCP và UDP khác nhau ở điểm nào? Gói tin UDP có thể bị rớt nhưng nó không có cơ chế thông báo và phát lại gói tin. Ví dụ trường hợp rớt gói như định tuyến quá phức tạp, gói vô tình bị hủy bởi tường lửa, gói bị loại bỏ do tắc nghẽn ở gateway. Thêm vào đó nếu kích thước gói quá lớn thì sẽ cần phân mảnh, chính vì điều sẽ tăng xác suất gói tin nguyên bản không thể được nhận bởi đầu thu. Ngược lại, TCP cung cấp cơ chế để đảm bảo người nhận thực sự nhận được gói tin nên có độ tin cậy cao hơn.
 
 Trong những năm 1990 các công ty bắt đầu sử dụng cả hai mô hình OSI và TCP/IP nhưng cuối thập niên đó thì mô hình TCP/IP đã trở thành lựa chọn phổ biến còn OSI bị nhanh chóng đi vào quên lãng. Ở thế kỷ 21, mô hình TCP/IP chiếm ưu thế nhưng một số mô hình mạng độc quyền vẫn tồn tại. Với mô hình OSI, sự phát triển bị ảnh hưởng một phần bởi kim chỉ nam "chuẩn hóa trước rồi lập trình sau", cái mà ngược lại với TCP/IP nên họ đã tiêu tốn nhiều thời gian và rồi không thành công trong cuộc đua chiếm lĩnh thị trường. Trong bài này chúng ta sẽ đọc một số kiến thức cơ bản của TCP/IP bởi vì không một ai trong chúng ta đang sử dụng máy tính triển khai dựa trên mô hình OSI cả, tuy nhiên chúng ta thường sẽ sử dụng các thuật ngữ liên quan đến OSI.
 
 <div style="text-align:center"><img src="../images/ine_52_tcp_ip_real_model.png" alt/></div>
+
+<div style="text-align:center"><img src="../images/ine_63_internet_protocol_suite.png" alt/></div>
 
 # <a name="ine_10_connection_oriented"></a>10.2 - Khái niệm giao thức hướng kết nối
 
@@ -108,4 +110,4 @@ Quy trình ngắt kết nối TCP có sự tham gia của 2 cờ ACK và FIN.
 
 # <a name="ine_10_overview_tcp_retransmit"></a>10.6 - Tổng quan kỹ thuật kiểm soát nghẽn
  
-(Sẽ sớm cập nhật!)
+(Sẽ sớm cập nhật! Kinh nghiệm phát hiện giả mạo IP sẽ liên quan đến kiến thức TCP Handshake, Window Size của TCP Flow Control được đề cập ở phần trên và TCP Congestion Control ở mục này. Hầu hết các cuộc tấn công đều diễn ra trong quá trình đang thỏa thuận, nếu tấn công sau quá trình này sẽ là một thách thức bởi vì rất khó để tạo các ra gói tin giả mạo trùng khớp Sequence Number.)
