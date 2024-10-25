@@ -1,13 +1,13 @@
-INE - 10. Tổng quan TCP ( :heavy_plus_sign: UPDATED 06/08/2024)
+INE - 10. Tổng quan TCP ( :arrow_up: UPDATED 25/10/2024)
 
-- [10.1 - Giới thiệu TCP ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_intro_tcp)
-- [10.2 - Khái niệm giao thức hướng kết nối ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_connection_oriented)
-- [10.3 - Tổng quan về cờ PSH và URG ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_psh_n_urg)
-- [10.4 - Tổng quan kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_flow_control_protocols)
-    - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_window_size_n_mss)
-    - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_distinguish_types_of_flow_control)
-- [10.5 - Tổng quan bắt tay 3 bước ( :heavy_plus_sign: UPDATED 06/08/2024)](#ine_10_tcp_handshake)
-- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :construction: UPDATED 06/08/2024)](#ine_10_congestion_control)
+- [10.1 - Giới thiệu TCP ( :arrow_up: UPDATED 25/10/2024)](#ine_10_intro_tcp)
+- [10.2 - Khái niệm giao thức hướng kết nối ( :arrow_up: UPDATED 25/10/2024)](#ine_10_connection_oriented)
+- [10.3 - Tổng quan về cờ PSH và URG ( :arrow_up: UPDATED 25/10/2024)](#ine_10_psh_n_urg)
+- [10.4 - Tổng quan kỹ thuật kiểm soát luồng (  :arrow_up: UPDATED 25/10/2024)](#ine_10_flow_control_protocols)
+    - [10.4.1 - Tổng quan về Window Size vs Maximum Segment Size (MSS) ( :arrow_up: UPDATED 25/10/2024)](#ine_10_window_size_n_mss)
+    - [10.4.2 - Phân biệt các loại kỹ thuật kiểm soát luồng ( :arrow_up: UPDATED 25/10/2024)](#ine_10_distinguish_types_of_flow_control)
+- [10.5 - Tổng quan bắt tay 3 bước ( :arrow_up: UPDATED 25/10/2024)](#ine_10_tcp_handshake)
+- [10.6 - Tổng quan kỹ thuật kiểm soát nghẽn ( :arrow_up: UPDATED 25/10/2024)](#ine_10_congestion_control)
 
 # <a name="ine_10_intro_tcp"></a>10.1 - Giới thiệu TCP
 
