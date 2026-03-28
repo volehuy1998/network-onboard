@@ -50,6 +50,7 @@ graph LR
     P6 --> P10
     P4 --> P11 --> P12
     P7 --> P13 --> P14
+    P11 --> P14
     P9 --> P13
     P4 --> P15 --> P16
     P15 --> P17
@@ -124,9 +125,9 @@ Khối này đi sâu vào các giao thức mà HAProxy hỗ trợ ở cả hai p
 - Phần 15 - SSL/TLS termination và certificate management *(chưa viết)*
   - Tóm tắt: SSL offloading, cấu hình certificate (`crt`, `ca-file`, `crt-list`, `crt-store`), cipher suites cho TLS 1.2 và 1.3, SNI/ALPN, certificate hot-reload, và kTLS kernel offload.
 - Phần 16 - Mutual TLS, OCSP, CRL, và tự động hóa certificate *(chưa viết)*
-  - Tóm tắt: mTLS với `verify required`, OCSP Stapling auto-update (HAProxy 2.8+), CRL management, và ACME protocol tự động xin/renew certificate (HAProxy 3.2, experimental).
+  - Tóm tắt: mTLS với `verify required`, OCSP Stapling auto-update (HAProxy 2.8+), CRL management, và ACME protocol tự động xin/renew certificate qua HTTP-01 challenge (HAProxy 3.2, yêu cầu `expose-experimental-directives`).
 - Phần 17 - HTTP/2, HTTP/3, WebSocket và gRPC *(chưa viết)*
-  - Tóm tắt: HTTP/2 multiplexing ở frontend và backend, HTTP/3 trên QUIC transport (`quic-bind`), WebSocket upgrade mechanism, gRPC bidirectional streaming, và trade-off giữa ba phiên bản HTTP.
+  - Tóm tắt: HTTP/2 multiplexing ở frontend và backend, HTTP/3 trên QUIC transport (`bind quic4@`/`quic6@`, Alt-Svc header), WebSocket upgrade mechanism, gRPC bidirectional streaming, và trade-off giữa ba phiên bản HTTP.
 - Phần 18 - Proxy Protocol *(chưa viết)*
   - Tóm tắt: Vấn đề mất IP client sau proxy, Proxy Protocol v1 (text) và v2 (binary), directives `send-proxy`/`accept-proxy`, TLV extensions, và tích hợp với Nginx và Apache.
 - Phần 19 - Authentication: HTTP Basic Auth và JWT validation *(chưa viết)*
@@ -139,9 +140,9 @@ Khối này trình bày các tính năng mở rộng khả năng của HAProxy v
 - Phần 20 - DNS resolvers và dynamic backends *(chưa viết)*
   - Tóm tắt: Section `resolvers`, `server-template` với DNS SRV records, `init-addr` cho khởi động trước DNS, dynamic server qua Runtime API, và tích hợp Consul/Kubernetes DNS.
 - Phần 21 - HTTP cache và compression *(chưa viết)*
-  - Tóm tắt: HTTP cache tích hợp (section `cache`, `cache-use`, `cache-store`), cache tuning, HTTP compression với filter architecture, và bandwidth limiting (HAProxy 2.7+).
+  - Tóm tắt: HTTP cache tích hợp (section `cache`, `cache-use`, `cache-store`), cache tuning, HTTP compression với filter architecture, và bandwidth limiting qua `filter bwlim-in`/`bwlim-out` (HAProxy 2.7+).
 - Phần 22 - Lua scripting và mở rộng HAProxy *(chưa viết)*
-  - Tóm tắt: Bốn điểm mở rộng Lua (actions, fetches, converters, services), coroutine model, ví dụ thực tế (custom health check, dynamic routing), và SPOE cho tác vụ nặng.
+  - Tóm tắt: Bốn điểm mở rộng Lua (actions, fetches, converters, services), coroutine model, ví dụ thực tế (custom health check, dynamic routing), SPOE/SPOP (`mode spop`, HAProxy 3.1+) cho tác vụ nặng, và traffic mirroring.
 - Phần 23 - Runtime API và quản trị động *(chưa viết)*
   - Tóm tắt: Stats socket với permission levels, các lệnh quản trị (`show stat`, `show info`, `set server`), cập nhật map/ACL tại runtime, và Master CLI quản lý workers.
 - Phần 24 - Logging, monitoring, và observability *(chưa viết)*
@@ -176,6 +177,6 @@ Toàn bộ series sử dụng các quy ước sau trong code blocks và ví dụ
 | `[backend-node]$` | Lệnh chạy trên backend server |
 | **Boldface** trong command syntax | Lệnh hoặc keyword gõ nguyên văn |
 | *Italic* trong command syntax | Tham số thay thế bằng giá trị thực tế |
-| `[x]` trong command syntax | Thành phần tùy chọn (có thể bỏ qua) |
+| `[x]` trong command syntax | Thành phần tùy chọn, có thể bỏ qua |
 | `{x}` trong command syntax | Thành phần bắt buộc |
 | `x \| y` trong command syntax | Chọn một trong các lựa chọn |
