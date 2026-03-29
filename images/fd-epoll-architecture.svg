@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="a-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="a-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C05621"/>
+    </marker>
+    <marker id="a-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="620" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-3: Kiến trúc epoll</text>
+  <text x="460" y="52" text-anchor="middle" font-size="11" fill="#718096">Nguồn: TLPI Chapter 63, epoll(7) man page</text>
+
+  <!-- ============ USER SPACE ============ -->
+  <rect x="15" y="64" width="890" height="148" fill="#EBF8FF" stroke="#90CDF4" rx="6"/>
+  <text x="30" y="86" font-size="12" font-weight="bold" fill="#2B6CB0">USER SPACE — HAProxy Process</text>
+
+  <!-- Event loop box — height increased from 95 to 102 -->
+  <rect x="30" y="98" width="265" height="102" fill="#fff" stroke="#2B6CB0" rx="4"/>
+  <text x="162" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Event Loop (main thread)</text>
+  <text x="44" y="138" font-size="10" fill="#4A5568" font-family="Consolas, monospace">while (1) &#123;</text>
+  <text x="44" y="154" font-size="10" fill="#2B6CB0" font-family="Consolas, monospace">  n = epoll_wait(epfd,...);</text>
+  <text x="44" y="170" font-size="10" fill="#4A5568" font-family="Consolas, monospace">  for (i=0; i&lt;n; i++)</text>
+  <text x="44" y="186" font-size="10" fill="#4A5568" font-family="Consolas, monospace">    handle(evlist[i].fd);</text>
+
+  <!-- Registration phase — height increased to 102 -->
+  <rect x="320" y="98" width="270" height="102" fill="#fff" stroke="#2B6CB0" rx="4"/>
+  <text x="455" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Đăng ký (chỉ 1 lần/FD)</text>
+  <text x="334" y="138" font-size="10" fill="#4A5568" font-family="Consolas, monospace">epoll_ctl(epfd,</text>
+  <text x="334" y="154" font-size="10" fill="#2B6CB0" font-family="Consolas, monospace">  EPOLL_CTL_ADD,</text>
+  <text x="334" y="170" font-size="10" fill="#4A5568" font-family="Consolas, monospace">  client_fd, &amp;ev);</text>
+  <text x="334" y="186" font-size="9" fill="#718096">// Kernel lưu vĩnh viễn</text>
+
+  <!-- Result processing — height increased to 102 -->
+  <rect x="615" y="98" width="280" height="102" fill="#fff" stroke="#2B6CB0" rx="4"/>
+  <text x="755" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Kết quả: chỉ FD sẵn sàng</text>
+  <text x="629" y="140" font-size="10" fill="#4A5568">epoll_wait() trả về:</text>
+  <text x="629" y="158" font-size="10" fill="#2B6CB0">evlist[0].fd = 7  (client A)</text>
+  <text x="629" y="176" font-size="10" fill="#2B6CB0">evlist[1].fd = 42 (client X)</text>
+  <text x="629" y="192" font-size="9" fill="#718096">Chỉ 2/10.000 FD — hiệu suất O(ready)</text>
+
+  <!-- ============ KERNEL SPACE ============ -->
+  <rect x="15" y="224" width="890" height="320" fill="#FFFFF0" stroke="#ECC94B" rx="6"/>
+  <text x="30" y="246" font-size="12" font-weight="bold" fill="#B7791F">KERNEL SPACE</text>
+
+  <!-- epoll instance -->
+  <rect x="300" y="258" width="320" height="36" fill="#FEFCBF" stroke="#D69E2E" rx="4"/>
+  <text x="460" y="280" text-anchor="middle" font-size="12" font-weight="bold" fill="#B7791F">epoll instance (epfd = 5)</text>
+
+  <!-- Interest List -->
+  <rect x="30" y="312" width="270" height="220" fill="#fff" stroke="#D69E2E" rx="4"/>
+  <text x="165" y="334" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">Interest List</text>
+  <text x="165" y="352" text-anchor="middle" font-size="9" fill="#718096">(red-black tree, lưu vĩnh viễn)</text>
+
+  <!-- FD items: rect height=28, text at rect_y+18 -->
+  <rect x="44" y="364" width="244" height="28" fill="#FEFCBF" stroke="#ECC94B" rx="2"/>
+  <text x="56" y="382" font-size="10" fill="#4A5568">FD 3 (listen:443) — EPOLLIN</text>
+
+  <rect x="44" y="396" width="244" height="28" fill="#FEFCBF" stroke="#ECC94B" rx="2"/>
+  <text x="56" y="414" font-size="10" fill="#4A5568">FD 7 (client A) — EPOLLIN|ET</text>
+
+  <rect x="44" y="428" width="244" height="28" fill="#FEFCBF" stroke="#ECC94B" rx="2"/>
+  <text x="56" y="446" font-size="10" fill="#4A5568">FD 8 (backend A) — EPOLLOUT</text>
+
+  <text x="165" y="474" text-anchor="middle" font-size="10" fill="#718096">... 9.997 FD khác ...</text>
+
+  <rect x="44" y="486" width="244" height="28" fill="#FEFCBF" stroke="#ECC94B" rx="2"/>
+  <text x="56" y="504" font-size="10" fill="#4A5568">FD 20003 (client N) — EPOLLIN</text>
+
+  <!-- Ready List -->
+  <rect x="330" y="312" width="270" height="220" fill="#fff" stroke="#C05621" rx="4"/>
+  <text x="465" y="334" text-anchor="middle" font-size="11" font-weight="bold" fill="#C05621">Ready List</text>
+  <text x="465" y="352" text-anchor="middle" font-size="9" fill="#718096">(linked list, kernel tự động thêm)</text>
+
+  <rect x="344" y="364" width="244" height="28" fill="#FEEBC8" stroke="#ED8936" rx="2"/>
+  <text x="356" y="382" font-size="10" font-weight="bold" fill="#C05621">FD 7 (client A) — data ready</text>
+
+  <rect x="344" y="396" width="244" height="28" fill="#FEEBC8" stroke="#ED8936" rx="2"/>
+  <text x="356" y="414" font-size="10" font-weight="bold" fill="#C05621">FD 42 (client X) — data ready</text>
+
+  <rect x="344" y="438" width="244" height="82" fill="#FFF5F5" stroke="#FC8181" rx="4" stroke-dasharray="4,2"/>
+  <text x="466" y="460" text-anchor="middle" font-size="10" fill="#C53030">Chỉ 2 FD trong ready list</text>
+  <text x="466" y="478" text-anchor="middle" font-size="10" fill="#C53030">dù đang giám sát 10.000 FD</text>
+  <text x="466" y="498" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">Hiệu suất O(ready), KHÔNG O(N)</text>
+
+  <!-- Callback mechanism -->
+  <rect x="630" y="312" width="265" height="220" fill="#F0FFF4" stroke="#48BB78" rx="4"/>
+  <text x="762" y="334" text-anchor="middle" font-size="11" font-weight="bold" fill="#276749">Kernel Callback</text>
+  <text x="762" y="352" text-anchor="middle" font-size="9" fill="#718096">(ep_poll_callback)</text>
+
+  <text x="644" y="376" font-size="10" fill="#276749">1. NIC nhận packet</text>
+  <text x="644" y="396" font-size="10" fill="#276749">2. Driver kích hoạt softirq</text>
+  <text x="644" y="416" font-size="10" fill="#276749">3. TCP stack xử lý</text>
+  <text x="644" y="436" font-size="10" fill="#276749">4. Dữ liệu vào socket buffer</text>
+  <text x="644" y="462" font-size="10" font-weight="bold" fill="#276749">5. Callback tự động</text>
+  <text x="657" y="480" font-size="10" font-weight="bold" fill="#276749">thêm FD vào ready list</text>
+
+  <!-- Arrows -->
+  <line x1="400" y1="294" x2="230" y2="312" stroke="#D69E2E" stroke-width="1.5" marker-end="url(#a1)"/>
+  <text x="280" y="300" font-size="9" fill="#B7791F">epoll_ctl(ADD)</text>
+
+  <line x1="630" y1="478" x2="590" y2="404" stroke="#48BB78" stroke-width="2" marker-end="url(#a-green)"/>
+  <text x="598" y="450" font-size="9" fill="#276749">callback</text>
+
+  <line x1="465" y1="312" x2="465" y2="294" stroke="#C05621" stroke-width="1.5" marker-end="url(#a-orange)"/>
+  <text x="475" y="306" font-size="9" fill="#C05621">epoll_wait()</text>
+
+  <line x1="455" y1="200" x2="445" y2="256" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#a-blue)"/>
+
+  <!-- ============ LEGEND ============ -->
+  <rect x="15" y="554" width="890" height="58" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="30" y="576" font-size="11" font-weight="bold" fill="#2D3748">So sánh hiệu suất:</text>
+
+  <rect x="30" y="588" width="12" height="12" fill="#FFF5F5" stroke="#FC8181" rx="2"/>
+  <text x="48" y="598" font-size="10" fill="#4A5568">select/poll: mỗi lần gọi phải truyền N FD, kernel quét toàn bộ — O(N)</text>
+
+  <rect x="470" y="588" width="12" height="12" fill="#F0FFF4" stroke="#48BB78" rx="2"/>
+  <text x="488" y="598" font-size="10" fill="#4A5568">epoll: đăng ký 1 lần, callback tự động, chỉ trả về FD sẵn sàng — O(ready)</text>
+</svg>

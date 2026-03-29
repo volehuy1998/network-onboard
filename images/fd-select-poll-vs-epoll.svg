@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 600" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="920" height="600" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-4: So sánh select(), poll() và epoll</text>
+  <text x="460" y="52" text-anchor="middle" font-size="11" fill="#718096">Dữ liệu benchmark: TLPI Table 63-9 (Linux 2.6.25, 100.000 iterations, 1 FD ready)</text>
+
+  <!-- ============ THREE COLUMNS ============ -->
+
+  <!-- COLUMN 1: select() -->
+  <rect x="15" y="66" width="290" height="320" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5" rx="6"/>
+  <text x="160" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#C53030">select()</text>
+  <text x="160" y="106" text-anchor="middle" font-size="10" fill="#718096">4.2BSD, 1983</text>
+
+  <text x="30" y="128" font-size="10" font-weight="bold" fill="#C53030">Cơ chế:</text>
+  <text x="30" y="146" font-size="10" fill="#4A5568">1. Tạo fd_set bitmap</text>
+  <text x="30" y="162" font-size="10" fill="#4A5568">2. Truyền TOÀN BỘ cho kernel</text>
+  <text x="30" y="178" font-size="10" fill="#4A5568">3. Kernel quét N FD</text>
+  <text x="30" y="194" font-size="10" fill="#4A5568">4. Trả về, app quét lại N FD</text>
+  <text x="30" y="210" font-size="10" fill="#E53E3E">5. Khởi tạo lại fd_set!</text>
+
+  <!-- Limit box: height increased from 56 to 64 for bottom padding -->
+  <rect x="27" y="224" width="266" height="64" fill="#FED7D7" stroke="#FC8181" rx="3"/>
+  <text x="39" y="244" font-size="10" font-weight="bold" fill="#9B2C2C">Giới hạn:</text>
+  <text x="39" y="262" font-size="10" fill="#C53030">FD_SETSIZE = 1024 (cố định)</text>
+  <text x="39" y="278" font-size="10" fill="#C53030">Không thể giám sát FD &gt; 1023</text>
+
+  <!-- Performance box: height increased from 68 to 80, texts spaced 18px -->
+  <rect x="27" y="296" width="266" height="86" fill="#fff" stroke="#FC8181" rx="3"/>
+  <text x="39" y="316" font-size="10" font-weight="bold" fill="#9B2C2C">Hiệu suất: O(N)</text>
+  <text x="39" y="334" font-size="10" fill="#4A5568">N=10:       0.73s</text>
+  <text x="39" y="352" font-size="10" fill="#4A5568">N=1.000:    35s</text>
+  <text x="39" y="370" font-size="10" font-weight="bold" fill="#C53030">N=10.000:  930s</text>
+
+  <!-- COLUMN 2: poll() -->
+  <rect x="315" y="66" width="290" height="320" fill="#FFFFF0" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="460" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#B7791F">poll()</text>
+  <text x="460" y="106" text-anchor="middle" font-size="10" fill="#718096">System V</text>
+
+  <text x="330" y="128" font-size="10" font-weight="bold" fill="#B7791F">Cơ chế:</text>
+  <text x="330" y="146" font-size="10" fill="#4A5568">1. Tạo mảng pollfd[]</text>
+  <text x="330" y="162" font-size="10" fill="#4A5568">2. Truyền TOÀN BỘ cho kernel</text>
+  <text x="330" y="178" font-size="10" fill="#4A5568">3. Kernel quét N FD</text>
+  <text x="330" y="194" font-size="10" fill="#4A5568">4. Trả về, app quét lại N FD</text>
+  <text x="330" y="210" font-size="10" fill="#2F855A">5. Không cần khởi tạo lại</text>
+
+  <rect x="327" y="224" width="266" height="64" fill="#FEFCBF" stroke="#ECC94B" rx="3"/>
+  <text x="339" y="244" font-size="10" font-weight="bold" fill="#B7791F">Cải tiến so với select():</text>
+  <text x="339" y="262" font-size="10" fill="#4A5568">Không giới hạn số FD</text>
+  <text x="339" y="278" font-size="10" fill="#4A5568">Tách events (input) và revents (output)</text>
+
+  <rect x="327" y="296" width="266" height="86" fill="#fff" stroke="#ECC94B" rx="3"/>
+  <text x="339" y="316" font-size="10" font-weight="bold" fill="#B7791F">Hiệu suất: VẪN O(N)</text>
+  <text x="339" y="334" font-size="10" fill="#4A5568">N=10:       0.61s</text>
+  <text x="339" y="352" font-size="10" fill="#4A5568">N=1.000:    35s</text>
+  <text x="339" y="370" font-size="10" font-weight="bold" fill="#B7791F">N=10.000:  990s</text>
+
+  <!-- COLUMN 3: epoll -->
+  <rect x="615" y="66" width="290" height="320" fill="#F0FFF4" stroke="#2F855A" stroke-width="1.5" rx="6"/>
+  <text x="760" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#276749">epoll</text>
+  <text x="760" y="106" text-anchor="middle" font-size="10" fill="#718096">Linux 2.6, 2004</text>
+
+  <text x="630" y="128" font-size="10" font-weight="bold" fill="#276749">Cơ chế:</text>
+  <text x="630" y="146" font-size="10" fill="#4A5568">1. epoll_ctl(ADD) — 1 lần</text>
+  <text x="630" y="162" font-size="10" fill="#4A5568">2. Kernel lưu interest list</text>
+  <text x="630" y="178" font-size="10" fill="#2F855A">3. Callback tự động khi có I/O</text>
+  <text x="630" y="194" font-size="10" fill="#2F855A">4. epoll_wait() chỉ trả về</text>
+  <text x="630" y="210" font-size="10" fill="#2F855A">   FD ĐÃ SẴN SÀNG</text>
+
+  <rect x="627" y="224" width="266" height="64" fill="#C6F6D5" stroke="#68D391" rx="3"/>
+  <text x="639" y="244" font-size="10" font-weight="bold" fill="#22543D">Ưu điểm:</text>
+  <text x="639" y="262" font-size="10" fill="#276749">Không copy FD list mỗi lần gọi</text>
+  <text x="639" y="278" font-size="10" fill="#276749">Kernel callback, không quét toàn bộ</text>
+
+  <rect x="627" y="296" width="266" height="86" fill="#fff" stroke="#68D391" rx="3"/>
+  <text x="639" y="316" font-size="10" font-weight="bold" fill="#22543D">Hiệu suất: O(ready)</text>
+  <text x="639" y="334" font-size="10" fill="#4A5568">N=10:       0.41s</text>
+  <text x="639" y="352" font-size="10" fill="#4A5568">N=1.000:    0.53s</text>
+  <text x="639" y="370" font-size="10" font-weight="bold" fill="#22543D">N=10.000:  0.66s</text>
+
+  <!-- ============ VISUAL COMPARISON BAR CHART ============ -->
+  <rect x="15" y="400" width="890" height="190" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="460" y="424" text-anchor="middle" font-size="12" font-weight="bold" fill="#2D3748">Benchmark: CPU time khi N = 10.000 FD (100.000 iterations)</text>
+
+  <!-- Scale labels -->
+  <text x="130" y="454" text-anchor="end" font-size="10" fill="#718096">select():</text>
+  <text x="130" y="488" text-anchor="end" font-size="10" fill="#718096">poll():</text>
+  <text x="130" y="526" text-anchor="end" font-size="10" fill="#718096">epoll:</text>
+
+  <!-- Bars: rect height=26, text centered vertically -->
+  <!-- select: 930s — scale: max 990s ≈ 720px -->
+  <rect x="140" y="440" width="676" height="26" fill="#FC8181" rx="3"/>
+  <text x="780" y="458" font-size="10" font-weight="bold" fill="#fff">930s</text>
+
+  <!-- poll: 990s -->
+  <rect x="140" y="474" width="720" height="26" fill="#ECC94B" rx="3"/>
+  <text x="824" y="492" font-size="10" font-weight="bold" fill="#fff">990s</text>
+
+  <!-- epoll: 0.66s (tiny bar + label outside) -->
+  <rect x="140" y="508" width="6" height="26" fill="#48BB78" rx="1"/>
+  <rect x="154" y="508" width="76" height="26" fill="#C6F6D5" stroke="#48BB78" rx="3"/>
+  <text x="164" y="526" font-size="10" font-weight="bold" fill="#22543D">0.66s</text>
+
+  <!-- Annotation -->
+  <text x="460" y="556" text-anchor="middle" font-size="11" font-weight="bold" fill="#C53030">select/poll chậm hơn epoll khoảng 1.400 lần tại N = 10.000</text>
+  <text x="460" y="574" text-anchor="middle" font-size="10" fill="#718096">Đây là lý do HAProxy, Nginx, Redis, Node.js đều sử dụng epoll trên Linux</text>
+</svg>

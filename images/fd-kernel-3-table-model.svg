@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 600" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="600" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="460" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-1: Mô hình 3 bảng của kernel (Three-Table Model)</text>
+  <text x="460" y="54" text-anchor="middle" font-size="11" fill="#718096">Nguồn: The Linux Programming Interface, Section 5.4 (Michael Kerrisk)</text>
+
+  <!-- ======= PROCESS A: Per-process FD Table ======= -->
+  <rect x="20" y="70" width="240" height="254" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="140" y="92" text-anchor="middle" font-size="12" font-weight="bold" fill="#2B6CB0">Process A (PID 1000)</text>
+  <text x="140" y="110" text-anchor="middle" font-size="10" fill="#4A5568">Per-process FD Table</text>
+
+  <!-- FD rows: rect height=28, text at rect_y+18 — ensures 8px top, 7px bottom -->
+  <rect x="32" y="120" width="216" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="44" y="138" font-size="10" fill="#4A5568">FD 0  stdin</text>
+
+  <rect x="32" y="152" width="216" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="44" y="170" font-size="10" fill="#4A5568">FD 1  stdout</text>
+
+  <rect x="32" y="184" width="216" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="44" y="202" font-size="10" fill="#4A5568">FD 2  stderr</text>
+
+  <rect x="32" y="216" width="216" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="234" font-size="10" font-weight="bold" fill="#2B6CB0">FD 3  flags: 0</text>
+
+  <rect x="32" y="248" width="216" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="266" font-size="10" font-weight="bold" fill="#2B6CB0">FD 4  flags: CLOEXEC</text>
+
+  <rect x="32" y="280" width="216" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="298" font-size="10" font-weight="bold" fill="#2B6CB0">FD 5  flags: 0</text>
+
+  <!-- ======= PROCESS B: Per-process FD Table ======= -->
+  <rect x="20" y="342" width="240" height="208" fill="#F0FFF4" stroke="#2F855A" stroke-width="1.5" rx="6"/>
+  <text x="140" y="364" text-anchor="middle" font-size="12" font-weight="bold" fill="#2F855A">Process B (PID 2000)</text>
+  <text x="140" y="382" text-anchor="middle" font-size="10" fill="#4A5568">Per-process FD Table</text>
+  <text x="140" y="398" text-anchor="middle" font-size="9" fill="#718096">(sau fork() từ Process A)</text>
+
+  <rect x="32" y="410" width="216" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="44" y="428" font-size="10" fill="#4A5568">FD 0  stdin</text>
+
+  <rect x="32" y="442" width="216" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="44" y="460" font-size="10" fill="#4A5568">FD 1  stdout</text>
+
+  <rect x="32" y="474" width="216" height="28" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="492" font-size="10" font-weight="bold" fill="#2F855A">FD 3  flags: 0</text>
+
+  <rect x="32" y="506" width="216" height="28" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="524" font-size="10" font-weight="bold" fill="#2F855A">FD 5  flags: 0</text>
+
+  <!-- ======= OPEN FILE TABLE (system-wide) ======= -->
+  <rect x="340" y="70" width="240" height="308" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="460" y="92" text-anchor="middle" font-size="12" font-weight="bold" fill="#B7791F">Open File Table</text>
+  <text x="460" y="110" text-anchor="middle" font-size="10" fill="#4A5568">(toàn hệ thống)</text>
+
+  <!-- OFD boxes: height=62, texts at +19, +35, +51 — top_pad=9, bottom_pad=62-(51+3)=8 -->
+  <rect x="352" y="122" width="216" height="62" fill="#fff" stroke="#ECC94B" rx="3"/>
+  <text x="364" y="141" font-size="10" font-weight="bold" fill="#B7791F">OFD #201</text>
+  <text x="364" y="157" font-size="10" fill="#4A5568">offset: 0 | O_RDONLY</text>
+  <text x="364" y="173" font-size="9" fill="#718096">refcount: 2 (A:FD3 + B:FD3)</text>
+
+  <rect x="352" y="192" width="216" height="62" fill="#fff" stroke="#ECC94B" rx="3"/>
+  <text x="364" y="211" font-size="10" font-weight="bold" fill="#B7791F">OFD #202</text>
+  <text x="364" y="227" font-size="10" fill="#4A5568">offset: 500 | O_RDWR</text>
+  <text x="364" y="243" font-size="9" fill="#718096">refcount: 1 (A:FD4)</text>
+
+  <rect x="352" y="262" width="216" height="62" fill="#fff" stroke="#ECC94B" rx="3"/>
+  <text x="364" y="281" font-size="10" font-weight="bold" fill="#B7791F">OFD #203</text>
+  <text x="364" y="297" font-size="10" fill="#4A5568">offset: 0 | O_RDONLY</text>
+  <text x="364" y="313" font-size="9" fill="#718096">refcount: 2 (A:FD5 + B:FD5)</text>
+
+  <rect x="352" y="332" width="216" height="28" fill="#FFF5F5" stroke="#E53E3E" rx="3" stroke-dasharray="4,2"/>
+  <text x="460" y="350" text-anchor="middle" font-size="9" fill="#E53E3E">OFD đã giải phóng (refcount=0)</text>
+
+  <!-- ======= I-NODE TABLE ======= -->
+  <rect x="660" y="70" width="240" height="260" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="780" y="92" text-anchor="middle" font-size="12" font-weight="bold" fill="#6B46C1">i-node Table</text>
+  <text x="780" y="110" text-anchor="middle" font-size="10" fill="#4A5568">(filesystem)</text>
+
+  <!-- i-node boxes: height=80, texts at +19, +35, +51, +67 — bottom_pad=80-(67+3)=10 -->
+  <rect x="672" y="122" width="216" height="80" fill="#fff" stroke="#D6BCFA" rx="3"/>
+  <text x="684" y="141" font-size="10" font-weight="bold" fill="#6B46C1">i-node 45678</text>
+  <text x="684" y="157" font-size="10" fill="#4A5568">/etc/hostname</text>
+  <text x="684" y="173" font-size="10" fill="#718096">type: regular file</text>
+  <text x="684" y="189" font-size="10" fill="#718096">perms: 644 | size: 12B</text>
+
+  <rect x="672" y="214" width="216" height="80" fill="#fff" stroke="#D6BCFA" rx="3"/>
+  <text x="684" y="233" font-size="10" font-weight="bold" fill="#6B46C1">i-node 89012</text>
+  <text x="684" y="249" font-size="10" fill="#4A5568">socket:[89012]</text>
+  <text x="684" y="265" font-size="10" fill="#718096">type: socket (TCP)</text>
+  <text x="684" y="281" font-size="10" fill="#718096">protocol: IPPROTO_TCP</text>
+
+  <!-- ======= ARROWS: Process A FD -> OFD ======= -->
+  <line x1="248" y1="234" x2="349" y2="153" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="248" y1="266" x2="349" y2="223" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="248" y1="298" x2="349" y2="293" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- ======= ARROWS: Process B FD -> OFD ======= -->
+  <line x1="248" y1="492" x2="349" y2="160" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arrow-teal)" stroke-dasharray="6,3"/>
+  <line x1="248" y1="524" x2="349" y2="300" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arrow-teal)" stroke-dasharray="6,3"/>
+
+  <!-- ======= ARROWS: OFD -> i-node ======= -->
+  <line x1="568" y1="153" x2="669" y2="160" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="568" y1="223" x2="669" y2="252" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="568" y1="293" x2="669" y2="170" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ======= ANNOTATIONS ======= -->
+  <text x="8" y="336" font-size="10" fill="#718096" font-style="italic">fork()</text>
+  <line x1="140" y1="324" x2="140" y2="340" stroke="#718096" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- Shared OFD annotation -->
+  <rect x="340" y="400" width="240" height="64" fill="#FFF5F5" stroke="#FC8181" rx="4" stroke-dasharray="4,2"/>
+  <text x="460" y="422" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">Chia sẻ offset!</text>
+  <text x="354" y="440" font-size="9" fill="#E53E3E">A:FD3 và B:FD3 cùng trỏ đến OFD#201</text>
+  <text x="354" y="456" font-size="9" fill="#E53E3E">Đọc/ghi sẽ thay đổi offset chung</text>
+
+  <!-- Same i-node annotation -->
+  <rect x="660" y="310" width="240" height="46" fill="#FEFCBF" stroke="#D69E2E" rx="4" stroke-dasharray="4,2"/>
+  <text x="780" y="330" text-anchor="middle" font-size="10" font-weight="bold" fill="#B7791F">Cùng i-node, khác OFD</text>
+  <text x="780" y="348" text-anchor="middle" font-size="9" fill="#B7791F">OFD#201 và #203 cùng trỏ i-node 45678</text>
+
+  <!-- Legend -->
+  <rect x="20" y="556" width="880" height="34" fill="#F7FAFC" stroke="#E2E8F0" rx="4"/>
+  <line x1="35" y1="576" x2="65" y2="576" stroke="#2B6CB0" stroke-width="1.5"/>
+  <text x="72" y="580" font-size="9" fill="#4A5568">Process A FD</text>
+  <line x1="185" y1="576" x2="215" y2="576" stroke="#2F855A" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="222" y="580" font-size="9" fill="#4A5568">Process B FD (chia sẻ)</text>
+  <line x1="375" y1="576" x2="405" y2="576" stroke="#B7791F" stroke-width="1.5"/>
+  <text x="412" y="580" font-size="9" fill="#4A5568">OFD trỏ đến i-node</text>
+  <rect x="555" y="570" width="12" height="12" fill="#FFF5F5" stroke="#E53E3E" rx="2" stroke-dasharray="3,1"/>
+  <text x="574" y="580" font-size="9" fill="#4A5568">Cảnh báo: side effect chia sẻ offset</text>
+</svg>
