@@ -99,6 +99,45 @@ Khi BẮT ĐẦU session mới:
 5. Thông báo cho user: "Tôi đã đọc context. Session trước [tóm tắt]. Pending: [danh sách]."
 ```
 
+### Rule 6: Quality Gate — Pre-flight Checklist (BẮT BUỘC)
+
+> Nguồn gốc: `.claude-skills/quality-gate/SKILL.md` — tích hợp trực tiếp vào đây để enforcement.
+> Lý do: skill nằm trong repo nhưng ngoài danh sách registered skills → không bao giờ được trigger tự động.
+> Bài học: session trước đã viết section 1.10 (close-on-exec) mà bỏ qua quality-gate hoàn toàn.
+
+**Checklist B — TRƯỚC KHI viết/sửa file .md (BẮT BUỘC):**
+```
+□ 1. Kích hoạt professor-style SKILL → nắm 6 criteria (2.1-2.6)
+□ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules
+□ 3. Xác định file đang sửa
+□ 4. Tra memory/file-dependency-map.md → liệt kê related files
+□ 5. Đọc related files để biết content hiện tại
+□ 6. BẮT ĐẦU viết/sửa (KHÔNG viết trước bước 1-5)
+```
+
+**Checklist C — TRƯỚC KHI commit (BẮT BUỘC):**
+```
+□ 1. Fact-check: liệt kê MỌI technical claims → verify từng claim
+□ 2. URL check: liệt kê MỌI URLs → verify bằng web-fetcher hoặc curl
+□ 3. Cross-file sync: tra dependency map → kiểm tra related files
+□ 4. Version annotation: nếu có cross-version content → thêm callout + update tracker
+□ 5. Git workflow skill: đọc trước khi commit
+□ 6. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
+```
+
+**Checklist E — Khi thêm Part mới (BẮT BUỘC):**
+```
+□ 1. Chạy Checklist B
+□ 2. Tạo file theo convention: X.0 - <name>.md
+□ 3. Include header block + learning objectives theo document-design
+□ 4. Cập nhật README.md (TOC, dependency graph)
+□ 5. Cập nhật memory/haproxy-series-state.md
+□ 6. Cập nhật memory/file-dependency-map.md
+□ 7. Chạy Checklist C
+```
+
+**Nguyên tắc:** Checklist không phải bureaucracy — giống pre-flight check phi công. Overhead 2-3 phút. Chi phí lỗi đồng bộ: phải sửa lại session sau, tốn thêm commit, có thể bỏ sót.
+
 ## Current State
 
 | Key | Value |
@@ -121,6 +160,7 @@ Khi BẮT ĐẦU session mới:
 | web-fetcher | MỌI URL cần fetch hoặc verify |
 | git-workflow | MỌI thao tác git: commit, push, branch, PR |
 | flow-graph | Sequence diagram, protocol flow, handshake diagram |
+| quality-gate | MỌI thao tác viết/sửa/commit — pre-flight checklist (Rule 6 ở trên) |
 
 ## Preferences
 
