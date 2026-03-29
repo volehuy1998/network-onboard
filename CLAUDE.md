@@ -105,14 +105,16 @@ Khi BẮT ĐẦU session mới:
 > Lý do: skill nằm trong repo nhưng ngoài danh sách registered skills → không bao giờ được trigger tự động.
 > Bài học: session trước đã viết section 1.10 (close-on-exec) mà bỏ qua quality-gate hoàn toàn.
 
-**Checklist B — TRƯỚC KHI viết/sửa file .md (BẮT BUỘC):**
+**Checklist B — TRƯỚC KHI viết/sửa file .md HOẶC .svg (BẮT BUỘC):**
 ```
 □ 1. Kích hoạt professor-style SKILL → nắm 6 criteria (2.1-2.6)
-□ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules
+□ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules, Rule 8
 □ 3. Xác định file đang sửa
-□ 4. Tra memory/file-dependency-map.md → liệt kê related files
+□ 4. Tra memory/file-dependency-map.md → liệt kê related files (kể cả Tầng 5: SVG↔markdown)
 □ 5. Đọc related files để biết content hiện tại
-□ 6. BẮT ĐẦU viết/sửa (KHÔNG viết trước bước 1-5)
+□ 5b. NẾU sửa SVG: grep tất cả .md tham chiếu SVG → đọc caption hiện tại → ghi nhận entity
+□ 6. BẮT ĐẦU viết/sửa (KHÔNG viết trước bước 1-5b)
+□ 6b. NẾU sửa SVG: update caption NGAY SAU khi hoàn thành SVG — trước bất kỳ task khác
 ```
 
 **Checklist C — TRƯỚC KHI commit (BẮT BUỘC):**
@@ -121,8 +123,10 @@ Khi BẮT ĐẦU session mới:
 □ 2. URL check: liệt kê MỌI URLs → verify bằng web-fetcher hoặc curl
 □ 3. Cross-file sync: tra dependency map → kiểm tra related files
 □ 4. Version annotation: nếu có cross-version content → thêm callout + update tracker
-□ 5. Git workflow skill: đọc trước khi commit
-□ 6. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
+□ 5a. SVG spacing+diacritics: nếu có SVG mới/sửa → chạy svg-audit.py + diacritics-audit.py (Rule 6). 0 violation.
+□ 5b. SVG-caption consistency: chạy svg-caption-consistency.py cho mỗi SVG đã sửa (Rule 8). 0 mismatch.
+□ 6. Git workflow skill: đọc trước khi commit
+□ 7. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
 ```
 
 **Checklist E — Khi thêm Part mới (BẮT BUỘC):**

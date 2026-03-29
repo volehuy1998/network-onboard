@@ -111,7 +111,7 @@ Mỗi process có một bảng riêng, được lưu trong cấu trúc `struct f
 - Cờ (flags) điều khiển hành vi của FD đó — hiện tại chỉ có một cờ duy nhất là **close-on-exec** (FD_CLOEXEC). Khi cờ này được bật, FD sẽ tự động đóng khi process gọi `exec()` để chạy chương trình mới.
 - Một con trỏ (pointer) đến entry tương ứng trong bảng thứ hai — bảng open file descriptions.
 
-Điều quan trọng là: bảng này là *riêng tư* của mỗi process. Hai process khác nhau có thể có FD số 3, nhưng hai FD 3 đó trỏ đến hai entry hoàn toàn khác nhau trong bảng hệ thống.
+Điều quan trọng là: bảng này là *riêng tư* của mỗi process. Process A và Process B đều có thể có FD mang số 3, nhưng đó là hai entry nằm trong hai bảng riêng biệt — FD 3 của Process A và FD 3 của Process B có thể trỏ đến hai tài nguyên hoàn toàn khác nhau trong bảng hệ thống.
 
 ### Bảng thứ hai: System-wide open file descriptions table (Open File Table)
 
@@ -137,7 +137,7 @@ Mỗi file system duy trì một bảng i-node cho tất cả file trên đó. M
 
 ![Figure 1-1: Mô hình 3 bảng của kernel](../images/fd-kernel-3-table-model.svg)
 
-*Figure 1-1: Process A giữ FD 3, 4, 5 trỏ đến các open file descriptions (OFD) trong bảng hệ thống. Sau fork(), Process B kế thừa bản sao FD table — FD 3 của cả hai process cùng trỏ đến OFD #201, chia sẻ file offset. OFD #201 và OFD #203 cùng trỏ đến i-node 45678 (/etc/hostname) nhưng có file offset độc lập vì được tạo bởi hai lần open() riêng biệt.*
+*Figure 1-1: Mô hình 3 bảng (Three-Table Model) theo TLPI Section 5.4, Figure 5-2. Process A giữ 4 FD thực sự (FD 3–6): FD 3 và FD 4 cùng trỏ đến OFD #201 (tạo bởi `dup()` — chia sẻ file offset và flags, f_count = 2). FD 5 trỏ đến OFD #202 — cùng file `/etc/hostname` nhưng qua lần `open()` riêng biệt, nên có file offset độc lập (f_pos = 300 vs f_pos = 0). FD 6 trỏ đến OFD #203 (`/var/log/app.log`) với cờ CLOEXEC = 1 — FD này sẽ tự động bị đóng khi process gọi exec(). OFD #201 và OFD #202 cùng trỏ đến i-node 45678 (`/etc/hostname`); OFD #203 trỏ đến i-node 67890 (`/var/log/app.log`). Mã nguồn tạo trạng thái này nằm ở thanh dưới cùng của hình.*
 
 ### Kết hợp lại: dòng chảy từ FD đến dữ liệu
 
@@ -591,7 +591,13 @@ Lúc này chạy `ss -tlnp | grep 443` sẽ thấy port 443 thuộc về `check_
 >
 > **Thực tế:** Một nguyên nhân ẩn khác là child process (được spawn bằng `fork()+exec()`) vô tình kế thừa listening socket FD. Dù parent đã thoát, child vẫn giữ reference đến socket, khiến kernel không giải phóng port. Nguyên nhân này khó debug vì `ss` sẽ hiển thị port thuộc về child process — một chương trình không liên quan đến service đang restart.
 
-### Tổng quan trực quan: FD leak và giải pháp CLOEXEC
+### Tổng quan trực quan: FD leak qua fork()+exec()
+
+![Figure 1-1b: Hành vi fork() và exec() trên FD table](../images/fd-fork-exec-cloexec.svg)
+
+*Figure 1-1b: Mở rộng từ Figure 1-1 — minh hoạ FD leak và vai trò CLOEXEC trong kịch bản HAProxy thực tế (nguồn: TLPI Section 5.4 + Section 27.4). Phase 1: Process A (HAProxy) giữ FD 3 (socket:443 → OFD#301, KHÔNG có CLOEXEC), FD 4 (`/var/log/haproxy.log` → OFD#302, có CLOEXEC), FD 5 (`/etc/haproxy/haproxy.cfg` → OFD#303). Phase 2: Sau fork(), child (PID 2000) nhận bản sao toàn bộ FD table — kernel tăng f_count trên mỗi OFD (1→2). Phase 3: Sau exec("check_backend.sh"), kernel quét close_on_exec bitmap — FD 4 bị đóng (CLOEXEC=1, f_count 2→1), nhưng FD 3 và FD 5 vẫn mở (CLOEXEC=0). Hậu quả: check_backend.sh giữ socket:443, HAProxy restart gặp EADDRINUSE. Mã nguồn tạo trạng thái và giải pháp (SOCK_CLOEXEC) nằm ở cuối hình.*
+
+### Tổng kết trực quan: so sánh có và không có CLOEXEC
 
 ![Figure 1-4: FD Leak qua fork()+exec() và giải pháp CLOEXEC](../images/fd-leak-and-cloexec.svg)
 
@@ -729,7 +735,8 @@ Xóa file tạm: `rm /tmp/test_cloexec.py`
 |---|---|---|
 | Paragraph | Định nghĩa file descriptor và vai trò trung gian của kernel | 1.1 |
 | Table 1-1 | Ba file descriptor tiêu chuẩn (0, 1, 2) | 1.2 |
-| Figure 1-1 | Mô hình 3 bảng: per-process FD table, open file table, i-node table | 1.3 |
+| Figure 1-1 | Mô hình 3 bảng: per-process FD table, open file table, i-node table (TLPI 5.4) | 1.3 |
+| Figure 1-1b | Hành vi fork()+exec() trên FD table — FD leak và vai trò CLOEXEC | 1.10 |
 | Paragraph | Khi hai FD trỏ đến cùng open file description, chúng chia sẻ file offset | 1.3 |
 | Paragraph | Mỗi kết nối TCP trên Linux là một file descriptor riêng biệt | 1.4 |
 | Paragraph | select() và poll() có hiệu suất O(N) | 1.6 |

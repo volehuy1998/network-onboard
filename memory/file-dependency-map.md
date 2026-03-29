@@ -38,6 +38,18 @@
 | `memory/session-log.md` | Log session gần nhất | `CLAUDE.md` (Current State section) |
 | `memory/haproxy-series-state.md` | Trạng thái từng Part | `haproxy-onboard/README.md` (TOC) |
 
+### Tầng 5: Image files (SVG → Markdown captions)
+
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `images/fd-kernel-3-table-model.svg` | Figure 1-1: TLPI Three-Table Model (pure, no fork/exec) | `linux-onboard/file-descriptor-deep-dive.md` (caption tại line ~140, Exam Prep table ~738) |
+| `images/fd-fork-exec-cloexec.svg` | Figure 1-1b: fork()+exec() extension, HAProxy CLOEXEC scenario | `linux-onboard/file-descriptor-deep-dive.md` (caption tại section 1.10 ~598, Exam Prep table ~739) |
+| `images/fd-leak-and-cloexec.svg` | Figure 1-4: FD leak comparison (with/without CLOEXEC) | `linux-onboard/file-descriptor-deep-dive.md` (caption tại section 1.10 ~604) |
+
+> **Quy tắc Tầng 5 (document-design Rule 8):** Khi sửa SVG, PHẢI đọc và update caption trong CÙNG batch thao tác. KHÔNG được giao SVG mà chưa verify caption. Chạy `svg-caption-consistency.py` trước commit.
+
+> **Bài học từ lỗi thực tế:** Session 2026-03-30, `fd-kernel-3-table-model.svg` được rewrite từ combined diagram (fork+exec+socket) sang pure TLPI model, nhưng caption vẫn mô tả fork() và socket:443. Nguyên nhân: Tầng 5 chưa tồn tại → cross-file sync check bỏ sót hoàn toàn.
+
 ---
 
 ## Quy tắc đồng bộ cụ thể

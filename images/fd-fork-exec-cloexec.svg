@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 898" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C53030"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+  </defs>
+
+  <rect width="720" height="898" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-1b: Hành vi fork() và exec() trên FD table</text>
+  <text x="360" y="47" text-anchor="middle" font-size="11" fill="#718096">Mở rộng từ Figure 1-1 — minh hoạ FD leak và vai trò CLOEXEC</text>
+
+  <!-- ===================== PHASE 1: PROCESS A ===================== -->
+  <rect x="15" y="60" width="330" height="200" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="180" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#2B6CB0">Process A (HAProxy — PID 1000)</text>
+
+  <rect x="27" y="96" width="306" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="39" y="114" font-size="10" fill="#4A5568">FD 0  stdin | FD 1  stdout | FD 2  stderr</text>
+
+  <rect x="27" y="128" width="306" height="32" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="39" y="148" font-size="10" font-weight="bold" fill="#C53030">FD 3  socket:443 (KHÔNG có CLOEXEC)</text>
+
+  <rect x="27" y="164" width="306" height="32" fill="#FED7D7" stroke="#E53E3E" rx="3"/>
+  <text x="39" y="184" font-size="10" font-weight="bold" fill="#C53030">FD 4  /var/log/haproxy.log (CLOEXEC)</text>
+
+  <rect x="27" y="200" width="306" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="39" y="218" font-size="10" fill="#2B6CB0">FD 5  /etc/haproxy/haproxy.cfg (O_RDONLY)</text>
+
+  <!-- OFD refcount -->
+  <rect x="370" y="60" width="330" height="200" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="535" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#B7791F">Open File Table (trích)</text>
+
+  <rect x="382" y="96" width="306" height="48" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="394" y="114" font-size="10" font-weight="bold" fill="#C53030">OFD #301 — socket TCP :443</text>
+  <text x="394" y="132" font-size="9" fill="#C53030">f_count: 1 | bind(443) + listen(128)</text>
+
+  <rect x="382" y="152" width="306" height="48" fill="#FED7D7" stroke="#E53E3E" rx="3"/>
+  <text x="394" y="170" font-size="10" font-weight="bold" fill="#C53030">OFD #302 — /var/log/haproxy.log</text>
+  <text x="394" y="188" font-size="9" fill="#C53030">f_count: 1 | O_WRONLY | O_APPEND</text>
+
+  <rect x="382" y="208" width="306" height="48" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="394" y="228" font-size="10" fill="#2B6CB0">OFD #303 — /etc/haproxy/haproxy.cfg</text>
+  <text x="394" y="244" font-size="9" fill="#718096">f_count: 1 | O_RDONLY</text>
+
+  <!-- Arrows Phase 1 -->
+  <line x1="333" y1="144" x2="379" y2="120" stroke="#C53030" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+  <line x1="333" y1="180" x2="379" y2="176" stroke="#C53030" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+  <line x1="333" y1="218" x2="379" y2="228" stroke="#2B6CB0" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== FORK TRANSITION ===================== -->
+  <line x1="180" y1="260" x2="180" y2="300" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="195" y="284" font-size="11" font-weight="bold" fill="#718096">fork()</text>
+
+  <!-- ===================== PHASE 2: AFTER FORK ===================== -->
+  <rect x="15" y="308" width="330" height="192" fill="#F0FFF4" stroke="#2F855A" stroke-width="1.5" rx="6"/>
+  <text x="180" y="330" text-anchor="middle" font-size="12" font-weight="bold" fill="#2F855A">Process B (child — PID 2000)</text>
+  <text x="180" y="348" text-anchor="middle" font-size="10" fill="#4A5568">Bản sao FD table ngay sau fork()</text>
+
+  <rect x="27" y="360" width="306" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="39" y="378" font-size="10" fill="#4A5568">FD 0  stdin | FD 1  stdout | FD 2  stderr</text>
+
+  <rect x="27" y="392" width="306" height="32" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="39" y="412" font-size="10" font-weight="bold" fill="#C53030">FD 3  socket:443 (không CLOEXEC)</text>
+
+  <rect x="27" y="428" width="306" height="32" fill="#FED7D7" stroke="#E53E3E" rx="3" stroke-dasharray="4,2"/>
+  <text x="39" y="448" font-size="10" font-weight="bold" fill="#C53030">FD 4  haproxy.log (CLOEXEC)</text>
+  <text x="305" y="448" font-size="8" fill="#E53E3E" text-anchor="end">sẽ bị đóng</text>
+
+  <rect x="27" y="464" width="306" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="39" y="482" font-size="10" fill="#2B6CB0">FD 5  /etc/haproxy/haproxy.cfg (O_RDONLY)</text>
+
+  <!-- Refcount annotation -->
+  <rect x="370" y="308" width="330" height="87" fill="#FFFBEB" stroke="#D69E2E" rx="4" stroke-dasharray="4,2"/>
+  <text x="535" y="332" text-anchor="middle" font-size="10" font-weight="bold" fill="#B7791F">Refcount sau fork()</text>
+  <text x="382" y="352" font-size="9" fill="#C53030">OFD#301 f_count: 1 → 2 (A:FD3 + B:FD3)</text>
+  <text x="382" y="368" font-size="9" fill="#C53030">OFD#302 f_count: 1 → 2 (A:FD4 + B:FD4)</text>
+  <text x="382" y="384" font-size="9" fill="#718096">OFD#303 f_count: 1 → 2 (A:FD5 + B:FD5)</text>
+
+  <!-- ===================== EXEC TRANSITION ===================== -->
+  <line x1="180" y1="500" x2="180" y2="540" stroke="#C53030" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
+  <text x="195" y="520" font-size="11" font-weight="bold" fill="#C53030">exec("check_backend.sh")</text>
+  <text x="195" y="536" font-size="9" fill="#C53030">Kernel quét close_on_exec bitmap</text>
+
+  <!-- ===================== PHASE 3: AFTER EXEC ===================== -->
+  <rect x="15" y="548" width="330" height="192" fill="#F0FFF4" stroke="#2F855A" stroke-width="1.5" rx="6"/>
+  <text x="180" y="570" text-anchor="middle" font-size="12" font-weight="bold" fill="#2F855A">Process B (check_backend.sh)</text>
+  <text x="180" y="588" text-anchor="middle" font-size="10" fill="#4A5568">Sau exec() — chương trình mới</text>
+
+  <rect x="27" y="600" width="306" height="28" fill="#fff" stroke="#CBD5E0" rx="3"/>
+  <text x="39" y="618" font-size="10" fill="#4A5568">FD 0  stdin | FD 1  stdout | FD 2  stderr</text>
+
+  <rect x="27" y="632" width="306" height="32" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="39" y="652" font-size="10" font-weight="bold" fill="#C53030">FD 3  socket:443 — VẪN MỞ!</text>
+
+  <rect x="27" y="668" width="306" height="32" fill="#F7FAFC" stroke="#CBD5E0" rx="3"/>
+  <text x="39" y="688" font-size="10" fill="#A0AEC0">FD 4  ĐÃ ĐÓNG (CLOEXEC)</text>
+  <line x1="31" y1="684" x2="329" y2="684" stroke="#CBD5E0" stroke-width="1"/>
+
+  <rect x="27" y="704" width="306" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="39" y="722" font-size="10" fill="#2B6CB0">FD 5  haproxy.cfg — VẪN MỞ</text>
+
+  <!-- Exec result -->
+  <rect x="370" y="548" width="330" height="87" fill="#FFF5F5" stroke="#E53E3E" rx="4" stroke-width="1.5"/>
+  <text x="535" y="572" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">Kernel xử lý exec()</text>
+  <text x="382" y="592" font-size="9" fill="#C53030">FD 4 (CLOEXEC=1): đóng → OFD#302 f_count: 2→1</text>
+  <text x="382" y="608" font-size="9" fill="#C53030">FD 3 (CLOEXEC=0): giữ nguyên → socket vẫn mở</text>
+  <text x="382" y="624" font-size="9" fill="#718096">FD 5 (CLOEXEC=0): giữ nguyên → config file vẫn mở</text>
+
+  <!-- Consequence -->
+  <rect x="370" y="642" width="330" height="87" fill="#FED7D7" stroke="#C53030" rx="4"/>
+  <text x="535" y="666" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">Hậu quả thực tế</text>
+  <text x="382" y="686" font-size="9" fill="#C53030">check_backend.sh giữ FD 3 (socket:443) mở</text>
+  <text x="382" y="702" font-size="9" fill="#C53030">→ HAProxy restart: bind(443) thất bại</text>
+  <text x="382" y="718" font-size="9" fill="#C53030">→ "Address already in use" (EADDRINUSE)</text>
+
+  <!-- ===================== CODE MAPPING ===================== -->
+  <rect x="15" y="748" width="685" height="76" fill="#F7FAFC" stroke="#E2E8F0" rx="4"/>
+  <text x="27" y="766" font-size="9" font-weight="bold" fill="#4A5568">Mã nguồn tạo trạng thái ban đầu (Process A — HAProxy):</text>
+  <text x="27" y="782" font-size="9" font-family="Consolas, monospace" fill="#C53030">fd3 = socket(AF_INET, SOCK_STREAM, 0);  /* KHÔNG có CLOEXEC — lỗi tiềm ẩn */</text>
+  <text x="27" y="796" font-size="9" font-family="Consolas, monospace" fill="#718096">bind(fd3, &amp;addr, ...); listen(fd3, 128);</text>
+  <text x="27" y="810" font-size="9" font-family="Consolas, monospace" fill="#718096">fd4 = open("/var/log/haproxy.log", O_WRONLY|O_APPEND|O_CLOEXEC);  fd5 = open("haproxy.cfg", O_RDONLY);</text>
+
+  <!-- ===================== SOLUTION ===================== -->
+  <rect x="15" y="830" width="685" height="60" fill="#F0FFF4" stroke="#38A169" rx="4"/>
+  <text x="27" y="848" font-size="9" font-weight="bold" fill="#2F855A">Giải pháp — thêm CLOEXEC khi tạo socket (nguồn: TLPI Section 27.4):</text>
+  <text x="27" y="864" font-size="9" font-family="Consolas, monospace" fill="#2F855A">fd3 = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);  /* Linux 2.6.27+ */</text>
+  <text x="27" y="880" font-size="9" font-family="Consolas, monospace" fill="#2F855A">/* Hoặc: fcntl(fd3, F_SETFD, FD_CLOEXEC); */</text>
+</svg>
