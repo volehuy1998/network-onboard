@@ -213,7 +213,9 @@
 
 # HAProxy - Cân bằng tải chuyên sâu
 
-:pushpin: Môi trường thực hành: Ubuntu Server 20.04 LTS, HAProxy 3.2 LTS (biên dịch từ mã nguồn hoặc PPA). So sánh hành vi trên Ubuntu 22.04 và 24.04 ở giai đoạn sau. Tài liệu tham khảo chính thống: [HAProxy Configuration Manual](https://docs.haproxy.org/3.2/configuration.html), [HAProxy Starter Guide](https://docs.haproxy.org/3.2/intro.html), và [HAProxy Management Guide](https://docs.haproxy.org/3.2/management.html).
+:pushpin: Môi trường thực hành: Ubuntu Server 20.04 LTS, HAProxy 2.0.x (Canonical official repository, cài đặt qua `apt install haproxy`). Sau đó phân tích những thay đổi ở HAProxy 2.4 (Ubuntu 22.04) và HAProxy 2.8 (Ubuntu 24.04). Tài liệu tham khảo chính thống: [HAProxy Configuration Manual 2.0](https://www.haproxy.org/download/2.0/doc/configuration.txt), [HAProxy Starter Guide 2.0](https://www.haproxy.org/download/2.0/doc/intro.txt), và [HAProxy Management Guide 2.0](https://www.haproxy.org/download/2.0/doc/management.txt).
+
+> **Lưu ý về phiên bản:** Ubuntu 20.04 chỉ cung cấp HAProxy 2.0.x từ Canonical official repo. Ubuntu 22.04 cung cấp HAProxy 2.4.x, Ubuntu 24.04 cung cấp HAProxy 2.8.x. Cài đặt phiên bản cao hơn (ví dụ: 3.2) yêu cầu PPA hoặc biên dịch từ mã nguồn — nằm ngoài hệ sinh thái chính thức của Canonical và không được khuyến nghị cho production. Phần 29 so sánh chi tiết các phiên bản.
 
 ## Khối I — Nền tảng kiến trúc và vận hành
 
@@ -227,7 +229,7 @@
 
 [Phần 2 - Cài đặt và quản lý dịch vụ HAProxy](https://github.com/volehuy1998/network-onboard/blob/master/haproxy-onboard/2.0%20-%20haproxy-installation-and-service-management.md)
 
-- 2.1 - Cài đặt HAProxy 3.2 LTS trên Ubuntu 20.04 (biên dịch từ mã nguồn và PPA)
+- 2.1 - Cài đặt HAProxy 2.0 từ Canonical repo trên Ubuntu 20.04 (`apt install haproxy`)
 - 2.2 - Master-worker process model: kiến trúc quản lý tiến trình hiện đại
 - 2.3 - Phân tích tệp `haproxy.service` của systemd và mối quan hệ với master-worker
 - 2.4 - Quản lý dịch vụ: khởi động, dừng, seamless reload (`-x`, `-sf`) và kiểm tra cấu hình

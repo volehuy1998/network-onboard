@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 680" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#E53E3E"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="680" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-2: FD Leak qua fork()+exec() và giải pháp CLOEXEC</text>
+
+  <!-- ============ GIAI ĐOẠN 1: TRƯỚC FORK ============ -->
+  <rect x="15" y="44" width="890" height="130" fill="#F7FAFC" stroke="#CBD5E0" rx="6"/>
+  <text x="30" y="66" font-size="12" font-weight="bold" fill="#2D3748">Giai đoạn 1: Trước fork()</text>
+
+  <!-- Parent process — rect tăng height để chứa 4 dòng thoải mái -->
+  <rect x="30" y="80" width="360" height="84" fill="#EBF8FF" stroke="#2B6CB0" rx="4"/>
+  <text x="210" y="100" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">HAProxy (Parent — root)</text>
+  <text x="44" y="118" font-size="10" fill="#4A5568">FD 0-2: stdin/stdout/stderr</text>
+  <text x="44" y="134" font-size="10" font-weight="bold" fill="#2B6CB0">FD 3: socket:443    FD 5: /etc/shadow</text>
+  <text x="44" y="150" font-size="10" fill="#4A5568">FD 4: epoll_fd       FD 6: log socket</text>
+
+  <!-- Annotation -->
+  <rect x="420" y="80" width="280" height="84" fill="#fff" stroke="#CBD5E0" rx="4"/>
+  <text x="434" y="100" font-size="10" fill="#718096">Parent giữ nhiều FD:</text>
+  <text x="434" y="118" font-size="10" fill="#718096">listening socket, epoll instance,</text>
+  <text x="434" y="134" font-size="10" fill="#718096">file nhạy cảm, log socket.</text>
+  <text x="434" y="150" font-size="10" fill="#718096">Tất cả đều bị child kế thừa.</text>
+
+  <!-- ============ GIAI ĐOẠN 2: SAU FORK, TRƯỚC EXEC ============ -->
+  <rect x="15" y="184" width="890" height="120" fill="#FFFFF0" stroke="#ECC94B" rx="6"/>
+  <text x="30" y="206" font-size="12" font-weight="bold" fill="#B7791F">Giai đoạn 2: Sau fork(), trước exec()</text>
+
+  <rect x="30" y="218" width="230" height="50" fill="#EBF8FF" stroke="#2B6CB0" rx="4"/>
+  <text x="145" y="238" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Parent (vẫn chạy)</text>
+  <text x="44" y="256" font-size="10" fill="#4A5568">FD 0-6 không đổi</text>
+
+  <line x1="260" y1="243" x2="310" y2="243" stroke="#B7791F" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="268" y="236" font-size="10" font-weight="bold" fill="#B7791F">fork()</text>
+
+  <rect x="315" y="218" width="250" height="50" fill="#FFF5F5" stroke="#E53E3E" rx="4"/>
+  <text x="440" y="238" text-anchor="middle" font-size="11" font-weight="bold" fill="#E53E3E">Child (bản sao FD table)</text>
+  <text x="329" y="256" font-size="10" fill="#C53030">FD 0-6: SAO CHÉP từ parent!</text>
+
+  <!-- Warning box — 4 dòng, cần height ≥ 80 -->
+  <rect x="600" y="218" width="295" height="80" fill="#FFF5F5" stroke="#FC8181" rx="4" stroke-dasharray="4,2"/>
+  <text x="614" y="238" font-size="10" font-weight="bold" fill="#C53030">Child kế thừa TẤT CẢ FD</text>
+  <text x="614" y="254" font-size="10" fill="#E53E3E">FD 3 (socket:443) refcount = 2</text>
+  <text x="614" y="270" font-size="10" fill="#E53E3E">FD 5 (/etc/shadow) có thể đọc!</text>
+  <text x="614" y="286" font-size="9" fill="#718096">Parent và Child cùng trỏ đến OFD</text>
+
+  <!-- ============ KỊCH BẢN A: EXEC KHÔNG CÓ CLOEXEC (XẤU) ============ -->
+  <rect x="15" y="316" width="440" height="220" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5" rx="6"/>
+  <text x="235" y="338" text-anchor="middle" font-size="12" font-weight="bold" fill="#C53030">Kịch bản A: exec() KHÔNG có CLOEXEC</text>
+
+  <line x1="55" y1="358" x2="105" y2="358" stroke="#E53E3E" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <text x="60" y="352" font-size="9" fill="#E53E3E">exec()</text>
+
+  <!-- New program — 3 dòng, cần height ≥ 64 -->
+  <rect x="110" y="348" width="330" height="64" fill="#fff" stroke="#FC8181" rx="4"/>
+  <text x="275" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="#C53030">check_backend.sh (chương trình mới)</text>
+  <text x="124" y="386" font-size="10" fill="#E53E3E">FD 0,1,2: stdin/stdout/stderr</text>
+  <text x="124" y="402" font-size="10" font-weight="bold" fill="#C53030">FD 3: socket:443   FD 5: /etc/shadow</text>
+
+  <!-- Consequences — 6 dòng, cần height ≥ 110 -->
+  <rect x="27" y="422" width="416" height="106" fill="#FED7D7" stroke="#FC8181" rx="4"/>
+  <text x="39" y="442" font-size="10" font-weight="bold" fill="#9B2C2C">Hậu quả 1 — Bảo mật:</text>
+  <text x="39" y="458" font-size="10" fill="#C53030">Script đọc được /etc/shadow qua read(5,...)</text>
+  <text x="39" y="474" font-size="10" fill="#C53030">dù script chạy với quyền user thường!</text>
+  <text x="39" y="494" font-size="10" font-weight="bold" fill="#9B2C2C">Hậu quả 2 — Tài nguyên:</text>
+  <text x="39" y="510" font-size="10" fill="#C53030">Restart HAProxy lỗi "Address already in use"</text>
+
+  <!-- ============ KỊCH BẢN B: EXEC CÓ CLOEXEC (TỐT) ============ -->
+  <rect x="465" y="316" width="440" height="220" fill="#F0FFF4" stroke="#2F855A" stroke-width="1.5" rx="6"/>
+  <text x="685" y="338" text-anchor="middle" font-size="12" font-weight="bold" fill="#276749">Kịch bản B: exec() CÓ CLOEXEC</text>
+
+  <line x1="505" y1="358" x2="555" y2="358" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="510" y="352" font-size="9" fill="#2F855A">exec()</text>
+
+  <rect x="560" y="348" width="330" height="64" fill="#fff" stroke="#68D391" rx="4"/>
+  <text x="725" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="#276749">check_backend.sh (chương trình mới)</text>
+  <text x="574" y="386" font-size="10" fill="#2F855A">FD 0,1,2: stdin/stdout/stderr</text>
+  <text x="574" y="402" font-size="10" font-weight="bold" fill="#276749">FD 3,5: ĐÃ BỊ KERNEL ĐÓNG!</text>
+
+  <rect x="477" y="422" width="416" height="106" fill="#C6F6D5" stroke="#68D391" rx="4"/>
+  <text x="489" y="442" font-size="10" font-weight="bold" fill="#22543D">Kernel tự động đóng FD có CLOEXEC:</text>
+  <text x="489" y="458" font-size="10" fill="#276749">socket:443 refcount giảm về 1</text>
+  <text x="489" y="474" font-size="10" fill="#276749">/etc/shadow: script không truy cập được</text>
+  <text x="489" y="494" font-size="10" font-weight="bold" fill="#22543D">Kết quả:</text>
+  <text x="489" y="510" font-size="10" fill="#276749">Restart HAProxy thành công, không FD leak.</text>
+
+  <!-- ============ SOLUTION BOX ============ -->
+  <rect x="15" y="550" width="890" height="116" fill="#EBF8FF" stroke="#3182CE" rx="6"/>
+  <text x="460" y="574" text-anchor="middle" font-size="12" font-weight="bold" fill="#2B6CB0">Best Practice: Đặt CLOEXEC nguyên tử khi tạo FD (Linux 2.6.23+)</text>
+
+  <text x="37" y="600" font-size="11" fill="#2D3748" font-family="Consolas, monospace">open(path, O_RDONLY | O_CLOEXEC)</text>
+  <text x="37" y="620" font-size="11" fill="#2D3748" font-family="Consolas, monospace">epoll_create1(EPOLL_CLOEXEC)</text>
+
+  <text x="490" y="600" font-size="11" fill="#2D3748" font-family="Consolas, monospace">socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0)</text>
+  <text x="490" y="620" font-size="11" fill="#2D3748" font-family="Consolas, monospace">pipe2(pipefd, O_CLOEXEC)</text>
+
+  <text x="460" y="652" text-anchor="middle" font-size="9" fill="#718096">Loại bỏ hoàn toàn race condition trong chương trình multi-threaded</text>
+</svg>

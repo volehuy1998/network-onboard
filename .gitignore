@@ -1,0 +1,6 @@
+# Large binary files
+references/*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
