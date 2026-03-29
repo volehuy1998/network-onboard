@@ -58,22 +58,29 @@ graph LR
     P9 --> P13
     P4 --> P15 --> P16
     P15 --> P17
+    P4 --> P17
     P4 --> P18
-    P7 --> P19
+    P8 --> P19
     P3 --> P20
     P8 --> P21
     P7 --> P22
     P3 --> P23
     P3 --> P24
+    P6 --> P24
     P5 --> P25
     P12 --> P25
     P2 --> P26
     P12 --> P26
+    P5 --> P27
     P14 --> P27
     P15 --> P27
+    P25 --> P28
+    P26 --> P28
+    P27 --> P28
+    P1 --> P29
 ```
 
-Lộ trình đọc khuyến nghị: đọc tuần tự từ Phần 1 đến Phần 29 là lộ trình an toàn nhất. Tuy nhiên, nếu cần ưu tiên theo vai trò, có thể chọn nhánh phù hợp — ví dụ: kỹ sư chỉ cần SSL/TLS có thể đọc Khối I (1-5) rồi nhảy sang Phần 15-16-17-18; kỹ sư cần rate limiting đọc Khối I → Phần 6-7 → Phần 9 → Phần 13-14. Sơ đồ trên giúp xác minh rằng mọi phụ thuộc đã được thỏa mãn trước khi đọc phần bất kỳ.
+Lộ trình đọc khuyến nghị: đọc tuần tự từ Phần 1 đến Phần 29 là lộ trình an toàn nhất. Tuy nhiên, nếu cần ưu tiên theo vai trò, có thể chọn nhánh phù hợp — ví dụ: kỹ sư chỉ cần SSL/TLS có thể đọc Khối I (1-5) rồi nhảy sang Phần 15-16-17-18; kỹ sư cần rate limiting đọc Khối I → Phần 6-7 → Phần 9 → Phần 13-14; kỹ sư cần logging/monitoring đọc Khối I → Phần 6 → Phần 24. Phần 28 (Lab tổng hợp) yêu cầu hoàn thành Phần 25-26-27 trước; Phần 29 (So sánh phiên bản) có thể đọc bất kỳ lúc nào sau Phần 1. Sơ đồ trên giúp xác minh rằng mọi phụ thuộc đã được thỏa mãn trước khi đọc phần bất kỳ.
 
 ---
 
