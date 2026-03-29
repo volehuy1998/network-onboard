@@ -1,6 +1,10 @@
 # HAProxy — Cân bằng tải chuyên sâu
 
-Chuỗi tài liệu này trình bày kiến trúc, cấu hình, và vận hành HAProxy từ nền tảng đến production-grade, hướng đến kỹ sư hạ tầng đã có nền Linux (RHCSA) và Network (CCNA). Môi trường thực hành chính: Ubuntu Server 20.04 LTS, HAProxy 3.2 LTS (biên dịch từ mã nguồn hoặc PPA). Giai đoạn sau so sánh hành vi trên Ubuntu 22.04 và 24.04. Tài liệu tham khảo chính thống: [HAProxy Configuration Manual](https://docs.haproxy.org/3.2/configuration.html), [HAProxy Starter Guide](https://docs.haproxy.org/3.2/intro.html), và [HAProxy Management Guide](https://docs.haproxy.org/3.2/management.html).
+Chuỗi tài liệu này trình bày kiến trúc, cấu hình, và vận hành HAProxy từ nền tảng đến production-grade, hướng đến kỹ sư hạ tầng đã có nền Linux (RHCSA) và Network (CCNA). Lộ trình giảng dạy xây dựng trên nền **phiên bản HAProxy chính thức từ Canonical repository** cho mỗi Ubuntu LTS — bắt đầu với HAProxy 2.0 trên Ubuntu Server 20.04, sau đó phân tích những thay đổi ở HAProxy 2.4 (Ubuntu 22.04) và HAProxy 2.8 (Ubuntu 24.04). Cách tiếp cận này phản ánh đúng thực tế vận hành: mỗi lần upgrade Ubuntu LTS, kỹ sư cần hiểu rõ phiên bản HAProxy mới thay đổi gì, cải tiến gì, và loại bỏ gì so với bản trước.
+
+Môi trường thực hành chính: Ubuntu Server 20.04 LTS, HAProxy 2.0.x (Canonical official repository, cài đặt qua `apt install haproxy`). Tài liệu tham khảo chính thống: [HAProxy Configuration Manual 2.0](https://www.haproxy.org/download/2.0/doc/configuration.txt), [HAProxy Starter Guide 2.0](https://www.haproxy.org/download/2.0/doc/intro.txt), và [HAProxy Management Guide 2.0](https://www.haproxy.org/download/2.0/doc/management.txt).
+
+> **Lưu ý về phiên bản:** Ubuntu 20.04 chỉ cung cấp HAProxy 2.0.x từ Canonical official repo. Ubuntu 22.04 cung cấp HAProxy 2.4.x, Ubuntu 24.04 cung cấp HAProxy 2.8.x. Cài đặt phiên bản cao hơn (ví dụ: 3.2) yêu cầu PPA hoặc biên dịch từ mã nguồn — nằm ngoài hệ sinh thái chính thức của Canonical và không được khuyến nghị cho production. Phần 29 so sánh chi tiết các phiên bản.
 
 Kiến thức tiên quyết cho toàn bộ series:
 
@@ -82,7 +86,7 @@ Khối này xây dựng mô hình mental về cách HAProxy hoạt động từ 
 - [Phần 1 - Lịch sử hình thành và kiến trúc HAProxy](1.0%20-%20haproxy-history-and-architecture.md)
   - Tóm tắt: Bối cảnh bài toán C10K, sự ra đời của HAProxy dưới tay Willy Tarreau, kiến trúc event-driven dựa trên epoll, và so sánh kiến trúc với Nginx và LVS.
 - Phần 2 - Cài đặt và quản lý dịch vụ HAProxy *(chưa viết)*
-  - Tóm tắt: Biên dịch HAProxy 3.2 từ mã nguồn và PPA trên Ubuntu 20.04, phân tích master-worker process model, tệp systemd unit, seamless reload, và cấu trúc thư mục với chroot.
+  - Tóm tắt: Cài đặt HAProxy 2.0 từ Canonical repo trên Ubuntu 20.04 (`apt install haproxy`), phân tích daemon mode và master-worker mode (kích hoạt bằng `-W` hoặc directive `master-worker`), tệp systemd unit, seamless reload với `-sf`, và cấu trúc thư mục với chroot.
 - Phần 3 - Cấu trúc cấu hình và các khái niệm cốt lõi *(chưa viết)*
   - Tóm tắt: Năm section cấu hình (global, defaults, frontend, backend, listen), directive `bind` và `server`, sự khác biệt giữa mode tcp và mode http, biến môi trường và conditional blocks.
 - Phần 4 - Mô hình kết nối và connection management *(chưa viết)*
@@ -125,9 +129,9 @@ Khối này đi sâu vào các giao thức mà HAProxy hỗ trợ ở cả hai p
 - Phần 15 - SSL/TLS termination và certificate management *(chưa viết)*
   - Tóm tắt: SSL offloading, cấu hình certificate (`crt`, `ca-file`, `crt-list`, `crt-store`), cipher suites cho TLS 1.2 và 1.3, SNI/ALPN, certificate hot-reload, và kTLS kernel offload.
 - Phần 16 - Mutual TLS, OCSP, CRL, và tự động hóa certificate *(chưa viết)*
-  - Tóm tắt: mTLS với `verify required`, OCSP Stapling auto-update (HAProxy 2.8+), CRL management, và ACME protocol tự động xin/renew certificate qua HTTP-01 challenge (HAProxy 3.2, yêu cầu `expose-experimental-directives`).
+  - Tóm tắt: mTLS với `verify required`, CRL management, và giới thiệu OCSP Stapling (có từ 2.0, auto-update cải tiến ở 2.8+). ACME protocol (HTTP-01 challenge, tự động xin/renew certificate) chỉ khả dụng từ HAProxy 3.2 — phần này ghi nhận tính năng nhưng không thực hành trên 2.0.
 - Phần 17 - HTTP/2, HTTP/3, WebSocket và gRPC *(chưa viết)*
-  - Tóm tắt: HTTP/2 multiplexing ở frontend và backend, HTTP/3 trên QUIC transport (`bind quic4@`/`quic6@`, Alt-Svc header), WebSocket upgrade mechanism, gRPC bidirectional streaming, và trade-off giữa ba phiên bản HTTP.
+  - Tóm tắt: HTTP/2 multiplexing ở frontend và backend (có từ HAProxy 2.0 qua HTX engine), WebSocket upgrade mechanism, gRPC bidirectional streaming. HTTP/3 trên QUIC transport (`bind quic4@`/`quic6@`) chỉ khả dụng từ HAProxy 2.6+ — phần này ghi nhận kiến trúc nhưng thực hành HTTP/2 và WebSocket trên 2.0.
 - Phần 18 - Proxy Protocol *(chưa viết)*
   - Tóm tắt: Vấn đề mất IP client sau proxy, Proxy Protocol v1 (text) và v2 (binary), directives `send-proxy`/`accept-proxy`, TLV extensions, và tích hợp với Nginx và Apache.
 - Phần 19 - Authentication: HTTP Basic Auth và JWT validation *(chưa viết)*
@@ -140,9 +144,9 @@ Khối này trình bày các tính năng mở rộng khả năng của HAProxy v
 - Phần 20 - DNS resolvers và dynamic backends *(chưa viết)*
   - Tóm tắt: Section `resolvers`, `server-template` với DNS SRV records, `init-addr` cho khởi động trước DNS, dynamic server qua Runtime API, và tích hợp Consul/Kubernetes DNS.
 - Phần 21 - HTTP cache và compression *(chưa viết)*
-  - Tóm tắt: HTTP cache tích hợp (section `cache`, `cache-use`, `cache-store`), cache tuning, HTTP compression với filter architecture, và bandwidth limiting qua `filter bwlim-in`/`bwlim-out` (HAProxy 2.7+).
+  - Tóm tắt: HTTP cache tích hợp (section `cache`, `cache-use`, `cache-store` — có từ HAProxy 2.0), cache tuning, HTTP compression với filter architecture. Bandwidth limiting (`filter bwlim-in`/`bwlim-out`) chỉ khả dụng từ HAProxy 2.7+ — phần này ghi nhận tính năng cho lộ trình upgrade.
 - Phần 22 - Lua scripting và mở rộng HAProxy *(chưa viết)*
-  - Tóm tắt: Bốn điểm mở rộng Lua (actions, fetches, converters, services), coroutine model, ví dụ thực tế (custom health check, dynamic routing), SPOE/SPOP (`mode spop`, HAProxy 3.1+) cho tác vụ nặng, và traffic mirroring.
+  - Tóm tắt: Bốn điểm mở rộng Lua (actions, fetches, converters, services — có từ HAProxy 2.0), coroutine model, ví dụ thực tế (custom health check, dynamic routing), SPOE/SPOP cho tác vụ nặng (có từ 2.0, `mode spop` backend cải tiến ở 3.1+), và traffic mirroring.
 - Phần 23 - Runtime API và quản trị động *(chưa viết)*
   - Tóm tắt: Stats socket với permission levels, các lệnh quản trị (`show stat`, `show info`, `set server`), cập nhật map/ACL tại runtime, và Master CLI quản lý workers.
 - Phần 24 - Logging, monitoring, và observability *(chưa viết)*
@@ -153,15 +157,15 @@ Khối này trình bày các tính năng mở rộng khả năng của HAProxy v
 Khối này chuyển từ kiến thức sang kỹ năng vận hành: tối ưu hiệu năng (kernel tuning, thread binding, zero-copy), triển khai high availability (Keepalived, VRRP, seamless reload), bảo mật (hardening, DDoS mitigation), lab tổng hợp kết nối tất cả kiến thức, và so sánh hành vi HAProxy trên các phiên bản Ubuntu LTS khác nhau.
 
 - Phần 25 - Performance tuning và kernel optimization *(chưa viết)*
-  - Tóm tắt: Thread binding và CPU affinity (`nbthread`, thread groups), `maxconn` và mối quan hệ với `LimitNOFILE`, kernel sysctl tuning cho TCP stack, `splice()` zero-copy, buffer tuning, và phương pháp benchmark.
+  - Tóm tắt: `nbthread` và CPU affinity, `nbproc` multi-process (còn tồn tại ở 2.0, bị xóa ở 2.5 — giải thích tại sao multi-thread thay thế), `maxconn` và mối quan hệ với `LimitNOFILE`, kernel sysctl tuning cho TCP stack, `splice()` zero-copy, buffer tuning, và phương pháp benchmark.
 - Phần 26 - High availability: Keepalived, VRRP, và seamless reload *(chưa viết)*
-  - Tóm tắt: Keepalived với VRRP protocol cho VIP failover, seamless reload qua cờ `-x` và `-sf`, hitless upgrade không downtime, fd passing giữa old/new worker, và connection draining.
+  - Tóm tắt: Keepalived với VRRP protocol cho VIP failover, seamless reload qua cờ `-sf` (daemon mode) và `-x` + fd passing (master-worker mode), hitless upgrade không downtime, và connection draining.
 - Phần 27 - Security hardening và DDoS mitigation *(chưa viết)*
   - Tóm tắt: Defense in depth (chroot, drop privileges, AppArmor), HTTP Request Smuggling (CL/TE desync), Slowloris/slow POST, DDoS mitigation bằng stick tables, và HTTP/2 Rapid Reset (CVE-2023-44487).
 - Phần 28 - Lab thực hành tổng hợp *(chưa viết)*
   - Tóm tắt: Năm bài lab end-to-end kết hợp kiến thức từ toàn bộ series — web application multi-tier, TCP proxy cho database cluster, API Gateway, HTTP/2 với gRPC và Prometheus, HA với Keepalived dưới tải.
 - Phần 29 - So sánh phiên bản HAProxy trên các Ubuntu LTS *(chưa viết)*
-  - Tóm tắt: Đặc điểm và giới hạn của HAProxy 2.0 (Ubuntu 20.04), 2.4 (22.04), 2.8 (24.04), 3.2 (LTS mới nhất), và benchmark so sánh định lượng trên cùng workload.
+  - Tóm tắt: So sánh tiến hóa theo lộ trình Canonical: HAProxy 2.0 (Ubuntu 20.04) → 2.4 (Ubuntu 22.04) → 2.8 (Ubuntu 24.04). Mỗi bước: tính năng mới, directives deprecated/removed, thay đổi default behavior, và benchmark so sánh định lượng trên cùng workload. Ghi chú thêm HAProxy 3.0+ cho lộ trình tương lai.
 
 ---
 
