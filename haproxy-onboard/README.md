@@ -169,6 +169,20 @@ Khối này chuyển từ kiến thức sang kỹ năng vận hành: tối ưu h
 
 ---
 
+## Hệ thống theo dõi tiến hóa phiên bản (Version Evolution Tracker)
+
+Sự khác biệt giữa HAProxy 2.0, 2.4, 2.8, và 3.0+ rất lớn — từ directive bị loại bỏ (`nbproc`), default behavior thay đổi (`http-reuse`), đến tính năng hoàn toàn mới (QUIC, ACME, thread groups). Thay vì chờ đến Phần 29 mới bắt đầu tổng hợp, series này ghi nhận mọi thay đổi phiên bản **ngay tại thời điểm phát hiện** trong từng Part, đồng thời cập nhật vào bảng tham chiếu trung tâm.
+
+Bảng tham chiếu: [references/haproxy-version-evolution.md](references/haproxy-version-evolution.md) — file này chứa toàn bộ sự khác biệt đã ghi nhận, phân loại theo category (process model, SSL/TLS, protocols, performance, ...), với back-reference đến Part đã nhắc.
+
+Quy ước inline trong nội dung bài: khi một tính năng hoặc behavior khác nhau giữa các phiên bản, bài viết sử dụng callout "Lưu ý phiên bản" để người đọc nhận biết ngay điều gì áp dụng cho phiên bản nào. Ví dụ:
+
+> **Lưu ý phiên bản:** Directive `nbproc` fully supported ở 2.0, deprecated ở 2.4, và bị loại bỏ hoàn toàn từ 2.5. Multi-threading (`nbthread`) thay thế hoàn toàn multi-process.
+
+Quy trình khi viết mỗi Part mới: (1) viết nội dung dựa trên HAProxy 2.0 baseline, (2) khi phát hiện behavior khác ở phiên bản sau, thêm callout "Lưu ý phiên bản" vào bài, (3) cập nhật bảng trong `references/haproxy-version-evolution.md` với cột "Nguồn Part" trỏ đến Part và section.
+
+---
+
 ## Quy ước ký hiệu trong series
 
 Toàn bộ series sử dụng các quy ước sau trong code blocks và ví dụ:
