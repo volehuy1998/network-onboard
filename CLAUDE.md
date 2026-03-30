@@ -33,7 +33,13 @@ network-onboard/                    ← Repo root (GitHub: volehuy1998/network-o
 
 ### Rule 1: Skill Activation Sequence (BẮT BUỘC)
 
-Khi viết hoặc sửa file `.md` trong bất kỳ onboard series nào, PHẢI kích hoạt skills theo thứ tự:
+Khi **viết, sửa, hoặc audit/review** file `.md` trong bất kỳ onboard series nào, PHẢI kích hoạt skills theo thứ tự:
+
+> **Bài học từ lỗi thực tế (session 2026-03-30):** Audit Part 1 + cấu trúc series nhưng chỉ
+> kích hoạt 2/4 skills (professor-style, document-design), bỏ qua fact-checker và web-fetcher.
+> Kết quả: phát hiện lỗi cấu trúc nhưng bỏ sót lỗi factual và dead links.
+> Nguyên nhân: diễn giải sai "viết hoặc sửa" → coi audit là "chỉ đọc" → bỏ qua verification.
+> **Quy tắc: 4 skills LUÔN kích hoạt cho MỌI tương tác với file .md — không có ngoại lệ.**
 
 ```
 1. professor-style    → Kiểm soát giọng văn, cấu trúc khái niệm (6 mục: 2.1-2.6)
@@ -105,7 +111,7 @@ Khi BẮT ĐẦU session mới:
 > Lý do: skill nằm trong repo nhưng ngoài danh sách registered skills → không bao giờ được trigger tự động.
 > Bài học: session trước đã viết section 1.10 (close-on-exec) mà bỏ qua quality-gate hoàn toàn.
 
-**Checklist B — TRƯỚC KHI viết/sửa file .md HOẶC .svg (BẮT BUỘC):**
+**Checklist B — TRƯỚC KHI viết/sửa/audit file .md HOẶC .svg (BẮT BUỘC):**
 ```
 □ 1. Kích hoạt professor-style SKILL → nắm 6 criteria (2.1-2.6)
 □ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules, Rule 8
@@ -146,13 +152,16 @@ Khi BẮT ĐẦU session mới:
 
 | Key | Value |
 |-----|-------|
-| Active branch | `master` (clean) |
+| Active branch | `master` (dirty — audit changes chưa commit) |
 | Base version | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
-| Parts completed | Part 1 only |
+| Parts completed | Part 1 only (fact-checked, 3 corrections, Quiz added) |
 | Parts total | 29 (6 Blocks) |
 | Last merged PR | PR #25 — `f3256f9` (squash merge vào master 2026-03-30) |
-| Pending push | Không |
+| Pending push | Có — audit changes cần commit → feature branch → PR |
 | Pending PR | Không |
+| Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories). File `references/haproxy-version-evolution.md` cần `git rm` trên local |
+| Dependency graph | 4 edges sửa trong session này: P3→P11, P6→P22, +P5→P24, +P3→P21 |
+| Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
 | Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — 791 lines, 5 SVG figures |
 | SVG audit infra | Rule 8 (document-design), svg-caption-consistency.py, Tầng 5 dependency map |
 | Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |

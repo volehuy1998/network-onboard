@@ -96,6 +96,29 @@ Khi bắt đầu session (hoặc khi context bị reset):
 
 ---
 
+## Checklist F — Khi audit/review file .md hoặc cấu trúc series
+
+Audit KHÔNG phải "chỉ đọc" — audit mà không fact-check thì kết quả audit không đáng tin.
+Bài học: session 2026-03-30, audit Part 1 + cấu trúc series nhưng chỉ kích hoạt professor-style
+và document-design, bỏ qua fact-checker và web-fetcher → phát hiện lỗi cấu trúc nhưng bỏ sót
+hoàn toàn lỗi factual và dead links.
+
+```
+□ 1. Kích hoạt ĐẦY ĐỦ 4 skills theo Rule 1: professor-style → document-design → fact-checker → web-fetcher
+□ 2. Đọc toàn bộ files cần audit
+□ 3. Fact-check: liệt kê MỌI technical claims trong files đang audit → verify từng claim
+□ 4. URL check: liệt kê MỌI URLs trong files đang audit → verify bằng web-fetcher hoặc curl
+□ 5. Cross-file sync: kiểm tra tên Part, version refs, dependency graph khớp giữa tất cả files
+□ 6. Professor-style audit: chạy 6 criteria (2.1-2.6) lên content đang review
+□ 7. Document-design audit: kiểm tra heading count, callout density, code block format, numbering
+□ 8. Trình bày findings CHỈ SAU KHI hoàn thành bước 1-7
+```
+
+Nguyên tắc: **4 skills LUÔN kích hoạt cho MỌI tương tác với file .md** — dù là viết, sửa, hay audit.
+Không có ngoại lệ "chỉ đọc thôi nên không cần fact-check".
+
+---
+
 ## Nguyên tắc áp dụng
 
 Checklist này không phải bureaucracy — nó là safety net. Giống như phi công phải chạy pre-flight check dù đã bay 10,000 giờ, Claude phải chạy checklist dù đã có kinh nghiệm với project. Lý do: mỗi session mới, context bị reset; lỗi đồng bộ xảy ra ở chính xác những chỗ tưởng đã kiểm tra rồi.
