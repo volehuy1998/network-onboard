@@ -4,3 +4,10 @@ references/*.pdf
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temporary/build artifacts
+*.skill
+pr-body.txt
+
+# Claude Desktop session files
+.claude/

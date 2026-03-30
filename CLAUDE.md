@@ -146,13 +146,16 @@ Khi BẮT ĐẦU session mới:
 
 | Key | Value |
 |-----|-------|
-| Active branch | `fix-haproxy-readme-audit` |
+| Active branch | `master` (clean) |
 | Base version | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | Parts completed | Part 1 only |
 | Parts total | 29 (6 Blocks) |
-| Last commit | `bdbff8f` — fix knowledge dependency map |
-| Pending push | `git push origin fix-haproxy-readme-audit` |
-| Pending PR | Chưa tạo PR cho branch `fix-haproxy-readme-audit` |
+| Last merged PR | PR #25 — `f3256f9` (squash merge vào master 2026-03-30) |
+| Pending push | Không |
+| Pending PR | Không |
+| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — 791 lines, 5 SVG figures |
+| SVG audit infra | Rule 8 (document-design), svg-caption-consistency.py, Tầng 5 dependency map |
+| Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
 
 ## Skill Quick Reference
 
