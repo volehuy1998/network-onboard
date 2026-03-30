@@ -52,7 +52,7 @@ graph LR
     P3 --> P6 --> P7 --> P8
     P6 --> P9
     P6 --> P10
-    P4 --> P11 --> P12
+    P3 --> P11 --> P12
     P7 --> P13 --> P14
     P11 --> P14
     P9 --> P13
@@ -63,11 +63,13 @@ graph LR
     P8 --> P19
     P3 --> P20
     P8 --> P21
-    P7 --> P22
+    P6 --> P22
     P3 --> P23
     P3 --> P24
     P6 --> P24
     P5 --> P25
+    P5 --> P24
+    P3 --> P21
     P12 --> P25
     P2 --> P26
     P12 --> P26
@@ -80,7 +82,7 @@ graph LR
     P1 --> P29
 ```
 
-Lộ trình đọc khuyến nghị: đọc tuần tự từ Phần 1 đến Phần 29 là lộ trình an toàn nhất. Tuy nhiên, nếu cần ưu tiên theo vai trò, có thể chọn nhánh phù hợp — ví dụ: kỹ sư chỉ cần SSL/TLS có thể đọc Khối I (1-5) rồi nhảy sang Phần 15-16-17-18; kỹ sư cần rate limiting đọc Khối I → Phần 6-7 → Phần 9 → Phần 13-14; kỹ sư cần logging/monitoring đọc Khối I → Phần 6 → Phần 24. Phần 28 (Lab tổng hợp) yêu cầu hoàn thành Phần 25-26-27 trước; Phần 29 (So sánh phiên bản) có thể đọc bất kỳ lúc nào sau Phần 1. Sơ đồ trên giúp xác minh rằng mọi phụ thuộc đã được thỏa mãn trước khi đọc phần bất kỳ.
+Lộ trình đọc khuyến nghị: đọc tuần tự từ Phần 1 đến Phần 29 là lộ trình an toàn nhất. Tuy nhiên, nếu cần ưu tiên theo vai trò, có thể chọn nhánh phù hợp — ví dụ: kỹ sư chỉ cần SSL/TLS có thể đọc Khối I (1-5) rồi nhảy sang Phần 15-16-17-18; kỹ sư cần rate limiting đọc Khối I → Phần 6-7 → Phần 9 → Phần 13-14; kỹ sư cần logging/monitoring đọc Khối I → Phần 5-6 → Phần 24 (Phần 5 cần thiết để hiểu timeout fields trong log); kỹ sư cần HTTP caching đọc Khối I → Phần 3 (basic cache setup) → Phần 8 (advanced cache control) → Phần 21. Phần 28 (Lab tổng hợp) yêu cầu hoàn thành Phần 25-26-27 trước; Phần 29 (So sánh phiên bản) có thể đọc bất kỳ lúc nào sau Phần 1. Sơ đồ trên giúp xác minh rằng mọi phụ thuộc đã được thỏa mãn trước khi đọc phần bất kỳ.
 
 ---
 
@@ -178,15 +180,13 @@ Khối này chuyển từ kiến thức sang kỹ năng vận hành: tối ưu h
 
 ## Hệ thống theo dõi tiến hóa phiên bản (Version Evolution Tracker)
 
-Sự khác biệt giữa HAProxy 2.0, 2.4, 2.8, và 3.0+ rất lớn — từ directive bị loại bỏ (`nbproc`), default behavior thay đổi (`http-reuse`), đến tính năng hoàn toàn mới (QUIC, ACME, thread groups). Thay vì chờ đến Phần 29 mới bắt đầu tổng hợp, series này ghi nhận mọi thay đổi phiên bản **ngay tại thời điểm phát hiện** trong từng Part, đồng thời cập nhật vào bảng tham chiếu trung tâm.
-
-Bảng tham chiếu: [references/haproxy-version-evolution.md](references/haproxy-version-evolution.md) — file này chứa toàn bộ sự khác biệt đã ghi nhận, phân loại theo category (process model, SSL/TLS, protocols, performance, ...), với back-reference đến Part đã nhắc.
+Sự khác biệt giữa HAProxy 2.0, 2.4, 2.8, và 3.0+ rất lớn — từ directive bị loại bỏ (`nbproc`), default behavior thay đổi (`http-reuse`), đến tính năng hoàn toàn mới (QUIC, ACME, thread groups). Thay vì chờ đến Phần 29 mới bắt đầu tổng hợp, series này ghi nhận mọi thay đổi phiên bản **ngay tại thời điểm phát hiện** trong từng Part, đồng thời cập nhật vào bảng tham chiếu trung tâm tại [Phụ lục A](#phụ-lục-a--bảng-theo-dõi-tiến-hóa-phiên-bản-haproxy) cuối file này.
 
 Quy ước inline trong nội dung bài: khi một tính năng hoặc behavior khác nhau giữa các phiên bản, bài viết sử dụng callout "Lưu ý phiên bản" để người đọc nhận biết ngay điều gì áp dụng cho phiên bản nào. Ví dụ:
 
-> **Lưu ý phiên bản:** Directive `nbproc` fully supported ở 2.0, deprecated ở 2.4, và bị loại bỏ hoàn toàn từ 2.5. Multi-threading (`nbthread`) thay thế hoàn toàn multi-process.
+> **Lưu ý phiên bản:** Directive `nbproc` fully supported ở 2.0, deprecated ở 2.3, và bị loại bỏ hoàn toàn từ 2.5. Multi-threading (`nbthread`) thay thế hoàn toàn multi-process.
 
-Quy trình khi viết mỗi Part mới: (1) viết nội dung dựa trên HAProxy 2.0 baseline, (2) khi phát hiện behavior khác ở phiên bản sau, thêm callout "Lưu ý phiên bản" vào bài, (3) cập nhật bảng trong `references/haproxy-version-evolution.md` với cột "Nguồn Part" trỏ đến Part và section.
+Quy trình khi viết mỗi Part mới: (1) viết nội dung dựa trên HAProxy 2.0 baseline, (2) khi phát hiện behavior khác ở phiên bản sau, thêm callout "Lưu ý phiên bản" vào bài, (3) cập nhật Phụ lục A cuối file này với cột "Nguồn Part" trỏ đến Part và section.
 
 ---
 
@@ -205,3 +205,150 @@ Toàn bộ series sử dụng các quy ước sau trong code blocks và ví dụ
 | `[x]` trong command syntax | Thành phần tùy chọn, có thể bỏ qua |
 | `{x}` trong command syntax | Thành phần bắt buộc |
 | `x \| y` trong command syntax | Chọn một trong các lựa chọn |
+
+---
+
+## Phụ lục A — Bảng theo dõi tiến hóa phiên bản HAProxy
+
+Bảng tham chiếu trung tâm ghi nhận mọi thay đổi giữa các phiên bản HAProxy trên Ubuntu LTS. Mỗi khi viết một Part và phát hiện behavior khác nhau giữa phiên bản, thông tin được ghi vào đây với back-reference đến Part đã nhắc. Khi đến Part 29 (So sánh phiên bản), toàn bộ dữ liệu đã sẵn sàng.
+
+| Ubuntu LTS | HAProxy (Canonical repo) | Trạng thái |
+|---|---|---|
+| 20.04 Focal | 2.0.x | **Baseline** (phiên bản gốc của series) |
+| 22.04 Jammy | 2.4.x | So sánh với baseline |
+| 24.04 Noble | 2.8.x | So sánh với baseline |
+| (PPA/source) | 3.0+ / 3.2 | Ghi nhận cho lộ trình tương lai |
+
+Quy ước: `NEW` = tính năng mới, `CHANGED` = hành vi mặc định thay đổi, `DEPRECATED` = sẽ bị loại bỏ, `REMOVED` = đã loại bỏ, `IMPROVED` = cải thiện hiệu năng/mở rộng.
+
+### A.1 — Process Model và Threading
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `master-worker` default | Không (cần `-W` hoặc directive) | Không | Mặc định | Mặc định | Part 1, §1.3 |
+| `nbproc` | Fully supported | DEPRECATED (từ 2.3) | REMOVED (từ 2.5) | REMOVED | Part 1, §1.3 |
+| `nbthread` default | Auto-detect CPU cores (Linux với CPU affinity) | Auto-detect CPU cores | Auto-detect | Auto-detect | Part 1, §1.3 |
+| `nbthread` + `nbproc` exclusive | Có (không dùng đồng thời) | N/A (nbproc deprecated) | N/A | N/A | Part 1, §1.3 |
+| Thread groups | Không | Không | NEW (từ 2.7) | Có | — |
+| `-W` master-worker flag | Có | Có | Có (nhưng là default) | Có | Part 1, §1.3 |
+| `-sf` soft-finish reload | Có | Có | Có | Có | Part 1, §1.3 |
+
+### A.2 — Cấu hình cốt lõi (Global, Defaults, Sections)
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `http-reuse` default | `never` | CHANGED → `safe` | `safe` | `safe` | — |
+| HTX engine (HTTP/2) | Có (mặc định từ 2.0) | Có | Có | Có | Part 1, §1.3 |
+| `default-path` directive | Không | NEW | Có | Có | — |
+| `strict-limits` | Không | NEW | Có | Có | — |
+| Conditional blocks (`if`) | Không | NEW (từ 2.4) | Có | Có | — |
+| `crt-store` section | Không | Không | Không | NEW (3.0) | — |
+
+### A.3 — SSL/TLS và Certificate Management
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| TLS 1.3 support | Có (OpenSSL 1.1.1) | Có | Có | Có | — |
+| OCSP Stapling | Có (basic) | IMPROVED | IMPROVED (auto-update) | Có | README, Part 16 |
+| ACME protocol (Let's Encrypt) | Không | Không | Không | NEW (3.2, experimental) | README, Part 16 |
+| kTLS kernel offload | Không | NEW (kernel 5.15+) | Có | Có | README, Part 15 |
+| `ssl-default-bind-ciphersuites` | Có (TLS 1.3 ciphers) | Có | Có | Có | — |
+| Certificate hot-reload | Có (via Runtime API) | Có | IMPROVED | Có | — |
+
+### A.4 — HTTP/2, HTTP/3, và Modern Protocols
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| HTTP/2 frontend | Có (qua HTX) | Có | Có | Có | README, Part 17 |
+| HTTP/2 backend (h2c/h2) | Có | IMPROVED | Có | Có | — |
+| QUIC / HTTP/3 | Không | Không | NEW (experimental, từ 2.6) | Có (stable) | README, Part 17 |
+| `bind quic4@`/`quic6@` | Không | Không | NEW | Có | README, Part 17 |
+| WebSocket upgrade | Có | Có | Có | Có | — |
+| gRPC proxying | Có | Có | Có | Có | — |
+
+### A.5 — Load Balancing và Health Checks
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `balance random` | Có | Có | Có | Có | — |
+| Health check: agent-check | Có | Có | Có | Có | — |
+| Passive health check | Có | Có | Có | Có | — |
+| Health check TCP fast-open | Không | Không | NEW | Có | — |
+
+### A.6 — Stick Tables, Persistence, và Rate Limiting
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| Stick table peers | Có | Có | IMPROVED (peers v2.1) | Có | — |
+| `gpt` (general purpose tag) | `gpt0` chỉ 1 tag | IMPROVED (multiple `gpt`) | Có | Có | — |
+| `silent-drop` | Có | Có | Có | Có | — |
+
+### A.7 — ACL, Fetches, Converters, và Rules
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `jwt_verify()` | Không | NEW (từ 2.4) | Có | Có | — |
+| `jwt_header_query` | Không | NEW | Có | Có | — |
+| `http-after-response` | Có | Có | Có | Có | — |
+| `set-var-fmt` | Không | NEW | Có | Có | — |
+
+### A.8 — Logging, Monitoring, và Observability
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| Prometheus exporter | Có (basic) | IMPROVED | IMPROVED | Có | — |
+| `ring` section (ring buffer) | Có | Có | IMPROVED | Có | — |
+| `log-forward` | Không | NEW (từ 2.3) | Có | Có | — |
+
+### A.9 — Performance, Kernel, và Advanced Features
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `splice()` zero-copy | Có | Có | Có | Có | — |
+| `filter bwlim` (bandwidth limit) | Không | Không | NEW (từ 2.7) | Có | README, Part 21 |
+| `mode spop` backend | Không | Không | Không | NEW (3.1) | README, Part 22 |
+| CPU affinity per thread | Có (basic `cpu-map`) | IMPROVED | IMPROVED (thread groups) | Có | — |
+| `tune.quic.*` directives | Không | Không | NEW | Có | — |
+
+### A.10 — Security
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| HTTP/2 Rapid Reset (CVE-2023-44487) | Không bị ảnh hưởng | Không bị ảnh hưởng | Patched | Patched | README, Part 27 |
+| H2 SETTINGS_MAX_CONCURRENT_STREAMS | Có | Có | IMPROVED | Có | — |
+
+### A.11 — Lua, SPOE/SPOP, và Extensibility
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| Lua 4 extension points | Có (actions, fetches, converters, services) | Có | Có | Có | README, Part 22 |
+| SPOE/SPOP | Có | Có | Có | IMPROVED (`mode spop` backend, 3.1+) | README, Part 22 |
+
+### A.12 — High Availability và Reload
+
+| Thay đổi | 2.0 (20.04) | 2.4 (22.04) | 2.8 (24.04) | 3.0+ | Nguồn Part |
+|---|---|---|---|---|---|
+| `-x` fd passing reload | Có (master-worker mode) | Có | Có | Có | README, Part 26 |
+| Seamless reload via master | Có (nếu master-worker bật) | Có | Có (default) | Có | Part 1, §1.3 |
+| `hard-stop-after` | Có | Có | Có | Có | — |
+
+### Thống kê tổng hợp
+
+| Metric | Giá trị |
+|---|---|
+| Tổng số thay đổi đã ghi nhận | 52 |
+| Từ 2.0 → 2.4 | ~15 thay đổi |
+| Từ 2.4 → 2.8 | ~12 thay đổi |
+| Từ 2.8 → 3.0+ | ~8 thay đổi |
+| Parts đã đóng góp dữ liệu | Part 1, README |
+
+### Tài liệu tham khảo cho Part 29
+
+1. [HAProxy 2.0 Release Notes](https://www.haproxy.org/download/2.0/src/CHANGELOG)
+2. [HAProxy 2.4 Release Notes](https://www.haproxy.org/download/2.4/src/CHANGELOG)
+3. [HAProxy 2.8 Release Notes](https://www.haproxy.org/download/2.8/src/CHANGELOG)
+4. [HAProxy 3.0 Release Notes](https://www.haproxy.org/download/3.0/src/CHANGELOG)
+5. [Announcing HAProxy 2.4 — haproxy.com](https://www.haproxy.com/blog/announcing-haproxy-2-4)
+6. [Announcing HAProxy 2.8 — haproxy.com](https://www.haproxy.com/blog/announcing-haproxy-2-8)
+7. [Announcing HAProxy 3.0 — haproxy.com](https://www.haproxy.com/blog/announcing-haproxy-3-0)
+8. [Ubuntu Packages — HAProxy](https://packages.ubuntu.com/search?keywords=haproxy)

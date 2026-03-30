@@ -7,64 +7,79 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-03-30
-**Branch:** `master` (sau khi merge PR #25)
-**Base:** `master`
+**Ngày:** 2026-03-30 (session 2 — tiếp nối sau PR #25)
+**Branch:** `master` (dirty — audit changes chưa commit)
+**Base:** `master` tại `f3256f9`
 
 ### Đã hoàn thành
 
-1. **PR #25 merged** — feat: add Linux FD deep-dive, HAProxy Part 1 restructure, and SVG audit infrastructure
-   - Squash merge commit: `f3256f9`
-   - 9 commits gộp thành 1
+1. **Audit toàn diện cấu trúc HAProxy + Part 1** (user request trước khi bắt đầu Part 2)
+   - Kích hoạt 4 skills: professor-style, document-design, fact-checker, web-fetcher
+   - Phát hiện và sửa 3 lỗi factual trong Part 1 (stack memory, nbproc deprecation, nbthread auto-detect)
+   - Verify 10 URLs — tất cả alive
+   - Thêm Quiz section (4 câu multiple-choice) vào Part 1
 
-2. **Linux FD Deep-Dive** (`linux-onboard/file-descriptor-deep-dive.md`)
-   - 791 dòng, TLPI Section 5.4 three-table model
-   - Các chủ đề: FD table, Open File Table, i-node table, dup(), fork(), exec(), CLOEXEC, epoll
-   - 5 SVG figures: fd-kernel-3-table-model, fd-fork-exec-cloexec, fd-epoll-architecture, fd-select-poll-vs-epoll, fd-leak-and-cloexec
+2. **Tích hợp Version Evolution Tracker vào Phụ lục A**
+   - Di chuyển 52 entries (12 categories) từ `references/haproxy-version-evolution.md` vào cuối `haproxy-onboard/README.md`
+   - File gốc cần `git rm` trên local (sandbox không cho phép xóa)
 
-3. **SVG Audit Infrastructure** (tạo mới sau khi phát hiện SVG-caption inconsistency)
-   - Root cause analysis: SVG rewritten nhưng caption không update
-   - Tạo document-design Rule 8: SVG-Caption Atomic Consistency
-   - Tạo `svg-caption-consistency.py` (entity extraction + mismatch detection)
-   - Tạo Tầng 5 trong `memory/file-dependency-map.md` (image→markdown mapping)
-   - Cập nhật Checklist B (§5b, §6b) và Checklist C (§5a, §5b) trong CLAUDE.md
-   - Đã cài `document-design.skill` vào Claude Desktop
+3. **Sửa Knowledge Dependency Graph** (4 edges)
+   - P4→P11 → P3→P11 (LB algorithms cần core concepts, không cần connection model)
+   - P7→P22 → P6→P22 (Lua extends fetches/converters, không phải ACL)
+   - +P5→P24 (logging cần timeout knowledge)
+   - +P3→P21 (HTTP cache cần config structure)
 
-4. **HAProxy Part 1 restructure** (từ session trước, included trong PR #25)
-   - Professor-style review, version correction 3.2→2.0
-   - 52-entry version evolution tracker
-   - Knowledge dependency map fixes (7 edges)
+4. **Thu gọn root README** — HAProxy section từ ~245 dòng → 3 dòng (pointer)
+
+5. **Đồng bộ haproxy-series-state.md** — sửa 27/29 tên Part cho khớp README (source of truth)
+
+6. **Cập nhật CLAUDE.md Rule 1** — mở rộng trigger sang "audit/review", thêm lesson-learned callout
+
+7. **Thêm Checklist F** vào quality-gate — dành cho audit/review operations
+
+8. **Cập nhật memory files** — file-dependency-map.md (remove version-evolution refs), CLAUDE.md Current State table
 
 ### Chưa hoàn thành (Pending)
 
+- [ ] **Commit audit changes** → feature branch → PR (theo git-workflow skill)
+- [ ] **`git rm haproxy-onboard/references/haproxy-version-evolution.md`** trên local machine
 - [ ] **HAProxy Parts 2-29**: Chưa bắt đầu (28/29 remaining)
-- [ ] **Linux FD doc — thêm sections**: Có thể mở rộng thêm về epoll edge-triggered, signalfd, eventfd
-- [ ] **Cleanup**: `document-design.skill` và `pr-body.txt` trong repo root (untracked, nên xóa)
-- [ ] **references/ folder**: Chứa "The Linux Programming Interface.pdf" — chưa track (file lớn, cân nhắc .gitignore hoặc Git LFS)
+- [ ] **Linux FD doc — thêm sections**: epoll edge-triggered, signalfd, eventfd
+- [ ] **Cleanup**: `document-design.skill` và `pr-body.txt` trong repo root
 
 ### Git State khi kết thúc
 
 ```
 Branch: master
-Status: clean (tại f3256f9)
-Remote: up to date with origin/master
-Untracked files: .claude/, document-design.skill, pr-body.txt (tạm, không cần commit)
+Status: dirty (nhiều files modified, chưa commit)
+Remote: master up to date tại f3256f9
+Modified files:
+  - haproxy-onboard/README.md (Phụ lục A, dependency graph, inline annotation fix)
+  - haproxy-onboard/1.0 - haproxy-history-and-architecture.md (3 fact fixes, Quiz, callout)
+  - README.md (root — thu gọn HAProxy section)
+  - CLAUDE.md (Rule 1 update, Current State table)
+  - memory/haproxy-series-state.md (sync 27 Part names)
+  - memory/file-dependency-map.md (remove version-evolution refs)
+  - memory/session-log.md (file này)
+  - .claude-skills/quality-gate/SKILL.md (Checklist F)
 ```
 
 ### Lệnh cần chạy trên local
 
 ```bash
-# Không có lệnh pending — master đã push và PR đã merge
-# Nếu muốn cleanup:
-rm document-design.skill pr-body.txt
+# SAU KHI commit và push trên Cowork/Claude Desktop:
+git rm haproxy-onboard/references/haproxy-version-evolution.md
+# Hoặc nếu commit trên local:
+git checkout -b audit/haproxy-structure-and-part1
+git add -A && git commit -m "docs(haproxy): audit structure, fix Part 1 facts, integrate version tracker"
+git push -u origin audit/haproxy-structure-and-part1
 ```
 
 ### Bài học rút ra từ session này
 
-1. **SVG-caption phải sửa atomic**: Khi rewrite SVG, caption PHẢI update ngay trong cùng thao tác
-2. **Root cause trước fix**: User yêu cầu đúng — điều tra nguyên nhân → tạo prevention → rồi mới fix
-3. **PowerShell không hỗ trợ heredoc**: Dùng `--body-file` thay vì `--body` khi tạo PR từ PowerShell/VSCode terminal
-4. **CRLF vs LF**: Windows tạo CRLF, git cần LF — cân nhắc `.gitattributes` để auto-normalize
+1. **4 skills LUÔN kích hoạt** — không có ngoại lệ kể cả audit/review (sai lầm: chỉ dùng 2/4)
+2. **Audit = viết** trong ngữ cảnh quality-gate — cần fact-checker + web-fetcher dù "chỉ đọc"
+3. **Cross-file sync discipline** — dependency map phải cập nhật ngay khi thay đổi cấu trúc file
 
 ---
 

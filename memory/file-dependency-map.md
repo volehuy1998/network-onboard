@@ -14,13 +14,13 @@
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
 | `README.md` (root) | Entry point repo, liệt kê tất cả series, HAProxy version refs | `haproxy-onboard/README.md` (version refs phải khớp), `linux-onboard/`, `network-onboard/` |
-| `haproxy-onboard/README.md` | TOC 29 Parts, Knowledge Dependency Map, Version Tracker link | `README.md` (root — version refs), MỌI file Part `*.md` (tên Part phải khớp TOC), `references/haproxy-version-evolution.md` |
+| `haproxy-onboard/README.md` | TOC 29 Parts, Knowledge Dependency Map, Phụ lục A (Version Evolution Tracker — 52 entries, 12 categories) | `README.md` (root — version refs), MỌI file Part `*.md` (tên Part phải khớp TOC), `memory/haproxy-series-state.md` (tên Part phải khớp) |
 
 ### Tầng 2: Content files (Parts)
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `haproxy-onboard/1.0 - haproxy-history-and-architecture.md` | Part 1: history, architecture, process model | `haproxy-onboard/README.md` (TOC entry, dependency graph), `README.md` (root — summary), `references/haproxy-version-evolution.md` (nếu có version-specific content) |
+| `haproxy-onboard/1.0 - haproxy-history-and-architecture.md` | Part 1: history, architecture, process model | `haproxy-onboard/README.md` (TOC entry, dependency graph, Phụ lục A nếu có version-specific content), `README.md` (root — summary) |
 | `linux-onboard/file-descriptor-deep-dive.md` | FD deep-dive: TLPI 3-table, epoll, CLOEXEC (791 lines) | 5 SVGs trong `images/fd-*.svg` (Tầng 5), `README.md` (root — nếu có link) |
 
 > **Template cho Parts mới:** Copy dòng trên và điều chỉnh. Mỗi Part mới phải được thêm vào bảng này.
@@ -29,7 +29,9 @@
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `haproxy-onboard/references/haproxy-version-evolution.md` | Version tracker (52 entries, 12 categories) | `haproxy-onboard/README.md` (Version Tracker section), MỌI Part file (inline version annotations `> **Lưu ý phiên bản:**` phải consistent) |
+| _(Không còn file riêng — Version Evolution Tracker đã tích hợp vào `haproxy-onboard/README.md` Phụ lục A)_ | — | — |
+
+> **Lưu ý:** `haproxy-onboard/references/haproxy-version-evolution.md` đã được migrate vào Phụ lục A của `haproxy-onboard/README.md` (session 2026-03-30). File gốc cần xóa trên local (`git rm`).
 
 ### Tầng 4: Memory và config files
 
@@ -61,9 +63,8 @@
 
 Phải kiểm tra TẤT CẢ file sau:
 1. `README.md` (root) — section HAProxy
-2. `haproxy-onboard/README.md` — TOC descriptions
-3. `haproxy-onboard/references/haproxy-version-evolution.md` — tracker table
-4. MỌI Part file đã viết — inline version annotations
+2. `haproxy-onboard/README.md` — TOC descriptions + Phụ lục A (Version Evolution Tracker)
+3. MỌI Part file đã viết — inline version annotations (`> **Lưu ý phiên bản:**`)
 
 **Bài học từ lỗi thực tế:** Session ngày 2026-03-29, sửa `haproxy-onboard/README.md` từ HAProxy 3.2 → 2.0 nhưng QUÊN `README.md` (root) vẫn còn "HAProxy 3.2". Phát hiện nhờ professor-style review, sửa trong commit `3535f14`.
 
@@ -73,7 +74,7 @@ Phải kiểm tra TẤT CẢ file sau:
 2. Cập nhật `haproxy-onboard/README.md` — TOC entry + Mermaid dependency graph + reading path
 3. Cập nhật `memory/haproxy-series-state.md` — thêm dòng mới
 4. Cập nhật `memory/file-dependency-map.md` (file này) — thêm entry Part mới
-5. Nếu có version-specific content: cập nhật `haproxy-onboard/references/haproxy-version-evolution.md`
+5. Nếu có version-specific content: cập nhật Phụ lục A trong `haproxy-onboard/README.md`
 
 ### Khi sửa Mermaid dependency graph
 
