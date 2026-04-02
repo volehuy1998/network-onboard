@@ -14,7 +14,7 @@
   <rect width="920" height="680" fill="#FAFBFC" rx="8"/>
 
   <!-- Title -->
-  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-2: FD Leak qua fork()+exec() và giải pháp CLOEXEC</text>
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-4: FD Leak qua fork()+exec() và giải pháp CLOEXEC</text>
 
   <!-- ============ GIAI ĐOẠN 1: TRƯỚC FORK ============ -->
   <rect x="15" y="44" width="890" height="130" fill="#F7FAFC" stroke="#CBD5E0" rx="6"/>

@@ -2,7 +2,7 @@
   <rect width="920" height="600" fill="#FAFBFC" rx="8"/>
 
   <!-- Title -->
-  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-4: So sánh select(), poll() và epoll</text>
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-3: So sánh select(), poll() và epoll</text>
   <text x="460" y="52" text-anchor="middle" font-size="11" fill="#718096">Dữ liệu benchmark: TLPI Table 63-9 (Linux 2.6.25, 100.000 iterations, 1 FD ready)</text>
 
   <!-- ============ THREE COLUMNS ============ -->
