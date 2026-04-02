@@ -7,94 +7,93 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-03-30 (session 2 — tiếp nối sau PR #25)
-**Branch:** `master` (dirty — audit changes chưa commit)
-**Base:** `master` tại `f3256f9`
+**Ngày:** 2026-04-02
+**Branch:** `fix/fd-doc-audit-corrections` (clean — commit `6ecfb07`)
+**Base:** `master` tại `6573211`
 
 ### Đã hoàn thành
 
-1. **Audit toàn diện cấu trúc HAProxy + Part 1** (user request trước khi bắt đầu Part 2)
-   - Kích hoạt 4 skills: professor-style, document-design, fact-checker, web-fetcher
-   - Phát hiện và sửa 3 lỗi factual trong Part 1 (stack memory, nbproc deprecation, nbthread auto-detect)
-   - Verify 10 URLs — tất cả alive
-   - Thêm Quiz section (4 câu multiple-choice) vào Part 1
+1. **Full 6-phase audit của `linux-onboard/file-descriptor-deep-dive.md`** (user request: "Tài liệu về FD này đúng chứ? Hãy dừng tất cả skill để audit nó")
+   - Phase 1: Đọc toàn bộ 791 dòng, liệt kê 13 technical claims cần verify
+   - Phase 2: Fact-check 13 claims — 11 CORRECT, 2 INCORRECT (đã sửa)
+     - Sửa 1: HAProxy hybrid ET/LT (FD_ET_POSSIBLE), không phải purely LT
+     - Sửa 2: HAProxy CLOEXEC conditional (accept4 + fcntl fallback), không phải "mọi socket/open"
+   - Phase 3: Verify 11 URLs — tất cả HTTP 200
+   - Phase 4: Document-design compliance — 12 H2 sections (vượt limit 7, nhưng chấp nhận cho standalone deep-dive), 7 Key Topics, 2 Misconceptions, learning elements đầy đủ
+   - Phase 5: Professor-style compliance — 6 criteria (2.1-2.6) đạt
+   - Phase 6: Commit fix trên feature branch
 
-2. **Tích hợp Version Evolution Tracker vào Phụ lục A**
-   - Di chuyển 52 entries (12 categories) từ `references/haproxy-version-evolution.md` vào cuối `haproxy-onboard/README.md`
-   - File gốc cần `git rm` trên local (sandbox không cho phép xóa)
+2. **Thay thế lab output placeholder bằng real output** (từ session trước, chưa commit)
+   - Section 1.2 Guided Exercise: hostname `huyvl-lab-fd`, PIDs 35567/35571, `/dev/pts/2`, root user
+   - Before You Begin: cập nhật quyền user/root
 
-3. **Sửa Knowledge Dependency Graph** (4 edges)
-   - P4→P11 → P3→P11 (LB algorithms cần core concepts, không cần connection model)
-   - P7→P22 → P6→P22 (Lua extends fetches/converters, không phải ACL)
-   - +P5→P24 (logging cần timeout knowledge)
-   - +P3→P21 (HTTP cache cần config structure)
-
-4. **Thu gọn root README** — HAProxy section từ ~245 dòng → 3 dòng (pointer)
-
-5. **Đồng bộ haproxy-series-state.md** — sửa 27/29 tên Part cho khớp README (source of truth)
-
-6. **Cập nhật CLAUDE.md Rule 1** — mở rộng trigger sang "audit/review", thêm lesson-learned callout
-
-7. **Thêm Checklist F** vào quality-gate — dành cho audit/review operations
-
-8. **Cập nhật memory files** — file-dependency-map.md (remove version-evolution refs), CLAUDE.md Current State table
+3. **Commit**: `6ecfb07` — `fix(linux): audit FD deep-dive — correct HAProxy claims, add real lab output`
 
 ### Chưa hoàn thành (Pending)
 
-- [ ] **Commit audit changes** → feature branch → PR (theo git-workflow skill)
-- [ ] **`git rm haproxy-onboard/references/haproxy-version-evolution.md`** trên local machine
+- [ ] **Push branch `fix/fd-doc-audit-corrections`** → tạo PR → merge (sandbox không có git auth)
 - [ ] **HAProxy Parts 2-29**: Chưa bắt đầu (28/29 remaining)
-- [ ] **Linux FD doc — thêm sections**: epoll edge-triggered, signalfd, eventfd
-- [ ] **Cleanup**: `document-design.skill` và `pr-body.txt` trong repo root
+- [ ] **Linux FD doc — mở rộng**: epoll advanced topics, signalfd/eventfd/timerfd (user nói "thực hành nó sau")
+- [ ] **Cleanup trên local**: `git rm haproxy-onboard/references/haproxy-version-evolution.md`, xóa `document-design.skill` và `pr-body.txt` trong repo root
 
 ### Git State khi kết thúc
 
 ```
-Branch: master
-Status: dirty (nhiều files modified, chưa commit)
-Remote: master up to date tại f3256f9
+Branch: fix/fd-doc-audit-corrections (clean)
+Remote: chưa push (sandbox không có git auth)
+Base: master tại 6573211
+Commit mới: 6ecfb07 — fix(linux): audit FD deep-dive
 Modified files:
-  - haproxy-onboard/README.md (Phụ lục A, dependency graph, inline annotation fix)
-  - haproxy-onboard/1.0 - haproxy-history-and-architecture.md (3 fact fixes, Quiz, callout)
-  - README.md (root — thu gọn HAProxy section)
-  - CLAUDE.md (Rule 1 update, Current State table)
-  - memory/haproxy-series-state.md (sync 27 Part names)
-  - memory/file-dependency-map.md (remove version-evolution refs)
-  - memory/session-log.md (file này)
-  - .claude-skills/quality-gate/SKILL.md (Checklist F)
+  - linux-onboard/file-descriptor-deep-dive.md (3 changes: real lab output, HAProxy ET/LT fix, HAProxy CLOEXEC fix)
 ```
 
 ### Lệnh cần chạy trên local
 
 ```bash
-# SAU KHI commit và push trên Cowork/Claude Desktop:
-git rm haproxy-onboard/references/haproxy-version-evolution.md
-# Hoặc nếu commit trên local:
-git checkout -b audit/haproxy-structure-and-part1
-git add -A && git commit -m "docs(haproxy): audit structure, fix Part 1 facts, integrate version tracker"
-git push -u origin audit/haproxy-structure-and-part1
+# Pull branch và push lên GitHub
+cd network-onboard
+git fetch origin
+git checkout fix/fd-doc-audit-corrections
+git push -u origin fix/fd-doc-audit-corrections
+
+# Tạo PR
+gh pr create --base master --title "fix(linux): audit FD deep-dive — correct HAProxy claims, add real lab output" --body "## Summary
+- Full 6-phase audit of linux-onboard/file-descriptor-deep-dive.md before GitHub publication
+- Correct 2 factual errors: HAProxy hybrid ET/LT (not purely LT), HAProxy CLOEXEC conditional (not unconditional)
+- Replace placeholder lab output with real terminal output from huyvl-lab-fd
+
+## Audit Results
+- 13 technical claims fact-checked: 11 correct, 2 corrected
+- 11 reference URLs verified: all HTTP 200
+- Document-design and professor-style compliance: passed
+
+## Test plan
+- [ ] Markdown renders correctly on GitHub
+- [ ] All 11 reference URLs accessible
+- [ ] Lab output matches real machine output"
+
+# Sau khi merge PR:
+git checkout master
+git pull origin master
 ```
 
 ### Bài học rút ra từ session này
 
-1. **4 skills LUÔN kích hoạt** — không có ngoại lệ kể cả audit/review (sai lầm: chỉ dùng 2/4)
-2. **Audit = viết** trong ngữ cảnh quality-gate — cần fact-checker + web-fetcher dù "chỉ đọc"
-3. **Cross-file sync discipline** — dependency map phải cập nhật ngay khi thay đổi cấu trúc file
+1. **HAProxy source code verification** là bắt buộc khi claim về internal behavior — documentation và source code có thể khác nhau (hybrid ET/LT vs "LT by default")
+2. **"trên mọi X" claims** cần verify cẩn thận — thực tế thường là conditional, có fallback
 
 ---
 
 ## Lịch sử sessions trước
 
+### Session 2026-03-30 (session 2)
+
+**Branch:** `master` (dirty — audit changes)
+**Đã hoàn thành:** Audit HAProxy structure + Part 1, tích hợp Version Evolution Tracker vào Phụ lục A, sửa Knowledge Dependency Graph (4 edges), thu gọn root README, đồng bộ haproxy-series-state.md, cập nhật CLAUDE.md Rule 1, thêm Checklist F.
+
 ### Session 2026-03-29
 
 **Branch:** `fix-haproxy-readme-audit`
-
-**Đã hoàn thành:**
-1. Commit `3d82766` — fix(haproxy): correct factual errors and add missing dependency in README TOC
-2. Commit `10c3a17` — docs(haproxy): add document-design structure and fix cross-references in Part 1
-3. Commit `3535f14` — fix(haproxy): update version refs to HAProxy 2.0 and enhance Part 1 with professor-style review
-4. Commit `919341b` — feat(haproxy): add version evolution tracker for cross-version changes
-5. Commit `bdbff8f` — fix(haproxy): update knowledge dependency map with 7 corrected edges
-6. Tạo CLAUDE.md + memory system
+**Đã hoàn thành:** 5 commits (3d82766, 10c3a17, 3535f14, 919341b, bdbff8f), tạo CLAUDE.md + memory system.
 
 _(Giữ tối đa 5 entries.)_
