@@ -933,6 +933,30 @@ FD 3 flags before exec: FD_CLOEXEC = True
 FD 3 closed by CLOEXEC — no leak
 root@huyvl-lab-fd:~#
 ```
+root@huyvl-lab-fd:~# python3 -c "
+import os, fcntl
+
+fd = os.open('/tmp/cloexec-test.txt', os.O_WRONLY | os.O_CREAT, 0o644)
+print(f'os.open() returned FD: {fd}')
+
+# Chi dup2 + close khi fd KHAC 3
+if fd != 3:
+    os.dup2(fd, 3)
+    os.close(fd)
+
+# Set CLOEXEC on FD 3
+flags = fcntl.fcntl(3, fcntl.F_GETFD)
+fcntl.fcntl(3, fcntl.F_SETFD, flags | fcntl.FD_CLOEXEC)
+print('FD 3 flags before exec: FD_CLOEXEC =', bool(fcntl.fcntl(3, fcntl.F_GETFD) & fcntl.FD_CLOEXEC))
+
+os.execlp('bash', 'bash', '-c', 'ls -l /proc/\$\$/fd/3 2>/dev/null && echo \"FD 3 LEAKED\" || echo \"FD 3 closed by CLOEXEC — no leak\"')
+"
+os.open() returned FD: 3
+FD 3 flags before exec: FD_CLOEXEC = True
+FD 3 closed by CLOEXEC — no leak
+```
+
+Phân tích kết quả: `os.open()` trả về FD 3 (lowest available — quy tắc đã chứng minh ở mục 1.3). Vì `fd` đã là 3, đoạn `if fd != 3` bỏ qua `dup2()`/`close()` — tránh lỗi đóng nhầm FD vừa mở (nếu `dup2(3, 3)` thì là no-op theo POSIX, nhưng `os.close(3)` ngay sau sẽ đóng FD ta cần). Sau khi `fcntl()` đặt `FD_CLOEXEC = True`, Python gọi `os.execlp()` — kernel quét close-on-exec bitmap, thấy FD 3 có cờ CLOEXEC → **tự động đóng FD 3** trước khi chương trình mới (`bash -c`) bắt đầu thực thi. Kết quả: process mới không thấy FD 3, in ra "FD 3 closed by CLOEXEC — no leak".
 
 Phân tích kết quả: `os.open()` trả về FD 3 (lowest available — quy tắc đã chứng minh ở mục 1.3). Vì `fd` đã là 3, đoạn `if fd != 3` bỏ qua `dup2()`/`close()` — tránh lỗi đóng nhầm FD vừa mở (nếu `dup2(3, 3)` thì là no-op theo POSIX, nhưng `os.close(3)` ngay sau sẽ đóng FD ta cần). Sau khi `fcntl()` đặt `FD_CLOEXEC = True`, Python gọi `os.execlp()` — kernel quét close-on-exec bitmap, thấy FD 3 có cờ CLOEXEC → **tự động đóng FD 3** trước khi chương trình mới (`bash -c`) bắt đầu thực thi. Kết quả: process mới không thấy FD 3, in ra "FD 3 closed by CLOEXEC — no leak".
 
