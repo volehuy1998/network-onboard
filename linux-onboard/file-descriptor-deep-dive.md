@@ -427,43 +427,54 @@ Bạn cần Python 3 đã cài đặt, hai terminal, và `ss` command (có sẵn
 
 **Instructions:**
 
-**1.** Khởi động một web server đơn giản bằng Python:
+**1.** Đảm bảo shell chỉ có FD tiêu chuẩn trước khi bắt đầu — tránh FD còn sót từ bài thực hành trước ảnh hưởng kết quả:
 
-    [linux-node]$ python3 -m http.server 8080 &
-    [1] 5678
+    [huyvl-lab-fd]# ls /proc/$$/fd/
+    0  1  2  255
 
-**2.** Kiểm tra file descriptor của process này:
+FD 0-2 là stdin/stdout/stderr, FD 255 là FD nội bộ của bash dùng giữ script input — bình thường. Không có FD nào khác chen giữa.
 
-    [linux-node]$ ls -la /proc/5678/fd/
-    lrwx------ 1 user user 64 Mar 29 10:10 0 -> /dev/pts/0
-    lrwx------ 1 user user 64 Mar 29 10:10 1 -> /dev/pts/0
-    lrwx------ 1 user user 64 Mar 29 10:10 2 -> /dev/pts/0
-    lrwx------ 1 user user 64 Mar 29 10:10 3 -> socket:[45678]
+**2.** Khởi động một web server đơn giản bằng Python:
 
-FD 0-2 là stdin/stdout/stderr như bình thường. FD 3 là một socket — kernel hiển thị dạng `socket:[inode_number]`, trong đó số trong ngoặc vuông là i-node number của socket trong sockfs.
+    [huyvl-lab-fd]# python3 -m http.server 8080 &
+    [1] 558
+    Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
 
-**3.** Xác nhận socket đang listen trên port 8080:
+**3.** Kiểm tra file descriptor của process này:
 
-    [linux-node]$ ss -tlnp | grep 8080
-    LISTEN  0  5  0.0.0.0:8080  0.0.0.0:*  users:(("python3",pid=5678,fd=3))
+    [huyvl-lab-fd]# ls -la /proc/558/fd/
+    total 0
+    dr-x------ 2 root root  0 Apr  3 18:42 .
+    dr-xr-xr-x 9 root root  0 Apr  3 18:42 ..
+    lrwx------ 1 root root 64 Apr  3 18:42 0 -> /dev/pts/0
+    lrwx------ 1 root root 64 Apr  3 18:42 1 -> /dev/pts/0
+    lrwx------ 1 root root 64 Apr  3 18:42 2 -> /dev/pts/0
+    lrwx------ 1 root root 64 Apr  3 18:42 3 -> 'socket:[20882]'
 
-`fd=3` trong output của `ss` xác nhận rằng listening socket chính là FD 3 mà bạn đã thấy trong `/proc`.
+FD 0-2 là stdin/stdout/stderr qua terminal `/dev/pts/0`. FD 3 là listening socket — kernel hiển thị dạng `socket:[inode_number]`, trong đó 20882 là i-node number của socket trong sockfs (pseudo-filesystem quản lý socket). Vì shell cha chỉ có FD 0-2 (đã kiểm tra ở bước 1), Python server nhận FD 3 cho listening socket — đúng quy tắc **lowest available number**.
 
-**4.** Từ một terminal khác, tạo một kết nối đến server:
+**4.** Dùng strace để quan sát syscall `accept4()` khi client kết nối. Attach strace vào process Python, chỉ theo dõi `accept4` và `close`:
 
-    [linux-node]$ curl http://localhost:8080/ &
+    [huyvl-lab-fd]# strace -e trace=accept4,close -p 558 2>&1 &
+    [2] 560
+    strace: Process 558 attached
 
-**5.** Ngay lập tức kiểm tra lại FD của Python server:
+**5.** Từ cùng terminal (hoặc terminal khác), gửi request:
 
-    [linux-node]$ ls -la /proc/5678/fd/
-    ...
-    lrwx------ 1 user user 64 Mar 29 10:10 3 -> socket:[45678]
-    lrwx------ 1 user user 64 Mar 29 10:11 4 -> socket:[45679]
+    [huyvl-lab-fd]# curl -s http://localhost:8080/ > /dev/null
+    accept4(3, {sa_family=AF_INET, sin_port=htons(45528), sin_addr=inet_addr("127.0.0.1")}, [16], SOCK_CLOEXEC) = 4
 
-FD 4 mới xuất hiện — đây là socket cho kết nối từ curl client. FD 3 vẫn là listening socket, không thay đổi. Mỗi kết nối TCP mới mà server `accept()` sẽ tạo thêm một FD mới (5, 6, 7, ...), minh họa trực tiếp tại sao số lượng FD khả dụng quyết định số kết nối đồng thời tối đa.
+`accept4(3, ...) = 4` cho biết: kernel nhận kết nối mới trên listening socket FD 3, tạo connection socket mới FD 4 cho client (port nguồn 45528). Cờ `SOCK_CLOEXEC` trong `accept4()` cho thấy Python 3 tự động đặt close-on-exec nguyên tử ngay khi tạo connection socket — đây là best practice mà mục 1.10 giải thích chi tiết: nếu process gọi `fork()+exec()` sau đó, connection socket FD 4 sẽ tự động bị đóng, ngăn FD leak.
+
+**6.** Gửi thêm request để quan sát kernel tái sử dụng FD:
+
+    [huyvl-lab-fd]# curl -s http://localhost:8080/ > /dev/null
+    accept4(3, ..., SOCK_CLOEXEC) = 4
+
+Request thứ hai cũng nhận FD 4. Lý do: sau khi phục vụ xong request đầu, Python gọi `close(4)` giải phóng connection socket. Request tiếp theo, `accept4()` lại trả FD 4 vì đó là số nhỏ nhất còn trống (FD 0-3 đều đang dùng). Đây là bằng chứng trực tiếp cho quy tắc lowest available number — kernel không "nhớ" FD cũ mà luôn cấp số nhỏ nhất khả dụng.
 
 **Finish:**
-`kill %1` để tắt Python server.
+`kill %1` để tắt Python server. `kill %2` để tắt strace.
 
 ---
 
@@ -655,30 +666,28 @@ Bạn cần `strace` đã cài đặt (`apt install strace`), Python 3, và `cur
 
 **Instructions:**
 
-**1.** Khởi động Python HTTP server với strace:
+**1.** Khởi động Python HTTP server với strace — theo dõi toàn bộ syscall liên quan vòng đời socket:
 
-    [linux-node]$ strace -e trace=socket,bind,listen,accept4,close -f python3 -m http.server 8080 2>/tmp/strace_output.txt &
+    [huyvl-lab-fd]# strace -e trace=socket,bind,listen,accept4,close -f python3 -m http.server 8080 2>/tmp/strace_output.txt &
 
-**2.** Từ terminal khác, gửi request:
+**2.** Từ terminal khác (hoặc cùng terminal), gửi request:
 
-    [linux-node]$ curl http://localhost:8080/
+    [huyvl-lab-fd]# curl -s http://localhost:8080/ > /dev/null
 
 **3.** Đọc strace output:
 
-    [linux-node]$ grep -E 'socket|bind|listen|accept' /tmp/strace_output.txt
+    [huyvl-lab-fd]# grep -E 'socket|bind|listen|accept' /tmp/strace_output.txt
 
-Output mẫu:
+Output kỳ vọng (FD number có thể khác tùy hệ thống):
 
-```
-socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
-bind(3, {sa_family=AF_INET, sin_port=htons(8080), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-listen(3, 5) = 0
-accept4(3, {sa_family=AF_INET, sin_port=htons(54321), sin_addr=inet_addr("127.0.0.1")}, ...) = 4
-```
+    socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_TCP) = 4
+    bind(4, {sa_family=AF_INET, sin_port=htons(8080), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+    listen(4, 5) = 0
+    accept4(4, {sa_family=AF_INET, sin_port=htons(47968), sin_addr=inet_addr("127.0.0.1")}, [16], SOCK_CLOEXEC) = 5
 
-Chuỗi syscall thể hiện rõ vòng đời của socket: `socket()` tạo FD 3 (listening socket), `bind(3, ...)` gán địa chỉ 0.0.0.0:8080, `listen(3, 5)` chuyển sang trạng thái LISTEN với backlog = 5. Khi client kết nối, `accept4(3, ...) = 4` tạo FD 4 — đây là connection socket riêng biệt cho kết nối từ client (port 54321). FD 3 vẫn tiếp tục lắng nghe kết nối mới.
+Chuỗi syscall thể hiện rõ vòng đời của socket: `socket(SOCK_STREAM|SOCK_CLOEXEC)` tạo listening socket với close-on-exec nguyên tử, `bind()` gán địa chỉ 0.0.0.0:8080, `listen(4, 5)` chuyển sang trạng thái LISTEN với backlog = 5. Khi client kết nối, `accept4(4, ..., SOCK_CLOEXEC) = 5` tạo connection socket FD 5 — cũng với `SOCK_CLOEXEC`. Cờ này đảm bảo cả listening socket lẫn connection socket đều tự động đóng nếu process gọi `exec()`, ngăn FD leak (mục 1.10).
 
-**4.** Gửi thêm vài kết nối và quan sát FD tăng dần (5, 6, 7, ...).
+**4.** Gửi thêm vài kết nối và quan sát: FD 5 được tái sử dụng mỗi lần (vì Python close FD 5 sau mỗi request, kernel cấp lại FD 5 theo quy tắc lowest available number).
 
 **Finish:**
 Tắt server và xóa file tạm: `kill %1 && rm /tmp/strace_output.txt`
@@ -824,74 +833,99 @@ Trên OpenStack, khi Neutron agent hoặc Nova compute `fork()+exec()` các help
 
 > **Lưu ý kỹ thuật:** Trên Python 3.4+, mọi FD mới tạo bởi `open()`, `socket.socket()`, `os.pipe()` đều tự động có cờ `CLOEXEC` (PEP 446). Trên Python 2, FD mặc định KHÔNG có cờ này — đây là lý do nhiều bug FD leak xuất hiện trong các dự án OpenStack thời Python 2.
 
-### ▶ Guided Exercise: Quan sát hành vi close-on-exec
+### ▶ Guided Exercise: Chứng minh FD leak qua exec() và CLOEXEC ngăn chặn
 
-Trong bài thực hành này, bạn chứng minh rằng FD không có cờ `CLOEXEC` sẽ rò rỉ qua `exec()`, và FD có cờ `CLOEXEC` sẽ bị kernel tự động đóng.
+Bài thực hành gồm hai phần đối lập: phần A chứng minh FD **rò rỉ** qua `exec()` khi không có `CLOEXEC`, phần B chứng minh kernel **tự động đóng** FD khi có `CLOEXEC`. Kết hợp cả hai, bạn thấy rõ vai trò của cờ close-on-exec trong thực tế.
 
 **Before You Begin:**
-Bạn cần Python 3.4+ (để có `os.O_CLOEXEC`). Kiểm tra bằng `python3 -c "import os; print(hasattr(os, 'O_CLOEXEC'))"` — kết quả phải là `True`.
+Đảm bảo môi trường sạch — chỉ có FD 0, 1, 2 tiêu chuẩn. Nếu tồn tại FD thừa từ thí nghiệm trước, đóng bằng `exec N>&-` (N là số FD). Bài học từ thí nghiệm 5: FD thừa từ session trước sẽ bị process con kế thừa và làm sai lệch kết quả.
 
 **Outcomes:**
 - Thấy được FD rò rỉ sang chương trình mới sau `exec()` khi không có `CLOEXEC`
-- Xác minh FD bị đóng tự động khi có cờ `CLOEXEC`
+- Xác minh FD bị kernel tự động đóng khi có cờ `CLOEXEC`
+- Hiểu tại sao network server hiện đại (HAProxy, Nginx, Python 3) luôn đặt `CLOEXEC` trên mọi FD
 
 **Instructions:**
 
-**1.** Tạo script Python mô phỏng FD leak. Script mở một file, rồi `fork()+exec()` lệnh `ls -la /proc/self/fd/` để liệt kê FD của child:
+**Phần A — Chứng minh FD leak khi KHÔNG có CLOEXEC:**
 
-```python
-# Lưu file: /tmp/test_cloexec.py
-import os, sys
-
-# Mở file KHÔNG có O_CLOEXEC
-fd_no_cloexec = os.open("/etc/hostname", os.O_RDONLY)
-print(f"Parent: opened /etc/hostname as FD {fd_no_cloexec} (no CLOEXEC)")
-
-# Mở file CÓ O_CLOEXEC
-fd_with_cloexec = os.open("/etc/hostname", os.O_RDONLY | os.O_CLOEXEC)
-print(f"Parent: opened /etc/hostname as FD {fd_with_cloexec} (with CLOEXEC)")
-
-print(f"\nChild process FDs after exec():")
-sys.stdout.flush()
-
-pid = os.fork()
-if pid == 0:
-    # Child process — exec ls để xem FD nào còn sống
-    os.execvp("ls", ["ls", "-la", "/proc/self/fd/"])
-else:
-    os.waitpid(pid, 0)
-```
-
-**2.** Chạy script:
-
-    [linux-node]$ python3 /tmp/test_cloexec.py
-
-Output mẫu:
+**1.** Kiểm tra môi trường sạch:
 
 ```
-Parent: opened /etc/hostname as FD 3 (no CLOEXEC)
-Parent: opened /etc/hostname as FD 4 (with CLOEXEC)
-
-Child process FDs after exec():
-lr-x------ 1 user user 64 ... 0 -> /dev/pts/0
-lrwx------ 1 user user 64 ... 1 -> /dev/pts/0
-lrwx------ 1 user user 64 ... 2 -> /dev/pts/0
-lr-x------ 1 user user 64 ... 3 -> /etc/hostname
+root@huyvl-lab-fd:~# ls -l /proc/$$/fd/
+total 0
+lrwx------ 1 root root 64 Apr  3 18:41 0 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr  3 18:41 1 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr  3 18:41 2 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr  3 18:41 255 -> /dev/pts/0
 ```
 
-FD 3 (không có `CLOEXEC`) vẫn tồn tại trong child sau `exec()` — đây chính là FD rò rỉ. FD 4 (có `CLOEXEC`) đã bị kernel tự động đóng trước khi `exec()` hoàn tất nên không xuất hiện trong output. FD 0, 1, 2 (stdin/stdout/stderr) vẫn tồn tại vì chúng cần thiết cho chương trình mới và thường không được đánh dấu CLOEXEC.
+Chỉ có FD 0, 1, 2 (stdin/stdout/stderr) và FD 255 (bash internal) — môi trường sạch, sẵn sàng thí nghiệm.
 
-**3.** Xác minh FD 3 trong child thực sự đọc được nội dung file. Sửa script, thay `os.execvp("ls", ...)` bằng:
+**2.** Mở FD 3 trỏ tới file (KHÔNG có cờ CLOEXEC):
 
-```python
-    os.execvp("python3", ["python3", "-c",
-        "import os; print('Child read from leaked FD 3:', os.read(3, 100))"])
+    root@huyvl-lab-fd:~# exec 3>/tmp/cloexec-test.txt
+
+**3.** Xác nhận FD 3 tồn tại trong shell hiện tại:
+
+```
+root@huyvl-lab-fd:~# ls -l /proc/$$/fd/3
+l-wx------ 1 root root 64 Apr  3 18:41 /proc/527/fd/3 -> /tmp/cloexec-test.txt
 ```
 
-Output sẽ hiện nội dung `/etc/hostname` — chứng minh child truy cập được file thông qua FD rò rỉ mà không cần gọi `open()`.
+Shell (PID 527) đang giữ FD 3 trỏ tới `/tmp/cloexec-test.txt` ở chế độ write-only (`l-wx`).
+
+**4.** Thực hiện `fork()+exec()` qua `bash -c` — kiểm tra FD 3 có rò rỉ sang process mới không:
+
+```
+root@huyvl-lab-fd:~# bash -c 'ls -l /proc/$$/fd/3 2>/dev/null && echo "FD 3 LEAKED — still open after exec()" || echo "FD 3 closed — no leak"'
+l-wx------ 1 root root 64 Apr  3 18:50 /proc/577/fd/3 -> /tmp/cloexec-test.txt
+FD 3 LEAKED — still open after exec()
+```
+
+Khi shell thực hiện `bash -c`, kernel gọi `fork()` tạo child process (PID 577), sau đó `exec("/bin/bash")` thay thế child bằng chương trình bash mới. Vì FD 3 **không có flag CLOEXEC**, kernel giữ nguyên nó qua `exec()`. Process mới (PID 577) — một instance bash hoàn toàn mới — vẫn thấy FD 3 trỏ tới `/tmp/cloexec-test.txt` mặc dù nó không hề mở file đó. Đây chính là **FD leak** — cùng hiện tượng đã gây lỗi `Address already in use` trong kịch bản HAProxy ở phần lý thuyết.
+
+**Phần B — Chứng minh CLOEXEC ngăn chặn leak:**
+
+**5.** Đóng FD 3 cũ và xác nhận môi trường sạch trở lại:
+
+    root@huyvl-lab-fd:~# exec 3>&-
+
+**6.** Dùng Python mở FD 3 với cờ `FD_CLOEXEC`, sau đó gọi `exec()` để kiểm tra:
+
+```
+root@huyvl-lab-fd:~# python3 -c "
+import os, fcntl
+
+fd = os.open('/tmp/cloexec-test.txt', os.O_WRONLY | os.O_CREAT, 0o644)
+print(f'os.open() returned FD: {fd}')
+
+# Chi dup2 + close khi fd KHAC 3
+if fd != 3:
+    os.dup2(fd, 3)
+    os.close(fd)
+
+# Set CLOEXEC on FD 3
+flags = fcntl.fcntl(3, fcntl.F_GETFD)
+fcntl.fcntl(3, fcntl.F_SETFD, flags | fcntl.FD_CLOEXEC)
+print('FD 3 flags before exec: FD_CLOEXEC =', bool(fcntl.fcntl(3, fcntl.F_GETFD) & fcntl.FD_CLOEXEC))
+
+os.execlp('bash', 'bash', '-c', 'ls -l /proc/\$\$/fd/3 2>/dev/null && echo \"FD 3 LEAKED\" || echo \"FD 3 closed by CLOEXEC — no leak\"')
+"
+os.open() returned FD: 3
+FD 3 flags before exec: FD_CLOEXEC = True
+FD 3 closed by CLOEXEC — no leak
+```
+
+Phân tích kết quả: `os.open()` trả về FD 3 (lowest available — quy tắc đã chứng minh ở mục 1.3). Vì `fd` đã là 3, đoạn `if fd != 3` bỏ qua `dup2()`/`close()` — tránh lỗi đóng nhầm FD vừa mở (nếu `dup2(3, 3)` thì là no-op theo POSIX, nhưng `os.close(3)` ngay sau sẽ đóng FD ta cần). Sau khi `fcntl()` đặt `FD_CLOEXEC = True`, Python gọi `os.execlp()` — kernel quét close-on-exec bitmap, thấy FD 3 có cờ CLOEXEC → **tự động đóng FD 3** trước khi chương trình mới (`bash -c`) bắt đầu thực thi. Kết quả: process mới không thấy FD 3, in ra "FD 3 closed by CLOEXEC — no leak".
+
+> **Key Topic:** Đây chính là cơ chế mà Python 3 sử dụng khi gọi `socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0)` — bạn đã thấy nó trong strace ở mục 1.4 khi quan sát `accept4()` với flag `SOCK_CLOEXEC`. Cờ này được đặt **nguyên tử** ngay khi FD được tạo (không qua hai bước `open()` rồi `fcntl()` như bài thực hành này), loại bỏ race condition trong chương trình multi-threaded.
+
+**Evaluation:**
+So sánh hai kết quả: phần A — FD 3 vẫn tồn tại sau `exec()` (FD leak), phần B — FD 3 bị kernel đóng trước `exec()` (no leak). Sự khác biệt duy nhất là cờ `FD_CLOEXEC` trên FD 3.
 
 **Finish:**
-Xóa file tạm: `rm /tmp/test_cloexec.py`
+Xóa file tạm: `rm /tmp/cloexec-test.txt`. Đóng FD 3 nếu còn mở: `exec 3>&-`.
 
 ---
 
