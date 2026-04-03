@@ -252,9 +252,9 @@ Ghi nhận trạng thái: **FD 3, FD 4 -> OFD "A" (pos=8). FD 5 -> OFD "B" (pos=
     flags:  0100000
     mnt_id: 31
 
-Process con (subshell) đọc `89` (2 bytes tiếp theo sau vị trí 8 của OFD "A"), offset tiến lên 10. Quay về cha, FD 3 cũng cho `pos: 10` — dù cha không hề gọi `read()` kể từ bước 4. Đến đây, kết quả trông giống hệt `dup()` ở bước 4: offset thay đổi xuyên qua, vì cùng chia sẻ OFD. Nhưng bước tiếp theo sẽ cho thấy fork() làm được điều mà dup() không làm được.
+Process con đọc `89` (2 bytes tiếp theo sau vị trí 8 của OFD "A"), offset tiến lên 10. Quay về cha, FD 3 cũng cho `pos: 10` — dù cha không hề gọi `read()` kể từ bước 4. Kết quả này giống hệt `dup()` ở bước 4: cùng chia sẻ OFD, nên offset thay đổi xuyên qua.
 
-**7.** Cho con đọc qua FD 5 — FD mà dup() không hề đụng đến:
+**7.** Cho con đọc qua FD 5 — FD mà `dup()` ở Phần A không hề đụng đến:
 
     root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
     pos:    0
@@ -270,11 +270,7 @@ Process con (subshell) đọc `89` (2 bytes tiếp theo sau vị trí 8 của OF
     flags:  0100000
     mnt_id: 31
 
-Trước fork, FD 5 của cha vẫn `pos: 0` — đúng như bước 5 đã xác nhận. Sau khi con đọc 3 bytes qua FD 5, parent's FD 5 nhảy lên `pos: 3`. Hiện tượng offset thay đổi xuyên qua bản thân nó không mới — bước 4 (dup) cũng cho kết quả tương tự. Điểm khác biệt nằm ở **phạm vi**: hãy so sánh OFD "B" (FD 5) trong hai phần:
-
-Suốt cả Phần A, `dup(3→4)` chỉ tạo thêm FD 4 trỏ đến OFD "A" — FD 5 (OFD "B") vẫn giữ nguyên `pos: 0` từ đầu đến cuối. `dup()` là thao tác **chọn lọc**: bạn chỉ định rõ FD nào muốn nhân bản, và chỉ OFD đó bị chia sẻ — các OFD khác không bị ảnh hưởng.
-
-`fork()` ở bước 6-7 nhân bản **toàn bộ** per-process FD table — con thừa kế FD 3, FD 4, **và cả FD 5** mà cha không có ý định chia sẻ. Khi con đọc qua FD 5, offset của OFD "B" thay đổi và cha nhìn thấy ngay. `fork()` là thao tác **bán buôn**: con nhận mọi FD của cha, bao gồm socket lắng nghe, file nhạy cảm, pipe — bất kể cha có muốn hay không. Đây chính xác là lý do cờ CLOEXEC tồn tại (xem mục 1.10): nó cho phép cha đánh dấu "FD này không được thừa kế khi exec()" để ngăn FD leak sang process con.
+Suốt cả Phần A, `dup(3→4)` chỉ tạo thêm FD 4 trỏ đến OFD "A" — FD 5 (OFD "B") vẫn giữ nguyên `pos: 0` từ đầu đến cuối, vì `dup()` chỉ nhân bản FD mà bạn chỉ định. Ở đây, `fork()` nhân bản **toàn bộ** per-process FD table — con thừa kế cả FD 5, đọc 3 bytes, và parent's FD 5 nhảy từ `pos: 0` lên `pos: 3`. Con nhận mọi FD của cha bao gồm socket lắng nghe, file nhạy cảm, pipe — bất kể cha có muốn hay không. Đây là lý do cờ CLOEXEC tồn tại (xem mục 1.10): cho phép cha đánh dấu "FD này không được thừa kế khi exec()" để ngăn FD leak sang process con.
 
 **Trạng thái cuối cùng — ba OFD mapping trong một session:**
 
