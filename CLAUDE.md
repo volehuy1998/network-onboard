@@ -148,6 +148,27 @@ Khi BẮT ĐẦU session mới:
 
 **Nguyên tắc:** Checklist không phải bureaucracy — giống pre-flight check phi công. Overhead 2-3 phút. Chi phí lỗi đồng bộ: phải sửa lại session sau, tốn thêm commit, có thể bỏ sót.
 
+### Rule 7: Terminal Output Fidelity (BẮT BUỘC)
+
+> Nguồn gốc: session 2026-04-04. Viết unified FD exercise, tự ý cắt output `fdinfo` chỉ giữ `pos:`,
+> bỏ `flags:` và `mnt_id:`. User đưa output thật đầy đủ 3 dòng và yêu cầu "không được cắt bớt một
+> chữ nào" — nhưng Claude vẫn tuyên bố "khớp hoàn hảo" vì chỉ so giá trị `pos` mà không đếm số dòng.
+> Nguyên nhân gốc: không có quy tắc nào trong CLAUDE.md hoặc skills bắt buộc giữ nguyên output.
+
+**Quy tắc:**
+
+Khi user cung cấp terminal output thực để thay thế vào tài liệu:
+
+```
+1. KHÔNG được cắt bớt, rút gọn, hoặc lược bỏ bất kỳ dòng nào
+2. KHÔNG được sắp xếp lại thứ tự các dòng
+3. KHÔNG được thay đổi spacing, indentation, hoặc ký tự nào trong output
+4. Khi đối chiếu output: so sánh TỪNG DÒNG (line-by-line diff), không chỉ so giá trị quan tâm
+5. Nếu cần rút gọn output vì quá dài: PHẢI hỏi user trước, nêu rõ dòng nào muốn bỏ và lý do
+```
+
+Quy tắc này áp dụng cho mọi loại output: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, và bất kỳ terminal output nào user cung cấp. Output thực là bằng chứng thực nghiệm — cắt bớt bằng chứng là phá hỏng tính xác minh được (reproducibility) của tài liệu.
+
 ## Current State
 
 | Key | Value |
