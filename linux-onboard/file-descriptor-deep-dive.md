@@ -270,9 +270,9 @@ Process con (subshell) đọc `89` (2 bytes tiếp theo sau vị trí 8 của OF
     flags:  0100000
     mnt_id: 31
 
-Trước fork, FD 5 của cha vẫn `pos: 0` — đúng như bước 5 đã xác nhận. Sau khi con đọc 3 bytes qua FD 5, parent's FD 5 nhảy lên `pos: 3`. Đây là sự khác biệt cốt lõi giữa `dup()` và `fork()`:
+Trước fork, FD 5 của cha vẫn `pos: 0` — đúng như bước 5 đã xác nhận. Sau khi con đọc 3 bytes qua FD 5, parent's FD 5 nhảy lên `pos: 3`. Hiện tượng offset thay đổi xuyên qua bản thân nó không mới — bước 4 (dup) cũng cho kết quả tương tự. Điểm khác biệt nằm ở **phạm vi**: hãy so sánh OFD "B" (FD 5) trong hai phần:
 
-`dup()` ở bước 3-4 chỉ tạo thêm FD 4 trỏ đến OFD "A" — nó **không hề đụng** đến FD 5 hay OFD "B". Suốt cả Phần A, FD 5 vẫn giữ nguyên `pos: 0`. `dup()` là thao tác **chọn lọc**: bạn chỉ định rõ FD nào muốn nhân bản, và chỉ OFD đó bị chia sẻ.
+Suốt cả Phần A, `dup(3→4)` chỉ tạo thêm FD 4 trỏ đến OFD "A" — FD 5 (OFD "B") vẫn giữ nguyên `pos: 0` từ đầu đến cuối. `dup()` là thao tác **chọn lọc**: bạn chỉ định rõ FD nào muốn nhân bản, và chỉ OFD đó bị chia sẻ — các OFD khác không bị ảnh hưởng.
 
 `fork()` ở bước 6-7 nhân bản **toàn bộ** per-process FD table — con thừa kế FD 3, FD 4, **và cả FD 5** mà cha không có ý định chia sẻ. Khi con đọc qua FD 5, offset của OFD "B" thay đổi và cha nhìn thấy ngay. `fork()` là thao tác **bán buôn**: con nhận mọi FD của cha, bao gồm socket lắng nghe, file nhạy cảm, pipe — bất kể cha có muốn hay không. Đây chính xác là lý do cờ CLOEXEC tồn tại (xem mục 1.10): nó cho phép cha đánh dấu "FD này không được thừa kế khi exec()" để ngăn FD leak sang process con.
 
