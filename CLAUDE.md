@@ -169,6 +169,33 @@ Khi user cung cấp terminal output thực để thay thế vào tài liệu:
 
 Quy tắc này áp dụng cho mọi loại output: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, và bất kỳ terminal output nào user cung cấp. Output thực là bằng chứng thực nghiệm — cắt bớt bằng chứng là phá hỏng tính xác minh được (reproducibility) của tài liệu.
 
+### Rule 8: Vietnamese Sentence Completeness (BẮT BUỘC)
+
+> Nguồn gốc: session 2026-04-04. Viết câu bridging "nhưng thực tế không" — từ phủ định "không" bị
+> bỏ lửng, thiếu tân ngữ. Người đọc phải tự suy "không" cái gì. User chỉ ra lỗi: "bạn cần giải
+> thích rõ nghĩa hơn 4 từ này". Nguyên nhân gốc: professor-style skill (read-only) không có rule
+> nào yêu cầu mệnh đề tiếng Việt phải đủ thành phần câu. Bổ sung professor-style 5.4 tại đây.
+
+**Quy tắc:**
+
+Tài liệu viết cho người Việt đọc — mọi mệnh đề phải đủ nghĩa khi đọc đơn lập, không dựa vào
+context ngầm. Ba lỗi cụ thể phải tránh:
+
+```
+1. Từ phủ định bỏ lửng: "không", "chưa", "chẳng" PHẢI đi kèm động từ hoặc tân ngữ rõ ràng
+   Sai:  "...nhưng thực tế không."
+   Đúng: "...nhưng kết quả thực tế luôn khớp với dự đoán của mô hình."
+
+2. Đại từ chỉ định mơ hồ: "điều đó", "việc này", "nó" PHẢI có tiền ngữ rõ ràng
+   trong cùng câu hoặc câu liền trước. Nếu xa hơn → lặp lại danh từ.
+   Sai:  "Fork tạo bản sao. Dup chỉ nhân bản một FD. Điều này giải thích..."
+   Đúng: "...Sự khác biệt selective vs wholesale này giải thích..."
+
+3. Phép đọc đơn lập: sau khi viết xong một câu, đọc lại câu đó TÁCH BIỆT khỏi context.
+   Nếu nghĩa không rõ khi đứng một mình → viết lại. Tài liệu kỹ thuật không phải
+   tin nhắn chat — người đọc có thể mở đúng mục đó mà không đọc từ đầu.
+```
+
 ## Current State
 
 | Key | Value |
