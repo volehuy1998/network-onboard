@@ -131,8 +131,9 @@ Khi BẮT ĐẦU session mới:
 □ 4. Version annotation: nếu có cross-version content → thêm callout + update tracker
 □ 5a. SVG spacing+diacritics: nếu có SVG mới/sửa → chạy svg-audit.py + diacritics-audit.py (Rule 6). 0 violation.
 □ 5b. SVG-caption consistency: chạy svg-caption-consistency.py cho mỗi SVG đã sửa (Rule 8). 0 mismatch.
-□ 6. Git workflow skill: đọc trước khi commit
-□ 7. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
+□ 6. File integrity: chạy null byte check (Rule 9) trên MỌI file text đã modified. 0 null bytes.
+□ 7. Git workflow skill: đọc trước khi commit
+□ 8. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
 ```
 
 **Checklist E — Khi thêm Part mới (BẮT BUỘC):**
@@ -196,6 +197,51 @@ context ngầm. Ba lỗi cụ thể phải tránh:
    tin nhắn chat — người đọc có thể mở đúng mục đó mà không đọc từ đầu.
 ```
 
+### Rule 9: File Integrity — Null Byte Prevention (BẮT BUỘC)
+
+> Nguồn gốc: session 2026-04-04. Commit `9a17eec` chứa file `file-descriptor-deep-dive.md` có
+> 3612 trailing null bytes (0x00) ở cuối. GitHub renderer phát hiện null bytes → phân loại file
+> là binary → từ chối render markdown. VS Code preview bỏ qua trailing nulls → hiển thị bình
+> thường → user không phát hiện cho đến khi merge PR #35 lên master và mở trên GitHub.
+> Nguyên nhân gốc: Write tool đôi khi padding null bytes vào cuối file (sparse file behavior
+> hoặc buffer không flush sạch). Không có bước kiểm tra nào trong Checklist C phát hiện lỗi này.
+
+**Quy tắc:**
+
+TRƯỚC KHI `git add` bất kỳ file nào, chạy kiểm tra file integrity:
+
+```bash
+# Bước 1: Kiểm tra null bytes trong mọi file đã modified/staged
+for f in $(git diff --name-only --cached 2>/dev/null; git diff --name-only); do
+  if [ -f "$f" ]; then
+    nullcount=$(python3 -c "print(open('$f','rb').read().count(b'\x00'))")
+    if [ "$nullcount" -gt 0 ]; then
+      echo "BLOCKED: $f chứa $nullcount null bytes"
+    fi
+  fi
+done
+
+# Bước 2: Nếu phát hiện null bytes → loại bỏ trước khi commit
+python3 -c "
+d = open('FILE','rb').read()
+clean = d.replace(b'\x00', b'')
+open('FILE','wb').write(clean)
+print(f'Removed {len(d)-len(clean)} null bytes')
+"
+
+# Bước 3: Verify lại — kết quả PHẢI là 0
+grep -cP '\x00' FILE
+```
+
+**Phạm vi áp dụng:** Mọi file text (.md, .py, .sh, .yml, .html, .svg, .css, .js). Null bytes
+trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ nào. File binary (.png, .jpg,
+.pdf) được miễn kiểm tra này.
+
+**Dấu hiệu cảnh báo sớm:**
+- `file` command báo "with very long lines" trên file .md → kiểm tra ngay
+- File size bất thường lớn so với số dòng (ví dụ: 93KB cho 1169 dòng text thuần)
+- GitHub hiển thị file như binary hoặc wall of text không format
+
 ## Current State
 
 | Key | Value |
@@ -210,9 +256,10 @@ context ngầm. Ba lỗi cụ thể phải tránh:
 | Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories). File `references/haproxy-version-evolution.md` cần `git rm` trên local |
 | Dependency graph | 4 edges sửa trong session này: P3→P11, P6→P22, +P5→P24, +P3→P21 |
 | Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — 791 lines, 5 SVG figures |
+| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — 1169 lines, 5 SVG figures |
 | SVG audit infra | Rule 8 (document-design), svg-caption-consistency.py, Tầng 5 dependency map |
 | Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
+| Null byte incident | PR #35 merged với 3612 trailing null bytes → GitHub render failure. Fixed: branch `fix/fd-doc-remove-null-bytes`. Rule 9 added. |
 
 ## Skill Quick Reference
 
