@@ -89,7 +89,7 @@
   <text x="480" y="266" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">OFD &#x201C;X&#x201D;</text>
 
   <rect x="294" y="280" width="372" height="28" fill="#F0FFF4" stroke="#38A169" rx="4"/>
-  <text x="306" y="298" font-size="10" font-weight="bold" fill="#2F855A">pos: 3  |  flags: 0100000 (O_RDONLY)  |  f_count: 2</text>
+  <text x="306" y="298" font-size="10" font-weight="bold" fill="#2F855A">pos: 3  |  flags: 0100002 (O_RDWR)  |  f_count: 2</text>
 
   <!-- ===================== I-NODE BOX ===================== -->
   <rect x="380" y="350" width="200" height="100" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
@@ -123,15 +123,15 @@
 
   <!-- Character boxes -->
   <g id="char-boxes">
-    <!-- AAA (blue) - position 0-2 -->
-    <rect x="50" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
-    <text x="65" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+    <!-- XXX (red - overwritten in Part F) - position 0-2 -->
+    <rect x="50" y="515" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="1.5" rx="2"/>
+    <text x="65" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
 
-    <rect x="82" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
-    <text x="97" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+    <rect x="82" y="515" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="1.5" rx="2"/>
+    <text x="97" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
 
-    <rect x="114" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
-    <text x="129" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+    <rect x="114" y="515" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="1.5" rx="2"/>
+    <text x="129" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
 
     <!-- BBB (darker blue) - position 3-5 -->
     <rect x="146" y="515" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>

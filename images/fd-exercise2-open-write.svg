@@ -62,7 +62,7 @@
   <text x="810" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">OFD &#x201C;X&#x201D;</text>
 
   <rect x="694" y="107" width="232" height="52" fill="#FFF5F5" stroke="#FC8181" rx="4"/>
-  <text x="706" y="127" font-size="10" font-weight="bold" fill="#C53030">pos: 3  |  flags: 0100000</text>
+  <text x="706" y="127" font-size="10" font-weight="bold" fill="#C53030">pos: 3  |  flags: 0100002</text>
   <text x="706" y="145" font-size="9" fill="#718096">f_count: 1 (FD 5 only)</text>
 
   <!-- ===================== I-NODE BOX ===================== -->

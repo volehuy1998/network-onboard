@@ -24,7 +24,7 @@
   <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">FD 3 ghi AAA (pos 0&#x2192;3), FD 4 ghi BBB (pos 3&#x2192;6) &#x2014; c&#xF9;ng OFD n&#xEA;n kh&#xF4;ng &#x111;&#xE8;</text>
 
   <!-- ===================== PROCESS BOX (center) ===================== -->
-  <rect x="80" y="72" width="250" height="150" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <rect x="80" y="72" width="250" height="120" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
   <text x="205" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Process (bash)</text>
 
   <!-- Column headers -->
@@ -41,12 +41,6 @@
   <text x="104" y="178" font-size="10" font-weight="bold" fill="#2B6CB0">4</text>
   <text x="140" y="178" font-size="9" fill="#718096">(dup)</text>
   <text x="180" y="178" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;W&#x201D;</text>
-
-  <!-- FD 5 → OFD "X" (not highlighted) -->
-  <rect x="92" y="190" width="196" height="28" fill="#F0FFF4" stroke="#38A169" rx="3"/>
-  <text x="104" y="210" font-size="10" font-weight="bold" fill="#2F855A">5</text>
-  <text x="140" y="210" font-size="9" fill="#718096">(open)</text>
-  <text x="180" y="210" font-size="10" fill="#2F855A">&#x2192; OFD &#x201C;X&#x201D;</text>
 
   <!-- ===================== OFD BOX ===================== -->
   <rect x="380" y="72" width="320" height="100" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
