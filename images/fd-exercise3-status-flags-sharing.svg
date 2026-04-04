@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 480" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="480" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="460" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-9: Exercise 3 &#x2014; Status flags chia s&#x1EBB; theo c&#xF9;ng quy lu&#x1EAD;t OFD</text>
+  <text x="460" y="50" text-anchor="middle" font-size="10" fill="#718096">fcntl(FD 4, F_SETFL, O_APPEND) thay &#x111;&#x1ED5;i flags tr&#xEA;n OFD &#x2014; &#x1EA3;nh h&#x1B0;&#x1EDF;ng FD 3 nh&#x1B0;ng kh&#xF4;ng &#x1EA3;nh h&#x1B0;&#x1EDF;ng FD 5</text>
+
+  <!-- ===================== FD TABLE ===================== -->
+  <rect x="20" y="64" width="240" height="230" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="140" y="84" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Per-process FD Table</text>
+
+  <!-- FD 3 → OFD "A" -->
+  <rect x="32" y="100" width="216" height="44" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="118" font-size="10" font-weight="bold" fill="#2B6CB0">FD 3</text>
+  <text x="120" y="118" font-size="10" fill="#2B6CB0">&#x2192; OFD "A"</text>
+  <text x="44" y="136" font-size="9" fill="#718096">open(/tmp/fdflags.txt, O_RDWR)</text>
+
+  <!-- FD 4 → OFD "A" (dup) -->
+  <rect x="32" y="150" width="216" height="44" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="168" font-size="10" font-weight="bold" fill="#2B6CB0">FD 4</text>
+  <text x="80" y="168" font-size="9" fill="#718096">(dup)</text>
+  <text x="120" y="168" font-size="10" fill="#2B6CB0">&#x2192; OFD "A"</text>
+  <text x="44" y="186" font-size="9" font-weight="bold" fill="#C53030">fcntl(4, F_SETFL, +O_APPEND)</text>
+
+  <!-- FD 5 → OFD "B" (open riêng) -->
+  <rect x="32" y="202" width="216" height="44" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="220" font-size="10" font-weight="bold" fill="#2F855A">FD 5</text>
+  <text x="76" y="220" font-size="9" fill="#718096">(open)</text>
+  <text x="120" y="220" font-size="10" fill="#2F855A">&#x2192; OFD "B"</text>
+  <text x="44" y="238" font-size="9" fill="#718096">open() ri&#xEA;ng &#x2192; OFD ri&#xEA;ng</text>
+
+  <!-- ===================== OFD TABLE ===================== -->
+  <rect x="330" y="64" width="310" height="230" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="485" y="84" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">Open File Table (kernel)</text>
+
+  <!-- OFD "A" — AFTER fcntl: flags changed -->
+  <rect x="342" y="100" width="286" height="86" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="354" y="120" font-size="10" font-weight="bold" fill="#2B6CB0">OFD "A"</text>
+  <text x="440" y="120" font-size="9" fill="#C53030">(flags thay &#x111;&#x1ED5;i!)</text>
+
+  <!-- Before/After flags -->
+  <text x="354" y="140" font-size="10" fill="#718096">Tr&#x1B0;&#x1EDB;c: flags = 0100002 (O_RDWR)</text>
+  <text x="354" y="158" font-size="10" font-weight="bold" fill="#C53030">Sau:   flags = 0102002 (O_RDWR + O_APPEND)</text>
+  <text x="354" y="176" font-size="9" fill="#2B6CB0">f_count: 2 (FD 3 + FD 4)</text>
+
+  <!-- OFD "B" — flags NOT changed -->
+  <rect x="342" y="200" width="286" height="78" fill="#F0FFF4" stroke="#38A169" rx="4"/>
+  <text x="354" y="220" font-size="10" font-weight="bold" fill="#2F855A">OFD "B"</text>
+  <text x="440" y="220" font-size="9" fill="#2F855A">(kh&#xF4;ng b&#x1ECB; &#x1EA3;nh h&#x1B0;&#x1EDF;ng)</text>
+
+  <text x="354" y="240" font-size="10" fill="#4A5568">flags = 0100002 (O_RDWR) &#x2014; kh&#xF4;ng &#x111;&#x1ED5;i</text>
+  <text x="354" y="258" font-size="9" fill="#718096">OFD ri&#xEA;ng bi&#x1EC7;t &#x2192; fcntl tr&#xEA;n OFD "A" kh&#xF4;ng lan sang</text>
+  <text x="354" y="274" font-size="9" fill="#2F855A">f_count: 1 (FD 5)</text>
+
+  <!-- ===================== ARROWS ===================== -->
+  <!-- FD 3 → OFD "A" -->
+  <line x1="248" y1="120" x2="339" y2="130" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- FD 4 → OFD "A" -->
+  <line x1="248" y1="168" x2="339" y2="155" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- FD 5 → OFD "B" -->
+  <line x1="248" y1="220" x2="339" y2="240" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+  <!-- ===================== OCTAL BREAKDOWN ===================== -->
+  <rect x="20" y="310" width="620" height="75" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="32" y="332" font-size="10" font-weight="bold" fill="#1A202C">Ph&#xE2;n t&#xED;ch gi&#xE1; tr&#x1ECB; octal:</text>
+  <text x="32" y="352" font-size="10" font-family="Consolas, monospace" fill="#718096">0100002  =  O_LARGEFILE (0100000) | O_RDWR (02)</text>
+  <text x="32" y="372" font-size="10" font-family="Consolas, monospace" fill="#C53030">0102002  =  O_LARGEFILE (0100000) | O_APPEND (02000) | O_RDWR (02)</text>
+  <text x="440" y="372" font-size="9" fill="#C53030">&#x2190; bit O_APPEND &#x111;&#x1B0;&#x1EE3;c b&#x1EAD;t</text>
+
+  <!-- ===================== FDINFO COMPARISON ===================== -->
+  <rect x="660" y="310" width="240" height="75" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="672" y="332" font-size="10" font-weight="bold" fill="#1A202C">fdinfo sau fcntl:</text>
+  <text x="672" y="352" font-size="10" fill="#2B6CB0">FD 3: flags = 0102002</text>
+  <text x="830" y="352" font-size="9" fill="#C53030">thay &#x111;&#x1ED5;i!</text>
+  <text x="672" y="368" font-size="10" fill="#2B6CB0">FD 4: flags = 0102002</text>
+  <text x="830" y="368" font-size="9" fill="#C53030">thay &#x111;&#x1ED5;i!</text>
+  <text x="672" y="384" font-size="10" fill="#2F855A">FD 5: flags = 0100002</text>
+  <text x="842" y="384" font-size="9" fill="#2F855A">gi&#x1EEF; nguy&#xEA;n</text>
+
+  <!-- ===================== PRODUCTION CALLOUT ===================== -->
+  <rect x="20" y="400" width="880" height="68" fill="#FFFBEB" stroke="#D69E2E" rx="6"/>
+  <text x="32" y="422" font-size="10" font-weight="bold" fill="#B7791F">&#xDD; ngh&#x129;a production:</text>
+  <text x="32" y="442" font-size="10" fill="#4A5568">HAProxy g&#x1ECD;i fcntl(fd, F_SETFL, O_NONBLOCK) &#x111;&#x1EC3; chuy&#x1EC3;n socket sang non-blocking. M&#x1ECD;i FD tr&#x1ECF; c&#xF9;ng OFD</text>
+  <text x="32" y="458" font-size="10" fill="#4A5568">(th&#xF4;ng qua dup() ho&#x1EB7;c sau fork()) &#x111;&#x1EC1;u tr&#x1EDF; th&#xE0;nh non-blocking &#x2014; d&#xF9; kh&#xF4;ng g&#x1ECD;i fcntl() tr&#xEA;n t&#x1EEB;ng FD ri&#xEA;ng l&#x1EBB;.</text>
+</svg>

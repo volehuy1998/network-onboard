@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#B7791F"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C53030"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-7: Exercise 2 Ph&#x1EA7;n F &#x2014; open() write: d&#x1EEF; li&#x1EC7;u b&#x1ECB; &#x111;&#xE8;</text>
+  <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">FD 5 (OFD ri&#xEA;ng) ghi XXX t&#x1EA1;i pos 0 &#x2014; &#x111;&#xE8; AAA th&#xE0;nh XXX</text>
+
+  <!-- ===================== PROCESS BOX (center) ===================== -->
+  <rect x="80" y="72" width="250" height="150" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="205" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Process (bash)</text>
+
+  <!-- Column headers -->
+  <text x="98" y="116" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="180" y="116" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- FD 3 → OFD "W" -->
+  <rect x="92" y="126" width="196" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="104" y="146" font-size="10" font-weight="bold" fill="#2B6CB0">3</text>
+  <text x="180" y="146" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- FD 4 → OFD "W" (dup) -->
+  <rect x="92" y="158" width="196" height="28" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="104" y="178" font-size="10" font-weight="bold" fill="#2B6CB0">4</text>
+  <text x="140" y="178" font-size="9" fill="#718096">(dup)</text>
+  <text x="180" y="178" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- FD 5 → OFD "X" (separate, highlighted) -->
+  <rect x="92" y="190" width="196" height="28" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="104" y="210" font-size="10" font-weight="bold" fill="#2F855A">5</text>
+  <text x="140" y="210" font-size="9" fill="#718096">(open)</text>
+  <text x="180" y="210" font-size="10" fill="#2F855A">&#x2192; OFD &#x201C;X&#x201D;</text>
+
+  <!-- ===================== OFD BOXES (two separate) ===================== -->
+  <!-- OFD W (left) -->
+  <rect x="380" y="72" width="260" height="100" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="510" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="#B7791F">OFD &#x201C;W&#x201D;</text>
+
+  <rect x="394" y="107" width="232" height="52" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="406" y="127" font-size="10" font-weight="bold" fill="#2B6CB0">pos: 6  |  flags: 0100002</text>
+  <text x="406" y="145" font-size="9" fill="#718096">f_count: 2 (FD 3,4)</text>
+
+  <!-- OFD X (right) -->
+  <rect x="680" y="72" width="260" height="100" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5" rx="6"/>
+  <text x="810" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">OFD &#x201C;X&#x201D;</text>
+
+  <rect x="694" y="107" width="232" height="52" fill="#FFF5F5" stroke="#FC8181" rx="4"/>
+  <text x="706" y="127" font-size="10" font-weight="bold" fill="#C53030">pos: 3  |  flags: 0100000</text>
+  <text x="706" y="145" font-size="9" fill="#718096">f_count: 1 (FD 5 only)</text>
+
+  <!-- ===================== I-NODE BOX ===================== -->
+  <rect x="400" y="210" width="160" height="100" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="480" y="234" text-anchor="middle" font-size="10" font-weight="bold" fill="#6B46C1">i-node</text>
+  <text x="480" y="253" text-anchor="middle" font-size="9" fill="#718096">/tmp/fd</text>
+  <text x="480" y="268" text-anchor="middle" font-size="9" fill="#718096">write.txt</text>
+  <text x="480" y="296" text-anchor="middle" font-size="9" fill="#718096">regular | 644</text>
+
+  <!-- ===================== ARROWS: FDs → OFDs ===================== -->
+  <line x1="288" y1="146" x2="376" y2="125" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <line x1="288" y1="178" x2="376" y2="133" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <line x1="288" y1="210" x2="676" y2="125" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+  <!-- ARROWS: OFDs → i-node -->
+  <line x1="510" y1="172" x2="480" y2="207" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+  <line x1="810" y1="172" x2="480" y2="207" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+
+  <!-- ===================== FILE CONTENT VISUALIZATION ===================== -->
+  <text x="50" y="350" font-size="11" font-weight="bold" fill="#1A202C">File content visualization:</text>
+
+  <!-- File: label -->
+  <text x="50" y="375" font-size="9" fill="#718096">File: /tmp/fdwrite.txt (sau khi FD 5 ghi XXX)</text>
+
+  <!-- Character boxes - showing overwrite -->
+  <g id="char-boxes">
+    <!-- XXX (RED - overwritten) - position 0-2 -->
+    <rect x="50" y="385" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="2" rx="2"/>
+    <text x="65" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
+
+    <rect x="82" y="385" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="2" rx="2"/>
+    <text x="97" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
+
+    <rect x="114" y="385" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="2" rx="2"/>
+    <text x="129" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">X</text>
+
+    <!-- Strike-through faded AAA above to show overwrite -->
+    <text x="65" y="378" text-anchor="middle" font-size="10" fill="#CCCCCC" opacity="0.6"><tspan text-decoration="line-through">A</tspan></text>
+    <text x="97" y="378" text-anchor="middle" font-size="10" fill="#CCCCCC" opacity="0.6"><tspan text-decoration="line-through">A</tspan></text>
+    <text x="129" y="378" text-anchor="middle" font-size="10" fill="#CCCCCC" opacity="0.6"><tspan text-decoration="line-through">A</tspan></text>
+
+    <!-- BBB (darker blue) - position 3-5 (unchanged) -->
+    <rect x="146" y="385" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="161" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <rect x="178" y="385" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="193" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <rect x="210" y="385" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="225" y="406" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <!-- Remaining (gray) - position 6-9 -->
+    <rect x="242" y="385" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="257" y="406" text-anchor="middle" font-size="10" fill="#6B7280">6</text>
+
+    <rect x="274" y="385" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="289" y="406" text-anchor="middle" font-size="10" fill="#6B7280">7</text>
+
+    <rect x="306" y="385" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="321" y="406" text-anchor="middle" font-size="10" fill="#6B7280">8</text>
+
+    <rect x="338" y="385" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="353" y="406" text-anchor="middle" font-size="10" fill="#6B7280">9</text>
+  </g>
+
+  <!-- Position labels below -->
+  <text x="65" y="430" text-anchor="middle" font-size="8" fill="#718096">0</text>
+  <text x="97" y="430" text-anchor="middle" font-size="8" fill="#718096">1</text>
+  <text x="129" y="430" text-anchor="middle" font-size="8" fill="#718096">2</text>
+  <text x="161" y="430" text-anchor="middle" font-size="8" fill="#718096">3</text>
+  <text x="193" y="430" text-anchor="middle" font-size="8" fill="#718096">4</text>
+  <text x="225" y="430" text-anchor="middle" font-size="8" fill="#718096">5</text>
+  <text x="257" y="430" text-anchor="middle" font-size="8" fill="#718096">6</text>
+  <text x="289" y="430" text-anchor="middle" font-size="8" fill="#718096">7</text>
+  <text x="321" y="430" text-anchor="middle" font-size="8" fill="#718096">8</text>
+  <text x="353" y="430" text-anchor="middle" font-size="8" fill="#718096">9</text>
+
+  <!-- ===================== PROOF ANNOTATION ===================== -->
+  <rect x="50" y="455" width="860" height="45" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="64" y="475" font-size="10" fill="#C53030">FD 5 ghi XXX t&#x1EA1;i pos 0 (OFD ri&#xEA;ng) &#x2192; &#x111;&#xE8; AAA. M&#x1EB7;t kh&#xE1;c, FD 3 v&#xE0; FD 4 v&#x1EAB;n pos: 6 (OFD &#x201C;W&#x201D; kh&#xF4;ng &#x1EA3;nh h&#x1B0;&#x1EDF;ng)</text>
+</svg>

@@ -246,20 +246,22 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 
 | Key | Value |
 |-----|-------|
-| Active branch | `master` (dirty — audit changes chưa commit) |
+| Active branch | `master` (dirty — exercise redesign + 6 new SVGs + figure renumbering) |
 | Base version | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | Parts completed | Part 1 only (fact-checked, 3 corrections, Quiz added) |
 | Parts total | 29 (6 Blocks) |
 | Last merged PR | PR #25 — `f3256f9` (squash merge vào master 2026-03-30) |
-| Pending push | Có — audit changes cần commit → feature branch → PR |
+| Pending push | Có — exercise redesign cần commit → feature branch → PR |
 | Pending PR | Không |
 | Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories). File `references/haproxy-version-evolution.md` cần `git rm` trên local |
-| Dependency graph | 4 edges sửa trong session này: P3→P11, P6→P22, +P5→P24, +P3→P21 |
+| Dependency graph | 4 edges sửa: P3→P11, P6→P22, +P5→P24, +P3→P21 |
 | Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — 1169 lines, 5 SVG figures |
-| SVG audit infra | Rule 8 (document-design), svg-caption-consistency.py, Tầng 5 dependency map |
+| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1261 lines, 14 SVG figures** (renumbered 1-1 through 1-14) |
+| SVG audit infra | Rule 8 (document-design), Tầng 5 dependency map (14 entries) |
 | Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
-| Null byte incident | PR #35 merged với 3612 trailing null bytes → GitHub render failure. Fixed: branch `fix/fd-doc-remove-null-bytes`. Rule 9 added. |
+| Null byte incident | PR #35 fixed. Rule 9 active. |
+| Orphan SVG | `images/fd-exercise2-write-ofd-sharing.svg` — cần `git rm` (replaced by 3 individual SVGs) |
+| WCAG known issues | 3 pre-existing SVGs: minor text spacing violations (0.5-2.5px shortfall) |
 
 ## Skill Quick Reference
 
