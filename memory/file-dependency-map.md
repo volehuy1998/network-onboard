@@ -37,9 +37,10 @@
 
 | File | Nội dung chính | Related Files |
 |------|---------------|---------------|
-| `CLAUDE.md` | Working memory, rules, current state | `memory/session-log.md`, `memory/haproxy-series-state.md` |
+| `CLAUDE.md` | Working memory, rules, current state | `memory/session-log.md`, `memory/haproxy-series-state.md`, `memory/experiment-plan.md` |
 | `memory/session-log.md` | Log session gần nhất | `CLAUDE.md` (Current State section) |
 | `memory/haproxy-series-state.md` | Trạng thái từng Part | `haproxy-onboard/README.md` (TOC) |
+| `memory/experiment-plan.md` | Kế hoạch thí nghiệm 5 phases (A→E) | `CLAUDE.md`, `linux-onboard/file-descriptor-deep-dive.md` (exercise inventory) |
 
 ### Tầng 5: Image files (SVG → Markdown captions)
 

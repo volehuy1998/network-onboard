@@ -246,22 +246,24 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 
 | Key | Value |
 |-----|-------|
-| Active branch | `master` (dirty — exercise redesign + 6 new SVGs + figure renumbering) |
+| Active branch | `feat/fd-exercise-redesign-background-child` (clean, pushed to remote) |
 | Base version | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | Parts completed | Part 1 only (fact-checked, 3 corrections, Quiz added) |
 | Parts total | 29 (6 Blocks) |
 | Last merged PR | PR #25 — `f3256f9` (squash merge vào master 2026-03-30) |
-| Pending push | Có — exercise redesign cần commit → feature branch → PR |
-| Pending PR | Không |
-| Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories). File `references/haproxy-version-evolution.md` cần `git rm` trên local |
+| Pending push | Không — branch đã push tại `d25e7ce` |
+| Pending PR | Có — `feat/fd-exercise-redesign-background-child` → `master` (đã tạo trên GitHub) |
+| Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories) |
 | Dependency graph | 4 edges sửa: P3→P11, P6→P22, +P5→P24, +P3→P21 |
 | Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1261 lines, 14 SVG figures** (renumbered 1-1 through 1-14) |
+| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** (renumbered 1-1 through 1-14) |
+| FD exercises | 7/9 verified with real lab output. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
 | SVG audit infra | Rule 8 (document-design), Tầng 5 dependency map (14 entries) |
 | Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
 | Null byte incident | PR #35 fixed. Rule 9 active. |
-| Orphan SVG | `images/fd-exercise2-write-ofd-sharing.svg` — cần `git rm` (replaced by 3 individual SVGs) |
+| Orphan SVG | Đã xoá (untracked, không cần git rm) |
 | WCAG known issues | 3 pre-existing SVGs: minor text spacing violations (0.5-2.5px shortfall) |
+| Experiment plan | `memory/experiment-plan.md` — 5 phases (A→E), priority-ordered |
 
 ## Skill Quick Reference
 
