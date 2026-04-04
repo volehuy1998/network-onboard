@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#B7791F"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C53030"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="600" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-8: Exercise 2 Ph&#x1EA7;n G &#x2014; fork() write: child ghi DD qua shared OFD</text>
+  <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">Child ghi DD t&#x1EA1;i pos 6, parent v&#xE0; child &#x111;&#x1EC1;u th&#x1EA5;y pos: 8</text>
+
+  <!-- ===================== PARENT PROCESS (left) ===================== -->
+  <rect x="20" y="72" width="220" height="150" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="130" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Parent Process</text>
+  <text x="130" y="110" text-anchor="middle" font-size="9" fill="#4A5568">(per-process FD table)</text>
+
+  <!-- Column headers -->
+  <text x="38" y="132" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="120" y="132" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- Parent FD 3 → OFD "W" -->
+  <rect x="32" y="142" width="196" height="26" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="160" font-size="10" font-weight="bold" fill="#2B6CB0">3</text>
+  <text x="120" y="160" font-size="9" fill="#2B6CB0">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- Parent FD 4 → OFD "W" -->
+  <rect x="32" y="172" width="196" height="26" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="190" font-size="10" font-weight="bold" fill="#2B6CB0">4</text>
+  <text x="120" y="190" font-size="9" fill="#2B6CB0">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- Parent FD 5 → OFD "X" -->
+  <rect x="32" y="202" width="196" height="26" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="220" font-size="10" font-weight="bold" fill="#2F855A">5</text>
+  <text x="120" y="220" font-size="9" fill="#2F855A">&#x2192; OFD &#x201C;X&#x201D;</text>
+
+  <!-- ===================== CHILD PROCESS (right) ===================== -->
+  <rect x="720" y="72" width="220" height="150" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5" rx="6" stroke-dasharray="5,3"/>
+  <text x="830" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#C53030">Child Process</text>
+  <text x="830" y="110" text-anchor="middle" font-size="9" fill="#4A5568">(b&#x1EA3;n sao sau fork)</text>
+
+  <!-- Column headers -->
+  <text x="738" y="132" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="820" y="132" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- Child FD 3 → OFD "W" -->
+  <rect x="732" y="142" width="196" height="26" fill="#FFF5F5" stroke="#FC8181" rx="3" stroke-dasharray="3,2"/>
+  <text x="744" y="160" font-size="10" font-weight="bold" fill="#C53030">3</text>
+  <text x="820" y="160" font-size="9" fill="#C53030">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- Child FD 4 → OFD "W" -->
+  <rect x="732" y="172" width="196" height="26" fill="#FFF5F5" stroke="#FC8181" rx="3" stroke-dasharray="3,2"/>
+  <text x="744" y="190" font-size="10" font-weight="bold" fill="#C53030">4</text>
+  <text x="820" y="190" font-size="9" fill="#C53030">&#x2192; OFD &#x201C;W&#x201D;</text>
+
+  <!-- Child FD 5 → OFD "X" -->
+  <rect x="732" y="202" width="196" height="26" fill="#FFF5F5" stroke="#FC8181" rx="3" stroke-dasharray="3,2"/>
+  <text x="744" y="220" font-size="10" font-weight="bold" fill="#C53030">5</text>
+  <text x="820" y="220" font-size="9" fill="#C53030">&#x2192; OFD &#x201C;X&#x201D;</text>
+
+  <!-- fork() label between processes -->
+  <line x1="243" y1="105" x2="717" y2="105" stroke="#E53E3E" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <rect x="420" y="89" width="120" height="30" fill="#FFF5F5" stroke="#E53E3E" rx="14"/>
+  <text x="480" y="109" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">fork()</text>
+
+  <!-- ===================== OFD BOXES (center) ===================== -->
+  <!-- OFD "W" -->
+  <rect x="280" y="155" width="400" height="72" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="480" y="176" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">OFD &#x201C;W&#x201D;</text>
+
+  <rect x="294" y="190" width="372" height="28" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="306" y="208" font-size="10" font-weight="bold" fill="#2B6CB0">pos: 8  |  flags: 0100002 (O_RDWR)  |  f_count: 4</text>
+
+  <!-- OFD "X" -->
+  <rect x="280" y="245" width="400" height="72" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="480" y="266" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">OFD &#x201C;X&#x201D;</text>
+
+  <rect x="294" y="280" width="372" height="28" fill="#F0FFF4" stroke="#38A169" rx="4"/>
+  <text x="306" y="298" font-size="10" font-weight="bold" fill="#2F855A">pos: 3  |  flags: 0100000 (O_RDONLY)  |  f_count: 2</text>
+
+  <!-- ===================== I-NODE BOX ===================== -->
+  <rect x="380" y="350" width="200" height="100" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="480" y="375" text-anchor="middle" font-size="11" font-weight="bold" fill="#6B46C1">i-node</text>
+  <text x="480" y="395" text-anchor="middle" font-size="9" fill="#718096">/tmp/fdwrite.txt</text>
+  <text x="480" y="430" text-anchor="middle" font-size="9" fill="#718096">regular | 644</text>
+
+  <!-- ===================== ARROWS: Parent FDs → OFD W ===================== -->
+  <line x1="228" y1="160" x2="291" y2="204" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <line x1="228" y1="190" x2="291" y2="208" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+
+  <!-- ARROWS: Parent FD 5 → OFD X -->
+  <line x1="228" y1="220" x2="291" y2="294" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+  <!-- ===================== ARROWS: Child FDs → OFDs (dashed) ===================== -->
+  <!-- Child FD 3,4 → OFD "W" (dashed arrows, red) -->
+  <line x1="729" y1="160" x2="669" y2="204" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+  <line x1="729" y1="190" x2="669" y2="208" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+
+  <!-- Child FD 5 → OFD "X" (dashed) -->
+  <line x1="729" y1="220" x2="669" y2="294" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+
+  <!-- ARROWS: OFDs → i-node -->
+  <line x1="480" y1="327" x2="480" y2="347" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+
+  <!-- ===================== FILE CONTENT VISUALIZATION ===================== -->
+  <text x="50" y="480" font-size="11" font-weight="bold" fill="#1A202C">File content visualization (child write DD):</text>
+
+  <!-- File: label -->
+  <text x="50" y="505" font-size="9" fill="#718096">File: /tmp/fdwrite.txt</text>
+
+  <!-- Character boxes -->
+  <g id="char-boxes">
+    <!-- AAA (blue) - position 0-2 -->
+    <rect x="50" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
+    <text x="65" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+
+    <rect x="82" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
+    <text x="97" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+
+    <rect x="114" y="515" width="30" height="30" fill="#C8E6FF" stroke="#2B6CB0" stroke-width="1.5" rx="2"/>
+    <text x="129" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#2B6CB0">A</text>
+
+    <!-- BBB (darker blue) - position 3-5 -->
+    <rect x="146" y="515" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="161" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <rect x="178" y="515" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="193" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <rect x="210" y="515" width="30" height="30" fill="#9BCAF5" stroke="#1E40AF" stroke-width="1.5" rx="2"/>
+    <text x="225" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E40AF">B</text>
+
+    <!-- DD (RED - child write) - position 6-7 -->
+    <rect x="242" y="515" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="2" rx="2"/>
+    <text x="257" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">D</text>
+
+    <rect x="274" y="515" width="30" height="30" fill="#FFCCCB" stroke="#C53030" stroke-width="2" rx="2"/>
+    <text x="289" y="536" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">D</text>
+
+    <!-- Remaining (gray) - position 8-9 -->
+    <rect x="306" y="515" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="321" y="536" text-anchor="middle" font-size="10" fill="#6B7280">8</text>
+
+    <rect x="338" y="515" width="30" height="30" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.5" rx="2"/>
+    <text x="353" y="536" text-anchor="middle" font-size="10" fill="#6B7280">9</text>
+  </g>
+
+  <!-- Position labels -->
+  <text x="65" y="560" text-anchor="middle" font-size="8" fill="#718096">0</text>
+  <text x="97" y="560" text-anchor="middle" font-size="8" fill="#718096">1</text>
+  <text x="129" y="560" text-anchor="middle" font-size="8" fill="#718096">2</text>
+  <text x="161" y="560" text-anchor="middle" font-size="8" fill="#718096">3</text>
+  <text x="193" y="560" text-anchor="middle" font-size="8" fill="#718096">4</text>
+  <text x="225" y="560" text-anchor="middle" font-size="8" fill="#718096">5</text>
+  <text x="257" y="560" text-anchor="middle" font-size="8" fill="#718096">6</text>
+  <text x="289" y="560" text-anchor="middle" font-size="8" fill="#718096">7</text>
+  <text x="321" y="560" text-anchor="middle" font-size="8" fill="#718096">8</text>
+  <text x="353" y="560" text-anchor="middle" font-size="8" fill="#718096">9</text>
+</svg>

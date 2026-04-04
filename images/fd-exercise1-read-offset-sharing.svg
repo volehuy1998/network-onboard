@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 676" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#B7791F"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C53030"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="676" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-5: Exercise 1 &#x2014; Tr&#x1EA1;ng th&#xE1;i cu&#x1ED1;i sau open(), dup(), v&#xE0; fork()</text>
+  <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">fork() nh&#xE2;n b&#x1EA3;n to&#xE0;n b&#x1ED9; FD table &#x2014; child chia s&#x1EBB; c&#x1EA3; OFD &#x201C;A&#x201D; (dup) l&#x1EAB;n OFD &#x201C;B&#x201D; (open ri&#xEA;ng)</text>
+
+  <!-- ===================== PARENT PROCESS (left) ===================== -->
+  <rect x="20" y="72" width="220" height="250" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="130" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Parent Process</text>
+  <text x="130" y="114" text-anchor="middle" font-size="9" fill="#4A5568">(per-process FD table)</text>
+
+  <!-- Column headers -->
+  <text x="38" y="136" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="120" y="136" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- FD 3 → OFD "A" -->
+  <rect x="32" y="146" width="196" height="30" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="166" font-size="10" font-weight="bold" fill="#2B6CB0">3</text>
+  <text x="120" y="166" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- FD 4 → OFD "A" (dup) -->
+  <rect x="32" y="180" width="196" height="30" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="200" font-size="10" font-weight="bold" fill="#2B6CB0">4</text>
+  <text x="80" y="200" font-size="9" fill="#718096">(dup)</text>
+  <text x="120" y="200" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- FD 5 → OFD "B" (open riêng) -->
+  <rect x="32" y="214" width="196" height="30" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="234" font-size="10" font-weight="bold" fill="#2F855A">5</text>
+  <text x="76" y="234" font-size="9" fill="#718096">(open)</text>
+  <text x="120" y="234" font-size="10" fill="#2F855A">&#x2192; OFD &#x201C;B&#x201D;</text>
+
+  <!-- Annotations -->
+  <text x="34" y="270" font-size="9" fill="#2B6CB0">B&#x1B0;&#x1EDB;c 3: exec 4&gt;&amp;3 &#x2192; dup(3, 4)</text>
+  <text x="34" y="286" font-size="9" fill="#2F855A">B&#x1B0;&#x1EDB;c 5: exec 5&lt; file &#x2192; open() m&#x1EDB;i</text>
+
+  <!-- ===================== CHILD PROCESS (right) ===================== -->
+  <rect x="720" y="72" width="220" height="250" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5" rx="6"/>
+  <text x="830" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#C53030">Child Process</text>
+  <text x="830" y="114" text-anchor="middle" font-size="9" fill="#4A5568">(b&#x1EA3;n sao sau fork)</text>
+
+  <!-- Column headers -->
+  <text x="738" y="136" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="820" y="136" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- Child FD 3 → OFD "A" -->
+  <rect x="732" y="146" width="196" height="30" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="744" y="166" font-size="10" font-weight="bold" fill="#C53030">3</text>
+  <text x="820" y="166" font-size="10" fill="#C53030">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- Child FD 4 → OFD "A" -->
+  <rect x="732" y="180" width="196" height="30" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="744" y="200" font-size="10" font-weight="bold" fill="#C53030">4</text>
+  <text x="820" y="200" font-size="10" fill="#C53030">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- Child FD 5 → OFD "B" -->
+  <rect x="732" y="214" width="196" height="30" fill="#FFF5F5" stroke="#FC8181" rx="3"/>
+  <text x="744" y="234" font-size="10" font-weight="bold" fill="#C53030">5</text>
+  <text x="820" y="234" font-size="10" fill="#C53030">&#x2192; OFD &#x201C;B&#x201D;</text>
+
+  <!-- Child annotation -->
+  <text x="734" y="270" font-size="9" fill="#C53030">fork() nh&#xE2;n b&#x1EA3;n to&#xE0;n b&#x1ED9; FD table</text>
+  <text x="734" y="286" font-size="9" fill="#718096">c&#xF9;ng OFD &#x201C;A&#x201D; v&#xE0; OFD &#x201C;B&#x201D;</text>
+
+  <!-- fork() label between two process boxes -->
+  <line x1="243" y1="130" x2="717" y2="130" stroke="#E53E3E" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <rect x="420" y="114" width="120" height="30" fill="#FFF5F5" stroke="#E53E3E" rx="14"/>
+  <text x="480" y="134" text-anchor="middle" font-size="10" font-weight="bold" fill="#C53030">fork()</text>
+
+  <!-- ===================== OPEN FILE TABLE (center) ===================== -->
+  <rect x="280" y="155" width="400" height="172" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="480" y="176" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">Open File Table (kernel)</text>
+
+  <!-- OFD "A" -->
+  <rect x="294" y="190" width="372" height="52" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="306" y="210" font-size="10" font-weight="bold" fill="#2B6CB0">OFD &#x201C;A&#x201D;</text>
+  <text x="390" y="210" font-size="10" fill="#4A5568">pos: 10  |  flags: 0100000 (O_RDONLY)</text>
+  <text x="306" y="230" font-size="9" fill="#2B6CB0">f_count: 4 (parent FD 3,4 + child FD 3,4)</text>
+
+  <!-- OFD "B" -->
+  <rect x="294" y="252" width="372" height="52" fill="#F0FFF4" stroke="#38A169" rx="4"/>
+  <text x="306" y="272" font-size="10" font-weight="bold" fill="#2F855A">OFD &#x201C;B&#x201D;</text>
+  <text x="390" y="272" font-size="10" fill="#4A5568">pos: 3  |  flags: 0100000 (O_RDONLY)</text>
+  <text x="306" y="292" font-size="9" fill="#2F855A">f_count: 2 (parent FD 5 + child FD 5)</text>
+
+  <!-- ===================== I-NODE TABLE (below center) ===================== -->
+  <rect x="310" y="345" width="340" height="96" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="480" y="367" text-anchor="middle" font-size="11" font-weight="bold" fill="#6B46C1">i-node Table (per-filesystem)</text>
+
+  <rect x="322" y="378" width="316" height="52" fill="#EDE9FE" stroke="#D6BCFA" rx="4"/>
+  <text x="334" y="396" font-size="10" font-weight="bold" fill="#6B46C1">i-node: /tmp/fdcompare.txt</text>
+  <text x="334" y="414" font-size="9" fill="#718096">type: regular | perms: 644</text>
+
+  <!-- ===================== ARROWS: Parent → OFD ===================== -->
+  <!-- Parent FD 3 → OFD "A" -->
+  <line x1="228" y1="166" x2="291" y2="210" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- Parent FD 4 → OFD "A" -->
+  <line x1="228" y1="200" x2="291" y2="215" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- Parent FD 5 → OFD "B" -->
+  <line x1="228" y1="234" x2="291" y2="272" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+  <!-- ===================== ARROWS: Child → OFD ===================== -->
+  <!-- Child FD 3 → OFD "A" -->
+  <line x1="729" y1="166" x2="669" y2="210" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+  <!-- Child FD 4 → OFD "A" -->
+  <line x1="729" y1="200" x2="669" y2="215" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+  <!-- Child FD 5 → OFD "B" -->
+  <line x1="729" y1="234" x2="669" y2="272" stroke="#C53030" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+
+  <!-- ===================== ARROWS: OFD → i-node ===================== -->
+  <line x1="480" y1="304" x2="480" y2="342" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+
+  <!-- ===================== PROOF ANNOTATIONS ===================== -->
+  <rect x="20" y="456" width="920" height="110" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="34" y="480" font-size="10" font-weight="bold" fill="#1A202C">B&#x1EB1;ng ch&#x1EE9;ng th&#x1EF1;c nghi&#x1EC7;m t&#x1EEB; /proc/pid/fdinfo:</text>
+
+  <text x="34" y="500" font-size="10" fill="#2B6CB0">B&#x1B0;&#x1EDB;c 4: &#x110;&#x1ECD;c 3 bytes th&#xF4;ng qua FD 4 &#x2192; pos FD 3 nh&#x1EA3;y t&#x1EEB; 5 l&#xEA;n 8</text>
+  <text x="52" y="516" font-size="9" fill="#718096">&#x2192; FD 3 v&#xE0; FD 4 chia s&#x1EBB; c&#xF9;ng OFD &#x201C;A&#x201D; (dup)</text>
+
+  <text x="34" y="536" font-size="10" fill="#C53030">B&#x1B0;&#x1EDB;c 6: Child &#x111;&#x1ECD;c 2 bytes th&#xF4;ng qua FD 3 &#x2192; pos ph&#xED;a parent nh&#x1EA3;y t&#x1EEB; 8 l&#xEA;n 10</text>
+  <text x="52" y="552" font-size="9" fill="#718096">&#x2192; Parent v&#xE0; child chia s&#x1EBB; c&#xF9;ng OFD &#x201C;A&#x201D; (fork)</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <rect x="20" y="581" width="920" height="80" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="34" y="604" font-size="10" font-weight="bold" fill="#1A202C">S&#x1EF1; kh&#xE1;c bi&#x1EC7;t c&#x1ED1;t l&#xF5;i:</text>
+  <text x="34" y="624" font-size="10" fill="#2B6CB0">dup(3&#x2192;4): selective &#x2014; ch&#x1EC9; nh&#xE2;n b&#x1EA3;n FD 3, t&#x1EA1;o FD 4 tr&#x1ECF; c&#xF9;ng OFD &#x201C;A&#x201D;. FD 5 kh&#xF4;ng b&#x1ECB; &#x1EA3;nh h&#x1B0;&#x1EDF;ng.</text>
+  <text x="34" y="644" font-size="10" fill="#C53030">fork(): wholesale &#x2014; child nh&#x1EAD;n b&#x1EA3;n sao to&#xE0;n b&#x1ED9; FD table, chia s&#x1EBB; c&#x1EA3; OFD &#x201C;A&#x201D; (FD 3,4) l&#x1EAB;n OFD &#x201C;B&#x201D; (FD 5).</text>
+</svg>

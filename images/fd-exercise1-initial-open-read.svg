@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#B7791F"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="380" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-2: Exercise 1 &#x2014; Tr&#x1EA1;ng th&#xE1;i ban &#x111;&#x1EA7;u sau open() v&#xE0; read 5 bytes</text>
+  <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">M&#x1ED9;t FD duy nh&#x1EA5;t, m&#x1ED9;t OFD, m&#x1ED9;t i-node</text>
+
+  <!-- ===================== PROCESS (left) ===================== -->
+  <rect x="20" y="72" width="220" height="150" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="130" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Process (bash)</text>
+  <text x="130" y="114" text-anchor="middle" font-size="9" fill="#4A5568">(per-process FD table)</text>
+
+  <!-- Column headers -->
+  <text x="38" y="136" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="120" y="136" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- FD 3 → OFD "A" -->
+  <rect x="32" y="146" width="196" height="30" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="166" font-size="10" font-weight="bold" fill="#2B6CB0">3</text>
+  <text x="120" y="166" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- Annotation -->
+  <text x="34" y="198" font-size="9" fill="#2B6CB0">B&#x1B0;&#x1EDB;c 1-2: exec 3&lt; file + read 5 bytes</text>
+
+  <!-- ===================== OPEN FILE TABLE (center) ===================== -->
+  <rect x="280" y="72" width="400" height="150" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="480" y="93" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">Open File Table (kernel)</text>
+
+  <!-- OFD "A" -->
+  <rect x="294" y="108" width="372" height="52" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="306" y="128" font-size="10" font-weight="bold" fill="#2B6CB0">OFD &#x201C;A&#x201D;</text>
+  <text x="390" y="128" font-size="10" fill="#4A5568">pos: 5  |  flags: 0100000 (O_RDONLY)</text>
+  <text x="306" y="148" font-size="9" fill="#2B6CB0">f_count: 1 (FD 3)</text>
+
+  <!-- ===================== I-NODE TABLE (bottom) ===================== -->
+  <rect x="310" y="245" width="340" height="96" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="480" y="267" text-anchor="middle" font-size="11" font-weight="bold" fill="#6B46C1">i-node Table (per-filesystem)</text>
+
+  <rect x="322" y="278" width="316" height="52" fill="#EDE9FE" stroke="#D6BCFA" rx="4"/>
+  <text x="334" y="296" font-size="10" font-weight="bold" fill="#6B46C1">i-node: /tmp/fdcompare.txt</text>
+  <text x="334" y="314" font-size="9" fill="#718096">type: regular | perms: 644</text>
+
+  <!-- ===================== ARROWS ===================== -->
+  <!-- Process FD 3 → OFD "A" -->
+  <line x1="228" y1="166" x2="291" y2="128" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+
+  <!-- OFD → i-node -->
+  <line x1="480" y1="160" x2="480" y2="242" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+</svg>

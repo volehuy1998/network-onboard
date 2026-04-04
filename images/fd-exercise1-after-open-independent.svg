@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Liberation Sans', 'DejaVu Sans', 'Noto Sans', Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A5568"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2B6CB0"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2F855A"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#B7791F"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A202C">Figure 1-4: Exercise 1 Ph&#x1EA7;n B &#x2014; Sau open() ri&#xEA;ng: hai OFD &#x111;&#x1ED9;c l&#x1EAD;p</text>
+  <text x="480" y="52" text-anchor="middle" font-size="10" fill="#718096">FD 3,4 &#x2192; OFD &#x201C;A&#x201D; (pos=8), FD 5 &#x2192; OFD &#x201C;B&#x201D; (pos=0) &#x2014; c&#xF9;ng file nh&#x1B0;ng kh&#xE1;c OFD</text>
+
+  <!-- ===================== PROCESS (left) ===================== -->
+  <rect x="20" y="72" width="220" height="200" fill="#EBF8FF" stroke="#2B6CB0" stroke-width="1.5" rx="6"/>
+  <text x="130" y="94" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B6CB0">Process (bash)</text>
+  <text x="130" y="114" text-anchor="middle" font-size="9" fill="#4A5568">(per-process FD table)</text>
+
+  <!-- Column headers -->
+  <text x="38" y="136" font-size="9" font-weight="bold" fill="#718096">FD</text>
+  <text x="120" y="136" font-size="9" font-weight="bold" fill="#718096">Tr&#x1ECF; &#x111;&#x1EBF;n</text>
+
+  <!-- FD 3 → OFD "A" -->
+  <rect x="32" y="146" width="196" height="30" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="166" font-size="10" font-weight="bold" fill="#2B6CB0">3</text>
+  <text x="120" y="166" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- FD 4 → OFD "A" (dup) -->
+  <rect x="32" y="180" width="196" height="30" fill="#EBF4FF" stroke="#3182CE" rx="3"/>
+  <text x="44" y="200" font-size="10" font-weight="bold" fill="#2B6CB0">4</text>
+  <text x="80" y="200" font-size="9" fill="#718096">(dup)</text>
+  <text x="120" y="200" font-size="10" fill="#2B6CB0">&#x2192; OFD &#x201C;A&#x201D;</text>
+
+  <!-- FD 5 → OFD "B" (open riêng) -->
+  <rect x="32" y="214" width="196" height="30" fill="#F0FFF4" stroke="#38A169" rx="3"/>
+  <text x="44" y="234" font-size="10" font-weight="bold" fill="#2F855A">5</text>
+  <text x="76" y="234" font-size="9" fill="#718096">(open)</text>
+  <text x="120" y="234" font-size="10" fill="#2F855A">&#x2192; OFD &#x201C;B&#x201D;</text>
+
+  <!-- Annotations -->
+  <text x="34" y="264" font-size="9" fill="#2F855A">B&#x1B0;&#x1EDB;c 5: exec 5&lt; file &#x2192; open() m&#x1EDB;i</text>
+
+  <!-- ===================== OPEN FILE TABLE (center) ===================== -->
+  <rect x="280" y="97" width="400" height="175" fill="#FFFBEB" stroke="#D69E2E" stroke-width="1.5" rx="6"/>
+  <text x="480" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#B7791F">Open File Table (kernel)</text>
+
+  <!-- OFD "A" -->
+  <rect x="294" y="132" width="372" height="52" fill="#EBF4FF" stroke="#3182CE" rx="4"/>
+  <text x="306" y="152" font-size="10" font-weight="bold" fill="#2B6CB0">OFD &#x201C;A&#x201D;</text>
+  <text x="390" y="152" font-size="10" fill="#4A5568">pos: 8  |  flags: 0100000 (O_RDONLY)</text>
+  <text x="306" y="172" font-size="9" fill="#2B6CB0">f_count: 2 (FD 3 + FD 4)</text>
+
+  <!-- OFD "B" -->
+  <rect x="294" y="194" width="372" height="52" fill="#F0FFF4" stroke="#38A169" rx="4"/>
+  <text x="306" y="214" font-size="10" font-weight="bold" fill="#2F855A">OFD &#x201C;B&#x201D;</text>
+  <text x="390" y="214" font-size="10" fill="#4A5568">pos: 0  |  flags: 0100000 (O_RDONLY)</text>
+  <text x="306" y="234" font-size="9" fill="#2F855A">f_count: 1 (FD 5)</text>
+
+  <!-- ===================== I-NODE TABLE (below center) ===================== -->
+  <rect x="310" y="292" width="340" height="96" fill="#FAF5FF" stroke="#805AD5" stroke-width="1.5" rx="6"/>
+  <text x="480" y="314" text-anchor="middle" font-size="11" font-weight="bold" fill="#6B46C1">i-node Table (per-filesystem)</text>
+
+  <rect x="322" y="325" width="316" height="52" fill="#EDE9FE" stroke="#D6BCFA" rx="4"/>
+  <text x="334" y="343" font-size="10" font-weight="bold" fill="#6B46C1">i-node: /tmp/fdcompare.txt</text>
+  <text x="334" y="361" font-size="9" fill="#718096">type: regular | perms: 644</text>
+
+  <!-- ===================== ARROWS: Process → OFD ===================== -->
+  <!-- Process FD 3 → OFD "A" -->
+  <line x1="228" y1="166" x2="291" y2="152" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- Process FD 4 → OFD "A" -->
+  <line x1="228" y1="200" x2="291" y2="168" stroke="#2B6CB0" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <!-- Process FD 5 → OFD "B" -->
+  <line x1="228" y1="234" x2="291" y2="214" stroke="#2F855A" stroke-width="1.5" marker-end="url(#arr-g)"/>
+
+  <!-- ===================== ARROWS: OFD → i-node ===================== -->
+  <line x1="480" y1="246" x2="480" y2="289" stroke="#B7791F" stroke-width="1.5" marker-end="url(#arr-o)"/>
+
+  <!-- ===================== PROOF ANNOTATIONS ===================== -->
+  <rect x="20" y="410" width="920" height="85" fill="#F7FAFC" stroke="#E2E8F0" rx="6"/>
+  <text x="34" y="434" font-size="10" font-weight="bold" fill="#1A202C">B&#x1EB1;ng ch&#x1EE9;ng: FD 5 cho pos: 0, kh&#xF4;ng ph&#x1EA3;i pos: 8</text>
+
+  <text x="34" y="454" font-size="10" fill="#2F855A">&#x2192; open() t&#x1EA1;o OFD m&#x1EDB;i (B), kh&#xF4;ng chia s&#x1EBB; OFD &#x111;&#x1EE3; c&#xF3; (A)</text>
+  <text x="34" y="474" font-size="9" fill="#718096">FD 3 v&#xE0; FD 4 chia s&#x1EBB; OFD &#x201C;A&#x201D; (dup) &#x2192; pos gi&#xF4;ng nhau. FD 5 tr&#x1ECF; OFD &#x201C;B&#x201D; ri&#xEA;ng l&#x1EBB; &#x2192; pos &#x0111;&#x1ED9;c l&#x1EAD;p.</text>
+</svg>

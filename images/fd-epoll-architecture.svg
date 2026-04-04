@@ -17,7 +17,7 @@
   <rect width="920" height="620" fill="#FAFBFC" rx="8"/>
 
   <!-- Title -->
-  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-2: Kiến trúc epoll</text>
+  <text x="460" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A202C">Figure 1-11: Kiến trúc epoll</text>
   <text x="460" y="52" text-anchor="middle" font-size="11" fill="#718096">Nguồn: TLPI Chapter 63, epoll(7) man page</text>
 
   <!-- ============ USER SPACE ============ -->
