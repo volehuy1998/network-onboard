@@ -1,0 +1,46 @@
+name: File Integrity — Null Byte Guard
+
+# Origin: session 2026-04-04, PR #35 incident
+# Write tool appended 3612 null bytes (0x00) to file-descriptor-deep-dive.md.
+# GitHub classified file as binary → refused markdown rendering.
+# VS Code preview ignored nulls → defect invisible locally.
+# This CI gate ensures no text file with null bytes ever reaches master.
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+jobs:
+  null-byte-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan text files for null bytes
+        run: |
+          echo "Scanning text files for null bytes..."
+          BLOCKED=0
+          EXTENSIONS="md py sh yml yaml html svg css js json txt cfg conf ini toml rst xml"
+
+          for ext in $EXTENSIONS; do
+            while IFS= read -r -d '' file; do
+              nullcount=$(python3 -c "print(open('$file','rb').read().count(b'\x00'))")
+              if [ "$nullcount" -gt 0 ]; then
+                echo "::error file=$file::Contains $nullcount null byte(s) — GitHub will treat this as binary"
+                BLOCKED=1
+              fi
+            done < <(find . -name "*.${ext}" -not -path './.git/*' -print0)
+          done
+
+          if [ "$BLOCKED" -eq 1 ]; then
+            echo ""
+            echo "FAILED: Null bytes detected in text file(s)."
+            echo "Fix: python3 -c \"d=open('FILE','rb').read(); open('FILE','wb').write(d.replace(b'\\x00',b''))\""
+            echo "See CLAUDE.md Rule 9 for details."
+            exit 1
+          fi
+
+          echo "All text files clean — no null bytes found."
