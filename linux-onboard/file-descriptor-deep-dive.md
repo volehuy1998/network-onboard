@@ -121,12 +121,12 @@ Mỗi process có một bảng riêng, được lưu trong cấu trúc `struct f
 Đây là bảng chung cho toàn hệ thống (system-wide), được quản lý bởi kernel. Mỗi entry trong bảng này — gọi là **open file description** (hay còn gọi là *open file handle*) — chứa tất cả thông tin liên quan đến một phiên làm việc với file:
 
 - **File offset** (vị trí đọc/ghi hiện tại) — được cập nhật mỗi khi `read()`, `write()`, hoặc `lseek()` được gọi
-- **Status flags** — các cờ đã chỉ định khi `open()` file (ví dụ: O_RDONLY, O_WRONLY, O_APPEND, O_NONBLOCK)
-- **Access mode** (read-only, write-only, read-write)
+- **Access mode** — quyền truy cập file: read-only (O_RDONLY), write-only (O_WRONLY), hay read-write (O_RDWR). Được set tại thời điểm `open()` và không thể thay đổi sau đó — `fcntl(F_SETFL)` bỏ qua access mode hoàn toàn
+- **File status flags** — các cờ ảnh hưởng đến hành vi I/O sau khi file đã mở (ví dụ: O_APPEND, O_NONBLOCK, O_ASYNC, O_DIRECT). Khác với access mode, status flags có thể thay đổi sau khi `open()` bằng `fcntl(F_SETFL)`
 - Thiết lập liên quan đến signal-driven I/O (Section 63.3)
 - Một con trỏ đến **i-node** của file trong bảng thứ ba
 
-Điểm then chốt: nhiều file descriptor (từ cùng process hoặc khác process) có thể trỏ đến *cùng một* open file description. Điều này xảy ra khi process gọi `dup()` hoặc `dup2()` để sao chép FD (ví dụ: shell redirect `2>&1`), hoặc khi process cha gọi `fork()` — process con thừa kế toàn bộ FD của cha, và các FD này trỏ đến cùng các open file descriptions.
+Điểm then chốt: nhiều file descriptor (từ cùng process hoặc khác process) có thể trỏ đến *cùng một* open file description. Điều này xảy ra khi process gọi `dup()` hoặc `dup2()` để sao chép FD (ví dụ: shell redirect `2>&1`), hoặc khi process gọi `fork()` — child process thừa kế toàn bộ FD của parent, và các FD này trỏ đến cùng các open file descriptions.
 
 > **Key Topic:** Khi hai FD trỏ đến cùng một open file description, chúng chia sẻ file offset. Điều này có nghĩa: nếu process A đọc 100 bytes qua FD 3, thì file offset tăng lên 100, và process B đọc tiếp qua FD của mình (cùng trỏ đến entry đó) sẽ bắt đầu từ byte thứ 101 — không phải từ đầu file.
 
@@ -159,216 +159,135 @@ Toàn bộ chuỗi này diễn ra trong kernel space — process chỉ biết "g
 >
 > **Thực tế:** Mối quan hệ là nhiều-nhiều. Nhiều FD có thể trỏ đến cùng open file description (qua dup/fork). Nhiều open file descriptions có thể trỏ đến cùng i-node (qua nhiều lần open() độc lập). Hiểu nhầm điều này dẫn đến bug nghiêm trọng khi lập trình multi-process — ví dụ hai process cùng ghi vào một file nhưng ghi đè lên nhau vì chia sẻ file offset mà không biết.
 
-### ▶ Guided Exercise: Quan sát mô hình 3 bảng trên hệ thống thật
+Mô hình ba bảng ở trên mô tả *kiến trúc* — ba tầng tra cứu từ FD đến dữ liệu trên đĩa, cùng các tính chất chia sẻ OFD qua `dup()`/`fork()` và tính độc lập OFD qua `open()`. Bốn bài thực hành tiếp theo sẽ *chứng minh* từng tính chất đó trực tiếp trên terminal — từ offset (read, write) đến status flags và lseek — bằng phép thử phản chứng: nếu tính chất không đúng, ta phải quan sát kết quả khác với dự đoán của mô hình, nhưng kết quả thực tế luôn khớp chính xác với những gì mô hình mô tả.
 
-Trong bài thực hành này, bạn chứng minh rằng hai lần `open()` độc lập trên cùng một file tạo ra hai open file description riêng biệt (với file offset riêng), dù cùng trỏ đến một i-node.
+### ▶ Guided Exercise: So sánh trực tiếp open(), dup() và fork() trên cùng một file
 
-**Before You Begin:**
-Bạn cần hai terminal riêng biệt (hai shell session). Đảm bảo `lsof` đã cài đặt (`which lsof` hoặc `apt install lsof`).
-
-**Outcomes:**
-- Xác minh được nhiều FD có thể trỏ đến cùng một file
-- Phân biệt được open file description độc lập và open file description chia sẻ
-
-**Instructions:**
-
-**1.** Mở hai terminal riêng biệt. Trên terminal 1, mở file để đọc:
-
-    [linux-node]$ exec 3< /etc/hostname
-
-Lệnh này mở file `/etc/hostname` để đọc (O_RDONLY) và gán cho FD 3 trong shell hiện tại.
-
-**2.** Trên cùng terminal 1, kiểm tra FD 3 đã tồn tại:
-
-    [linux-node]$ ls -la /proc/$$/fd/3
-    lr-x------ 1 user user 64 Mar 29 10:05 3 -> /etc/hostname
-
-`$$` là PID của shell hiện tại. Permission `lr-x------` cho thấy FD chỉ cho phép đọc — đúng với cờ O_RDONLY đã dùng khi `exec 3<` mở file.
-
-**3.** Trên terminal 2, cũng mở file đó:
-
-    [linux-node]$ exec 4< /etc/hostname
-
-
-Đây là một lần gọi `open()` độc lập — kernel tạo một open file description MỚI trong open file table, dù cùng trỏ đến cùng i-node.
-
-**4.** So sánh hai FD bằng lsof:
-
-    [linux-node]$ lsof /etc/hostname
-    COMMAND  PID USER  FD  TYPE DEVICE SIZE/OFF   NODE NAME
-    bash    1001 user   3r  REG  253,0       12 262155 /etc/hostname
-    bash    1002 user   4r  REG  253,0       12 262155 /etc/hostname
-
-Cột NODE (262155) giống nhau ở cả hai dòng — cả hai FD trỏ đến cùng i-node, chứng minh đó là cùng một file trên đĩa. Tuy nhiên SIZE/OFF có thể khác nhau nếu một bên đã `read()`, vì mỗi lần `open()` tạo open file description riêng với file offset độc lập.
-
-**5.** Dọn dẹp:
-
-    # Trên terminal 1:
-    [linux-node]$ exec 3<&-
-    # Trên terminal 2:
-    [linux-node]$ exec 4<&-
-
-**Finish:**
-Ký hiệu `3<&-` đóng FD 3. Kernel giảm reference count của open file description tương ứng. Khi count về 0, entry được giải phóng.
-
-### ▶ Guided Exercise: Quan sát file offset thay đổi qua /proc/pid/fdinfo
-
-Trong bài thực hành này, bạn nhìn trực tiếp vào bảng thứ nhất (per-process FD table) và bảng thứ hai (open file description) thông qua pseudo-filesystem `/proc`. Cụ thể, `/proc/<pid>/fdinfo/<fd>` xuất ba trường quan trọng: `pos` (file offset nằm trong open file description), `flags` (status flags), và `mnt_id` (mount point chứa file). Đây là cửa sổ duy nhất để quan sát trạng thái bên trong kernel mà không cần debugger.
+Bài thực hành này chạy trong **một session duy nhất**, sử dụng **một file duy nhất**, xuyên suốt cả ba cơ chế tạo FD. Trạng thái offset được giữ nguyên từ bước trước sang bước sau — nên sự khác biệt giữa `open()`, `dup()`, và `fork()` hiện ra ngay tại chỗ, không cần bảng so sánh riêng. File `/proc/<pid>/fdinfo/<fd>` xuất ba trường quan trọng: `pos` (file offset nằm trong open file description), `flags` (status flags), và `mnt_id` (mount point chứa file) — đây là cửa sổ duy nhất để quan sát trạng thái bên trong kernel mà không cần debugger.
 
 **Outcomes:**
-- Thấy được file offset thay đổi theo thời gian thực sau mỗi lần `read()`
-- Hiểu rằng `pos` không nằm trong FD table (bảng 1) mà nằm trong open file description (bảng 2) — FD chỉ là con trỏ đến entry đó
+- Chứng minh `dup()` chia sẻ OFD: đọc qua FD mới làm thay đổi offset của FD gốc
+- Chứng minh `open()` tạo OFD riêng: mở lại cùng file nhưng offset bắt đầu từ 0, không bị ảnh hưởng bởi FD trước
+- Chứng minh `fork()` chia sẻ OFD xuyên process: child đọc thì offset phía parent thay đổi — nhưng chỉ trên FD chia sẻ OFD, FD từ `open()` độc lập vẫn không bị ảnh hưởng
+- Liên hệ với cơ chế shell redirect `2>&1` (dup) và cơ chế fork()+exec() trong HAProxy
 
 **Before You Begin:**
-Một terminal duy nhất, quyền root hoặc user thường (quyền root cho phép xem fdinfo của mọi process).
+Một terminal duy nhất, quyền root hoặc user thường. Bài thực hành sử dụng subshell `( ... )` cho bước fork — đây là `fork()` thuần túy, không `exec()`. Khi gọi `fork()`, kernel tạo bản sao của process hiện tại: process gốc gọi là **parent process**, bản sao gọi là **child process**. Child process là bản sao chính xác của parent tại thời điểm fork.
 
 **Instructions:**
 
 **1.** Tạo file test và mở FD 3 để đọc:
 
-    root@huyvl-lab-fd:~# echo "ABCDEFGHIJ" > /tmp/testfile.txt
-    root@huyvl-lab-fd:~# exec 3< /tmp/testfile.txt
+    root@huyvl-lab-fd:~# echo "0123456789ABCDEFGHIJKLMNOP" > /tmp/fdcompare.txt
+    root@huyvl-lab-fd:~# exec 3< /tmp/fdcompare.txt
 
-**2.** Kiểm tra trạng thái ban đầu của FD 3:
+**2.** Đọc 5 bytes qua FD 3, rồi kiểm tra offset:
 
+    root@huyvl-lab-fd:~# read -n 5 -u 3 data && echo "$data"
+    01234
     root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    5
+    flags:  0100000
+    mnt_id: 31
+
+`pos` nhảy từ 0 lên 5 — kernel ghi nhận 5 bytes đã được đọc. Giá trị `pos` nằm trong open file description (bảng 2), không phải trong per-process FD table (bảng 1). `flags: 0100000` tương ứng O_RDONLY + O_LARGEFILE (kernel tự thêm O_LARGEFILE trên hệ thống 64-bit).
+
+**Phần A — dup(): FD mới trỏ đến cùng OFD**
+
+**3.** Tạo FD 4 bằng `dup()` từ FD 3, rồi kiểm tra offset:
+
+    root@huyvl-lab-fd:~# exec 4>&3
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
+    pos:    5
+    flags:  0100000
+    mnt_id: 31
+
+FD 4 cho `pos: 5` ngay lập tức — cùng giá trị với FD 3. Lệnh `exec 4>&3` gọi `dup2(3, 4)`: kernel tạo entry mới tại vị trí FD 4 trong bảng thứ nhất, trỏ đến cùng OFD mà FD 3 đang dùng, và tăng `f_count` (reference count) trong OFD từ 1 lên 2. Tuy nhiên, chỉ riêng `pos: 5` chưa đủ kết luận — giá trị này có thể do kernel copy offset sang OFD mới thay vì chia sẻ OFD. Bước tiếp theo sẽ phân biệt hai khả năng.
+
+**4.** Đọc 3 bytes qua FD 4, rồi kiểm tra FD 3 (FD mà bạn không hề đụng vào):
+
+    root@huyvl-lab-fd:~# read -n 3 -u 4 more && echo "$more"
+    567
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    8
+    flags:  0100000
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
+    pos:    8
+    flags:  0100000
+    mnt_id: 31
+
+Bạn chỉ đọc qua FD 4, nhưng `pos` của FD 3 cũng nhảy từ 5 lên 8. Nếu `dup2()` tạo OFD riêng (copy offset sang entry mới trong bảng thứ hai), thì thao tác đọc qua FD 4 không thể làm thay đổi `pos` của FD 3 — vì hai OFD là hai vùng nhớ độc lập trong kernel. Kết quả `pos: 8` trên cả hai FD chỉ giải thích được khi cả hai cùng trỏ đến một OFD duy nhất — chính xác là tính chất "chia sẻ file offset" mà mục 1.3 đã mô tả. Đây cũng là cơ chế đằng sau shell redirect `2>&1`: FD 2 (stderr) được `dup()` để trỏ cùng OFD với FD 1 (stdout), nên mọi output lỗi đi cùng đích với output thường.
+
+Ghi nhận trạng thái hiện tại: **FD 3 và FD 4 cùng trỏ đến OFD "A", pos = 8.**
+
+**Phần B — open() độc lập: OFD riêng, offset riêng**
+
+**5.** Mở lại **cùng file đó** bằng `open()` mới, gán cho FD 5:
+
+    root@huyvl-lab-fd:~# exec 5< /tmp/fdcompare.txt
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
     pos:    0
     flags:  0100000
     mnt_id: 31
-
-`pos: 0` cho biết file offset đang ở đầu file — bạn vừa mở, chưa đọc byte nào. `flags: 0100000` tương ứng O_RDONLY + O_LARGEFILE (kernel tự thêm O_LARGEFILE trên hệ thống 64-bit). `mnt_id: 31` xác định mount point chứa file `/tmp/testfile.txt`.
-
-**3.** Đọc 5 bytes qua FD 3, rồi kiểm tra offset:
-
-    root@huyvl-lab-fd:~# read -n 5 -u 3 data
-    root@huyvl-lab-fd:~# echo "$data"
-    ABCDE
-    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
-    pos:    5
-    flags:  0100000
-    mnt_id: 31
-
-`pos` nhảy từ 0 lên 5 — kernel ghi nhận 5 bytes đã được đọc. Giá trị này nằm trong open file description (bảng 2), không phải trong per-process FD table (bảng 1). FD 3 chỉ là con trỏ dẫn đến entry chứa offset này.
-
-**Finish:**
-Giữ nguyên FD 3 mở — bài thực hành tiếp theo sẽ sử dụng nó để chứng minh hành vi chia sẻ offset khi `dup()`.
-
-### ▶ Guided Exercise: dup() — hai FD chia sẻ cùng một open file description
-
-Bài thực hành này chứng minh điểm then chốt nhất của mô hình 3 bảng: khi `dup()` tạo FD mới, FD mới không tạo open file description riêng mà trỏ đến **cùng entry** trong bảng thứ hai. Hệ quả trực tiếp: đọc qua FD này thì offset của FD kia cũng thay đổi — vì cả hai đang nhìn vào cùng một open file description.
-
-**Outcomes:**
-- Chứng minh hai FD có cùng `pos` ngay sau `dup()`
-- Chứng minh đọc qua FD 4 làm thay đổi `pos` của FD 3 (và ngược lại)
-- Liên hệ với cơ chế shell redirect `2>&1` (FD 2 trỏ đến cùng OFD với FD 1)
-
-**Before You Begin:**
-FD 3 từ bài trước phải còn mở với `pos: 5`. Kiểm tra: `cat /proc/$$/fdinfo/3` phải trả về `pos: 5`.
-
-**Instructions:**
-
-**1.** Tạo FD 4 bằng `dup()` từ FD 3:
-
-    root@huyvl-lab-fd:~# exec 4>&3
-
-Lệnh `exec 4>&3` bảo bash gọi `dup2(3, 4)` — kernel copy entry FD 3 trong per-process table sang vị trí FD 4, nhưng cả hai đều trỏ đến cùng một open file description. Trường `f_count` (reference count) trong OFD tăng từ 1 lên 2.
-
-**2.** Xác minh cả hai FD có cùng offset:
-
-    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
-    pos:    5
-    flags:  0100000
-    mnt_id: 31
-    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
-    pos:    5
-    flags:  0100000
-    mnt_id: 31
-
-Cả hai cho `pos: 5` — vì cùng trỏ đến một OFD.
-
-**3.** Đọc 3 bytes qua FD 4, rồi kiểm tra offset của FD 3 (FD mà bạn không hề đụng vào):
-
-    root@huyvl-lab-fd:~# read -n 3 -u 4 more
-    root@huyvl-lab-fd:~# echo "$more"
-    FGH
     root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
     pos:    8
     flags:  0100000
     mnt_id: 31
-    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
-    pos:    8
-    flags:  0100000
-    mnt_id: 31
 
-Bạn chỉ đọc qua FD 4, nhưng `pos` của FD 3 cũng nhảy từ 5 lên 8. Đây là bằng chứng trực tiếp rằng offset không nằm trong per-process FD table (bảng 1) mà nằm trong open file description (bảng 2), và `dup()` khiến hai FD chia sẻ cùng entry đó.
+FD 5 cho `pos: 0` — **không phải** `pos: 8`. Nếu `open()` trỏ FD mới đến OFD đã có (giống cơ chế `dup()`), FD 5 phải cho `pos: 8` vì OFD "A" đang ở vị trí đó. Kết quả `pos: 0` chứng minh `open()` tạo OFD hoàn toàn mới (gọi là OFD "B") trong bảng thứ hai, với offset riêng, dù cùng file `/tmp/fdcompare.txt` và cùng i-node trên đĩa. Đây chính là kịch bản "f_pos = 300 vs f_pos = 0" trong Figure 1-1: hai OFD tách biệt, hai offset độc lập, nhưng cùng trỏ đến một i-node trong bảng thứ ba.
 
-> **Key Topic:** `dup()` và `dup2()` tạo FD mới trỏ đến cùng open file description — nghĩa là chia sẻ file offset, status flags, và signal-driven I/O settings. Đây chính xác là cơ chế đằng sau shell redirect `2>&1`: FD 2 (stderr) được `dup()` để trỏ cùng OFD với FD 1 (stdout), nên mọi output lỗi đi cùng đích với output thường. Tuy nhiên, FD flags (cụ thể là close-on-exec) là riêng biệt — mỗi FD có cờ CLOEXEC độc lập dù trỏ cùng OFD (man dup(2), man7.org).
+Ghi nhận trạng thái: **FD 3, FD 4 -> OFD "A" (pos=8). FD 5 -> OFD "B" (pos=0).**
 
-**4.** Dọn dẹp:
+**Phần C — fork(): child process thừa kế toàn bộ bảng FD — khác biệt cốt lõi với dup()**
 
-    root@huyvl-lab-fd:~# exec 3<&-
-    root@huyvl-lab-fd:~# exec 4<&-
+**6.** Từ bên trong subshell (fork), đọc 2 bytes qua FD 3, rồi kiểm tra từ parent process:
 
-**Finish:**
-Đóng cả hai FD. Kernel giảm reference count của OFD mỗi lần đóng một FD. Khi FD 3 đóng, `f_count` giảm từ 2 về 1 (FD 4 vẫn giữ). Khi FD 4 đóng, `f_count` về 0 và kernel giải phóng OFD đó.
-
-### ▶ Guided Exercise: fork() — process con thừa kế FD trỏ cùng open file description
-
-Bài thực hành trước chứng minh `dup()` tạo hai FD **trong cùng process** chia sẻ OFD. Bài này đi xa hơn: `fork()` tạo process con thừa kế **toàn bộ FD table**, và các FD trong con trỏ đến **cùng các OFD** với cha. Đây là cơ chế giải thích tại sao shell pipeline hoạt động — process cha (shell) thiết lập pipe FDs, fork() process con, và con thừa kế FDs trỏ đến cùng pipe OFD.
-
-**Outcomes:**
-- Chứng minh process con có cùng FD trỏ đến cùng OFD (cùng offset) với cha
-- Chứng minh đọc trong process con làm thay đổi offset nhìn từ process cha
-- Liên hệ với cơ chế fork()+exec() trong HAProxy khi spawn health check processes
-
-**Before You Begin:**
-Một terminal duy nhất, quyền root. Bài thực hành sử dụng subshell `( ... )` thay vì `bash -c` để tránh nhiễu từ bash startup. Lý do: `bash -c '...'` thực hiện `fork()+exec()` — bash mới khởi động lại có thể đọc vài bytes trên FD kế thừa để kiểm tra nội bộ, gây lệch offset. Subshell `( ... )` chỉ thực hiện `fork()` thuần túy, không `exec()`, nên process con là bản sao chính xác của cha đã khởi tạo xong — không đụng FD.
-
-**Instructions:**
-
-**1.** Tạo file test mới và mở FD 3:
-
-    root@huyvl-lab-fd:~# echo "0123456789ABCDEF" > /tmp/forktest.txt
-    root@huyvl-lab-fd:~# exec 3< /tmp/forktest.txt
-
-**2.** Đọc 4 bytes để đưa offset lên 4:
-
-    root@huyvl-lab-fd:~# read -n 4 -u 3 chunk
-    root@huyvl-lab-fd:~# echo "$chunk"
-    0123
-    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
-    pos:    4
-    flags:  0100000
-    mnt_id: 31
-
-**3.** Kiểm tra FD 3 từ bên trong subshell (fork):
-
-    root@huyvl-lab-fd:~# ( cat /proc/self/fdinfo/3 )
-    pos:    4
-    flags:  0100000
-    mnt_id: 31
-
-Subshell `( ... )` fork ra process con — con thừa kế FD 3 trỏ đến cùng OFD. `/proc/self/fdinfo/3` bên trong con cho `pos: 4`, giống hệt cha — vì cả hai nhìn vào cùng một entry trong open file table.
-
-**4.** Đọc 3 bytes trong subshell, rồi kiểm tra offset từ process cha:
-
-    root@huyvl-lab-fd:~# ( read -n 3 -u 3 x; echo "child read: $x"; cat /proc/self/fdinfo/3 )
-    child read: 456
-    pos:    7
+    root@huyvl-lab-fd:~# ( read -n 2 -u 3 x; echo "child read: $x"; echo "child pos FD3:"; cat /proc/self/fdinfo/3 )
+    child read: 89
+    child pos FD3:
+    pos:    10
     flags:  0100000
     mnt_id: 31
     root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
-    pos:    7
+    pos:    10
     flags:  0100000
     mnt_id: 31
 
-Process con đọc `456` (3 bytes tiếp theo sau vị trí 4), offset tiến lên 7. Quay về process cha, `cat /proc/$$/fdinfo/3` cũng cho `pos: 7` — dù cha không hề gọi `read()` kể từ bước 2. Đây là bằng chứng trực tiếp: `fork()` khiến con thừa kế FD trỏ đến cùng open file description, và mọi thay đổi offset từ phía con đều phản ánh ngay lập tức ở phía cha.
+Child process đọc `89` (2 bytes tiếp theo sau vị trí 8 của OFD "A"), offset tiến lên 10. Sau khi subshell kết thúc, kiểm tra FD 3 từ parent process — cũng cho `pos: 10`, dù parent không hề gọi `read()` kể từ bước 4. Nếu `fork()` tạo OFD riêng cho child (copy offset sang entry mới trong bảng thứ hai), thì thao tác đọc của child không thể ảnh hưởng đến offset phía parent — vì hai OFD là hai vùng nhớ độc lập trong kernel. Kết quả `pos: 10` ở cả hai phía chỉ giải thích được khi parent và child cùng trỏ đến một OFD duy nhất — cơ chế chia sẻ xuyên process giống hệt `dup()` ở bước 4, nhưng lần này xảy ra giữa hai process thay vì hai FD trong cùng process.
 
-> **Key Topic:** `fork()` khiến process con thừa kế bản sao FD table — nhưng các FD trỏ đến **cùng** open file descriptions với cha (man fork(2), man7.org). Hệ quả: thay đổi offset ở bên nào cũng ảnh hưởng bên kia. Đây là lý do HAProxy và các network server cẩn thận đặt cờ `CLOEXEC` trên listening socket FDs — để khi fork()+exec() health check script, script con không vô tình thừa kế và giữ tham chiếu đến socket lắng nghe.
+**7.** Cho child process đọc qua FD 5 — FD thuộc OFD "B", tách biệt hoàn toàn với OFD "A":
 
-**5.** Phân biệt chia sẻ OFD và cách ly biến — hiểu đúng ranh giới fork():
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
+    pos:    0
+    flags:  0100000
+    mnt_id: 31
+    root@huyvl-lab-fd:~# ( read -n 3 -u 5 y; echo "child read FD5: $y"; cat /proc/self/fdinfo/5 )
+    child read FD5: 012
+    pos:    3
+    flags:  0100000
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
+    pos:    3
+    flags:  0100000
+    mnt_id: 31
 
-Thí nghiệm vừa rồi chứng minh fork() chia sẻ OFD (offset thay đổi xuyên process). Một câu hỏi tự nhiên: nếu FD chia sẻ, vậy biến trong process con có chia sẻ với cha không? Câu trả lời là không — và sự khác biệt này chính xác phản ánh ranh giới giữa kernel space (OFD — kernel quản lý, chia sẻ qua con trỏ) và user space (biến — nằm trong address space riêng, copy-on-write sau fork).
+Trước tiên, kiểm tra FD 5 phía parent: `pos: 0` — chưa ai đọc qua OFD "B" kể từ bước 5. Sau khi child đọc 3 bytes qua FD 5, cả child lẫn parent đều cho `pos: 3`. Áp dụng cùng phép thử phản chứng từ bước 6: nếu `fork()` tạo OFD riêng cho child, offset phía parent phải giữ nguyên 0 — nhưng thực tế nhảy lên 3, chứng minh parent và child chia sẻ OFD "B".
+
+Điều quan trọng hơn là ý nghĩa kết hợp của bước 6 và bước 7. Bước 6 chứng minh child chia sẻ OFD "A" (qua FD 3). Bước 7 chứng minh child chia sẻ cả OFD "B" (qua FD 5). Đây chính là sự khác biệt cốt lõi với `dup()`: `dup(3→4)` chỉ nhân bản **một FD cụ thể** mà bạn chỉ định — FD 3 sang FD 4, cả hai trỏ đến OFD "A", nhưng không tạo thêm bất kỳ FD nào khác và không ảnh hưởng đến các OFD khác trong hệ thống. Còn `fork()` nhân bản **toàn bộ** per-process FD table — child process thừa kế cả FD 3, FD 4 (OFD "A") lẫn FD 5 (OFD "B"), và chia sẻ offset trên tất cả. Nói cách khác, `dup()` là selective (chọn lọc), `fork()` là wholesale (toàn bộ).
+
+Hệ quả production: child process nhận mọi FD của parent — bao gồm socket lắng nghe, file nhạy cảm, pipe — bất kể parent có muốn hay không. Đây là lý do cờ CLOEXEC tồn tại (xem mục 1.10): cho phép parent đánh dấu "FD này không được thừa kế khi exec()" để ngăn FD leak sang child process.
+
+**Trạng thái cuối cùng — ba OFD mapping trong một session:**
+
+    FD 3  ──┐
+            ├──→  OFD "A"  (pos = 10)   ← dup() + fork() chia sẻ
+    FD 4  ──┘
+    FD 5  ─────→  OFD "B"  (pos = 3)    ← fork() cũng chia sẻ — dup() không đụng đến
+
+**Phần D — Ranh giới kernel space vs user space qua fork()**
+
+**8.** fork() chia sẻ OFD (kernel space) nhưng cách ly biến (user space):
 
     root@huyvl-lab-fd:~# x="PARENT"
     root@huyvl-lab-fd:~# ( x="CHILD"; echo "inside: $x" )
@@ -376,15 +295,251 @@ Thí nghiệm vừa rồi chứng minh fork() chia sẻ OFD (offset thay đổi 
     root@huyvl-lab-fd:~# echo "outside: $x"
     outside: PARENT
 
-Process con sửa biến `x` thành `CHILD`, nhưng cha vẫn giữ `PARENT` — vì mỗi cặp ngoặc `( ... )` tạo một fork riêng biệt với address space được copy. Biến nằm trong user space (bản sao riêng), còn OFD nằm trong kernel space (con trỏ chia sẻ). Đây cũng là lý do bạn không thể tách lệnh `read` và `echo "$x"` ra hai subshell riêng biệt — biến `$x` gán trong subshell A sẽ chết theo subshell A, subshell B không thấy nó.
+Child process sửa biến `x` thành `CHILD`, nhưng parent vẫn giữ `PARENT`. Sự khác biệt này phản ánh ranh giới kiến trúc: OFD nằm trong kernel space (parent và child cùng trỏ đến một OFD — nên offset thay đổi xuyên process), còn biến nằm trong user space (copy-on-write sau fork — nên mỗi process có bản sao riêng).
 
-**6.** Dọn dẹp:
+**9.** Dọn dẹp:
 
-    root@huyvl-lab-fd:~# exec 3<&-
-    root@huyvl-lab-fd:~# rm /tmp/forktest.txt /tmp/testfile.txt
+    root@huyvl-lab-fd:~# exec 3<&- ; exec 4<&- ; exec 5<&-
+    root@huyvl-lab-fd:~# rm /tmp/fdcompare.txt
+
+Ký hiệu `3<&-` đóng FD 3. Kernel giảm reference count (`f_count`) của OFD mỗi lần đóng một FD. Khi FD 3 đóng, `f_count` của OFD "A" giảm từ 2 về 1 (FD 4 vẫn giữ). Khi FD 4 đóng, `f_count` về 0 và kernel giải phóng OFD "A". OFD "B" cũng được giải phóng khi FD 5 đóng.
 
 **Finish:**
-Bốn bài thực hành trên đã chứng minh bằng thực nghiệm mọi khía cạnh của mô hình 3 bảng: per-process FD table (fdinfo cho mỗi FD riêng), open file description chia sẻ qua dup() và fork() (cùng offset), i-node chia sẻ qua open() độc lập (cùng NODE trong lsof), và ranh giới giữa kernel space (OFD — chia sẻ) và user space (biến — cách ly). Kiến thức này là nền tảng trực tiếp để hiểu close-on-exec (mục 1.10) và cơ chế HAProxy ngăn FD leak khi spawn process con.
+
+Ba cơ chế tạo FD khác nhau ở mức OFD: `open()` luôn tạo OFD mới (bước 5: pos bắt đầu từ 0 dù cùng file), `dup()` chia sẻ OFD nhưng chỉ trên FD được chỉ định (bước 4: FD 3 và FD 4 cùng offset, trong khi FD 5 không bị ảnh hưởng), còn `fork()` nhân bản toàn bộ bảng FD nên child process chia sẻ OFD với parent trên mọi FD đang mở (bước 7: child đọc qua FD 5 khiến FD 5 phía parent thay đổi offset — điều không xảy ra trong Phần A).
+
+> **Key Topic:** `dup()` và `dup2()` tạo FD mới trỏ đến cùng open file description — nghĩa là chia sẻ file offset, status flags, và signal-driven I/O settings. Tuy nhiên, FD flags (cụ thể là close-on-exec) là riêng biệt — mỗi FD có cờ CLOEXEC độc lập dù trỏ cùng OFD (man dup(2), man7.org). `fork()` khiến child process thừa kế bản sao toàn bộ FD table — nhưng các FD trỏ đến **cùng** open file descriptions với parent (man fork(2), man7.org). Đây là lý do HAProxy và các network server cẩn thận đặt cờ CLOEXEC trên listening socket FDs — để khi fork()+exec() health check script, child process không vô tình thừa kế và giữ tham chiếu đến socket lắng nghe.
+
+---
+
+### ▶ Guided Exercise: Write-side proof — khi OFD sharing quyết định dữ liệu sống hay chết
+
+Exercise trước chứng minh OFD sharing qua **read** — quan sát offset thay đổi nhưng file không bị sửa. Exercise này chứng minh qua **write** — hệ quả hiện ra trực tiếp trong nội dung file: dữ liệu nối tiếp (shared OFD) hay bị đè (independent OFD).
+
+**Outcomes:**
+- Chứng minh `dup()` chia sẻ OFD trên write: hai FD ghi tuần tự, không đè lẫn nhau
+- Chứng minh `open()` tạo OFD riêng trên write: ghi từ offset 0, đè dữ liệu hiện có
+- Chứng minh `fork()` chia sẻ OFD trên write xuyên process: child ghi làm offset phía parent tiến
+- Liên hệ với data corruption trong production: hai process ghi cùng log file không có `O_APPEND`
+
+**Before You Begin:**
+Cùng terminal, quyền root. Bài này mở file ở chế độ read-write (`exec 3<> file` → O_RDWR) thay vì read-only (`exec 3< file` → O_RDONLY) như exercise trước. Sự khác biệt sẽ phản ánh trong trường `flags` của `fdinfo`.
+
+**Instructions:**
+
+**1.** Tạo file 10 ký tự (không có newline cuối) và mở FD 3 read-write:
+
+    root@huyvl-lab-fd:~# echo -n "0123456789" > /tmp/fdwrite.txt
+    root@huyvl-lab-fd:~# exec 3<> /tmp/fdwrite.txt
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+
+`flags: 0100002` = O_RDWR (02) + O_LARGEFILE (0100000). So sánh với exercise trước: FD 3 mở bằng `exec 3< file` cho `flags: 0100000` (O_RDONLY = 00). Bit cuối (02 vs 00) phản ánh access mode được lưu trong OFD.
+
+**Phần E — dup() write: hai FD cùng OFD → dữ liệu nối tiếp**
+
+**2.** Tạo FD 4 bằng dup(), ghi `AAA` qua FD 3, rồi ghi `BBB` qua FD 4:
+
+    root@huyvl-lab-fd:~# exec 4>&3
+    root@huyvl-lab-fd:~# echo -n "AAA" >&3
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    3
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# echo -n "BBB" >&4
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    6
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /tmp/fdwrite.txt
+    AAABBB6789root@huyvl-lab-fd:~#
+
+`echo -n "AAA" >&3` ghi 3 bytes tại pos 0, offset tiến lên 3. Sau đó `echo -n "BBB" >&4` ghi 3 bytes — nhưng tại pos 3 (không phải pos 0), vì FD 4 chia sẻ cùng OFD với FD 3. Offset tiến lên 6, file chứa `AAABBB6789` — hai chuỗi **nối tiếp nhau**. Nếu `dup()` tạo OFD riêng (copy offset = 0 tại thời điểm dup), lệnh `echo >&4` sẽ ghi `BBB` tại pos 0, đè `AAA` — file sẽ là `BBB3456789`. Kết quả `AAABBB6789` chỉ giải thích được khi cả hai FD chia sẻ cùng offset trong cùng OFD — mỗi lần write, offset tiến, và lần write sau tiếp tục từ vị trí đó. Đây là cơ chế cho phép `>>log 2>&1` ghi stdout và stderr tuần tự vào cùng file mà không đè lẫn nhau.
+
+Ghi nhận trạng thái: **FD 3 và FD 4 cùng trỏ đến OFD "W", pos = 6. File: `AAABBB6789`.**
+
+**Phần F — open() write: OFD riêng → đè dữ liệu**
+
+**3.** Mở lại **cùng file đó** bằng `open()` mới, ghi `XXX` qua FD 5:
+
+    root@huyvl-lab-fd:~# exec 5<> /tmp/fdwrite.txt
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# echo -n "XXX" >&5
+    root@huyvl-lab-fd:~# cat /tmp/fdwrite.txt
+    XXXBBB6789root@huyvl-lab-fd:~#
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    6
+    flags:  0100002
+    mnt_id: 31
+
+FD 5 bắt đầu tại `pos: 0` — OFD mới, offset riêng. Ghi `XXX` tại vị trí 0-2, **đè** `AAA` thành `XXX`. File: `XXXBBB6789`. Trong khi đó, FD 3 vẫn `pos: 6` — hoàn toàn không bị ảnh hưởng. Nếu `open()` trỏ FD 5 đến OFD đang có (pos = 6), `XXX` sẽ ghi tại vị trí 6-8 → file `AAABBBXXX9`. Kết quả `XXX` nằm ở đầu file (vị trí 0) chứng minh OFD độc lập.
+
+Đây chính là kịch bản **data corruption** kinh điển: hai process mở cùng log file bằng `open()` riêng biệt (không `O_APPEND`), cả hai bắt đầu ghi từ offset 0 → process sau đè dữ liệu của process trước. Giải pháp production: dùng `O_APPEND` — kernel di chuyển offset về cuối file **trước mỗi lần write**, atomic, bất kể OFD nào.
+
+**Phần G — fork() write xuyên process**
+
+**4.** Child ghi 2 bytes qua FD 3, kiểm tra từ parent:
+
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    6
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# ( echo -n "DD" >&3 )
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    8
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /tmp/fdwrite.txt
+    XXXBBBDD89root@huyvl-lab-fd:~#
+
+Trước fork, parent đang ở `pos: 6`. Child ghi `DD` tại pos 6 (vì child chia sẻ OFD với parent), offset tiến lên 8. Parent kiểm tra — cũng `pos: 8`, dù parent không hề ghi. File: `XXXBBBDD89` — ký tự `67` tại vị trí 6-7 bị thay bằng `DD`. Nếu `fork()` tạo OFD riêng cho child, child ghi tại pos 6 của OFD riêng, nhưng OFD phía parent giữ nguyên pos 6 — parent không thể thấy sự thay đổi offset. Kết quả `pos: 8` phía parent chứng minh shared OFD trên write path, xuyên process boundary — giống hệt kết luận từ bước 6 exercise trước (read path), nhưng lần này hệ quả là **dữ liệu file thực sự bị thay đổi** bởi child.
+
+**5.** Dọn dẹp:
+
+    root@huyvl-lab-fd:~# exec 3<&- ; exec 4<&- ; exec 5<&-
+    root@huyvl-lab-fd:~# rm /tmp/fdwrite.txt
+
+**Finish:**
+
+Exercise trước chứng minh OFD sharing qua read (offset thay đổi khi FD khác hoặc process khác đọc). Exercise này chứng minh cùng tính chất qua write — với hệ quả nghiêm trọng hơn: khi hai FD chia sẻ OFD (`dup()` hoặc `fork()`), writes nối tiếp nhau (bước 2: `AAABBB`); khi hai FD trỏ OFD riêng (`open()`), writes đè lẫn nhau (bước 3: `XXX` đè `AAA`). Đây là lý do HAProxy mở log file với `O_APPEND`, và là lý do các network daemon cẩn thận quản lý FD inheritance trước `fork()`.
+
+---
+
+### ▶ Guided Exercise: Status flags cũng chia sẻ qua OFD — không chỉ offset
+
+Hai exercise trước chứng minh OFD sharing qua **offset** (pos thay đổi khi FD khác đọc/ghi). Nhưng OFD không chỉ chứa offset — nó còn chứa **status flags** (O_APPEND, O_NONBLOCK, O_ASYNC, ...). Exercise này chứng minh status flags cũng chia sẻ theo cùng quy luật: `dup()` chia sẻ, `open()` tách biệt.
+
+**Outcomes:**
+- Chứng minh thay đổi status flags qua FD này ảnh hưởng FD kia (khi cùng OFD qua `dup()`)
+- Chứng minh thay đổi status flags trên OFD riêng (`open()`) không ảnh hưởng OFD khác
+- Giải thích ý nghĩa octal của `flags` trong `/proc/pid/fdinfo`
+
+**Before You Begin:**
+Cùng terminal, quyền root. Exercise này dùng `python3` để gọi `fcntl(F_SETFL)` — system call thay đổi status flags trên OFD — vì bash không có lệnh trực tiếp cho thao tác này.
+
+**Instructions:**
+
+**1.** Tạo 3 FD: FD 3 (open), FD 4 (dup từ FD 3 → cùng OFD), FD 5 (open riêng → OFD riêng):
+
+    root@huyvl-lab-fd:~# echo -n "0123456789" > /tmp/fdflags.txt
+    root@huyvl-lab-fd:~# exec 3<> /tmp/fdflags.txt
+    root@huyvl-lab-fd:~# exec 4>&3
+    root@huyvl-lab-fd:~# exec 5<> /tmp/fdflags.txt
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~#
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+
+Ba FD đều cho `flags: 0100002` — O_RDWR (02) + O_LARGEFILE (0100000). Tại thời điểm này, hai OFD (một cho FD 3/4, một cho FD 5) có flags giống nhau. Bước tiếp theo sẽ phá vỡ sự đối xứng đó.
+
+**2.** Thêm `O_APPEND` qua FD 4 (dup), rồi kiểm tra cả 3 FD:
+
+    root@huyvl-lab-fd:~# python3 -c "import fcntl, os; fcntl.fcntl(4, fcntl.F_SETFL, fcntl.fcntl(4, fcntl.F_GETFL) | os.O_APPEND)"
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    0
+    flags:  0102002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/4
+    pos:    0
+    flags:  0102002
+    mnt_id: 31
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/5
+    pos:    0
+    flags:  0100002
+    mnt_id: 31
+
+Lệnh `python3` gọi `fcntl(4, F_SETFL, flags | O_APPEND)` — thêm cờ O_APPEND (octal 02000) vào OFD mà FD 4 trỏ đến. Kết quả: FD 3 cũng nhảy từ `0100002` lên `0102002`, dù lệnh python3 chỉ thao tác trên FD 4. Nếu `dup()` tạo OFD riêng, thay đổi flags trên FD 4 không thể ảnh hưởng FD 3 — vì `F_SETFL` ghi vào OFD, và hai OFD riêng biệt là hai vùng nhớ độc lập trong kernel. Kết quả `0102002` trên cả FD 3 lẫn FD 4 chỉ giải thích được khi cả hai cùng trỏ đến một OFD duy nhất — cùng kết luận từ exercise 1 (offset) và exercise 2 (write), nhưng lần này chứng minh trên một thuộc tính khác hoàn toàn.
+
+Trong khi đó, FD 5 vẫn `0100002` — không có O_APPEND. `open()` tạo OFD riêng, nên thay đổi flags trên OFD của FD 3/4 không lan sang OFD của FD 5.
+
+Phân tích giá trị octal: `0102002` = O_RDWR (02) + O_APPEND (02000) + O_LARGEFILE (0100000). So sánh trực quan:
+
+    0100002  →  O_LARGEFILE | O_RDWR
+    0102002  →  O_LARGEFILE | O_APPEND | O_RDWR
+         ^
+         bit O_APPEND (02000) được bật
+
+**3.** Dọn dẹp:
+
+    root@huyvl-lab-fd:~# exec 3<&- ; exec 4<&- ; exec 5<&-
+    root@huyvl-lab-fd:~# rm /tmp/fdflags.txt
+
+**Finish:**
+
+OFD chia sẻ không chỉ offset (exercise 1, 2) mà cả status flags (exercise này). Điều này có ý nghĩa production: khi HAProxy gọi `fcntl(fd, F_SETFL, O_NONBLOCK)` để chuyển socket sang non-blocking mode, mọi FD trỏ đến cùng OFD (qua `dup()` hoặc sau `fork()`) đều trở thành non-blocking — dù không gọi `fcntl()` trên từng FD riêng lẻ.
+
+---
+
+### ▶ Guided Exercise: lseek xuyên process — child "tua lại" file cho parent
+
+Ba exercise trước chứng minh OFD sharing qua read, write, và status flags. Exercise này chứng minh khía cạnh cuối cùng: **lseek** — thao tác di chuyển offset trực tiếp — cũng xuyên process qua shared OFD.
+
+**Outcomes:**
+- Chứng minh child process gọi `lseek()` thay đổi offset mà parent nhìn thấy
+- Chứng minh parent có thể đọc lại dữ liệu từ đầu file sau khi child "tua lại"
+- Nhận diện rủi ro: child process có thể vô tình phá hỏng vị trí đọc/ghi của parent
+
+**Before You Begin:**
+Cùng terminal, quyền root. Dùng `python3` để gọi `os.lseek()` vì bash không có lệnh lseek trực tiếp.
+
+**Instructions:**
+
+**1.** Tạo file, mở FD 3, đọc 5 bytes:
+
+    root@huyvl-lab-fd:~# echo -n "0123456789" > /tmp/fdseek.txt
+    root@huyvl-lab-fd:~# exec 3< /tmp/fdseek.txt
+    root@huyvl-lab-fd:~# read -n 5 -u 3 data && echo "$data"
+    01234
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    5
+    flags:  0100000
+    mnt_id: 31
+
+Parent đã đọc `01234`, offset ở vị trí 5. Lần đọc tiếp theo sẽ bắt đầu từ ký tự `5`.
+
+**2.** Child process (subshell) gọi `lseek(3, 0, SEEK_SET)` — tua offset về đầu file:
+
+    root@huyvl-lab-fd:~# ( python3 -c "import os; os.lseek(3, 0, os.SEEK_SET)" )
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    0
+    flags:  0100000
+    mnt_id: 31
+
+Parent kiểm tra FD 3 — `pos: 0`. Child đã "tua lại" offset của parent về đầu file, dù parent không hề gọi `lseek()`. Nếu `fork()` tạo OFD riêng cho child, `lseek()` của child chỉ thay đổi offset trong OFD riêng — OFD phía parent giữ nguyên `pos: 5`. Kết quả `pos: 0` chứng minh parent và child chia sẻ cùng OFD, và `lseek()` cũng hoạt động xuyên process giống hệt `read()` (exercise 1) và `write()` (exercise 2).
+
+**3.** Đọc lại để xác nhận — parent thực sự đọc từ đầu file:
+
+    root@huyvl-lab-fd:~# read -n 3 -u 3 data2 && echo "$data2"
+    012
+    root@huyvl-lab-fd:~# cat /proc/$$/fdinfo/3
+    pos:    3
+    flags:  0100000
+    mnt_id: 31
+
+Parent đọc `012` — ba ký tự đầu tiên — **không phải** `567` (vị trí mà parent đang đọc dở trước khi child lseek). Đây là bằng chứng không thể chối cãi: child process đã thực sự thay đổi vị trí đọc của parent. Trong production, đây là lỗi khó debug: parent đang xử lý file tuần tự, child vô tình lseek → parent đọc lại dữ liệu đã xử lý hoặc bỏ qua dữ liệu chưa xử lý, gây duplicate processing hoặc data loss mà không có error nào được raise.
+
+**4.** Dọn dẹp:
+
+    root@huyvl-lab-fd:~# exec 3<&-
+    root@huyvl-lab-fd:~# rm /tmp/fdseek.txt
+
+**Finish:**
+
+Bốn exercise đã chứng minh OFD sharing trên bốn chiều khác nhau: read offset (exercise 1), write + nội dung file (exercise 2), status flags (exercise 3), và lseek (exercise 4). Tất cả đều tuân theo cùng một quy luật: `dup()` và `fork()` chia sẻ OFD, `open()` tạo OFD riêng. Mọi thao tác trên OFD — dù là đọc, ghi, thay đổi flags, hay di chuyển offset — đều lan truyền qua tất cả FD cùng trỏ đến OFD đó, kể cả FD ở process khác.
 
 ---
 
@@ -451,7 +606,7 @@ FD 0-2 là stdin/stdout/stderr, FD 255 là FD nội bộ của bash dùng giữ 
     lrwx------ 1 root root 64 Apr  3 18:42 2 -> /dev/pts/0
     lrwx------ 1 root root 64 Apr  3 18:42 3 -> 'socket:[20882]'
 
-FD 0-2 là stdin/stdout/stderr qua terminal `/dev/pts/0`. FD 3 là listening socket — kernel hiển thị dạng `socket:[inode_number]`, trong đó 20882 là i-node number của socket trong sockfs (pseudo-filesystem quản lý socket). Vì shell cha chỉ có FD 0-2 (đã kiểm tra ở bước 1), Python server nhận FD 3 cho listening socket — đúng quy tắc **lowest available number**.
+FD 0-2 là stdin/stdout/stderr qua terminal `/dev/pts/0`. FD 3 là listening socket — kernel hiển thị dạng `socket:[inode_number]`, trong đó 20882 là i-node number của socket trong sockfs (pseudo-filesystem quản lý socket). Vì parent process chỉ có FD 0-2 (đã kiểm tra ở bước 1), Python server nhận FD 3 cho listening socket — đúng quy tắc **lowest available number**.
 
 **4.** Dùng strace để quan sát syscall `accept4()` khi client kết nối. Attach strace vào process Python, chỉ theo dõi `accept4` và `close`:
 
@@ -840,7 +995,7 @@ Trên OpenStack, khi Neutron agent hoặc Nova compute `fork()+exec()` các help
 Bài thực hành gồm hai phần đối lập: phần A chứng minh FD **rò rỉ** qua `exec()` khi không có `CLOEXEC`, phần B chứng minh kernel **tự động đóng** FD khi có `CLOEXEC`. Kết hợp cả hai, bạn thấy rõ vai trò của cờ close-on-exec trong thực tế.
 
 **Before You Begin:**
-Đảm bảo môi trường sạch — chỉ có FD 0, 1, 2 tiêu chuẩn. Nếu tồn tại FD thừa từ thí nghiệm trước, đóng bằng `exec N>&-` (N là số FD). Bài học từ thí nghiệm 5: FD thừa từ session trước sẽ bị process con kế thừa và làm sai lệch kết quả.
+Đảm bảo môi trường sạch — chỉ có FD 0, 1, 2 tiêu chuẩn. Nếu tồn tại FD thừa từ thí nghiệm trước, đóng bằng `exec N>&-` (N là số FD). Bài học từ thí nghiệm 5: FD thừa từ session trước sẽ bị child process kế thừa và làm sai lệch kết quả.
 
 **Outcomes:**
 - Thấy được FD rò rỉ sang chương trình mới sau `exec()` khi không có `CLOEXEC`
@@ -1012,3 +1167,4 @@ file descriptor, Universal I/O Model, open file description, i-node, per-process
 9. [The Linux Programming Interface — Section 27.4: File Descriptors and exec()](https://man7.org/tlpi/) — Close-on-exec flag, FD inheritance across exec()
 10. [open(2) — Linux man page, O_CLOEXEC flag](https://man7.org/linux/man-pages/man2/open.2.html) — Atomic close-on-exec since Linux 2.6.23
 11. [PEP 446 — Make newly created file descriptors non-inheritable (Python 3.4)](https://peps.python.org/pep-0446/) — Python mặc định đặt CLOEXEC trên mọi FD mới
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
