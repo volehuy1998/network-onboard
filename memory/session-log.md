@@ -7,165 +7,72 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-04
-**Branch:** `master` (dirty — major exercise redesign + 6 new SVGs + figure renumbering)
-**Base:** `master` tại `e92ef0f`
+**Ngày:** 2026-04-04 (session 2 — tiếp nối)
+**Branch:** `feat/fd-exercise-redesign-background-child`
+**Remote:** `origin/feat/fd-exercise-redesign-background-child` tại `d25e7ce`
 
-### Đã hoàn thành
+### Đã hoàn thành (session 2)
 
-1. **Exercise redesign — background child + /proc inspection** (6-phase plan, phases 1-6):
-   - **Phase 1**: Fix i-node text overflow trong `fd-exercise1-read-offset-sharing.svg` (viewBox 660→676, downstream elements +16px)
-   - **Phase 2**: Redesign 3/4 exercises trong `file-descriptor-deep-dive.md`:
-     - Exercise 1 Phần C+D: blocking subshell → background child `( ...; sleep 300 ) &` + `/proc/$CHILD/fdinfo/N`
-     - Exercise 2 Phần G: same pattern cho fork write
-     - Exercise 4 steps 2-5: same pattern cho lseek xuyên process
-     - Exercise 3: không sửa (không có fork)
-   - **Phase 3**: Tạo 6 SVG mới (individual diagrams thay vì multi-panel):
-     - `fd-exercise1-initial-open-read.svg` (baseline, pos=5)
-     - `fd-exercise1-after-dup.svg` (FD 3,4 → OFD "A", pos=8)
-     - `fd-exercise1-after-open-independent.svg` (2 OFDs)
-     - `fd-exercise2-dup-write.svg`, `fd-exercise2-open-write.svg`, `fd-exercise2-fork-write.svg`
-   - **Phase 4**: Renumber all 14 figures sequentially (1-1 through 1-14):
-     - Inserted 3 new SVG refs in Exercise 1 (after step 2, after Phần A, after Phần B)
-     - Inserted 3 new SVG refs in Exercise 2 (after each Part E, F, G)
-     - Deleted old multi-panel Exercise 2 reference (`fd-exercise2-write-ofd-sharing.svg`)
-     - Renamed 7 existing figures in both markdown AND SVG internal `<text>` titles
-     - Updated Key Topics table (Table 1-3) with all 14 figure entries
-   - **Phase 5**: Full audit:
-     - 0 null bytes across all 14 SVGs + markdown
-     - SVG-caption consistency: 14/14 match
-     - All 14 SVG file references resolve to existing files
-     - Fact-check: 17/17 technical claims PASS (man page refs, bash syntax, expected output)
-   - **Phase 6**: Updated memory files (this file, dependency map)
+1. **Lab verification exercises 1, 2, 4** trên `huyvl-lab-fd`:
+   - Exercise 1: Real PIDs 578 (CHILD), 587 (CHILD2), job notifications `[1] 578`, `[2] 587`
+   - Exercise 2: Real PID 558, file content `AAABBB6789` → `XXXBBB6789` → `XXXBBBDD89`
+   - Exercise 4: Real PID 566, pos: 5→0→3 confirmed
+   - Commit `1c8212e`: replaced all placeholder output with real lab output
 
-2. **professor-style SKILL update**: Added POE method (2.7), Part 8 (International Pedagogical Framework), packaged as `.skill` file
+2. **SVG factual error fixes** — commit `398d7e9` (rebased to `d25e7ce`):
+   - `fd-exercise2-dup-write.svg` (Fig 1-6): Removed FD 5 (doesn't exist at Part E)
+   - `fd-exercise2-open-write.svg` (Fig 1-7): OFD "X" flags `0100000` → `0100002` (exec 5<> = O_RDWR)
+   - `fd-exercise2-fork-write.svg` (Fig 1-8): OFD "X" flags `0100000` → `0100002` + file content `AAA` → `XXX` (Part F overwrote before Part G)
+   - `fd-exercise4-lseek-cross-process.svg` (Fig 1-10): pos=5 marker x=308 → x=296
+   - `fd-exercise3-status-flags-sharing.svg` (Fig 1-9): Verified correct — no changes needed
 
-### Chưa hoàn thành (Pending)
+3. **Orphan cleanup:**
+   - Deleted `images/fd-exercise2-write-ofd-sharing.svg` (untracked, old multi-panel)
+   - Deleted `copy-professor-style-skill.html` (untracked temp)
+   - Deleted `professor-style-SKILL-updated.md` (untracked temp)
 
-- [ ] **Commit + push + PR** cho toàn bộ redesign (sandbox lock — cần chạy trên local)
-- [ ] **WCAG spacing fixes**: 3 pre-existing SVGs have minor text spacing violations (0.5-2.5px shortfall): fd-fork-exec-cloexec.svg, fd-kernel-3-table-model.svg, fd-select-poll-vs-epoll.svg
-- [ ] **Orphan cleanup**: `git rm images/fd-exercise2-write-ofd-sharing.svg` (old multi-panel, no longer referenced)
-- [ ] **Lab verification**: User cần chạy redesigned exercises trên huyvl-lab-fd và cung cấp real output để thay thế expected output (PID 2847 là placeholder)
-- [ ] **HAProxy Parts 2-29**: Chưa bắt đầu (28/29 remaining)
-- [ ] **Linux FD doc — mở rộng**: epoll advanced topics, signalfd/eventfd/timerfd
-- [ ] **Cleanup trên local**: `git rm haproxy-onboard/references/haproxy-version-evolution.md`
+4. **Experiment plan created:** `memory/experiment-plan.md`
+   - Inventory: 7/9 exercises verified, 2/9 cần lab (strace TCP, FD limit lab)
+   - 5 phases planned: A (lab verification), B (WCAG), C (FD expansion), D (HAProxy Parts 2-5), E (Network)
+
+### Chưa hoàn thành (Pending) — xem chi tiết tại `memory/experiment-plan.md`
+
+- [ ] **Phase A1: Exercise 7 (strace TCP server, line 900)**: "Output kỳ vọng" still placeholder — runbook sẵn sàng
+- [ ] **Phase A2: Exercise 8 (FD limit lab, line 941)**: Cần quyết định inline output hay reference section
+- [ ] **PR merge**: `feat/fd-exercise-redesign-background-child` → `master` (đã có PR trên GitHub)
+- [ ] **Phase B: WCAG spacing fixes**: 3 pre-existing SVGs (30 phút)
+- [ ] **Phase C: FD doc expansion**: epoll practical (C1), signalfd/eventfd/timerfd (C2), /proc/sys/fs monitoring (C3)
+- [ ] **Phase D: HAProxy Parts 2-5**: Block I labs chi tiết (installation, config, connection mgmt, timeout)
+- [ ] **Phase E: Network onboard**: Chưa có content (sau Block I HAProxy)
+
+### Clarification từ user trong session này
+
+- **Exercise 3 (status flags)** không cần lab mới vì KHÔNG có fork() — chỉ thao tác trên shell
+  hiện tại. Output đã khớp thực tế từ trước khi redesign. Đây là lý do chỉ exercises 1, 2, 4
+  được redesign sang background child pattern, còn exercise 3 giữ nguyên.
+- **User muốn kế hoạch "tối đa"** — đã tạo 5 phases (A→E) với runbooks chi tiết, commands
+  copy-paste-ready cho `huyvl-lab-fd`, effort estimates, và lab environment requirements.
 
 ### Git State khi kết thúc
 
 ```
-Branch: master (dirty)
-Remote: origin/master tại e92ef0f
-Modified files (chưa commit):
-  - linux-onboard/file-descriptor-deep-dive.md (exercises redesigned, 14 figures renumbered, 1261 lines)
-  - images/fd-exercise1-initial-open-read.svg (NEW)
-  - images/fd-exercise1-after-dup.svg (NEW)
-  - images/fd-exercise1-after-open-independent.svg (NEW)
-  - images/fd-exercise2-dup-write.svg (NEW)
-  - images/fd-exercise2-open-write.svg (NEW)
-  - images/fd-exercise2-fork-write.svg (NEW)
-  - images/fd-exercise1-read-offset-sharing.svg (title 1-6→1-5, viewBox fix)
-  - images/fd-exercise3-status-flags-sharing.svg (title 1-8→1-9)
-  - images/fd-exercise4-lseek-cross-process.svg (title 1-9→1-10)
-  - images/fd-epoll-architecture.svg (title 1-2→1-11)
-  - images/fd-select-poll-vs-epoll.svg (title 1-3→1-12)
-  - images/fd-fork-exec-cloexec.svg (title 1-1b→1-13)
-  - images/fd-leak-and-cloexec.svg (title 1-4→1-14)
-  - memory/file-dependency-map.md (updated Tầng 5 for 14 SVGs)
-  - memory/session-log.md (this file)
-Lock files: .git/index.lock có thể tồn tại trong sandbox — cần xóa trên local
+Branch: feat/fd-exercise-redesign-background-child (clean)
+Remote: origin/feat/fd-exercise-redesign-background-child tại d25e7ce
+Commits trên branch (so với master):
+  - 5405c6c docs(linux): redesign FD exercises with background child + /proc inspection
+  - 7a7b3e1 ci: add file integrity check workflow (null byte prevention)
+  - 1c8212e docs(linux): replace placeholder output with real lab output from huyvl-lab-fd
+  - d25e7ce fix(linux): correct factual errors in 4 exercise SVG diagrams
+Working tree: clean (cả sandbox lẫn local)
 ```
 
-### Lệnh cần chạy trên local
+### Bài học rút ra
 
-```bash
-# 0. Xóa lock file nếu tồn tại
-cd network-onboard
-rm -f .git/index.lock .git/HEAD.lock
-
-# 1. Tạo branch mới từ master
-git checkout master
-git pull origin master
-git checkout -b feat/fd-exercise-redesign-background-child
-
-# 2. Stage all changes
-git add linux-onboard/file-descriptor-deep-dive.md
-git add images/fd-exercise1-initial-open-read.svg
-git add images/fd-exercise1-after-dup.svg
-git add images/fd-exercise1-after-open-independent.svg
-git add images/fd-exercise2-dup-write.svg
-git add images/fd-exercise2-open-write.svg
-git add images/fd-exercise2-fork-write.svg
-git add images/fd-exercise1-read-offset-sharing.svg
-git add images/fd-exercise3-status-flags-sharing.svg
-git add images/fd-exercise4-lseek-cross-process.svg
-git add images/fd-epoll-architecture.svg
-git add images/fd-select-poll-vs-epoll.svg
-git add images/fd-fork-exec-cloexec.svg
-git add images/fd-leak-and-cloexec.svg
-git add memory/file-dependency-map.md
-git add memory/session-log.md
-
-# 3. Remove orphan SVG
-git rm images/fd-exercise2-write-ofd-sharing.svg
-
-# 4. Null byte check (Rule 9)
-for f in $(git diff --cached --name-only); do
-  if [ -f "$f" ]; then
-    nullcount=$(python3 -c "print(open('$f','rb').read().count(b'\x00'))")
-    if [ "$nullcount" -gt 0 ]; then echo "BLOCKED: $f has $nullcount null bytes"; fi
-  fi
-done
-
-# 5. Commit
-git commit -m "docs(linux): redesign FD exercises with background child + /proc inspection
-
-- Redesign exercises 1/2/4 to use background child pattern:
-  ( commands; sleep 300 ) & + /proc/\$CHILD/fdinfo/N inspection
-  Replaces blocking subshell that required separate terminal
-- Create 6 new individual SVG diagrams for exercise intermediate states
-  (baseline, after-dup, after-open, dup-write, open-write, fork-write)
-- Renumber all 14 figures sequentially (1-1 through 1-14)
-  in both markdown and SVG internal <text> titles
-- Update Key Topics table with all 14 figure entries
-- Remove old multi-panel Exercise 2 SVG (replaced by 3 individual diagrams)
-- Fix i-node text overflow in Exercise 1 final SVG (viewBox 660→676)
-- Update memory: dependency map (14 SVG entries), session log
-
-Fact-checked: 17/17 technical claims PASS (man page refs, bash syntax)
-Null bytes: 0 across all files
-SVG-caption consistency: 14/14 match
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
-
-# 6. Push
-git push -u origin feat/fd-exercise-redesign-background-child
-
-# 7. Create PR
-gh pr create --base master \
-  --title "docs(linux): redesign FD exercises with background child + /proc inspection" \
-  --body "## Summary
-- Redesign exercises 1/2/4: blocking subshell → background child \`( ...; sleep 300 ) &\` + \`/proc/\$CHILD/fdinfo/N\`
-- 6 new individual SVG diagrams for exercise intermediate states
-- All 14 figures renumbered sequentially (1-1 through 1-14)
-- Old multi-panel Exercise 2 SVG removed
-
-## Audit results
-- 17/17 technical claims fact-checked PASS
-- 0 null bytes across all files
-- 14/14 SVG-caption consistency
-
-## Test plan
-- [ ] Markdown renders correctly on GitHub (14 SVG embeds)
-- [ ] Run redesigned exercises on lab machine (PID values are placeholders)
-- [ ] Verify figure numbering sequential with no gaps
-- [ ] Check SVG renders in both GitHub and VS Code preview"
-```
-
-### Bài học rút ra từ session này
-
-1. **Individual SVGs > multi-panel SVGs** cho exercises — mỗi bước thay đổi có diagram riêng giúp người đọc theo dõi tốt hơn
-2. **Background child + /proc inspection** pattern: `( commands; sleep 300 ) & CHILD=$!; sleep 1` cho phép quan sát đồng thời parent và child từ cùng terminal — loại bỏ yêu cầu "mở terminal thứ hai"
-3. **Figure renumbering requires 3 locations per figure**: markdown alt-text `![Figure X-Y]`, markdown caption `*Figure X-Y*`, SVG internal `<text>`. Bỏ sót 1 trong 3 gây inconsistency
+1. **Real output > placeholder**: Output của user là bằng chứng thực nghiệm — placeholder chỉ là giả thuyết. Commit placeholder TRƯỚC rồi sửa SAU = double work
+2. **SVG factual errors cascade**: Khi exercise flow thay đổi state (Part E → F → G), SVG ở mỗi phase phải reflect state SAU phase trước, không phải state ban đầu. Lỗi `AAA` thay vì `XXX` trong fork-write SVG là ví dụ
+3. **OFD flags phải match access mode**: `exec N<>` = O_RDWR = 0100002, `exec N<` = O_RDONLY = 0100000. Sai flags trong SVG là sai factual
+4. **pos marker alignment**: Monospace font-size 12 → character width ≈ 7.2px. Marker phải tính từ text x-origin + (position × glyph_width)
+5. **Rule 7 (Terminal Output Fidelity)**: Đã enforce thành công — mọi output đều copy nguyên văn từ lab
 
 ---
 
