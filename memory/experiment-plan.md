@@ -9,17 +9,17 @@
 
 ## Inventory: Trạng thái 9 exercises hiện tại
 
-| # | Exercise | Section | Line | Lab Output | Status |
-|---|----------|---------|------|-----------|--------|
-| 1 | Quan sát ba FD tiêu chuẩn | 1.2 | 55 | Real (huyvl-lab-fd) | VERIFIED |
-| 2 | So sánh open(), dup(), fork() trên cùng file | 1.3 | 164 | Real (PIDs 578, 587) | VERIFIED |
-| 3 | Write-side proof — OFD sharing | 1.3 | 356 | Real (PID 558) | VERIFIED |
-| 4 | Status flags chia sẻ qua OFD | 1.3 | 476 | Real (không có fork, output đúng sẵn) | VERIFIED |
-| 5 | lseek xuyên process | 1.3 | 554 | Real (PID 566) | VERIFIED |
-| 6 | Socket là file descriptor | 1.4 | 659 | Real (PID 558) | VERIFIED |
-| 7 | strace TCP server | 1.9 | 900 | **"Output kỳ vọng"** — placeholder | NEEDS LAB |
-| 8 | Lab: FD limit và kết nối tối đa | 1.9 | 941 | Self-directed (chỉ có instructions) | NEEDS LAB |
-| 9 | CLOEXEC leak vs no leak | 1.10 | 1080 | Real (PIDs 527, 577) | VERIFIED |
+| # | Heading | Section | Line | Lab Output | Status |
+|---|---------|---------|------|-----------|--------|
+| 1 | Guided Exercise 1: Quan sát ba FD tiêu chuẩn | 1.2 | 55 | Real (huyvl-lab-fd) | VERIFIED |
+| 2 | Guided Exercise 2: So sánh open(), dup(), fork() trên cùng file | 1.3 | 164 | Real (PIDs 578, 587) | VERIFIED |
+| 3 | Guided Exercise 3: Write-side proof — OFD sharing | 1.3 | 356 | Real (PID 558) | VERIFIED |
+| 4 | Guided Exercise 4: Status flags chia sẻ qua OFD | 1.3 | 476 | Real (không có fork, output đúng sẵn) | VERIFIED |
+| 5 | Guided Exercise 5: lseek xuyên process | 1.3 | 554 | Real (PID 566) | VERIFIED |
+| 6 | Guided Exercise 6: Socket là file descriptor | 1.4 | 659 | Real (PID 558) | VERIFIED |
+| 7 | Guided Exercise 7: strace TCP server | 1.9 | 900 | **"Output kỳ vọng"** — placeholder | NEEDS LAB |
+| 8 | Lab 8: FD limit và kết nối tối đa | 1.9 | 941 | Self-directed (chỉ có instructions) | NEEDS LAB |
+| 9 | Guided Exercise 9: CLOEXEC leak vs no leak | 1.10 | 1080 | Real (PIDs 527, 577) | VERIFIED |
 
 **Ghi chú exercise 4 (Status flags):** Không cần redesign background child vì exercise này
 không có fork() — chỉ thao tác trên shell hiện tại (mở 3 FD, fcntl qua python3, đọc
@@ -36,7 +36,7 @@ không có fork() — chỉ thao tác trên shell hiện tại (mở 3 FD, fcntl
 
 ---
 
-### A1. Exercise 7: strace TCP server (line 900-937)
+### A1. Guided Exercise 7: strace TCP server (line 900-937)
 
 **Vấn đề:** Line 925 ghi "Output kỳ vọng (FD number có thể khác tùy hệ thống)" — 4 dòng
 strace output là placeholder (FD 4, port 47968).
@@ -85,7 +85,7 @@ rm -f /tmp/strace_output.txt
 
 ---
 
-### A2. Exercise 8: Lab FD limit (line 941-967)
+### A2. Lab 8: FD limit (line 941-967)
 
 **Vấn đề:** Exercise hiện là self-directed (chỉ instructions, không có output mẫu). Cần quyết
 định: giữ self-directed hay thêm reference output.
