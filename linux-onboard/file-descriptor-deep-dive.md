@@ -439,7 +439,7 @@ FD 5 bắt đầu tại `pos: 0` — OFD mới, offset riêng. Ghi `XXX` tại v
     flags:  0100002
     mnt_id: 31
 
-Trước fork, parent đang ở `pos: 6`. Nếu `fork()` tạo OFD riêng cho child (copy offset sang entry mới), child sẽ ghi `DD` tại pos 6 của OFD riêng — nhưng OFD phía parent giữ nguyên `pos: 6`, vì hai OFD là hai vùng nhớ độc lập.
+Trước fork, parent đang ở `pos: 6`. Nếu `fork()` tạo OFD riêng cho child (copy offset sang entry mới), child sẽ ghi `DD` tại pos 6 của OFD riêng và OFD phía parent vẫn giữ nguyên `pos: 6`, vì hai OFD là hai vùng nhớ độc lập.
 
     root@huyvl-lab-fd:~# ( echo -n "DD" >&3; sleep 300 ) &
     [1] 558
