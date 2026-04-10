@@ -258,6 +258,8 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 | Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
 | Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** (renumbered 1-1 through 1-14) |
 | FD exercises | 7/9 verified with real lab output. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
+| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **920 lines** (rewritten 2026-04-10, professor-style) |
+| SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10, professor-style) |
 | SVG audit infra | Rule 8 (document-design), Tầng 5 dependency map (14 entries) |
 | Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
 | Null byte incident | PR #35 fixed. Rule 9 active. |
