@@ -7,76 +7,63 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-04 (session 2 — tiếp nối)
-**Branch:** `feat/fd-exercise-redesign-background-child`
-**Remote:** `origin/feat/fd-exercise-redesign-background-child` tại `d25e7ce`
+**Ngày:** 2026-04-10
+**Branch:** working tree dirty (SDN docs rewrite, chưa commit)
 
-### Đã hoàn thành (session 2)
+### Đã hoàn thành
 
-1. **Lab verification exercises 1, 2, 4** trên `huyvl-lab-fd`:
-   - Exercise 1: Real PIDs 578 (CHILD), 587 (CHILD2), job notifications `[1] 578`, `[2] 587`
-   - Exercise 2: Real PID 558, file content `AAABBB6789` → `XXXBBB6789` → `XXXBBBDD89`
-   - Exercise 4: Real PID 566, pos: 5→0→3 confirmed
-   - Commit `1c8212e`: replaced all placeholder output with real lab output
+1. **Full rewrite `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md`**:
+   - 496 lines, 49,147 bytes, 0 null bytes
+   - Converted from AI-style "Phần X:" headings to `## 2.X -` descriptive format
+   - Consolidated from 8 H2 sections to 7 (document-design max)
+   - Professor-style voice throughout, natural transitions, flowing prose
+   - All technical content preserved from prior verified research
+   - Exercises: GE1, GE2 (both POE), Lab 3
 
-2. **SVG factual error fixes** — commit `398d7e9` (rebased to `d25e7ce`):
-   - `fd-exercise2-dup-write.svg` (Fig 1-6): Removed FD 5 (doesn't exist at Part E)
-   - `fd-exercise2-open-write.svg` (Fig 1-7): OFD "X" flags `0100000` → `0100002` (exec 5<> = O_RDWR)
-   - `fd-exercise2-fork-write.svg` (Fig 1-8): OFD "X" flags `0100000` → `0100002` + file content `AAA` → `XXX` (Part F overwrote before Part G)
-   - `fd-exercise4-lseek-cross-process.svg` (Fig 1-10): pos=5 marker x=308 → x=296
-   - `fd-exercise3-status-flags-sharing.svg` (Fig 1-9): Verified correct — no changes needed
+2. **Full rewrite `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md`**:
+   - 920 lines, 81,663 bytes, 0 null bytes (from original 1037 lines)
+   - Converted from "Phần X:" to `## 1.X -` descriptive format
+   - 7 H2 sections: OVN origin → localnet → MC groups → FDB → MAC_Binding → case study → design lessons
+   - Metadata bullet lists (commit hashes, bug IDs) rewritten into flowing prose
+   - Sparse sections (3.1, 3.2) expanded with proper context
+   - All exercises preserved: GE1 (MC_UNKNOWN POE), GE2 (FDB 3-condition POE), Lab 3 (FDB poisoning)
+   - Exam Prep: 15 Key Topics, 24 terms, 13 Command References
 
-3. **Orphan cleanup:**
-   - Deleted `images/fd-exercise2-write-ofd-sharing.svg` (untracked, old multi-panel)
-   - Deleted `copy-professor-style-skill.html` (untracked temp)
-   - Deleted `professor-style-SKILL-updated.md` (untracked temp)
+3. **CLAUDE.md updated**: Added SDN 1.0 and 2.0 doc entries to Current State table
 
-4. **Experiment plan created:** `memory/experiment-plan.md`
-   - Inventory: 7/9 exercises verified, 2/9 cần lab (strace TCP, FD limit lab)
-   - 5 phases planned: A (lab verification), B (WCAG), C (FD expansion), D (HAProxy Parts 2-5), E (Network)
+### Chưa hoàn thành (Pending)
 
-### Chưa hoàn thành (Pending) — xem chi tiết tại `memory/experiment-plan.md`
-
-- [ ] **Phase A1: Exercise 7 (strace TCP server, line 900)**: "Output kỳ vọng" still placeholder — runbook sẵn sàng
-- [ ] **Phase A2: Exercise 8 (FD limit lab, line 941)**: Cần quyết định inline output hay reference section
-- [ ] **PR merge**: `feat/fd-exercise-redesign-background-child` → `master` (đã có PR trên GitHub)
-- [ ] **Phase B: WCAG spacing fixes**: 3 pre-existing SVGs (30 phút)
-- [ ] **Phase C: FD doc expansion**: epoll practical (C1), signalfd/eventfd/timerfd (C2), /proc/sys/fs monitoring (C3)
-- [ ] **Phase D: HAProxy Parts 2-5**: Block I labs chi tiết (installation, config, connection mgmt, timeout)
-- [ ] **Phase E: Network onboard**: Chưa có content (sau Block I HAProxy)
-
-### Clarification từ user trong session này
-
-- **Exercise 3 (status flags)** không cần lab mới vì KHÔNG có fork() — chỉ thao tác trên shell
-  hiện tại. Output đã khớp thực tế từ trước khi redesign. Đây là lý do chỉ exercises 1, 2, 4
-  được redesign sang background child pattern, còn exercise 3 giữ nguyên.
-- **User muốn kế hoạch "tối đa"** — đã tạo 5 phases (A→E) với runbooks chi tiết, commands
-  copy-paste-ready cho `huyvl-lab-fd`, effort estimates, và lab environment requirements.
+- [ ] **Commit SDN docs rewrite** (cả 1.0 và 2.0) — cần user quyết định branch strategy
+- [ ] **Full 4-skill audit** trên cả hai documents (fact-check URLs, cross-references)
+- [ ] **Phase A1/A2**: FD exercises 7, 8 still need lab verification
+- [ ] **PR merge**: `feat/fd-exercise-redesign-background-child` → `master`
+- [ ] **Phases B-E**: Xem `memory/experiment-plan.md`
 
 ### Git State khi kết thúc
 
 ```
-Branch: feat/fd-exercise-redesign-background-child (clean)
-Remote: origin/feat/fd-exercise-redesign-background-child tại d25e7ce
-Commits trên branch (so với master):
-  - 5405c6c docs(linux): redesign FD exercises with background child + /proc inspection
-  - 7a7b3e1 ci: add file integrity check workflow (null byte prevention)
-  - 1c8212e docs(linux): replace placeholder output with real lab output from huyvl-lab-fd
-  - d25e7ce fix(linux): correct factual errors in 4 exercise SVG diagrams
-Working tree: clean (cả sandbox lẫn local)
+Branch: working directory có uncommitted changes (2 files modified trong sdn-onboard/)
+Files modified:
+  - sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md (rewritten)
+  - sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md (rewritten)
+  - CLAUDE.md (updated Current State)
+  - memory/session-log.md (this file)
 ```
 
 ### Bài học rút ra
 
-1. **Real output > placeholder**: Output của user là bằng chứng thực nghiệm — placeholder chỉ là giả thuyết. Commit placeholder TRƯỚC rồi sửa SAU = double work
-2. **SVG factual errors cascade**: Khi exercise flow thay đổi state (Part E → F → G), SVG ở mỗi phase phải reflect state SAU phase trước, không phải state ban đầu. Lỗi `AAA` thay vì `XXX` trong fork-write SVG là ví dụ
-3. **OFD flags phải match access mode**: `exec N<>` = O_RDWR = 0100002, `exec N<` = O_RDONLY = 0100000. Sai flags trong SVG là sai factual
-4. **pos marker alignment**: Monospace font-size 12 → character width ≈ 7.2px. Marker phải tính từ text x-origin + (position × glyph_width)
-5. **Rule 7 (Terminal Output Fidelity)**: Đã enforce thành công — mọi output đều copy nguyên văn từ lab
+1. **Style consistency across series**: Reading HAProxy Part 1 and FD deep-dive as reference before rewriting SDN docs ensured consistent voice
+2. **Metadata → prose**: Commit hashes and bug IDs listed as bullet points look AI-written; weaving them into prose paragraphs makes them part of the narrative
+3. **Section consolidation**: Reducing subsection count in bloated sections (Phần 4 had 10+ subsections) improved readability without losing content
 
 ---
 
 ## Lịch sử sessions trước
+
+### Session 2026-04-04 (session 2)
+
+**Branch:** `feat/fd-exercise-redesign-background-child` (clean, pushed to remote at `d25e7ce`)
+**Đã hoàn thành:** Lab verification exercises 1/2/4 with real output, SVG factual error fixes (4 SVGs), orphan cleanup, experiment plan created (5 phases A→E).
 
 ### Session 2026-04-03
 
