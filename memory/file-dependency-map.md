@@ -13,8 +13,9 @@
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `README.md` (root) | Entry point repo, liệt kê tất cả series, HAProxy version refs | `haproxy-onboard/README.md` (version refs phải khớp), `linux-onboard/`, `network-onboard/` |
+| `README.md` (root) | Entry point repo, liệt kê tất cả series (Linux, Cisco, SDN, HAProxy) | `haproxy-onboard/README.md`, `sdn-onboard/README.md`, `linux-onboard/`, `network-onboard/` |
 | `haproxy-onboard/README.md` | TOC 29 Parts, Knowledge Dependency Map, Phụ lục A (Version Evolution Tracker — 52 entries, 12 categories) | `README.md` (root — version refs), MỌI file Part `*.md` (tên Part phải khớp TOC), `memory/haproxy-series-state.md` (tên Part phải khớp) |
+| `sdn-onboard/README.md` | TOC 2 Parts, dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/1.0`, `sdn-onboard/2.0` (section titles phải khớp TOC) |
 
 ### Tầng 2: Content files (Parts)
 
@@ -41,6 +42,15 @@
 | `memory/session-log.md` | Log session gần nhất | `CLAUDE.md` (Current State section) |
 | `memory/haproxy-series-state.md` | Trạng thái từng Part | `haproxy-onboard/README.md` (TOC) |
 | `memory/experiment-plan.md` | Kế hoạch thí nghiệm 5 phases (A→E) | `CLAUDE.md`, `linux-onboard/file-descriptor-deep-dive.md` (exercise inventory) |
+
+### Tầng 2b: SDN onboard series
+
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim, FDP-620 (1234 lines, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0 |
+| `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
+
+> **Quy tắc:** Khi sửa SDN 1.0, kiểm tra SDN 2.0 có references đến localnet/MC_UNKNOWN không. Khi sửa SDN 2.0, kiểm tra SDN 1.0 có concepts nào được tái sử dụng không.
 
 ### Tầng 5: Image files (SVG → Markdown captions)
 
