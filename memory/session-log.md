@@ -7,82 +7,88 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-10
-**Branch:** working tree dirty (SDN docs rewrite, chưa commit)
+**Ngày:** 2026-04-11 (session 2)
+**Branch:** `docs/sdn-onboard-rewrite` (dirty — uncommitted log integrity fixes)
 
 ### Đã hoàn thành
 
-1. **Full rewrite `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md`**:
-   - 496 lines, 49,147 bytes, 0 null bytes
-   - Converted from AI-style "Phần X:" headings to `## 2.X -` descriptive format
-   - Consolidated from 8 H2 sections to 7 (document-design max)
-   - Professor-style voice throughout, natural transitions, flowing prose
-   - All technical content preserved from prior verified research
-   - Exercises: GE1, GE2 (both POE), Lab 3
+1. **Log integrity audit toàn diện trên SDN 1.0**:
+   - Phát hiện và sửa 8 loại vi phạm Rule 7: UUID truncation, line merge, line deletion, timestamp alteration
+   - Đối chiếu từng dòng log trong tài liệu với 3 file log gốc (ovn-controller, ovs-vswitchd, nova-compute)
+   - Phát hiện nova-compute dùng UTC+7 (22:39:xx) trong khi OVN/OVS dùng UTC (15:39:xx)
+   - Thêm 3 dòng "Claiming unknown" bị xóa, 3 unexpected events tại 15:39:52.xxx bị thiếu
+   - Sửa OVS timestamp .948→.947, tách patch port entries thành 2 dòng đúng timestamp
 
-2. **Full rewrite `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md`**:
-   - 920 lines, 81,663 bytes, 0 null bytes (from original 1037 lines)
-   - Converted from "Phần X:" to `## 1.X -` descriptive format
-   - 7 H2 sections: OVN origin → localnet → MC groups → FDB → MAC_Binding → case study → design lessons
-   - Metadata bullet lists (commit hashes, bug IDs) rewritten into flowing prose
-   - Sparse sections (3.1, 3.2) expanded with proper context
-   - All exercises preserved: GE1 (MC_UNKNOWN POE), GE2 (FDB 3-condition POE), Lab 3 (FDB poisoning)
-   - Exam Prep: 15 Key Topics, 24 terms, 13 Command References
+2. **Đổi prefix labels trong timeline** (session 2, cùng ngày):
+   - `[nova]` → `[nova-compute]`, `[ovs ]` → `[ovs-vswitchd]`, `[ovn ]` → `[ovn-controller]`
+   - 37 occurrences thay đổi, bao gồm concept illustration block (lines 224-226)
+   - Sửa dòng `[FDB ]` giả thành annotation format `──` để phân biệt với log thực
 
-3. **CLAUDE.md updated**: Added SDN 1.0 and 2.0 doc entries to Current State table
+3. **Rule 7a added to CLAUDE.md**: "System Log Absolute Integrity (KHÔNG CÓ NGOẠI LỆ)" — 7 điều cấm tuyệt đối cho system log
+
+4. **Skill updates packaged**:
+   - `professor-style` SKILL.md: thêm section 6.4 (Absolute Log Integrity)
+   - `fact-checker` SKILL.md: thêm Anti-Pattern #12 (Log Tampering) + 4 checklist items
+   - Đóng gói thành `.skill` files và gửi cho user cài đặt
+
+5. **Cập nhật memory/project files**: session-log, CLAUDE.md, file-dependency-map, README.md
 
 ### Chưa hoàn thành (Pending)
 
-- [ ] **Commit SDN docs rewrite** (cả 1.0 và 2.0) — cần user quyết định branch strategy
-- [ ] **Full 4-skill audit** trên cả hai documents (fact-check URLs, cross-references)
+- [ ] **Commit log integrity fixes** trên branch `docs/sdn-onboard-rewrite`
+- [ ] **PR merge**: `docs/sdn-onboard-rewrite` → `master` (3 commits + uncommitted changes)
 - [ ] **Phase A1/A2**: FD exercises 7, 8 still need lab verification
-- [ ] **PR merge**: `feat/fd-exercise-redesign-background-child` → `master`
 - [ ] **Phases B-E**: Xem `memory/experiment-plan.md`
 
 ### Git State khi kết thúc
 
 ```
-Branch: working directory có uncommitted changes (2 files modified trong sdn-onboard/)
-Files modified:
-  - sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md (rewritten)
-  - sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md (rewritten)
-  - CLAUDE.md (updated Current State)
+Branch: docs/sdn-onboard-rewrite (up to date with origin, dirty)
+Last commit on branch: 2421ff9 (docs(sdn): add live migration FDB poisoning forensic analysis)
+Files modified (uncommitted):
+  - CLAUDE.md (Rule 7a added, Current State updated)
+  - memory/file-dependency-map.md (SDN line counts updated)
   - memory/session-log.md (this file)
+  - README.md (SDN onboard section added)
+  - sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md (prefix labels + FDB annotation)
+Untracked:
+  - skill-updates/ (professor-style + fact-checker skill updates)
+  - pidfd_getfd_demo.py (demo script from earlier session)
 ```
 
 ### Bài học rút ra
 
-1. **Style consistency across series**: Reading HAProxy Part 1 and FD deep-dive as reference before rewriting SDN docs ensured consistent voice
-2. **Metadata → prose**: Commit hashes and bug IDs listed as bullet points look AI-written; weaving them into prose paragraphs makes them part of the narrative
-3. **Section consolidation**: Reducing subsection count in bloated sections (Phần 4 had 10+ subsections) improved readability without losing content
+1. **System log = forensic evidence**: Bất kỳ thay đổi nào (truncate UUID, merge lines, sửa timestamp 1ms) đều phá hỏng reproducibility. Rule 7a ra đời từ lỗi này.
+2. **Timezone awareness khi cross-correlate**: nova-compute (UTC+7) vs OVN/OVS (UTC) — search by instance UUID thay vì timestamp khi log sources dùng timezone khác nhau.
+3. **Synthetic data phải tách biệt visual**: Dòng `[FDB ]` trông giống log thật nhưng là constructed data — gây nhầm lẫn. Annotation format `──` giải quyết vấn đề này.
 
 ---
 
 ## Lịch sử sessions trước
 
+### Session 2026-04-11 (session 1)
+
+**Branch:** `docs/sdn-onboard-rewrite`
+**Đã hoàn thành:** Log integrity audit SDN 1.0 — phát hiện và sửa vi phạm Rule 7 trên OVN/OVS/nova entries. Thêm Rule 7a vào CLAUDE.md. Packaged skill updates.
+
+### Session 2026-04-10
+
+**Branch:** `docs/sdn-onboard-rewrite` (created, committed)
+**Đã hoàn thành:** Full rewrite SDN 1.0 (920→1234 lines) và SDN 2.0 (496 lines) trong professor-style. Converted headings, expanded sparse sections, added forensic timeline with production logs.
+
 ### Session 2026-04-04 (session 2)
 
-**Branch:** `feat/fd-exercise-redesign-background-child` (clean, pushed to remote at `d25e7ce`)
-**Đã hoàn thành:** Lab verification exercises 1/2/4 with real output, SVG factual error fixes (4 SVGs), orphan cleanup, experiment plan created (5 phases A→E).
+**Branch:** `feat/fd-exercise-redesign-background-child` (clean, pushed at `d25e7ce`)
+**Đã hoàn thành:** Lab verification exercises 1-6 with real output, SVG factual error fixes (4 SVGs), orphan cleanup, experiment plan created (5 phases A→E). Null byte incident discovered and fixed (PR #35→#38).
 
 ### Session 2026-04-03
 
 **Branch:** `master` (dirty)
 **Đã hoàn thành:** Thí nghiệm 6A/6B (CLOEXEC), cập nhật sections 1.4, 1.9, 1.10 với real lab output.
 
-### Session 2026-04-02
-
-**Branch:** `fix/fd-doc-audit-corrections` (clean — commit `6ecfb07`)
-**Đã hoàn thành:** Full 6-phase audit FD doc (13 claims fact-checked, 2 corrected: HAProxy ET/LT, HAProxy CLOEXEC conditional), verify 11 URLs, replace lab output placeholder.
-
 ### Session 2026-03-30 (session 2)
 
-**Branch:** `master` (dirty — audit changes)
+**Branch:** `master` (dirty)
 **Đã hoàn thành:** Audit HAProxy structure + Part 1, tích hợp Version Evolution Tracker vào Phụ lục A, sửa Knowledge Dependency Graph (4 edges), thu gọn root README.
-
-### Session 2026-03-29
-
-**Branch:** `fix-haproxy-readme-audit`
-**Đã hoàn thành:** 5 commits (3d82766, 10c3a17, 3535f14, 919341b, bdbff8f), tạo CLAUDE.md + memory system.
 
 _(Giữ tối đa 5 entries.)_

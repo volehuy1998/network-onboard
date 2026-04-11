@@ -170,6 +170,37 @@ Khi user cung cấp terminal output thực để thay thế vào tài liệu:
 
 Quy tắc này áp dụng cho mọi loại output: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, và bất kỳ terminal output nào user cung cấp. Output thực là bằng chứng thực nghiệm — cắt bớt bằng chứng là phá hỏng tính xác minh được (reproducibility) của tài liệu.
 
+#### Rule 7a: System Log Absolute Integrity (KHÔNG CÓ NGOẠI LỆ)
+
+> Nguồn gốc: session 2026-04-11. Viết timeline trong SDN 1.0 (FDB poisoning case study)
+> nhưng tự ý: (a) merge 3 dòng log riêng biệt thành 1 block, (b) truncate UUID từ đầy đủ
+> `0a17b4f8-736d-4bf5-ba1e-335d17cb5973` thành `0a17b4f8`, (c) xóa hoàn toàn 3 dòng
+> "Claiming unknown" trong final claim, (d) sửa timestamp `.947` thành `.948`.
+> Rationalization sai: "đây là formatted timeline, không phải raw log."
+> Log hệ thống là forensic evidence — chỉnh sửa bằng chứng dù dưới dạng nào
+> cũng phá hỏng tính toàn vẹn. Rule 7 mục 5 ("hỏi trước") KHÔNG áp dụng cho system log.
+
+Log hệ thống (daemon/service logs, diagnostic tool output) tuân theo nguyên tắc
+**toàn vẹn tuyệt đối** — nghiêm ngặt hơn Rule 7 thông thường:
+
+```
+1. TUYỆT ĐỐI KHÔNG cắt ngắn, rút gọn, truncate — kể cả UUID, path, IP address
+2. TUYỆT ĐỐI KHÔNG merge nhiều dòng log thành 1 entry — mỗi dòng log gốc = 1 visual line
+3. TUYỆT ĐỐI KHÔNG xóa dòng log — dù nội dung "lặp lại" hoặc "không quan trọng"
+4. TUYỆT ĐỐI KHÔNG thay đổi timestamp — dù chỉ 1 millisecond
+5. KHÔNG có ngoại lệ — system log KHÔNG BAO GIỜ được cắt ngắn dưới bất kỳ lý do nào
+6. Khi trình bày log trong format khác (timeline, table, annotated block):
+   - Message body sau log prefix PHẢI giữ nguyên verbatim trên cùng 1 dòng
+   - Mỗi dòng log gốc PHẢI là 1 visual line riêng biệt trong code block
+   - Annotation → dòng riêng với prefix "──", KHÔNG chèn vào giữa message body
+7. Khi timeline chỉ hiển thị subset: PHẢI ghi "[N dòng khác omitted — context: ...]"
+```
+
+Phạm vi: mọi log từ daemon/service (ovn-controller, ovs-vswitchd, nova-compute,
+neutron-server, haproxy, nginx, journald, syslog, dmesg) và mọi output từ diagnostic
+tools (tcpdump, strace, lsof, ss, conntrack, ovs-ofctl, ovn-trace, ovn-detrace).
+Áp dụng KHÔNG PHÂN BIỆT format trình bày — raw, timeline, table, annotated, hay diagram.
+
 ### Rule 8: Vietnamese Sentence Completeness (BẮT BUỘC)
 
 > Nguồn gốc: session 2026-04-04. Viết câu bridging "nhưng thực tế không" — từ phủ định "không" bị
@@ -246,26 +277,17 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 
 | Key | Value |
 |-----|-------|
-| Active branch | `feat/fd-exercise-redesign-background-child` (clean, pushed to remote) |
-| Base version | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
-| Parts completed | Part 1 only (fact-checked, 3 corrections, Quiz added) |
-| Parts total | 29 (6 Blocks) |
-| Last merged PR | PR #25 — `f3256f9` (squash merge vào master 2026-03-30) |
-| Pending push | Không — branch đã push tại `d25e7ce` |
-| Pending PR | Có — `feat/fd-exercise-redesign-background-child` → `master` (đã tạo trên GitHub) |
-| Version tracker | Tích hợp vào `haproxy-onboard/README.md` Phụ lục A (52 entries, 12 categories) |
-| Dependency graph | 4 edges sửa: P3→P11, P6→P22, +P5→P24, +P3→P21 |
-| Root README | HAProxy section thu gọn từ ~245 dòng → 3 dòng (pointer tới haproxy-onboard/README.md) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** (renumbered 1-1 through 1-14) |
-| FD exercises | 7/9 verified with real lab output. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
-| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **920 lines** (rewritten 2026-04-10, professor-style) |
-| SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10, professor-style) |
-| SVG audit infra | Rule 8 (document-design), Tầng 5 dependency map (14 entries) |
-| Installed skill | `document-design.skill` — đã cài Rule 8 (SVG-Caption Atomic Consistency) |
-| Null byte incident | PR #35 fixed. Rule 9 active. |
-| Orphan SVG | Đã xoá (untracked, không cần git rm) |
-| WCAG known issues | 3 pre-existing SVGs: minor text spacing violations (0.5-2.5px shortfall) |
-| Experiment plan | `memory/experiment-plan.md` — 5 phases (A→E), priority-ordered |
+| Active branch | `docs/sdn-onboard-rewrite` (dirty — log integrity fixes chưa commit) |
+| Master HEAD | `9672272` — docs(linux): redesign FD exercises + fix SVG errors + experiment plan (#43) |
+| HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
+| HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
+| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
+| FD exercises | 7/9 verified. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
+| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1234 lines** (log integrity audited 2026-04-11) |
+| SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10) |
+| Pending commit | Log integrity fixes on SDN 1.0 (prefix labels, FDB annotation, Rule 7a compliance) |
+| Pending PR | `docs/sdn-onboard-rewrite` → `master` (3 commits + uncommitted changes) |
+| Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
 
 ## Skill Quick Reference
 

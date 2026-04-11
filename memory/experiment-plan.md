@@ -3,7 +3,7 @@
 > Kế hoạch chi tiết cho các thí nghiệm tiếp theo trên `huyvl-lab-fd`.
 > Claude đọc file này khi cần biết experiment nào đã chạy, experiment nào cần chạy.
 >
-> **Cập nhật lần cuối:** 2026-04-04 (session 2)
+> **Cập nhật lần cuối:** 2026-04-11
 
 ---
 
