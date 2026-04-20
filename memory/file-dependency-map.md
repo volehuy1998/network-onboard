@@ -99,11 +99,30 @@
 > Ngược lại khi viết `1.1`/`1.2`, không được nhắc lại nội dung `1.0` (Rule non-repetition) —
 > chỉ reference section number (ví dụ: "như 1.0.4 đã trình bày").
 
+### Tầng 2g: SDN foundation Block II (skeleton refined — S6a hoàn tất 2026-04-21)
+
+> **Scope:** Block II sau S6a refinement (Rule 10 architecture phase). 5 file skeleton, mỗi file
+> 30-80 dòng với title + summary 1-3 câu cho mỗi section. Dependency chain tuyến tính:
+> 2.0 → 2.1 → 2.2 → 2.3 → 2.4 (2.4 phụ thuộc 2.3 cho 4D Project lineage vào Ethane).
+
+| File | Nội dung chính (skeleton) | Related Files — PHẢI kiểm tra khi sửa |
+|------|--------------------------|---------------------------------------|
+| `sdn-onboard/2.0 - dcan-open-signaling-gsmp.md` | Skeleton 5 section: DCAN (Cambridge 1995) / OPENSIG (Aurel Lazar Columbia) / GSMP RFC 3292 (06/2002 từ Ipsilon) / GSMP message structure vs OF 1.0 12-tuple / di sản switch controlled by external entity | `sdn-onboard/README.md` (TOC Block II), `plans/sdn-foundation-architecture.md` §3.3 Block II Phase A, `sdn-onboard/2.1` (GSMP biến thể Ipsilon), `sdn-onboard/1.2` (forward ref từ Part 1) |
+| `sdn-onboard/2.1 - ipsilon-and-active-networking.md` | Skeleton 6 section: Ipsilon IP Switching (Peter Newman 1996, RFC 1953/1987) / Ipsilon → MPLS lineage / DARPA Active Networking 1996-2001 / capsules vs programmable switches / tại sao AN không commercialize / di sản đến P4 | `sdn-onboard/README.md` TOC, §3.3 Block II, `sdn-onboard/2.0` (GSMP prerequisite), Block VI Part 6.x P4 (forward ref) |
+| `sdn-onboard/2.2 - nac-orchestration-virtualization.md` | Skeleton 4 section: NAC (RADIUS RFC 2865 + COPS RFC 2748 + 802.1X) / HP OpenView/IBM Tivoli orchestration / VMware vDS 2009 + XenServer OVS 2009 / di sản ML2 plugin architecture | `sdn-onboard/README.md` TOC, §3.3 Block II, `sdn-onboard/2.0` (prerequisite controller motif), Block X Neutron (forward ref ML2) |
+| `sdn-onboard/2.3 - forces-and-4d-project.md` | Skeleton 6 section: ForCES WG (RFC 3654/3746/5810) / ForCES CE/FE vs OpenFlow split / tại sao ForCES không commercialize / 4D Project authors (Rexford/Greenberg/Hjalmtýsson/Maltz/Myers/Zhang) / 4 planes Decision/Dissemination/Discovery/Data / di sản 4D → Ethane | `sdn-onboard/README.md` TOC, §3.3 Block II, `sdn-onboard/2.0` (prerequisite), `sdn-onboard/2.4` (4D → Ethane lineage) |
+| `sdn-onboard/2.4 - ethane-the-direct-ancestor.md` | Skeleton 5 section: Ethane SIGCOMM 2007 authors (Casado/Freedman/Pettit/Luo/McKeown/Shenker) / architecture centralized policy + flow-based forwarding / NOX controller (CCR 07/2008) / Casado PhD thesis 2007 + Nicira founding / Ethane → OpenFlow 1.0 (CCR 04/2008 + spec 31/12/2009) + Capstone Block II Lab | `sdn-onboard/README.md` TOC, §3.3 Block II, `sdn-onboard/2.3` (prerequisite 4D), Block IV OpenFlow (forward ref), Block XIV Commercial SDN (Nicira NVP → NSX) |
+
+> **Quy tắc dependency Block II (Phase A):** Các claim lịch sử (năm paper, tên tác giả, số RFC)
+> phải consistent xuyên 5 file. Khi Phase B viết content, PHẢI fact-check mọi entry trong reference
+> placeholder (RFC 3292/1953/1987/2865/2748/3654/3746/5810/3031, SIGCOMM 2007/2008, CCR 1996/1999/2005/2008).
+> Rule non-repetition: 2.0 đặt nền GSMP → 2.1 chỉ nhắc GSMP variant Ipsilon, không giải lại message format.
+
 ### Tầng 2e: SDN foundation skeletons rev 2 (các Block khác — placeholder)
 
-> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f-tương đương
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f/2g-tương đương
 > và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file), Block 0 (S4 đã viết content),
-> Block I (S5.1 bắt đầu Part 1.0, còn 1.1/1.2 pending).
+> Block I (S5.1 Part 1.0 content, 1.1/1.2 skeleton refined), Block II (S6a skeleton refined 2026-04-21).
 
 **Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 
