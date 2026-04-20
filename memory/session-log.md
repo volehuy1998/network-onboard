@@ -7,6 +7,92 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-21 (session 8 — S5a Block I + S6a Block II + S7a Block III + S8a Block IV skeleton refinement theo Rule 10)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `908279d` (working tree clean, local `git status` báo up-to-date với origin)
+**Plan:** `plans/sdn-foundation-architecture.md` — Phase A progress: Block 0 content + Block I (1.0 content + 1.1/1.2 skeleton) + Blocks II/III/IV skeleton = **4/16 blocks architecture complete**
+
+### Bối cảnh session 8
+
+Session 7 đóng với Part 1.0 over-scope (198 dòng content) + doctrine correction (Rule 10 Architecture-First) + plan split Phase A/B. Session 8 bắt đầu với directive "tiếp tục đi" và chạy 4 lượt architecture refinement liên tiếp: S5a (Block I skeleton) → S6a (Block II) → S7a (Block III) → S8a (Block IV). Mỗi lượt = 1 commit riêng để bisect dễ.
+
+### Đã hoàn thành session 8
+
+**S5a Block I skeleton (commit `10ab5cb`) — 2 file:**
+- Part 1.1 `data-center-pain-points.md` — 5 sections: East-West growth Google Jupiter/Facebook Fabric, underlay scale limits (MAC table + STP convergence), VLAN 4094 exhaustion multi-tenancy, Clos/leaf-spine motivation, kết nối forward sang Part 3.0 (Stanford Clean Slate response).
+- Part 1.2 `five-drivers-why-sdn.md` — 5 sections: (1) programmability — expose control plane, (2) multi-tenancy isolation, (3) mobility — VM migration + microservices, (4) agility — CLI automation pain → API, (5) vendor neutrality + whitebox. Kết nối forward sang Block II (forerunner DCAN/Open Signaling/GSMP) và Block III (Stanford Clean Slate).
+
+**S6a Block II skeleton (commit `dc1b0b9`) — 5 file:**
+- Part 2.0 `dcan-open-signaling-gsmp.md` — DCAN (ATM era, Cambridge 1995), Open Signaling workshops 1995-1998, GSMP RFC 3292 (06/2002) + RFC 3293 GSMP MIB. Lý do ATM không scale → drop.
+- Part 2.1 `ipsilon-and-active-networking.md` — Ipsilon General Switch Management Protocol (GSMP origin) + RFC 1953 (05/1996) + Nokia acquisition 1997. Active Networking DARPA 1996-2002 (programmable packet processing).
+- Part 2.2 `nac-orchestration-virtualization.md` — Enterprise NAC (Cisco 2004), orchestration stack pre-2007 (HP OpenView, IBM Tivoli), virtualization pressure từ VMware ESX 2001+.
+- Part 2.3 `forces-and-4d-project.md` — ForCES IETF RFC 3654 (11/2003) + RFC 3746 (04/2004) architecture — CE/FE separation. 4D Project (Princeton/CMU, Greenberg et al. SIGCOMM 2005) — decision/dissemination/discovery/data four planes.
+- Part 2.4 `ethane-the-direct-ancestor.md` — Ethane SIGCOMM 2007 (Casado, Freedman, Pettit, Luo, McKeown, Shenker) — security-driven policy enforcement, direct predecessor của OpenFlow 1.0.
+
+**S7a Block III skeleton (commit `ff0dd14`) — 3 file:**
+- Part 3.0 `stanford-clean-slate-program.md` — 5 sections: Clean Slate funded 2006-2012, researchers (McKeown/Shenker/Casado/Parulkar/Anderson), Stanford Gates Building 2008-2009 lab (8-10 HP ProCurve 5400), CCR 04/2008 paper 7 authors, Nicira founding 08/2007 + VMware acquisition 23/07/2012 $1.26B.
+- Part 3.1 `openflow-1.0-specification.md` — 7 sections: spec 1.0.0 release 31/12/2009 (42 pages, Stanford shepherd), TCP 6633/6653 (IANA 09/2013), message types, 12-tuple match (ofp_match §A.2.3), 8 actions, flow entry anatomy, single-table cross-product + OVS resubmit NXM extension.
+- Part 3.2 `onf-formation-and-governance.md` — 6 sections + Capstone Lab Block III: ONF thành lập 21/03/2011, 6 founding operators + 17 early adopters, working groups, Stanford→ONF transition, so sánh ONF vs IETF/IEEE/OCP, 2018 ONF + ON.Lab merger, OpenFlow 1.5.1 là revision cuối cùng (26/03/2015).
+- Tầng 2h thêm vào `file-dependency-map.md` với non-repetition rules (3.1 không lặp history từ 3.0; 3.2 không lặp Ethane→OF từ 2.4.5) + Phase B fact-check list (CCR 38(2), ONF bylaws, Stanford Clean Slate archive, VMware-Nicira press release).
+
+**S8a Block IV skeleton (commit `908279d`) — 7 file:**
+- Part 4.0 `openflow-1.1-multi-table-groups.md` — 6 sections: OF 1.1 release 28/02/2011 (pre-ONF, Stanford shepherd), multi-table pipeline + GOTO_TABLE, instructions vs actions, 4 group types (ALL/SELECT/INDIRECT/FAST_FAILOVER sub-10ms reroute), MPLS native, use case multi-tenant O(N·M)→O(N+M).
+- Part 4.1 `openflow-1.2-oxm-tlv-match.md` — 5 sections: OF 1.2 release 05/12/2011 (first ONF-published spec), OXM TLV format, IPv6 match, controller roles EQUAL/MASTER/SLAVE + generation_id, wire incompat 1.0→1.2 + HELLO negotiation.
+- Part 4.2 `openflow-1.3-meters-pbb-ipv6.md` — 6 sections: 1.3.0 (25/04/2012) → 1.3.5 (26/03/2015) errata chain, meter table per-flow QoS (DROP/DSCP_REMARK + token bucket), auxiliary channels, PBB 802.1ah (I-SID 24-bit), IPv6 ext header bitmask, lý do 1.3 = LTS (OVS 2.0+, Ryu/ODL default, Pica8/HP/NEC silicon commit).
+- Part 4.3 `openflow-1.4-bundles-eviction.md` — 5 sections: release 14/10/2013, bundles (OPEN/CLOSE/COMMIT/DISCARD + ATOMIC/ORDERED flags, SQL analogy), eviction via importance field vs timeout, optical port (ITU-T G.694.1), OVS 2.5 partial + vendor skip.
+- Part 4.4 `openflow-1.5-egress-l4l7.md` — 5 sections: 1.5.0 (19/12/2014) + 1.5.1 (26/03/2015) final, egress tables, TCP flags (URG/ACK/PSH/RST/SYN/FIN), packet type aware (OXM PACKET_TYPE 0x6558/0x0806/0x0800/0x86dd/0x8847), current state 2026 zero vendor.
+- Part 4.5 `ttp-table-type-patterns.md` — 4 sections: silicon subset problem (Broadcom Trident2 ACL 4K, Intel FM6000), TTP pattern (analogy HTTP Accept), ONF TS-017 (15/08/2014, YANG-based), Flow Objectives ONOS alternative.
+- Part 4.6 `openflow-limitations-lessons.md` — 7 sections + Capstone POE Lab: 5 limitations (flow-table explosion, controller latency 1-5ms DevoFlow SIGCOMM 2011, distribution Atomix Raft, silicon TCAM/SRAM, L4-L7 gap), Google B4 SIGCOMM 2013 fork, lessons → P4 + API-based SDN. Capstone: POE chứng minh FAST_FAILOVER sub-10ms.
+- Tầng 2i thêm vào dependency map với dependency chain 4.0→4.6, non-repetition rules (4.0 establishes multi-table; 4.1-4.5 chỉ note additions; 4.6 horizontal summary), Phase B fact-check list.
+
+### Errors + fixes trong session 8
+
+- **"Author identity unknown"** khi chạy `git commit-tree` qua plumbing: fix bằng env vars inline — `GIT_AUTHOR_NAME="VO LE" GIT_AUTHOR_EMAIL="volehuy1998@gmail.com" GIT_COMMITTER_NAME="VO LE" GIT_COMMITTER_EMAIL="volehuy1998@gmail.com"`. Verified `git log -1 --format='%an <%ae>'` khớp.
+- **"cannot lock ref 'HEAD': Unable to create 'HEAD.lock'"** khi `git update-ref`: bypass bằng direct Python write vào `.git/refs/heads/docs/sdn-foundation-rev2`. `.git/refs/heads/docs/sdn-foundation-rev2.lock` phantom file remain (Operation not permitted khi unlink) — tolerable, không ảnh hưởng commit sau.
+- **Stale working tree sau plumbing commit:** refresh bằng `GIT_INDEX_FILE=/tmp/<name>-index git read-tree HEAD && cp /tmp/<name>-index .git/index`.
+
+### Pending cho session 9 (Architecture Phase — Rule 10)
+
+- **S9a Block V (3 file):** refine skeleton 5.0 (NETCONF/YANG-based SDN APIs), 5.1 (hypervisor overlays NVP/NSX + Contrail), 5.2 (opening the device — whitebox + SAI + SONiC). Mỗi file 30-60 dòng theo Rule 10.
+- **S10a Block VI (3 file):** 6.0 (P4 Bosshart CCR 2014 + Tofino), 6.1 (Flow Objectives ONOS), 6.2 (Intent-Based Networking).
+- **S11a Block VII (4 file):** SDN trong data center.
+- **S12a-S19a:** tuần tự theo plan §4.1 tracker. Tổng ~45 file skeleton còn lại sau S8a.
+- **Gate Phase B:** sau toàn bộ skeleton, user review end-to-end + approve explicit.
+
+### Lệnh local cần chạy khi resume trên máy khác
+
+```bash
+# Trên máy mới — sau khi clone hoặc đã có working copy:
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+
+# Verify 4 commit mới:
+git log --oneline -5
+# Expected top 4:
+#   908279d docs(sdn): S8a Block IV skeleton refinement (Rule 10 architecture phase)
+#   ff0dd14 docs(sdn): S7a Block III skeleton refinement (Rule 10 architecture phase)
+#   dc1b0b9 docs(sdn): S6a Block II skeleton refinement (Rule 10 architecture phase)
+#   10ab5cb docs(sdn): S5a Block I skeleton refinement (Rule 10 architecture phase)
+
+# (Tùy chọn) Push master nếu chưa đồng bộ — local `master` hiện ahead origin/master by 1 commit
+# không thuộc scope SDN rev 2, kiểm tra trước khi push:
+git log origin/master..master --oneline
+```
+
+### Quick-start cho session 9
+
+1. Đọc `CLAUDE.md` → Current State bảng (đã update bảng S5/S6a/S7a/S8a status + push state row)
+2. Đọc file này (session-log.md) → biết 4 commit mới và pending S9a Block V
+3. Đọc `memory/file-dependency-map.md` → Tầng 2g/2h/2i đã thêm, tiếp theo là Tầng 2j Block V
+4. Đọc `plans/sdn-foundation-architecture.md` §4.1 execution tracker → verify S6a/S7a/S8a = DONE
+5. Chạy `git status` + `git log --oneline -5` xác nhận remote state
+6. Bắt đầu S9a: đọc 3 skeleton Block V hiện có (5.0, 5.1, 5.2) + plan §3.3 Block V spec → refine Rule 10
+
+---
+
+## Session 7 (archived)
+
 **Ngày:** 2026-04-21 (session 7 — S5.1 Part 1.0 content + doctrine correction)
 **Branch:** `docs/sdn-foundation-rev2` @ commit `9cd8041` (S5.1 pushed) → working tree doctrine update
 **Plan:** `plans/sdn-foundation-architecture.md` — **Phase A (Architecture) in progress; Part 1.0 over-scope**

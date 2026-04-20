@@ -336,8 +336,9 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` (S3 + S4 completed, 2026-04-20) |
-| Master HEAD | `a416dcf` — chore(memory): update session log and dependency map for session 4 |
+| Active branch | `docs/sdn-foundation-rev2` @ `908279d` (S8a Block IV skeleton, push state = up-to-date với `origin/docs/sdn-foundation-rev2` per `git status`) |
+| Last 4 commits trên branch | `908279d` S8a Block IV → `ff0dd14` S7a Block III → `dc1b0b9` S6a Block II → `10ab5cb` S5a Block I (Part 1.1 + 1.2) |
+| Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
 | Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
@@ -349,9 +350,13 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 | S3 status | S3.1-S3.6 completed 2026-04-20. User đã push commit remote ở session 6. Legacy artifacts đã cleanup. |
 | S4 status | **DONE** (2026-04-21). S4.1-S4.3 content Block 0, S4.4 quality gate (null byte 0, URL 6/7 → 7/7 sau fix Vanderbilt, cross-file sync, version annotation). Commit `c38c3c9` + handoff `76173cd` đã push lên remote. Index stale do plumbing path đã được refresh ở session 7. |
 | Current phase | **Architecture Phase** (Rule 10) — skeleton + title + summary cho toàn bộ 17 blocks. Content Phase chỉ bắt đầu sau khi skeleton complete và user approve. |
-| S5 status | In progress (2026-04-21). Part 1.0 đã viết full content (over-scope, 198 dòng, commit `9cd8041` đã push). Từ Part 1.1 trở đi: chỉ skeleton (~30-60 dòng/file). Scope Block I còn lại: Part 1.1 skeleton + Part 1.2 skeleton (~100-120 dòng tổng). |
-| Architecture backlog | Sau Block I: Block II (5 file), Block III (3 file), ... Block XVI. Tổng ~60 file skeleton cần đạt chuẩn Rule 10. Phần lớn đã có skeleton từ S2 — cần audit và nâng chuẩn (title + summary đầy đủ, không để *Sẽ phát triển* mơ hồ). |
+| S5 status | Block I content + skeleton DONE. Part 1.0 = 198 dòng content (over-scope, commit `9cd8041`). Part 1.1 + Part 1.2 skeleton refined Rule 10 (~70 dòng/file) ở S5a, commit `10ab5cb`. |
+| S6a status | **DONE** (session 8, 2026-04-21). Block II skeleton refined Rule 10: Part 2.0 (DCAN/Open Signaling/GSMP RFC 3292), 2.1 (Ipsilon RFC 1953/Active Networking DARPA), 2.2 (NAC/orchestration/virtualization), 2.3 (ForCES RFC 3654/3746 + 4D Project Princeton/CMU 2005), 2.4 (Ethane SIGCOMM 2007 — direct OpenFlow predecessor). Tầng 2g thêm vào dependency map. Commit `dc1b0b9`. |
+| S7a status | **DONE** (session 8b, 2026-04-21). Block III skeleton refined Rule 10: Part 3.0 (Stanford Clean Slate 2006-2012 + Nicira founding 08/2007 + VMware $1.26B 07/2012), 3.1 (OpenFlow 1.0 spec 31/12/2009 + 12-tuple match + 8 actions), 3.2 (ONF formation 21/03/2011 + 6 founding operators + 2018 ON.Lab merger). Tầng 2h thêm vào dependency map với non-repetition rules + Phase B fact-check list. Commit `ff0dd14`. |
+| S8a status | **DONE** (session 8c, 2026-04-21). Block IV skeleton refined Rule 10: Part 4.0 (OF 1.1 multi-table + 4 group types FAST_FAILOVER), 4.1 (OF 1.2 OXM TLV + controller roles MASTER/SLAVE), 4.2 (OF 1.3 LTS — meter table + PBB + IPv6 ext headers), 4.3 (OF 1.4 bundles + eviction + optical), 4.4 (OF 1.5 egress + TCP flags + packet type), 4.5 (TTP ONF TS-017 + Flow Objectives ONOS), 4.6 (5 limitations + Google B4 SIGCOMM 2013 + lessons → P4). Tầng 2i thêm vào dependency map. Commit `908279d`. |
+| Architecture backlog | Block V (5.0 NETCONF/YANG, 5.1 NVP/NSX, 5.2 whitebox), Block VI (P4/Flow Objectives/IBN), Block VII (DC SDN), Block VIII (NFV/SD-WAN), Block IX **audit** (9.0-9.5 đã có 6 skeleton — cần Rule 10 compliance check), Block X (OVSDB), Block XI (overlay VXLAN/Geneve), Block XII (leaf-spine/Clos), Block XIII (OVN foundation), Block XIV (Neutron/kolla), Block XV-XVI (future + capstone). Tổng ~45 file skeleton còn lại. |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
+| Push state on next machine | Branch `docs/sdn-foundation-rev2` đã up-to-date với origin per local `git status`. Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` để đồng bộ 4 commit `10ab5cb`/`dc1b0b9`/`ff0dd14`/`908279d`. |
 
 ## Skill Quick Reference
 

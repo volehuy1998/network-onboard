@@ -1713,11 +1713,11 @@ bài học + section headings đầy đủ + tóm tắt 1-3 câu dưới mỗi h
 | Step | Block | Part | Files | Skel lines est | Thời gian | Trạng thái |
 |------|-------|------|-------|----------------|-----------|-----------|
 | S4a | 0 | 0 | 2 | 60-120 | done | **OVER-SCOPE** — 574 dòng content viết ở session 6 (file 0.0 + 0.1). Giữ nguyên, coi như reference implementation. |
-| S5a | I | 1 | 3 | 90-180 | in progress | Part 1.0 OVER-SCOPE (198 dòng, session 7). Part 1.1 + 1.2 chờ viết skeleton theo Rule 10. |
-| S6a | II | 2 | 5 | 150-300 | pending | 5 file skeleton đã có sẵn từ S2; cần audit và nâng chuẩn (bỏ "Sẽ phát triển" mơ hồ → tóm tắt 1-3 câu cụ thể). |
-| S7a | III | 3 | 3 | 90-180 | pending | Tương tự: audit + refine skeleton S2. |
-| S8a | IV | 4 | 7 | 210-420 | pending | 7 file; Block OpenFlow evolution 1.0-1.5 + controller-southbound. |
-| S9a | V | 5 | 3 | 90-180 | pending | Alt SDN models (SDN via APIs, Hypervisor Overlays, Whitebox). |
+| S5a | I | 1 | 3 | 90-180 | **DONE** | Part 1.0 OVER-SCOPE (198 dòng content, session 7, commit `9cd8041`). Part 1.1 + 1.2 refined Rule 10 (~70 dòng/file) ở session 8, commit `10ab5cb`. |
+| S6a | II | 2 | 5 | 150-300 | **DONE** | Session 8 (2026-04-21). 5 file skeleton refined — Part 2.0 DCAN/Open Signaling/GSMP RFC 3292, 2.1 Ipsilon RFC 1953 + Active Networking DARPA, 2.2 NAC/orchestration/VMware ESX pressure, 2.3 ForCES RFC 3654/3746 + 4D SIGCOMM 2005, 2.4 Ethane SIGCOMM 2007 direct OpenFlow predecessor. Tầng 2g thêm vào dependency map. Commit `dc1b0b9`. |
+| S7a | III | 3 | 3 | 90-180 | **DONE** | Session 8 (2026-04-21). 3 file skeleton refined — Part 3.0 Stanford Clean Slate 2006-2012 + Nicira 08/2007 + VMware $1.26B 07/2012, 3.1 OpenFlow 1.0 spec 31/12/2009 + 12-tuple + 8 actions + TCP 6633/6653, 3.2 ONF 21/03/2011 + 6 operators + 2018 ON.Lab merger + Capstone Block III. Tầng 2h thêm. Commit `ff0dd14`. |
+| S8a | IV | 4 | 7 | 210-420 | **DONE** | Session 8 (2026-04-21). 7 file skeleton refined — 4.0 OF 1.1 multi-table + 4 group types, 4.1 OF 1.2 OXM TLV + controller roles, 4.2 OF 1.3 LTS + meters + PBB + IPv6, 4.3 OF 1.4 bundles + eviction + optical, 4.4 OF 1.5 egress + TCP flags + packet type, 4.5 TTP ONF TS-017 + Flow Objectives, 4.6 5 limitations + Google B4 SIGCOMM 2013 + Capstone POE. Tầng 2i thêm. Commit `908279d`. |
+| S9a | V | 5 | 3 | 90-180 | pending | Alt SDN models (SDN via APIs NETCONF/YANG, Hypervisor Overlays NVP/NSX/Contrail, Whitebox SAI/SONiC). **Next up trên máy mới.** |
 | S10a | VI | 6 | 3 | 90-180 | pending | Emerging models — P4, intent-based, etc. |
 | S11a | VII | 7 | 4 | 120-240 | pending | SDN in data center. |
 | S12a | VIII | 8 | 4 | 120-240 | pending | SDN service providers (NFV, SD-WAN). |
@@ -1794,10 +1794,10 @@ theo `plans/sdn-foundation-architecture.md` original rev 2 targets.
 | S2 | **DONE** | `sdn-onboard/README.md` rev 2 (33937 bytes, 60 internal links verified) | Session 4 (2026-04-20 chiều) | Header + baseline OVS 2.17.9/OVN 22.03.8 + Mermaid graph P0-P19 + 7 reading paths + TOC 20 Parts + Phụ lục A/B/C |
 | S3 | **DONE** | 3 file OVN renamed 17.0/18.0/19.0 + §17-19 renumbering + cross-refs + metadata sync | Session 5-6 (2026-04-20) | S3.1-S3.5 completed. User đã push commit remote ở local. Legacy `1.0 - sdn-history-and-openflow-protocol.md` đã untrack + rm local |
 | S4 | **DONE** | `0.0 - how-to-read-this-series.md` (148 dòng) + `0.1 - lab-environment-setup.md` (426 dòng) = 574 dòng content | Session 6 (2026-04-20) | Cả 2 file đã viết đầy đủ: learning objectives, reading paths, convention markers, CCNA/RHCSA mapping table, 3 lab modes, Ubuntu 22.04 baseline, OVS+OVN apt install, Mininet 2.3.0 from source, kolla-ansible version matrix (16.x-20.x), health check playbook, teardown, Guided Exercise 1 |
-| S5 | Pending | Skeleton Block I (1.0, 1.1, 1.2) đã có | — | Chưa viết content |
-| S6 | Pending | Skeleton Block II (2.0-2.4) đã có | — | Chưa viết content |
-| S7 | Pending | Skeleton Block III (3.0-3.2) đã có | — | Collision với advanced 3.0 — đợi S3 |
-| S8 | Pending | Skeleton Block IV (4.0-4.6) đã có | — | Chưa viết content |
+| S5 | Partial (S5a DONE) | Part 1.0 content (198 dòng, `9cd8041`) + Part 1.1/1.2 skeleton Rule 10 (`10ab5cb`). Content cho 1.1/1.2 → Phase B. | Session 7-8 (2026-04-21) | S5a skeleton refinement complete; S5b content cho 1.1/1.2 chờ Phase B gate. |
+| S6 | S6a DONE | Block II skeleton 5 file refined Rule 10 (`dc1b0b9`). Content → S6b Phase B. | Session 8 (2026-04-21) | Tầng 2g thêm vào dependency map. |
+| S7 | S7a DONE | Block III skeleton 3 file refined Rule 10 (`ff0dd14`). Content → S7b Phase B. | Session 8 (2026-04-21) | Tầng 2h thêm. Collision với advanced 3.0 đã giải quyết ở S3 (rename sang 19.0). |
+| S8 | S8a DONE | Block IV skeleton 7 file refined Rule 10 (`908279d`). Content → S8b Phase B. | Session 8 (2026-04-21) | Tầng 2i thêm. OpenFlow evolution 1.1→1.5 + TTP + limitations. |
 | S9 | Pending | Skeleton Block V (5.0-5.2) đã có | — | |
 | S10 | Pending | Skeleton Block VI (6.0-6.2) đã có | — | |
 | S11 | Pending | Skeleton Block VII (7.0-7.3) đã có | — | |
@@ -1813,19 +1813,23 @@ theo `plans/sdn-foundation-architecture.md` original rev 2 targets.
 | S21 | Pending | Legacy cleanup | — | Xóa `plans/sdn-restructure-multichassis-pmtud.md` khi series hoàn tất |
 | S22 | Pending | PR + merge `docs/sdn-foundation-rev2` → master | — | |
 
-**Progress summary (cuối session 6 — 2026-04-20):**
+**Progress summary (cuối session 8 — 2026-04-21):**
 
 - Skeleton toàn bộ 59 foundation file + 3 file advanced đã rename sang 17/18/19 = 62 file đã tồn tại vật lý trên disk
 - S1-S4 completed (2026-04-20 sessions 2-6): phê duyệt plan, README rev 2, rename + renumber + cross-refs + metadata sync, Block 0 content
-- Tổng content đã viết (không tính skeleton placeholders): 6 file — `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (1178 dòng), `18.0 - ovn-arp-responder-and-bum-suppression.md` (496 dòng), `19.0 - ovn-multichassis-binding-and-pmtud.md` (1379 dòng), `README.md` rev 2 (~450 dòng metadata/TOC), `0.0 - how-to-read-this-series.md` (148 dòng), `0.1 - lab-environment-setup.md` (426 dòng). Tổng ~4077 dòng content.
-- Branch active: `docs/sdn-foundation-rev2` (branched từ `master` sau merge PR #49), đã push remote ở session 6
-- Commit chờ: S4 changes ở working tree (2 file Block 0 content + 2 metadata file synced), pending null byte check + commit
+- S5a-S8a completed (2026-04-21 sessions 7-8): Architecture Phase cho Block I/II/III/IV = 17 skeleton files đã đạt chuẩn Rule 10 (title + 1-3 câu summary per section, không content paragraphs, không code blocks, không fact-check deep). Commits tuần tự: `10ab5cb` (Block I) → `dc1b0b9` (Block II) → `ff0dd14` (Block III) → `908279d` (Block IV).
+- Tổng content đã viết (không tính skeleton): 6 file như progress summary trước, không đổi. Session 7-8 chỉ làm skeleton refinement, không thêm content.
+- Branch active: `docs/sdn-foundation-rev2` @ `908279d`, local `git status` báo up-to-date với `origin/docs/sdn-foundation-rev2`.
+- Tầng 2f (Block I), 2g (Block II), 2h (Block III), 2i (Block IV) đã thêm vào `memory/file-dependency-map.md` với non-repetition rules + Phase B fact-check lists.
 
-**Khuyến nghị cho session kế tiếp:**
+**Khuyến nghị cho session kế tiếp (S9a on new machine):**
 
-1. S5 — Block I content (3 file: 1.0, 1.1, 1.2 — ~1200 dòng) — giải thích "tại sao SDN ra đời"
-2. Hoặc S13 — Block IX (DOCA mới viết để "nóng" kiến thức vừa nghiên cứu) nếu muốn ưu tiên chủ đề nóng
-3. Mỗi Block đóng lại bằng Capstone Lab trước khi chuyển Block sau
+1. Resume bằng `git fetch && git pull --ff-only` trên branch `docs/sdn-foundation-rev2` để đồng bộ 4 commit mới.
+2. Đọc `CLAUDE.md` Current State + `memory/session-log.md` (session 8 entry) + dependency map Tầng 2i.
+3. S9a — Block V skeleton refinement (3 file: 5.0 NETCONF/YANG, 5.1 NVP/NSX, 5.2 whitebox/SAI/SONiC) ~90-180 dòng tổng, 1 commit.
+4. Sau S9a: S10a Block VI (P4/Flow Objectives/IBN), S11a Block VII (DC SDN), ... tuần tự theo bảng S4-S19a.
+5. Block IX (9.0-9.5) đã có 6 skeleton từ session 4 + thêm 9.5 DOCA — **S13a cần audit Rule 10 compliance** chứ không phải tạo mới.
+6. **Không tự chuyển sang Phase B.** Gate yêu cầu user approve explicit sau khi toàn bộ Phase A skeleton hoàn tất.
 
 ---
 
