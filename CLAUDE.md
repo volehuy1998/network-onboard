@@ -277,16 +277,16 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-onboard-rewrite` (reset to master + Part 3 re-applied, 2026-04-20) |
-| Master HEAD | `65ca274` — Merge pull request #47 from volehuy1998/docs/sdn-onboard-rewrite |
+| Active branch | `docs/sdn-foundation-rev2` (S3 rename + renumber completed, 2026-04-20) |
+| Master HEAD | `a416dcf` — chore(memory): update session log and dependency map for session 4 |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
 | Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
 | FD exercises | 7/9 verified. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
-| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1178 lines** (trimmed 2026-04-20 per plan §3.2: §1.6 deep-dive moved to Part 3, cross-refs added; log integrity preserved) |
-| SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10) |
-| SDN 3.0 doc | `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,769 bytes** (new 2026-04-20, 7 §3.x + 3 Labs + Exam Prep + References; Lab 1 POE sáu lớp) |
-| Pending PR | `docs/sdn-onboard-rewrite` → `master` — Part 3 addition (plans/, sdn-onboard/3.0, TOC extensions in 4 metadata files) |
+| SDN 17.0 doc | `sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1178 lines** (renamed từ `1.0 - ovn-l2-...` ở S3; renumbered Phần 1 → Phần 17, mục 1.X → 17.X; forward refs tới Part 19 §19.2/§19.4/§19.5-19.6) |
+| SDN 18.0 doc | `sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (renamed từ `2.0 - ovn-arp-...` ở S3; renumbered Phần 2 → Phần 18, mục 2.X → 18.X; cross-refs sang Part 17 mục 17.4/17.6 đã cập nhật) |
+| SDN 19.0 doc | `sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,903 bytes** (renamed từ `3.0 - ovn-multichassis-...` ở S3; renumbered Phần 3 → Phần 19, §3.X → §19.X; RFC refs RFC 791 §3.1 / RFC 8926 §3.4/§3.5 preserved intact) |
+| S3 status | S3.1-S3.5 completed 2026-04-20. Working tree pending: commit S3 rename+renumber + metadata sync. S3.6 = null byte check + commit. Legacy artifact `sdn-onboard/.fuse_hidden...` là sandbox fuse lock, sẽ tự động giải phóng khi file bị `git rm` local. |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
 
 ## Skill Quick Reference

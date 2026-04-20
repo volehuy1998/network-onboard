@@ -215,35 +215,35 @@
 
 Nghiên cứu chuyên sâu về OVN, OpenvSwitch, và OpenFlow trong môi trường OpenStack production.
 
-[Part 1 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/1.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
+[Part 17 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
 
-- 1.1 - Tại sao OVN tồn tại: bài toán gốc và hành trình giải quyết
-- 1.2 - Localnet port: cầu nối giữa thế giới ảo và VLAN vật lý
-- 1.3 - MC_FLOOD và MC_UNKNOWN: broadcast và unknown destination trong distributed control plane
-- 1.4 - FDB table và dynamic MAC learning: từ bài toán flooding đến caching
-- 1.5 - MAC_Binding table: IP-to-MAC resolution trên logical router
-- 1.6 - Case study: FDB poisoning trên provider network VLAN 3808
-- 1.7 - Bài học thiết kế: trade-off và tiến hóa incremental
+- 17.1 - Tại sao OVN tồn tại: bài toán gốc và hành trình giải quyết
+- 17.2 - Localnet port: cầu nối giữa thế giới ảo và VLAN vật lý
+- 17.3 - MC_FLOOD và MC_UNKNOWN: broadcast và unknown destination trong distributed control plane
+- 17.4 - FDB table và dynamic MAC learning: từ bài toán flooding đến caching
+- 17.5 - MAC_Binding table: IP-to-MAC resolution trên logical router
+- 17.6 - Case study: FDB poisoning trên provider network VLAN 3808
+- 17.7 - Bài học thiết kế: trade-off và tiến hóa incremental
 
-[Part 2 - OVN ARP Responder và BUM Suppression](sdn-onboard/2.0%20-%20ovn-arp-responder-and-bum-suppression.md)
+[Part 18 - OVN ARP Responder và BUM Suppression](sdn-onboard/18.0%20-%20ovn-arp-responder-and-bum-suppression.md)
 
-- 2.1 - Bối cảnh: ARP trên mạng vật lý và hiệu ứng khuếch đại trong overlay
-- 2.2 - Dòng chảy lịch sử: từ l2population đến ARP Responder tích hợp trong OVN
-- 2.3 - Cơ chế ARP Responder: Ingress Table 26 và hệ thống bốn tầng priority
-- 2.4 - Port_security: gate trung tâm quyết định ARP Responder có hoạt động hay không
-- 2.5 - ARP Responder và FDB: hai cơ chế độc lập cho hai bài toán
-- 2.6 - Khi ARP Responder vắng mặt: incidents thực tế và đánh giá triển khai
-- 2.7 - Bốn kiến trúc ARP suppression và arp_proxy
+- 18.1 - Bối cảnh: ARP trên mạng vật lý và hiệu ứng khuếch đại trong overlay
+- 18.2 - Dòng chảy lịch sử: từ l2population đến ARP Responder tích hợp trong OVN
+- 18.3 - Cơ chế ARP Responder: Ingress Table 26 và hệ thống bốn tầng priority
+- 18.4 - Port_security: gate trung tâm quyết định ARP Responder có hoạt động hay không
+- 18.5 - ARP Responder và FDB: hai cơ chế độc lập cho hai bài toán
+- 18.6 - Khi ARP Responder vắng mặt: incidents thực tế và đánh giá triển khai
+- 18.7 - Bốn kiến trúc ARP suppression và arp_proxy
 
-[Part 3 - OVN Multichassis Binding, PMTUD và activation-strategy](sdn-onboard/3.0%20-%20ovn-multichassis-binding-and-pmtud.md)
+[Part 19 - OVN Multichassis Binding, PMTUD và activation-strategy](sdn-onboard/19.0%20-%20ovn-multichassis-binding-and-pmtud.md)
 
-- 3.1 - Lịch sử ba thời kỳ live migration trong OVN (pre-22.09 → 22.09 → 24.03+)
-- 3.2 - Multichassis port binding lifecycle (CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND)
-- 3.3 - `enforce_tunneling_for_multichassis_ports` + sáu kịch bản packet path
-- 3.4 - Geneve 58-byte overhead + PMTUD pipeline + bug FDP-620 root cause
-- 3.5 - activation-strategy=rarp: tín hiệu đồng bộ ba tầng
-- 3.6 - Operational tuning: Jumbo frame + MTU cache recovery
-- 3.7 - Design lessons + Khuyến nghị vận hành
+- 19.1 - Lịch sử ba thời kỳ live migration trong OVN (pre-22.09 → 22.09 → 24.03+)
+- 19.2 - Multichassis port binding lifecycle (CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND)
+- 19.3 - `enforce_tunneling_for_multichassis_ports` + sáu kịch bản packet path
+- 19.4 - Geneve 58-byte overhead + PMTUD pipeline + bug FDP-620 root cause
+- 19.5 - activation-strategy=rarp: tín hiệu đồng bộ ba tầng
+- 19.6 - Operational tuning: Jumbo frame + MTU cache recovery
+- 19.7 - Design lessons + Khuyến nghị vận hành
 - Lab 1: Verification playbook sáu lớp (POE framework)
 - Lab 2: Reproduce bug FDP-620 với `ping -s 6000`
 - Lab 3: Đo Geneve overhead trên wire bằng tcpdump + wireshark

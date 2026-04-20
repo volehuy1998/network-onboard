@@ -1544,7 +1544,7 @@ Mục đích: OVN — implementation cụ thể trên OVS của hypervisor overl
 
 ##### `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md`
 
-- **Status:** rename từ `1.0 - ovn-l2-forwarding-and-fdb-poisoning.md`
+- **Status:** renamed từ `1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (S3 completed 2026-04-20)
 - **Current:** 1178 lines (trimmed 2026-04-20, see CLAUDE.md)
 - **Ebook mapping:** Không (production forensic)
 - **Prerequisites:** Block XIII, XIV
@@ -1556,7 +1556,7 @@ Mục đích: OVN — implementation cụ thể trên OVS của hypervisor overl
 
 ##### `18.0 - ovn-arp-responder-and-bum-suppression.md`
 
-- **Status:** rename từ `2.0 - ovn-arp-responder-and-bum-suppression.md`
+- **Status:** renamed từ `2.0 - ovn-arp-responder-and-bum-suppression.md` (S3 completed 2026-04-20)
 - **Current:** 496 lines (rewritten 2026-04-10)
 - **Ebook mapping:** Không
 - **Prerequisites:** Block XIII, XIV, Part 17
@@ -1567,7 +1567,7 @@ Mục đích: OVN — implementation cụ thể trên OVS của hypervisor overl
 
 ##### `19.0 - ovn-multichassis-binding-and-pmtud.md`
 
-- **Status:** rename từ `3.0 - ovn-multichassis-binding-and-pmtud.md`
+- **Status:** renamed từ `3.0 - ovn-multichassis-binding-and-pmtud.md` (S3 completed 2026-04-20)
 - **Current:** 1379 lines, 127KB
 - **Ebook mapping:** Không
 - **Prerequisites:** Block XI (overlay MTU), XIII, XIV, Part 17, Part 18
@@ -1686,15 +1686,16 @@ Khi renumber `1.0 → 17.0`, `2.0 → 18.0`, `3.0 → 19.0`, các file sau phả
 
 **Skills:** professor-style, document-design, web-fetcher.
 
-### S3. Rename 3 Part hiện tại (0.5 ngày)
+### S3. Rename 3 Part hiện tại (0.5 ngày) — **COMPLETED 2026-04-20**
 
-- `git mv "sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md" "sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md"`
-- `git mv "sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md" "sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md"`
-- `git mv "sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md" "sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md"`
-- Update header block 3 files (Prerequisites)
-- Update cross-refs trong Part 19 ("Part 1 §1.6" → "Part 17 §17.6")
-- Update `README.md` root, `memory/file-dependency-map.md`
-- Commit: `docs(sdn): renumber advanced Parts 1/2/3 → 17/18/19 for rev 2 foundation series prep`
+- [x] S3.1 — `git mv` 3 file OVN: `1.0/2.0/3.0 - ovn-...` → `17.0/18.0/19.0 - ovn-...`
+- [x] S3.2 — Renumber internal headings: Phần 1/2/3 → Phần 17/18/19, mục/§ X.Y → tương ứng
+- [x] S3.3 — Update cross-refs: Part 17 forward refs tới Part 19 §19.2/§19.4/§19.5-19.6; Part 18 refs tới Part 17 §17.4/§17.6; Part 19 refs tới Part 17 §17.X (RFC refs RFC 791 §3.1 / RFC 8926 §3.4/§3.5 preserved intact)
+- [x] S3.4 — Mark legacy artifact `1.0 - sdn-history-and-openflow-protocol.md` for `git rm` (sandbox fuse-locked)
+- [x] S3.5 — Sync `README.md` root, `sdn-onboard/README.md` TOC, `memory/file-dependency-map.md`, `CLAUDE.md`
+- [ ] S3.6 — Null byte check (Rule 9) + commit với message `docs(sdn): renumber advanced Parts 1/2/3 → 17/18/19 for rev 2 foundation series prep`
+
+Residual S20 scope: Part 17/18 có những stale references đến mục `2.X`, `3.X`, `4.1/4.6/4.8/4.9` — những mục chưa tồn tại vì Part 17 hiện chỉ có đến mục 17.7. Sẽ được audit khi foundation content mở rộng thêm (ví dụ: khi viết Part 13 OVN foundation, có thể bổ sung mục 17.X mới rồi re-link).
 
 ### S4-S19. Viết từng Block (2-22 weeks tùy pace)
 
@@ -1784,15 +1785,15 @@ Mỗi S từ S4 đến S19 tương ứng với một Block (I-XVII minus XVII tr
 
 **Progress summary (cuối session 4 — 2026-04-20):**
 
-- Skeleton toàn bộ 59 foundation file + 4 file advanced/artifact = 63 file đã tồn tại vật lý trên disk
-- S1 (phê duyệt) + S2 (README rev 2) done; S3 onward pending
-- Tổng content đã viết (không tính skeleton placeholders): 4 file — `1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (1178 dòng), `2.0 - ovn-arp-responder-and-bum-suppression.md` (496 dòng), `3.0 - ovn-multichassis-binding-and-pmtud.md` (1379 dòng), `README.md` rev 2 (~450 dòng metadata/TOC)
-- Branch pending: `docs/sdn-foundation-rev2` CHƯA tạo (session hiện tại vẫn làm việc trên `docs/sdn-onboard-rewrite` từ session trước)
-- Commit chờ: toàn bộ session 4 changes đang ở working tree, chưa stage
+- Skeleton toàn bộ 59 foundation file + 3 file advanced đã rename sang 17/18/19 = 62 file đã tồn tại vật lý trên disk (artifact `1.0 - sdn-history-and-openflow-protocol.md` chờ `git rm` local)
+- S1-S3 completed (2026-04-20): phê duyệt, README rev 2, rename + renumber + cross-refs + metadata sync. S3.6 (commit) pending.
+- Tổng content đã viết (không tính skeleton placeholders): 4 file — `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (1178 dòng), `18.0 - ovn-arp-responder-and-bum-suppression.md` (496 dòng), `19.0 - ovn-multichassis-binding-and-pmtud.md` (1379 dòng), `README.md` rev 2 (~450 dòng metadata/TOC)
+- Branch active: `docs/sdn-foundation-rev2` (branched từ `master` sau merge PR #49)
+- Commit chờ: S3 changes ở working tree (3 file OVN renamed + 3 metadata file synced), pending null byte check + commit
 
 **Khuyến nghị cho session kế tiếp:**
 
-1. User approve S3 rename → chạy `git mv` + sed cross-refs → commit
+1. S3.6 — commit S3 rename+renumber+metadata sync (pending user push to remote)
 2. Start S4 (Block 0 content — 2 file ngắn) hoặc S13 (Block IX — DOCA mới viết để "nóng" kiến thức vừa nghiên cứu)
 3. Mỗi Block đóng lại bằng Capstone Lab trước khi chuyển Block sau
 

@@ -228,9 +228,9 @@ Khối then chốt thứ hai — OVN logical model. OVN công bố ngày 13/01/2
 
 Ba Part advanced là forensic analysis trên production kolla-ansible hàng trăm node, đi từ hiện tượng quan sát được (blackhole, FDB poisoning, migration failure) đến root cause trong source code OVN. Đọc Khối này yêu cầu đã hoàn thành Block I đến XIV.
 
-- **Part 17 — OVN L2 Forwarding và FDB Poisoning** *(1178 dòng; chờ rename từ `1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` → `17.0 - ...` ở S3)* — distributed control plane, MC_FLOOD multicast group, localnet port, FDB dynamic MAC learning, case study FDB poisoning VLAN 3808 với forensic timeline ba daemon logs.
-- **Part 18 — OVN ARP Responder và BUM Suppression** *(496 dòng; chờ rename từ `2.0 - ovn-arp-responder-and-bum-suppression.md` → `18.0 - ...` ở S3)* — ARP Responder ingress table 26, port_security gate, bốn kiến trúc ARP suppression và arp_proxy.
-- **Part 19 — OVN Multichassis Binding, PMTUD và activation-strategy** *(1379 dòng; chờ rename từ `3.0 - ovn-multichassis-binding-and-pmtud.md` → `19.0 - ...` ở S3)* — ba thời kỳ live migration OVN, multichassis port binding lifecycle, bug FDP-620 root cause, activation-strategy=rarp OVN 24.03.
+- **Part 17** — [OVN L2 Forwarding và FDB Poisoning](17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md) *(1178 dòng)* — distributed control plane, MC_FLOOD multicast group, localnet port, FDB dynamic MAC learning, case study FDB poisoning VLAN 3808 với forensic timeline ba daemon logs.
+- **Part 18** — [OVN ARP Responder và BUM Suppression](18.0%20-%20ovn-arp-responder-and-bum-suppression.md) *(496 dòng)* — ARP Responder ingress table 26, port_security gate, bốn kiến trúc ARP suppression và arp_proxy.
+- **Part 19** — [OVN Multichassis Binding, PMTUD và activation-strategy](19.0%20-%20ovn-multichassis-binding-and-pmtud.md) *(1379 dòng)* — ba thời kỳ live migration OVN, multichassis port binding lifecycle, bug FDP-620 root cause, activation-strategy=rarp OVN 24.03.
 
 ---
 
@@ -242,9 +242,9 @@ Mỗi Part foundation (Parts 0 đến 16) có ít nhất một Guided Exercise 1
 
 ## Trạng thái migration rev 1 → rev 2
 
-Series này đang trong quá trình tái cấu trúc theo plan `plans/sdn-foundation-architecture.md`. Tại thời điểm 2026-04-20, trạng thái như sau. Ba file OVN advanced vẫn mang tên filesystem `1.0`, `2.0`, `3.0` (chưa rename sang `17.0`, `18.0`, `19.0`). 60 file skeleton cho Block 0 → Block XVI đã tồn tại với header block, Learning Objectives, section sketch — nhưng content chi tiết chưa được viết. README này đã được viết theo target state rev 2 với TOC 20 Part.
+Series này đang trong quá trình tái cấu trúc theo plan `plans/sdn-foundation-architecture.md`. Tại thời điểm 2026-04-20, bước S3 đã hoàn tất: ba file OVN advanced đã được rename từ `1.0`, `2.0`, `3.0` sang `17.0`, `18.0`, `19.0`; headings nội bộ và cross-references trong ba file đã được renumber tương ứng (Phần 1 → Phần 17, mục 1.X → 17.X, v.v.). 60 file skeleton cho Block 0 → Block XVI đã tồn tại với header block, Learning Objectives, section sketch — nhưng content chi tiết chưa được viết. README này đã được viết theo target state rev 2 với TOC 20 Part.
 
-Kết quả là các liên kết tới Part 17, 18, 19 trong TOC này hiện trỏ đến tên file cũ (`1.0 - ...`, `2.0 - ...`, `3.0 - ...`) cho đến khi plan §S3 chạy `git mv` và sed cross-reference update. Trong session viết foundation (Parts 1-16), branch sẽ được pull về local, rename được thực hiện bằng `git mv`, cross-references được update, tất cả gộp vào một commit của S3 để tránh trạng thái broken kéo dài.
+Bước tiếp theo theo kế hoạch là viết foundation Parts 1-16 (substantive content thay cho skeleton hiện tại), sau đó audit toàn bộ cross-references còn sót (ví dụ: những tham chiếu đến mục 4.1/4.6/4.8/4.9 của Part 17 — những mục chưa tồn tại vì Part 17 chỉ có đến mục 17.7 — sẽ được giải quyết khi foundation content mở rộng thêm).
 
 ---
 

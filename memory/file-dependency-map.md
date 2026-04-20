@@ -15,7 +15,7 @@
 |------|---------------|---------------------------------------|
 | `README.md` (root) | Entry point repo, liệt kê tất cả series (Linux, Cisco, SDN, HAProxy) | `haproxy-onboard/README.md`, `sdn-onboard/README.md`, `linux-onboard/`, `network-onboard/` |
 | `haproxy-onboard/README.md` | TOC 29 Parts, Knowledge Dependency Map, Phụ lục A (Version Evolution Tracker — 52 entries, 12 categories) | `README.md` (root — version refs), MỌI file Part `*.md` (tên Part phải khớp TOC), `memory/haproxy-series-state.md` (tên Part phải khớp) |
-| `sdn-onboard/README.md` | TOC 2 Parts, dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/1.0`, `sdn-onboard/2.0` (section titles phải khớp TOC) |
+| `sdn-onboard/README.md` | TOC 20 Parts (17 foundation + 3 advanced), dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/17.0`, `sdn-onboard/18.0`, `sdn-onboard/19.0` (section titles phải khớp TOC) |
 
 ### Tầng 2: Content files (Parts)
 
@@ -47,12 +47,12 @@
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `sdn-onboard/README.md` | **Rev 2 (2026-04-20 session 4, 33937 bytes):** TOC 20 Parts / 17 Blocks + Block XVII advanced; baseline OVS 2.17.9/OVN 22.03.8/Ubuntu 22.04 + upgrade path OVS 3.3/OVN 24.03/Ubuntu 24.04; Mermaid dependency graph P0-P19; 7 reading paths; Phụ lục A Version Evolution Tracker (với Part 9.5 DOCA row); Phụ lục B RFC references; Phụ lục C Bibliography (Goransson, NSDI 2015, NVIDIA DOCA, upstream) | `README.md` (root — SDN section), TẤT CẢ 60 file skeleton Block 0-XVI (60 markdown links cần verify tồn tại), 3 file OVN advanced (1.0/2.0/3.0) có mô tả "chờ rename S3" → khi S3 chạy phải sửa TOC entries Part 17/18/19, `plans/sdn-foundation-architecture.md` §3.1/§3.4/§3.5 (TOC/graph/reading paths phải khớp) |
-| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim high-level, FDP-620 trigger conditions (1178 lines sau khi trim §1.6 deep-dive sang Part 3 ngày 2026-04-20, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0, `sdn-onboard/3.0` (cross-refs bidirectional: Part 1 § 1.6 liên kết tới Part 3 §3.2/3.4/3.5/3.6) |
-| `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
-| `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` | OVN multichassis binding lifecycle + Geneve PMTUD bug FDP-620 root cause + RARP activation-strategy + 3 Labs (1379 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (live migration trigger, localnet, Chassis/Claim baseline), `README.md` (root — SDN section) |
+| `sdn-onboard/README.md` | **Rev 2 (2026-04-20 session 4, 33937 bytes):** TOC 20 Parts / 17 Blocks + Block XVII advanced; baseline OVS 2.17.9/OVN 22.03.8/Ubuntu 22.04 + upgrade path OVS 3.3/OVN 24.03/Ubuntu 24.04; Mermaid dependency graph P0-P19; 7 reading paths; Phụ lục A Version Evolution Tracker (với Part 9.5 DOCA row); Phụ lục B RFC references; Phụ lục C Bibliography (Goransson, NSDI 2015, NVIDIA DOCA, upstream) | `README.md` (root — SDN section), TẤT CẢ 60 file skeleton Block 0-XVI (60 markdown links cần verify tồn tại), 3 file OVN advanced `17.0/18.0/19.0` (S3 đã rename 2026-04-20; TOC entries Part 17/18/19 đã sync), `plans/sdn-foundation-architecture.md` §3.1/§3.4/§3.5 (TOC/graph/reading paths phải khớp) |
+| `sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim high-level, FDP-620 trigger conditions (1178 lines sau khi trim §17.6 deep-dive sang Part 19 ngày 2026-04-20, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/18.0` nếu 18.0 cross-reference 17.0, `sdn-onboard/19.0` (cross-refs bidirectional: Part 17 §17.6 liên kết tới Part 19 §19.2/19.4/19.5/19.6) |
+| `sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/README.md` (TOC), `sdn-onboard/17.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 17) |
+| `sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md` | OVN multichassis binding lifecycle + Geneve PMTUD bug FDP-620 root cause + RARP activation-strategy + 3 Labs (1379 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/17.0` (live migration trigger, localnet, Chassis/Claim baseline), `README.md` (root — SDN section) |
 
-> **Quy tắc:** Khi sửa SDN 1.0, kiểm tra SDN 2.0 có references đến localnet/MC_UNKNOWN không, và SDN 3.0 có cross-ref đến live migration/multichassis của Part 1 không. Khi sửa SDN 2.0, kiểm tra SDN 1.0 có concepts nào được tái sử dụng không. Khi sửa SDN 3.0, kiểm tra consistency với Part 1 section 1.2 (Chassis/Claim) và section 1.6 (live migration trigger).
+> **Quy tắc:** Khi sửa SDN 17.0, kiểm tra SDN 18.0 có references đến localnet/MC_UNKNOWN không, và SDN 19.0 có cross-ref đến live migration/multichassis của Part 17 không. Khi sửa SDN 18.0, kiểm tra SDN 17.0 có concepts nào được tái sử dụng không. Khi sửa SDN 19.0, kiểm tra consistency với Part 17 section 17.2 (Chassis/Claim) và section 17.6 (live migration trigger).
 
 ### Tầng 2c: SDN foundation skeletons rev 2 (Block IX — OpenvSwitch internals)
 
@@ -82,24 +82,24 @@
 > và liệt kê cross-ref. Hiện tại chỉ track Block IX vì đó là Block duy nhất vừa thay đổi
 > cấu trúc (5→6 file).
 
-**Conflict numbering — rủi ro cao, chờ S3 rename (Plan §S3):**
+**Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 
 ```
-sdn-onboard/1.0 - networking-industry-before-sdn.md       ← skeleton rev 2 Block I
-sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md  ← OVN advanced, rename sang 17.0
-sdn-onboard/1.0 - sdn-history-and-openflow-protocol.md    ← artifact rev 1, cần git rm
+sdn-onboard/1.0 - networking-industry-before-sdn.md        ← skeleton rev 2 Block I (giữ nguyên)
+sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md  ← OVN advanced (renamed từ 1.0)
 
-sdn-onboard/2.0 - dcan-open-signaling-gsmp.md             ← skeleton rev 2 Block II
-sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md ← OVN advanced, rename sang 18.0
+sdn-onboard/2.0 - dcan-open-signaling-gsmp.md              ← skeleton rev 2 Block II (giữ nguyên)
+sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md ← OVN advanced (renamed từ 2.0)
 
-sdn-onboard/3.0 - stanford-clean-slate-program.md          ← skeleton rev 2 Block III
-sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md   ← OVN advanced, rename sang 19.0
+sdn-onboard/3.0 - stanford-clean-slate-program.md          ← skeleton rev 2 Block III (giữ nguyên)
+sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md   ← OVN advanced (renamed từ 3.0)
 ```
 
-Shell không phân biệt 3 file cùng prefix "1.0 - " (chúng có phần hậu tố khác nhau) — git
-và filesystem hoàn toàn accept. Nhưng về mặt tài liệu, 3 file cùng số Part tạo ra ambiguity.
-Plan §S3 giải quyết bằng `git mv` 3 file OVN sang 17.0/18.0/19.0 + sed cross-ref. Đến khi
-S3 chạy, MỌI cross-ref trong tài liệu đều phải dùng tên đầy đủ (không chỉ "Part 1.0").
+S3 đã thực thi ngày 2026-04-20: `git mv` 3 file OVN sang 17.0/18.0/19.0, renumber internal
+headings (Phần 1/2/3 → Phần 17/18/19; mục X.Y → tương ứng), update cross-references giữa
+3 file. Legacy artifact `1.0 - sdn-history-and-openflow-protocol.md` đã được đánh dấu để
+`git rm` trên local (sandbox không delete được do fuse lock). Không còn conflict tên —
+skeleton Block I/II/III (1.0/2.0/3.0) và advanced Part (17.0/18.0/19.0) ở hai dải số tách biệt.
 
 ### Tầng 5: Image files (SVG → Markdown captions)
 

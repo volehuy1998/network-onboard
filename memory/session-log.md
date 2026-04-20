@@ -7,6 +7,43 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-20 (session 5 — S3 rename + renumber + metadata sync)
+**Branch:** `docs/sdn-foundation-rev2` (S3 work-in-progress; pending commit + push to remote)
+**Plan:** `plans/sdn-foundation-architecture.md` — S3 marked complete, S4+ ready
+
+### Bối cảnh session 5
+
+Session 4 kết thúc với S3 approved nhưng chưa execute. Session 5 thực thi S3 đầy đủ 6 substeps.
+
+### Đã hoàn thành session 5
+
+1. **S3.1 — `git mv` 3 file OVN advanced:**
+   - `1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` → `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md`
+   - `2.0 - ovn-arp-responder-and-bum-suppression.md` → `18.0 - ovn-arp-responder-and-bum-suppression.md`
+   - `3.0 - ovn-multichassis-binding-and-pmtud.md` → `19.0 - ovn-multichassis-binding-and-pmtud.md`
+
+2. **S3.2 — Renumber internal headings:** H1 `Phần 1/2/3` → `Phần 17/18/19`; mục X.Y → tương ứng; §X.Y → §17/18/19.Y; Key Topics table cột cuối cập nhật toàn bộ rows.
+
+3. **S3.3 — Cross-references:** Part 17 forward refs sang Part 19 §19.2/§19.4/§19.5-19.6; Part 18 refs sang Part 17 §17.4/§17.6; Part 19 refs sang Part 17 §17.X. **RFC refs preserved intact** (RFC 791 §3.1, RFC 8926 §3.4, RFC 8926 §3.5) qua placeholder protection.
+
+4. **S3.4 — Legacy artifact:** `1.0 - sdn-history-and-openflow-protocol.md` đã đánh dấu để `git rm` local (sandbox fuse-locked, `.fuse_hidden...` inode hold).
+
+5. **S3.5 — Metadata sync:** `README.md` root, `sdn-onboard/README.md` TOC rev 2 status, `memory/file-dependency-map.md` bảng Tầng 2b + block numbering conflict section, `CLAUDE.md` Current State table, `plans/sdn-foundation-architecture.md` §3.3 status entries + S3 substep checklist + Progress summary.
+
+### S20 scope để lại
+
+Part 17 và Part 18 còn chứa stale references đến mục không tồn tại: refs đến Part 17 mục 2.2/2.4/3.3/4.1/4.6/4.8/4.9 (Part 17 hiện chỉ có 17.1 đến 17.7). Giữ nguyên những refs này để S20 (Post-foundation audit) xử lý khi foundation content mở rộng — một số mục có thể được thêm vào khi viết Block XIII OVN foundation rồi re-link.
+
+### Pending S3.6
+
+- Null byte check (Rule 9) trên 3 file OVN renamed + 4 metadata file synced
+- Stage + commit với message: `docs(sdn): renumber advanced Parts 1/2/3 → 17/18/19 for rev 2 foundation series prep`
+- Push to remote: USER phải chạy `git push -u origin docs/sdn-foundation-rev2` trên local (Rule 4 protected branch)
+
+---
+
+## Session 4 (archived)
+
 **Ngày:** 2026-04-20 (session 4 — nghiên cứu OVS-DOCA + thêm Part 9.5 + backbone review)
 **Branch:** `docs/sdn-onboard-rewrite` (chưa commit session 4; pending reset hoặc new feature branch)
 **Plan:** `plans/sdn-foundation-architecture.md` — rev 2 đã được update để phản ánh Block IX = 6 file
