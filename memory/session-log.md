@@ -56,6 +56,24 @@
 - `git push origin docs/sdn-onboard-rewrite:docs/sdn-onboard-rewrite --force-with-lease` (user chạy trên máy local)
 - `gh pr create` với title/body thật (user chạy sau khi push thành công)
 
+### Hậu kỳ sau khi PR được mở (feedback user 2026-04-20)
+
+User phát hiện hai vấn đề khi review PR:
+
+1. **Bỏ quên Step S5 của plan.** Part 1.0 không có thay đổi nào dù plan §3.2 đã quy định rõ phải cắt 3 deep-dive subsection của §1.6 (lines 919-997) và thay bằng cross-reference tới Part 3. Nguyên nhân: sau quy trình recovery force-push, Part 1 được reset về master và không áp dụng Step S5. Đã thực hiện:
+   - Cắt sạch §1.6.2-1.6.4 (79 dòng deep-dive: binding mechanism, Geneve PMTUD, jumbo/activation-strategy)
+   - Thay bằng 3 cross-reference section theo IEC 82079-1 §6.7 (anchor text rõ nghĩa, không dùng "see here")
+   - Dọn Exam Prep Key Topics: xóa entry #20-21 (chứa function name chỉ còn trong Part 3), renumber #22-24 thành #20-22 với mô tả phản ánh đúng mức độ nội dung còn lại trong Part 1
+   - Dọn Define Key Terms: xóa 6 term thuộc Part 3 (CAN_BIND_AS_MAIN, CAN_BIND_AS_ADDITIONAL, enforce_tunneling_for_multichassis_ports, shash_is_empty, OFTABLE_OUTPUT_LARGE_PKT_DETECT, effective tunnel MTU)
+   - Kết quả: 1234 → 1178 dòng
+
+2. **Lạm dụng em-dash (—).** User nhận xét "Sử dụng quá nhiều ký hiệu —, hãy sử dụng ngôn ngữ để diễn tả nó". Toàn bộ prose mới cho Step S5 viết không em-dash, dùng thay bằng dấu phẩy, "vì", "gồm", "cùng", dấu ngoặc đơn, hoặc câu riêng biệt. Em-dash còn lại trong Part 1 thuộc nội dung không thay đổi, được giữ nguyên để tránh scope creep.
+
+### Pending (bổ sung sau Step S5)
+
+- `git pull --rebase origin docs/sdn-onboard-rewrite` rồi apply patch hoặc copy file trực tiếp vào clone local (user có sẵn 3 commit từ recovery trước đó: ceccb25, 81e2759, e6c6c9f)
+- Commit Part 1 trim + metadata updates trên local, push lên remote để PR tự động update
+
 ---
 
 ## Session 2026-04-11

@@ -48,7 +48,7 @@
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
 | `sdn-onboard/README.md` | TOC SDN series, dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/1.0`, `sdn-onboard/2.0`, `sdn-onboard/3.0` (section titles phải khớp TOC) |
-| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim, FDP-620 (1234 lines, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0, `sdn-onboard/3.0` (multichassis/PMTUD cross-refs) |
+| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim high-level, FDP-620 trigger conditions (1178 lines sau khi trim §1.6 deep-dive sang Part 3 ngày 2026-04-20, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0, `sdn-onboard/3.0` (cross-refs bidirectional: Part 1 § 1.6 liên kết tới Part 3 §3.2/3.4/3.5/3.6) |
 | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
 | `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` | OVN multichassis binding lifecycle + Geneve PMTUD bug FDP-620 root cause + RARP activation-strategy + 3 Labs (1379 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (live migration trigger, localnet, Chassis/Claim baseline), `README.md` (root — SDN section) |
 

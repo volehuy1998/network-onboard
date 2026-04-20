@@ -283,7 +283,7 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 | HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
 | Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
 | FD exercises | 7/9 verified. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
-| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1234 lines** (log integrity audited 2026-04-11) |
+| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1178 lines** (trimmed 2026-04-20 per plan §3.2: §1.6 deep-dive moved to Part 3, cross-refs added; log integrity preserved) |
 | SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10) |
 | SDN 3.0 doc | `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,769 bytes** (new 2026-04-20, 7 §3.x + 3 Labs + Exam Prep + References; Lab 1 POE sáu lớp) |
 | Pending PR | `docs/sdn-onboard-rewrite` → `master` — Part 3 addition (plans/, sdn-onboard/3.0, TOC extensions in 4 metadata files) |
