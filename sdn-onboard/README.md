@@ -36,20 +36,45 @@ Exercises: GE1 (MC_UNKNOWN POE), GE2 (FDB 3-condition POE), Lab 3 (FDB poisoning
 
 Exercises: GE1 (ARP Responder POE), GE2 (BUM suppression POE), Lab 3 (troubleshooting)
 
+### Part 3 — OVN Multichassis Binding, PMTUD và activation-strategy (1379 dòng)
+
+[3.0 - ovn-multichassis-binding-and-pmtud.md](3.0%20-%20ovn-multichassis-binding-and-pmtud.md)
+
+| Section | Nội dung |
+|---------|---------|
+| 3.1 | Lịch sử ba thời kỳ live migration trong OVN: pre-22.09 blackhole 13.25% loss → 22.09 multichassis duplicate → 24.03+ activation-strategy=rarp |
+| 3.2 | Multichassis port binding lifecycle: CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND, timeline, 6 scenarios matrix |
+| 3.3 | `enforce_tunneling_for_multichassis_ports()`: priority 110 override localnet 100, 6 kịch bản packet path |
+| 3.4 | Geneve 58-byte overhead, pipeline tables 41/42, **bug FDP-620 root cause** + patch Ales Musil 6-line |
+| 3.5 | activation-strategy=rarp: ba "cửa khóa" flows (priority 1010/1000), pinctrl_activation_strategy_handler, 4 reasons RARP > GARP |
+| 3.6 | Operational tuning: Jumbo frame MTU 9000→8942, mtu_expires kernel tuning |
+| 3.7 | Design lessons: data-plane-as-signal pattern, Prometheus exporter, 3-phase deployment |
+
+Labs: Lab 1 (verification playbook sáu lớp — POE framework), Lab 2 (FDP-620 reproduce với `ping -s 6000`), Lab 3 (Geneve overhead measurement bằng tcpdump+wireshark)
+
 ## Sơ đồ phụ thuộc kiến thức
 
 ```
 Part 1 ──► Part 2
 (L2, FDB)   (ARP, BUM)
+   │
+   └──────► Part 3
+            (Multichassis, PMTUD, RARP)
 
 Part 2 references từ Part 1:
   - Localnet port concept (1.2)
   - MC_UNKNOWN group (1.3)
   - FDB table (1.4)
   - MAC_Binding table (1.5)
+
+Part 3 references từ Part 1:
+  - Localnet port + chassisredirect (1.2)
+  - Multichassis binding (1.2 — Chassis, Claim, Multichassis section)
+  - Live migration trigger scenario (1.6 — section "Live migration")
+  - FDB table interaction trong live migration (1.4 + 1.6)
 ```
 
-Đọc Part 1 trước Part 2. Part 2 xây dựng trên nền tảng localnet, multicast groups, và FDB đã trình bày trong Part 1.
+Đọc Part 1 trước Part 2 và Part 3. Part 3 đào sâu cơ chế multichassis mà Part 1 đã giới thiệu ở mức conceptual; Part 2 độc lập với Part 3 (ARP responder ≠ multichassis binding).
 
 ## Log files sử dụng trong case study
 
