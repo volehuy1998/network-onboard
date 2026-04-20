@@ -118,11 +118,33 @@
 > placeholder (RFC 3292/1953/1987/2865/2748/3654/3746/5810/3031, SIGCOMM 2007/2008, CCR 1996/1999/2005/2008).
 > Rule non-repetition: 2.0 đặt nền GSMP → 2.1 chỉ nhắc GSMP variant Ipsilon, không giải lại message format.
 
+### Tầng 2h: SDN foundation Block III (skeleton refined — S7a hoàn tất 2026-04-21)
+
+> **Scope:** Block III "Khai sinh OpenFlow" sau S7a refinement (Rule 10 architecture phase). 3 file skeleton,
+> mỗi file 40-60 dòng với title + summary 1-3 câu cho mỗi section. Dependency chain tuyến tính:
+> 3.0 → 3.1 → 3.2 (3.2 phụ thuộc 3.1 cho spec ownership transition Stanford → ONF).
+
+| File | Nội dung chính (skeleton) | Related Files — PHẢI kiểm tra khi sửa |
+|------|--------------------------|---------------------------------------|
+| `sdn-onboard/3.0 - stanford-clean-slate-program.md` | Skeleton 5 section: Clean Slate funded 2006-2012 (NSF FIND + DARPA + industry consortium) / key researchers (McKeown/Shenker/Casado/Parulkar) / Stanford Gates Building deployment 2008-2009 (8-10 HP ProCurve 5400 + NOX) / CCR 04/2008 foundational paper 7 authors / Nicira founding 08/2007 → VMware acquisition 07/2012 $1.26B | `sdn-onboard/README.md` (TOC Block III), `plans/sdn-foundation-architecture.md` §3.3 Block III Phase A, `sdn-onboard/2.4` (prerequisite: Casado PhD thesis + Ethane lineage), `sdn-onboard/3.1` (forward ref: Stanford shepherd spec 1.0 trước ONF), Block XIV Commercial SDN (forward ref NVP → NSX) |
+| `sdn-onboard/3.1 - openflow-1.0-specification.md` | Skeleton 7 section: spec 1.0.0 (31/12/2009, 42 trang, Stanford shepherd) / TCP 6633 plain + TCP 6653 TLS (IANA 09/2013) / message types 3 nhóm (symmetric/controller-to-switch/async) / 12-tuple match fields (ofp_match §A.2.3) / 8 actions (§A.2.6) / flow entry anatomy (match+priority+counters+timeouts+cookie+actions) / single-table cross-product explosion + OVS resubmit NXM workaround | `sdn-onboard/README.md` TOC, §3.3 Block III, `sdn-onboard/3.0` (prerequisite: Stanford history + CCR 04/2008), `sdn-onboard/3.2` (forward ref: ONF take over spec 1.1+), `sdn-onboard/2.0` (cross-ref GSMP 12-tuple mapping §2.0.4), Part 4.x OpenFlow evolution (forward ref multi-table 1.1, group table 1.3) |
+| `sdn-onboard/3.2 - onf-formation-and-governance.md` | Skeleton 6 section + Capstone Lab: ONF press release 21/03/2011 / 6 founding operators (Deutsche Telekom/Facebook/Google/Microsoft/Verizon/Yahoo) + 17 early adopters (Cisco/Juniper/HP/NEC/VMware...) / working groups (Config/FAWG/NBI/Optical/Security/Testing) / Stanford → ONF spec ownership transition / ONF vs IETF/IEEE/OCP 4-dimension comparison / 2018 merger với ON.Lab → ONOS+CORD+SD-RAN + OpenFlow 1.5.1 last revision (03/2015) | `sdn-onboard/README.md` TOC, §3.3 Block III, `sdn-onboard/3.1` (prerequisite: spec 1.0 transition), Block IV OpenFlow evolution (forward ref: ONF shepherd 1.1 → 1.5.1), Block XIV Commercial SDN (forward ref: ONOS governance history) |
+
+> **Quy tắc dependency Block III (Phase A):** Claim lịch sử phải consistent — đặc biệt các timestamp
+> quan trọng: OpenFlow 1.0 spec (31/12/2009), CCR paper (04/2008), ONF formation (21/03/2011),
+> IANA TCP 6653 assignment (09/2013), ONF-ON.Lab merger (10/2018), OpenFlow 1.5.1 (03/2015).
+> Khi Phase B viết content, PHẢI fact-check cross-source: ACM CCR 38(2), ONF bylaws
+> (opennetworking.org/legal), Stanford Clean Slate archive (cloud.stanford.edu/cleanslate),
+> VMware-Nicira press release 07/2012. Rule non-repetition: 3.0 đặt nền Stanford +
+> Nicira lineage → 3.1 không lặp lại Stanford history, chỉ nhắc "Stanford shepherd spec 1.0";
+> 3.2 không lặp lại Ethane → OF transition (đã ở 2.4.5), chỉ tập trung governance process.
+
 ### Tầng 2e: SDN foundation skeletons rev 2 (các Block khác — placeholder)
 
-> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f/2g-tương đương
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f/2g/2h-tương đương
 > và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file), Block 0 (S4 đã viết content),
-> Block I (S5.1 Part 1.0 content, 1.1/1.2 skeleton refined), Block II (S6a skeleton refined 2026-04-21).
+> Block I (S5.1 Part 1.0 content, 1.1/1.2 skeleton refined), Block II (S6a skeleton refined 2026-04-21),
+> Block III (S7a skeleton refined 2026-04-21).
 
 **Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 
