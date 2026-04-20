@@ -139,12 +139,37 @@
 > Nicira lineage → 3.1 không lặp lại Stanford history, chỉ nhắc "Stanford shepherd spec 1.0";
 > 3.2 không lặp lại Ethane → OF transition (đã ở 2.4.5), chỉ tập trung governance process.
 
+### Tầng 2i: SDN foundation Block IV (skeleton refined — S8a hoàn tất 2026-04-21)
+
+> **Scope:** Block IV "OpenFlow evolution" sau S8a refinement (Rule 10 architecture phase). 7 file skeleton,
+> mỗi file 40-70 dòng với title + summary 1-3 câu cho mỗi section. Dependency chain tuyến tính:
+> 4.0 (OF 1.1) → 4.1 (OF 1.2) → 4.2 (OF 1.3 LTS) → 4.3 (OF 1.4) → 4.4 (OF 1.5) → 4.5 (TTP) → 4.6
+> (limitations + Capstone Lab). 4.6 tổng kết và kết nối sang Block V (API-based SDN) + Block VI (P4).
+
+| File | Nội dung chính (skeleton) | Related Files — PHẢI kiểm tra khi sửa |
+|------|--------------------------|---------------------------------------|
+| `sdn-onboard/4.0 - openflow-1.1-multi-table-groups.md` | Skeleton 6 section: OF 1.1 release 28/02/2011 (pre-ONF, Stanford shepherd) / multi-table pipeline semantics + GOTO_TABLE / instructions vs actions distinction / 4 group types (ALL/SELECT/INDIRECT/FAST_FAILOVER sub-10ms reroute) / MPLS native (PUSH/POP/SET_TTL) / use case multi-tenant classifier → tunnel giảm O(N·M) → O(N+M) | `sdn-onboard/README.md` (TOC Block IV), `plans/sdn-foundation-architecture.md` §3.3 Block IV Phase A, `sdn-onboard/3.1` (prerequisite: single-table cross-product explosion §3.1.7), `sdn-onboard/4.1` (forward ref: OXM identify field) |
+| `sdn-onboard/4.1 - openflow-1.2-oxm-tlv-match.md` | Skeleton 5 section: OF 1.2 release 05/12/2011 (spec đầu tiên do ONF công bố) / OXM TLV format (class+field+HM+length, origin NXM) / IPv6 match fields / controller roles EQUAL/MASTER/SLAVE + generation_id / migration 1.0→1.2 không backward compat wire | `sdn-onboard/README.md` TOC, §3.3 Block IV, `sdn-onboard/4.0` (prerequisite), `sdn-onboard/4.2` (forward ref IPv6 extension header), Block VII (forward ref controllers) |
+| `sdn-onboard/4.2 - openflow-1.3-meters-pbb-ipv6.md` | Skeleton 6 section: OF 1.3 release timeline 1.3.0-1.3.5 (2012-2015, errata chain backward compat) / meter table per-flow QoS (DROP/DSCP_REMARK bands + token bucket) / per-connection auxiliary channels / PBB 802.1ah match (PBB_ISID 24-bit) / IPv6 extension headers bitmask / tại sao 1.3 = LTS (OVS 2.0+, Ryu/ODL baseline, Pica8/HP/NEC commit silicon) | `sdn-onboard/README.md` TOC, §3.3 Block IV, `sdn-onboard/4.1` (prerequisite OXM), `sdn-onboard/4.3` (forward ref 1.4 adoption mismatch), Block XVI (forward ref WAN QoS) |
+| `sdn-onboard/4.3 - openflow-1.4-bundles-eviction.md` | Skeleton 5 section: OF 1.4 release 14/10/2013 / bundles atomic transaction (OPEN/CLOSE/COMMIT/DISCARD + ATOMIC/ORDERED flags, analogy SQL) / flow entry eviction với importance field vs timeout / optical port extensions (ITU-T G.694.1 wavelength grid) / adoption reality OVS 2.5 partial + vendor skip | `sdn-onboard/README.md` TOC, §3.3 Block IV, `sdn-onboard/4.2` (prerequisite 1.3), `sdn-onboard/4.4` (continuity 1.5 adoption narrative), `sdn-onboard/16.1` (forward ref optical SDN) |
+| `sdn-onboard/4.4 - openflow-1.5-egress-l4l7.md` | Skeleton 5 section: OF 1.5 release 1.5.0 (19/12/2014) + 1.5.1 (26/03/2015) cuối cùng / egress tables per-output-port processing / TCP flags matching (URG/ACK/PSH/RST/SYN/FIN) / packet type aware (OXM PACKET_TYPE) / current state 2026 OVS 2.10+ partial, vendor zero, Tofino/P4 thay chỗ | `sdn-onboard/README.md` TOC, §3.3 Block IV, `sdn-onboard/4.3` (prerequisite 1.4), `sdn-onboard/4.6` (forward ref lesson learned), Block VI Part 6.0 (forward ref P4) |
+| `sdn-onboard/4.5 - ttp-table-type-patterns.md` | Skeleton 4 section: vấn đề silicon subset OF spec (Broadcom Trident2, Intel FM6000) / TTP pre-agreed pattern analogy HTTP Accept / ONF TS-017 spec (15/08/2014, YANG-based) / alternative Flow Objectives của ONOS (forward ref Block VI) | `sdn-onboard/README.md` TOC, §3.3 Block IV, `sdn-onboard/4.4` (prerequisite), `sdn-onboard/6.1` (forward ref Flow Objectives abstraction) |
+| `sdn-onboard/4.6 - openflow-limitations-lessons.md` | Skeleton 7 section + Capstone Block IV Lab POE: 5 limitations (flow-table explosion Broadcom Trident2 4K ACL / controller latency 1-5ms DevoFlow SIGCOMM 2011 / distribution scale Atomix Raft / silicon mismatch TCAM vs SRAM ingress vs egress / L4-L7 gap HTTP/SSL/DPI) / Google B4 SIGCOMM 2013 fork / lesson → P4 + API-based SDN — Capstone: multi-table pipeline + FAST_FAILOVER sub-10ms reroute POE verification | `sdn-onboard/README.md` TOC, §3.3 Block IV, TẤT CẢ 4.0-4.5 (tổng kết), `sdn-onboard/5.0` (forward ref API SDN), `sdn-onboard/6.0` (forward ref P4), `sdn-onboard/9.2` (cross-ref OVS megaflow), `sdn-onboard/10.1` (cross-ref OVSDB Raft), Block VIII/XVI (forward ref Linux L7/SDN WAN) |
+
+> **Quy tắc dependency Block IV (Phase A):** Các timestamp và số version phải consistent xuyên 7 file.
+> Khi Phase B viết content, PHẢI fact-check mọi release date: 1.1.0 (28/02/2011), 1.2 (05/12/2011),
+> 1.3.0 (25/04/2012) → 1.3.5 (26/03/2015), 1.4 (14/10/2013), 1.5.0 (19/12/2014) → 1.5.1 (26/03/2015),
+> ONF TS-017 (15/08/2014). Rule non-repetition: 4.0 đặt nền multi-table + group → các Part sau chỉ
+> nhắc additions/changes, không giải lại pipeline semantic; 4.6 là tổng kết — không lặp lại chi tiết
+> 4.0-4.5, chỉ extract limitations theo chiều ngang. Fact-check cross-source: SIGCOMM 2011 (DevoFlow),
+> SIGCOMM 2013 (B4), NSDI 2015 (OVS), CCR 2014 (P4), Broadcom Trident2 architecture brief.
+
 ### Tầng 2e: SDN foundation skeletons rev 2 (các Block khác — placeholder)
 
-> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f/2g/2h-tương đương
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f/2g/2h/2i-tương đương
 > và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file), Block 0 (S4 đã viết content),
 > Block I (S5.1 Part 1.0 content, 1.1/1.2 skeleton refined), Block II (S6a skeleton refined 2026-04-21),
-> Block III (S7a skeleton refined 2026-04-21).
+> Block III (S7a skeleton refined 2026-04-21), Block IV (S8a skeleton refined 2026-04-21).
 
 **Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 
