@@ -7,15 +7,77 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-21 (session 7 — S5.1 Part 1.0 content)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `76173cd` (handoff session 6) + working tree modified
+**Plan:** `plans/sdn-foundation-architecture.md` — S5 in progress (Part 1.0 DONE, 1.1+1.2 pending)
+
+### Bối cảnh session 7
+
+Session 6 đóng S4 với commit `c38c3c9` đã push lên remote. Session 7 bắt đầu S5 (Block I = 3 Part, ~1200 dòng). Chiến lược: viết Part 1.0 trước (nền tảng cho 1.1/1.2), commit, bàn giao 1.1/1.2 cho session sau.
+
+Phát hiện đầu session: git index stale (HEAD và working tree đều `9537639`, nhưng index vẫn `6edd891` từ session 6 plumbing path — index không được refresh sau `write-tree` manual). Fix: `GIT_INDEX_FILE=/tmp/fresh-index git read-tree HEAD && cp /tmp/fresh-index .git/index` → `git status` trả về clean.
+
+### Đã hoàn thành session 7
+
+1. **S5.1 research + fact-check (4 skills activated):** professor-style, fact-checker, web-fetcher đã load đầy đủ. document-design SKILL.md quá lớn (34681 tokens) → proceed với 3 skills + document convention đã quen. Verified 10 historical sources qua curl HTTP 200:
+   - Ethane paper (yuba.stanford.edu/~casado/ethane-sigcomm07.pdf)
+   - RFC 7348 (VXLAN), RFC 5556 (TRILL)
+   - IEEE 802.1Q (ieee802.org/1/pages/802.1Q.html)
+   - IEEE 802.1D (ieee802.org/1/pages/802.1D.html — initial URL standards.ieee.org trả về 403, thay bằng canonical working group page)
+   - Jupiter Rising (research.google)
+   - Inside Social Network's DC Network (research.facebook.com)
+   - Facebook DC Fabric blog 2014-11-14 (engineering.fb.com)
+   - AWS EC2 launch 2006-08-24 (aws.amazon.com)
+   - Cisco Catalyst 6500 white paper
+
+2. **S5.1 content Part 1.0 (198 dòng, 25408 bytes):** `sdn-onboard/1.0 - networking-industry-before-sdn.md`. Sections:
+   - Header block + Mục tiêu bài học (3 Bloom objectives)
+   - 1.0.1: Mô hình truyền thống — control + data + management hợp nhất 1984-2008 (Cisco IOS, Juniper Junos, Arista EOS)
+   - 1.0.2: Vendor lock-in 3 layer (silicon ASIC, software CLI, roadmap)
+   - 1.0.3: East-West traffic explosion (Google Jupiter 100× bisection 2005-2015, Facebook Fabric 2014, Roy SIGCOMM 2015 intra-DC ratio)
+   - 1.0.4: 3 giới hạn kỹ thuật (STP 40-50% block, VLAN 4096 từ 12-bit 802.1Q, Catalyst 6513 chassis oversubscription 8.7:1)
+   - 1.0.5: 3 giới hạn vận hành (CLI/expect, config drift, change velocity)
+   - Guided Exercise 1 POE: tính 174 CLI commands cho 20-switch VLAN 100 add
+   - Mạch nối với phần sau (forward ref 1.1, 1.2)
+   - Tài liệu tham khảo: 10 verified sources
+
+3. **S5.1 Quality gate Checklist C:**
+   - Null byte check (Rule 9): 0 bytes trong `1.0 - networking-industry-before-sdn.md`
+   - URL check: 10/10 URLs HTTP 200 sau khi fix IEEE 802.1D (403 → 200)
+   - Cross-file sync: `file-dependency-map.md` thêm Tầng 2f cho Block I Part 1.0
+   - Version annotation: không cần — Part 1.0 là historical context, không có cross-version content
+
+4. **CLAUDE.md Current State:** S4 status → DONE, S5 status → In progress Block I Part 1.0.
+
+### Pending cho session 8 (S5.2 + S5.3)
+
+- **Part 1.1 — data center pain points (~400 dòng):** scope dự kiến: multi-tenancy pain (VLAN exhaustion thực nghiệm, AWS re:Invent case), MAC table overflow ở DC scale, STP convergence storm, operational overhead từ CLI scaling. Thúc đẩy từ Part 1.0 (3 giới hạn kỹ thuật + 3 giới hạn vận hành).
+- **Part 1.2 — five drivers why SDN (~400 dòng):** scope dự kiến: (1) cloud/virtualization demand, (2) multi-tenant isolation, (3) automation velocity, (4) open programmability, (5) economic (white-box + merchant silicon). Cite Nick McKeown/Martin Casado talks, OCP roadmap.
+- **Commit + push:** tương tự S4, commit S5.1 qua git plumbing path (do sandbox FUSE lock), user chạy `git reset --mixed HEAD` + `git push` trên local.
+
+### Lệnh local cần chạy sau session 7
+
+```bash
+# Trên Windows (VO LE's machine), sau khi pull mới nhất từ sandbox:
+cd ~/network-onboard
+git fetch origin
+git reset --mixed HEAD       # refresh index nếu cần
+git push origin docs/sdn-foundation-rev2
+```
+
+---
+
+## Session 6 (archived)
+
 **Ngày:** 2026-04-20 → 2026-04-21 (session 6 — S4 Block 0 content DONE + pushed)
 **Branch:** `docs/sdn-foundation-rev2` @ commit `c38c3c9` (đã push lên remote)
 **Plan:** `plans/sdn-foundation-architecture.md` — S4 **DONE**, next target S5 Block I
 
-### Bối cảnh session 6
+### Bối cảnh session 6 (archived)
 
 Session 5 đã đóng S3 (rename + renumber 3 file OVN advanced). User đã push `docs/sdn-foundation-rev2` lên remote, xóa FUSE phantom, và `git rm` legacy artifact `1.0 - sdn-history-and-openflow-protocol.md` trên local. Session 6 thực thi S4 theo plan: viết content cho 2 file Block 0.
 
-### Đã hoàn thành session 6
+### Đã hoàn thành session 6 (archived)
 
 1. **S4.1 — Fact-check:** Verified Ubuntu 22.04 package versions qua Launchpad (`openvswitch-switch 2.17.9-0ubuntu0.22.04.1`, `ovn 22.03.8-0ubuntu0.22.04.1` trong jammy-updates 2025-08-12). Verified kolla-ansible → OpenStack mapping qua `releases.openstack.org/teams/kolla.html` (16.x=Antelope, 17.x=Bobcat, 18.x=Caracal, 19.x=Dalmatian, 20.x=Epoxy). Phát hiện lỗi skeleton 0.1 ghi "17.x = Antelope/Bobcat" — sửa lại trong content.
 

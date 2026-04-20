@@ -88,10 +88,22 @@
 > Ngược lại khi phát hiện version mismatch ở `0.1`, kiểm tra `README.md` Phụ lục A Version
 > Evolution Tracker có khớp không.
 
+### Tầng 2f: SDN foundation Block I (content written — S5.1 bắt đầu 2026-04-21)
+
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `sdn-onboard/1.0 - networking-industry-before-sdn.md` | Block I Part 1.0: mô hình control/data/management hợp nhất vendor-proprietary (1984-2008); vendor lock-in 3 layer; East-West traffic explosion (Jupiter SIGCOMM 2015, Facebook Fabric 2014, Roy SIGCOMM 2015); 3 giới hạn kỹ thuật (STP 40-50% block, VLAN 4096, chassis oversubscription 8.7:1 Cat 6513); 3 giới hạn vận hành (CLI/expect, config drift, change velocity); Guided Exercise 1 POE (174 CLI commands, 20-switch VLAN 100); 10 refs (Ethane, RFC 7348/5556, IEEE 802.1Q/802.1D, Jupiter, Roy, FB Fabric, EC2 launch, Cat 6500) (198 dòng) | `sdn-onboard/README.md` (TOC Block I), `plans/sdn-foundation-architecture.md` §3.3 Block I, `sdn-onboard/1.1` (forward ref: DC pain points phát triển từ 3 giới hạn kỹ thuật), `sdn-onboard/1.2` (forward ref: 5 drivers vì sao SDN) |
+
+> **Quy tắc dependency Block I:** Khi sửa `1.0`, PHẢI kiểm tra forward references trong `1.1`
+> và `1.2` (khi viết): historical claims (năm Ethane, IEEE, kolla-ansible versions) phải consistent.
+> Ngược lại khi viết `1.1`/`1.2`, không được nhắc lại nội dung `1.0` (Rule non-repetition) —
+> chỉ reference section number (ví dụ: "như 1.0.4 đã trình bày").
+
 ### Tầng 2e: SDN foundation skeletons rev 2 (các Block khác — placeholder)
 
-> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d-tương đương
-> và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file) và Block 0 (S4 đã viết content).
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d/2f-tương đương
+> và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file), Block 0 (S4 đã viết content),
+> Block I (S5.1 bắt đầu Part 1.0, còn 1.1/1.2 pending).
 
 **Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 

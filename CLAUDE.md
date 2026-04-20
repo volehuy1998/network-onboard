@@ -288,7 +288,8 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 | SDN 19.0 doc | `sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,903 bytes** (renamed từ `3.0 - ovn-multichassis-...` ở S3; renumbered Phần 3 → Phần 19, §3.X → §19.X; RFC refs RFC 791 §3.1 / RFC 8926 §3.4/§3.5 preserved intact) |
 | SDN Block 0 | `sdn-onboard/0.0 - how-to-read-this-series.md` (148 lines) + `0.1 - lab-environment-setup.md` (426 lines) = 574 dòng content. S4 DONE. |
 | S3 status | S3.1-S3.6 completed 2026-04-20. User đã push commit remote ở session 6. Legacy artifacts đã cleanup. |
-| S4 status | S4.1-S4.3 completed: nội dung Block 0 đầy đủ (reading paths, lab modes, kolla-ansible matrix 16.x-20.x, Guided Exercise 1). S4.4 = null byte check + commit working tree pending. |
+| S4 status | **DONE** (2026-04-21). S4.1-S4.3 content Block 0, S4.4 quality gate (null byte 0, URL 6/7 → 7/7 sau fix Vanderbilt, cross-file sync, version annotation). Commit `c38c3c9` + handoff `76173cd` đã push lên remote. Index stale do plumbing path đã được refresh ở session 7. |
+| S5 status | In progress (2026-04-21). Block I (Part 1): scope = ~1200 dòng × 3 file (1.0, 1.1, 1.2). Current focus: **Part 1.0** (networking industry before SDN, ~400 dòng). |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
 
 ## Skill Quick Reference
