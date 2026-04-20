@@ -47,12 +47,59 @@
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `sdn-onboard/README.md` | TOC SDN series, dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/1.0`, `sdn-onboard/2.0`, `sdn-onboard/3.0` (section titles phải khớp TOC) |
+| `sdn-onboard/README.md` | **Rev 2 (2026-04-20 session 4, 33937 bytes):** TOC 20 Parts / 17 Blocks + Block XVII advanced; baseline OVS 2.17.9/OVN 22.03.8/Ubuntu 22.04 + upgrade path OVS 3.3/OVN 24.03/Ubuntu 24.04; Mermaid dependency graph P0-P19; 7 reading paths; Phụ lục A Version Evolution Tracker (với Part 9.5 DOCA row); Phụ lục B RFC references; Phụ lục C Bibliography (Goransson, NSDI 2015, NVIDIA DOCA, upstream) | `README.md` (root — SDN section), TẤT CẢ 60 file skeleton Block 0-XVI (60 markdown links cần verify tồn tại), 3 file OVN advanced (1.0/2.0/3.0) có mô tả "chờ rename S3" → khi S3 chạy phải sửa TOC entries Part 17/18/19, `plans/sdn-foundation-architecture.md` §3.1/§3.4/§3.5 (TOC/graph/reading paths phải khớp) |
 | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim high-level, FDP-620 trigger conditions (1178 lines sau khi trim §1.6 deep-dive sang Part 3 ngày 2026-04-20, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0, `sdn-onboard/3.0` (cross-refs bidirectional: Part 1 § 1.6 liên kết tới Part 3 §3.2/3.4/3.5/3.6) |
 | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
 | `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` | OVN multichassis binding lifecycle + Geneve PMTUD bug FDP-620 root cause + RARP activation-strategy + 3 Labs (1379 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (live migration trigger, localnet, Chassis/Claim baseline), `README.md` (root — SDN section) |
 
 > **Quy tắc:** Khi sửa SDN 1.0, kiểm tra SDN 2.0 có references đến localnet/MC_UNKNOWN không, và SDN 3.0 có cross-ref đến live migration/multichassis của Part 1 không. Khi sửa SDN 2.0, kiểm tra SDN 1.0 có concepts nào được tái sử dụng không. Khi sửa SDN 3.0, kiểm tra consistency với Part 1 section 1.2 (Chassis/Claim) và section 1.6 (live migration trigger).
+
+### Tầng 2c: SDN foundation skeletons rev 2 (Block IX — OpenvSwitch internals)
+
+> **Scope:** Block IX sau khi thêm 9.5 (session 2026-04-20 session 4). 6 file skeleton,
+> dependency chain tuyến tính 9.0 → 9.1 → 9.2 → 9.3 → 9.4 → 9.5.
+> Các Block khác (0, I-VIII, X-XVI) cũng có skeleton tồn tại nhưng chưa nhập vào bảng này
+> — sẽ được ghi nhận khi S5-S19 bắt đầu viết content từng Block.
+
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `sdn-onboard/9.0 - ovs-history-2007-present.md` | Skeleton: OVS 2007 Nicira → NSDI 2015 → Linux Foundation 2016, version timeline, so sánh Linux bridge | `plans/sdn-foundation-architecture.md` §3.3 Block IX (sections phải khớp), `sdn-onboard/README.md` TOC (khi rewrite S2) |
+| `sdn-onboard/9.1 - ovs-3-component-architecture.md` | Skeleton: ovs-vswitchd + ovsdb-server + openvswitch.ko, netlink genl family upcall | §3.3 Block IX, Part 8.1 (linux-onboard bridge reference), cross-ref tới Part 10 (OVSDB details) |
+| `sdn-onboard/9.2 - ovs-kernel-datapath-megaflow.md` | Skeleton: microflow → megaflow → ukeys, handler/revalidator threads, NSDI 2015 numbers | §3.3 Block IX, 9.1 (prerequisite), cross-ref Part 13 (OVN sử dụng megaflow installation path) |
+| `sdn-onboard/9.3 - ovs-userspace-dpdk-afxdp.md` | Skeleton: DPDK PMD + hugepages + NUMA, AF_XDP alternative, trade-off matrix | §3.3 Block IX, 9.2 (prerequisite), **9.5 (complement: DPDK vs DOCA so sánh)** |
+| `sdn-onboard/9.4 - ovs-cli-tools-playbook.md` | Skeleton: ovs-vsctl/ofctl/appctl/dpctl, 6-layer troubleshooting playbook, Capstone Block IX Lab 2 | §3.3 Block IX, 9.3 (prerequisite), 9.5 (CLI là tool verify DOCA offload counters) |
+| `sdn-onboard/9.5 - hw-offload-switchdev-asap2-doca.md` | Skeleton mới 2026-04-20: switchdev, ASAP² eSwitch, 3 DPIFs comparison, OVS-DOCA internals, vDPA, BlueField DPU, megaflow scaling 200k-2M | §3.3 Block IX (entry 9.5 mới), 9.3 (trade-off bridge → DOCA), 9.4 (CLI cho `ovs-appctl coverage/show` read DOCA counters), Part 8.1 (Linux bridge/veth tiên quyết) |
+
+> **Capstone positioning trong Block IX:** "Capstone Block IX Lab 2" giữ tại 9.4 (CLI) —
+> baseline cho mọi user (không yêu cầu NIC đặc biệt). Lab của 9.5 là **capstone mở rộng**
+> cho user có NIC ConnectX-5+ hoặc BlueField (so sánh throughput 3 DPIFs). Quyết định này
+> xuất phát từ nguyên tắc accessibility: Block capstone không được đòi hỏi hardware mà
+> phần lớn học viên không có.
+
+### Tầng 2d: SDN foundation skeletons rev 2 (các Block khác — placeholder)
+
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c-tương đương
+> và liệt kê cross-ref. Hiện tại chỉ track Block IX vì đó là Block duy nhất vừa thay đổi
+> cấu trúc (5→6 file).
+
+**Conflict numbering — rủi ro cao, chờ S3 rename (Plan §S3):**
+
+```
+sdn-onboard/1.0 - networking-industry-before-sdn.md       ← skeleton rev 2 Block I
+sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md  ← OVN advanced, rename sang 17.0
+sdn-onboard/1.0 - sdn-history-and-openflow-protocol.md    ← artifact rev 1, cần git rm
+
+sdn-onboard/2.0 - dcan-open-signaling-gsmp.md             ← skeleton rev 2 Block II
+sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md ← OVN advanced, rename sang 18.0
+
+sdn-onboard/3.0 - stanford-clean-slate-program.md          ← skeleton rev 2 Block III
+sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md   ← OVN advanced, rename sang 19.0
+```
+
+Shell không phân biệt 3 file cùng prefix "1.0 - " (chúng có phần hậu tố khác nhau) — git
+và filesystem hoàn toàn accept. Nhưng về mặt tài liệu, 3 file cùng số Part tạo ra ambiguity.
+Plan §S3 giải quyết bằng `git mv` 3 file OVN sang 17.0/18.0/19.0 + sed cross-ref. Đến khi
+S3 chạy, MỌI cross-ref trong tài liệu đều phải dùng tên đầy đủ (không chỉ "Part 1.0").
 
 ### Tầng 5: Image files (SVG → Markdown captions)
 

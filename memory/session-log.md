@@ -7,7 +7,110 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-20 (session 2 — kiến trúc lại sdn-onboard foundation)
+**Ngày:** 2026-04-20 (session 4 — nghiên cứu OVS-DOCA + thêm Part 9.5 + backbone review)
+**Branch:** `docs/sdn-onboard-rewrite` (chưa commit session 4; pending reset hoặc new feature branch)
+**Plan:** `plans/sdn-foundation-architecture.md` — rev 2 đã được update để phản ánh Block IX = 6 file
+
+### Bối cảnh session này
+
+User nhắc: "hãy nhớ tham khảo tài liệu openflow, openvswitch, ovn từ trang chủ nữa nhé để
+tăng phần đa dạng. Đừng quên mỗi khi tham khảo hay nghiên cứu tài liệu ở ngoài xong thì
+cập nhật PLAN, cập nhật kiến trúc, khung sườn." + 3 PDF tải lên: NVIDIA OVS-DOCA Doc, Jorge
+Crichigno USC workshop 2021, Dean Pemberton NSRC OpenVSwitch slides.
+
+Sau đó user nhắc tiếp: "sau khi nghiên cứu, hãy nhớ review lại kiến trúc, khung sườn tài
+liệu nhé. Cập nhật nó thường xuyên sẽ rất tốt. Củng cố xương sống tài liệu."
+
+### Đã hoàn thành session này
+
+1. **Đọc 3 PDF** trong `/tmp-pdftxt/`:
+   - `OVS-DOCA.txt` 6362 dòng — đọc chunk ưu tiên (OVS-Kernel HW offload, switchdev, DPDK,
+     DOCA DPIF specific, BlueField)
+   - `OpenVSwitch.txt` 172 dòng (Dean Pemberton NSRC) — nhấn mạnh motivation HW offload
+   - Đã đọc trước đó: Jorge Crichigno slides (OVS overview, motivation)
+
+2. **Phát hiện gap kiến thức lớn:** Block IX rev 2 (5 file: 9.0 history, 9.1 architecture,
+   9.2 kernel, 9.3 userspace/DPDK, 9.4 CLI) KHÔNG có phần nào cover:
+   - NVIDIA ASAP² eSwitch offload
+   - Linux switchdev framework + VF representor
+   - OVS-DOCA DPIF (flavor mới 2023) — NVIDIA khuyến nghị primary
+   - vDPA, BlueField DPU
+   - Steering modes (SMFS/DMFS), vPort match modes (Metadata/Legacy)
+
+3. **Thêm Part 9.5** (`9.5 - hw-offload-switchdev-asap2-doca.md`, 64 dòng skeleton):
+   - 10 section 9.5.1 → 9.5.10 từ rationale → switchdev → ASAP² → 3 DPIFs → OVS-DOCA
+     internals → feature coverage → steering/vPort modes → vDPA → BlueField → megaflow scaling
+   - 2 Guided Exercises (switchdev verify + DOCA counters)
+   - 1 Lab (throughput comparison Kernel vs DPDK vs DOCA)
+
+4. **Cập nhật `plans/sdn-foundation-architecture.md`** 5 edit points:
+   - File index: thêm 9.5 entry
+   - Total count: 62 → 63 file content (+ 1 README = 64 tổng)
+   - Block IX summary row: 5 → 6 file, ghi "NSDI 2015 + external + NVIDIA DOCA"
+   - Block IX subsection header: "Part 9, 5 files" → "Part 9, 6 files"
+   - Block IX detailed entry: thêm §9.5 với Learning Objectives + 10 sections + exercises
+
+5. **Backbone review — coherence check Block IX sau khi thêm 9.5:**
+   - Dòng chảy sư phạm: history (9.0) → architecture (9.1) → kernel datapath (9.2) →
+     userspace datapath (9.3) → CLI tools (9.4) → hardware offload (9.5). OK.
+   - Prerequisite chain: 9.0 → 9.1 → 9.2 → 9.3 → 9.4 → 9.5 (mỗi Part chain tiếp theo). 9.5
+     bổ sung prerequisite liên khối Part 8.1 (Linux bridge/veth) và kiến thức CCNA L2
+     switching — đã ghi trong header 9.5.
+   - Capstone Block IX: giữ "Capstone Block IX Lab 2" tại 9.4 (CLI) vì đó là baseline cho
+     mọi user; Lab của 9.5 là capstone mở rộng cho user có NIC ConnectX-5+/BlueField.
+     Lý do: không phải ai cũng có hardware tương thích để chạy DOCA stack.
+
+### Cảnh báo cấu trúc — KHÔNG tự sửa, chờ user quyết
+
+**Conflict numbering:** Thư mục `sdn-onboard/` hiện có 3 cặp file cùng prefix số:
+```
+1.0 - networking-industry-before-sdn.md       (skeleton rev 2, 2365 bytes)
+1.0 - ovn-l2-forwarding-and-fdb-poisoning.md  (advanced content, 115163 bytes)
+1.0 - sdn-history-and-openflow-protocol.md    (artifact rev 1, 44062 bytes — cần xóa)
+
+2.0 - dcan-open-signaling-gsmp.md             (skeleton rev 2)
+2.0 - ovn-arp-responder-and-bum-suppression.md (advanced content)
+
+3.0 - stanford-clean-slate-program.md          (skeleton rev 2)
+3.0 - ovn-multichassis-binding-and-pmtud.md   (advanced content)
+```
+Plan §S3 đã đặc tả `git mv` 3 file OVN sang 17.0/18.0/19.0 — CHƯA execute. Rủi ro cao nếu
+bỏ sót cross-reference. Cần chạy S3 ngay sau khi user approve plan.
+
+### Pending tasks sau session 4
+
+- **Task #11: DONE** — `sdn-onboard/README.md` rev 2 đã viết (33937 bytes, 60 internal links
+  verified, 0 null bytes). Header + baseline OVS 2.17.9/OVN 22.03.8 + Mermaid graph P0-P19 +
+  7 reading paths + TOC 20 Parts + Phụ lục A (Version Evolution Tracker extended với Part 9.5) +
+  Phụ lục B (RFC refs mở rộng) + Phụ lục C (Bibliography Goransson + NSDI + NVIDIA docs).
+- **Task #12: DONE** — Plan §4.1 "Execution progress tracker" đã bổ sung với bảng 22 step
+  S1-S22, summary progress cuối session 4, và khuyến nghị session kế tiếp.
+- **Task #13:** Upstream fetch openvswitch.org, ovn.org, ONF archive — deferred đến S13
+  (content writing phase cho Block IX). 3 PDF NVIDIA/Crichigno/Pemberton đã đọc, đủ cho
+  skeleton 9.5; fetch thêm khi bắt đầu viết content 9.5.
+- **S3 rename:** 3 file OVN advanced → 17.0/18.0/19.0 + cross-ref sed — BLOCKED chờ user
+  approve. Rủi ro nếu bỏ sót cross-ref trong Part 19 (tham chiếu Part 1 §1.6 → phải sửa
+  thành Part 17 §17.6).
+- **Task #5:** Write `ebook-coverage-map.md` (Goransson Ch1-15 → blocks) — in_progress,
+  deferred vì README rev 2 đã ghi rõ mapping trong Phụ lục C Bibliography.
+- Update `memory/file-dependency-map.md` thêm Block IX entries (9.0-9.5) — done trong
+  session trước. Thêm entry README rev 2 dependency — done trong session này.
+
+### Lệnh cần chạy trên local khi resume
+
+```bash
+cd ~/network-onboard
+git status                              # verify workspace state
+git log --oneline -5                    # confirm HEAD
+```
+Chưa có commit mới trong session này — mọi thay đổi (plan update, 9.5 skeleton, dependency
+map, session log) đang ở working tree, sẽ commit sau khi user review.
+
+---
+
+## Session trước (session 2 — kiến trúc lại sdn-onboard foundation rev 1)
+
+**Ngày:** 2026-04-20 (session 2)
 **Branch:** `master` (clean, sau khi PR #47/#48/#49 merged)
 **Plan:** `plans/sdn-foundation-architecture.md` — rev 1 draft, CHỜ user phê duyệt
 
@@ -132,6 +235,73 @@ User phát hiện hai vấn đề khi review PR:
 
 - `git pull --rebase origin docs/sdn-onboard-rewrite` rồi apply patch hoặc copy file trực tiếp vào clone local (user có sẵn 3 commit từ recovery trước đó: ceccb25, 81e2759, e6c6c9f)
 - Commit Part 1 trim + metadata updates trên local, push lên remote để PR tự động update
+
+### Step S4 execution (2026-04-20, continued session)
+
+Bắt đầu Step S4 (viết Part 1 nền tảng mới theo plan §3.2). File mới:
+`sdn-onboard/1.0 - sdn-history-and-openflow-protocol.md` (383 dòng, 44062 bytes, 0 null bytes).
+
+Đã hoàn thành:
+
+1. **Header block + Learning Objectives** (5 mục tiêu Bloom: Understand/Analyze/Remember/Apply/Evaluate) + Prerequisites.
+
+2. **§1.1 Bối cảnh**: network ossification, closed vendor silos, datacenter virtualization pressure 2005-2008. Misconception callout: SDN tập trung hóa control plane, không loại bỏ. Ethane 2007 (Casado) là predecessor trực tiếp của OpenFlow.
+
+3. **§1.2 Stanford Clean Slate Program (2007 → Jan 2012) + bài báo 2008**: 8 tác giả (McKeown, Anderson, Balakrishnan, Parulkar, Peterson, Rexford, Shenker, Turner), 6 trường đại học Mỹ. Ba thành phần switch OpenFlow: Flow Table + Secure Channel + OpenFlow Protocol. Lý do chuẩn hóa nhanh (20 tháng từ paper → spec 1.0.0).
+
+4. **§1.3 OpenFlow 1.0 (31/12/2009, wire protocol 0x01)**: Table 1-1 (12-tuple match), action set đầy đủ (OUTPUT/SET_VLAN/STRIP/SET_DL/SET_NW/SET_TP/ENQUEUE), không có DROP tường minh. Flow lifecycle 3 bước (match → PACKET_IN → FLOW_MOD). Hai misconception callouts: scalability fast/slow path, fail-secure vs fail-standalone. Example 1-1: TCP SYN lifecycle (2 PACKET_IN cho connection 10K packets). Guided Exercise 1 (Mininet + Ryu + tshark).
+
+5. **§1.4 Evolution 1.1 → 1.5**: Table 1-2 dòng chảy phiên bản (ngày + wire protocol + feature chính). Giải thích narrative cho mỗi phiên bản: 1.1 (multi-table + group + MPLS, 28/02/2011), 1.2 (OXM, 05/12/2011), 1.3 (meters + IPv6 ext headers, 25/06/2012, longevity lớn nhất), 1.4 (bundle messages + eviction, 14/10/2013), 1.5 (egress tables + packet type aware, 19/12/2014). Callout về 1.6 nội bộ 09/2016 không công bố công khai.
+
+6. **§1.5 Match fields 12-tuple → OXM/NXM**: giải thích NXM của OVS 1.1 (2010) đi trước OXM của OpenFlow 1.2 (cuối 2011), OXM mô phỏng gần như đồng format với NXM. OVS có NXM-only fields (`NX_CT_STATE`, `NX_REG0..7`, `NX_TUN_ID`) chưa được ONF chuẩn hóa. Misconception: 45 trường match cứng vẫn là giới hạn → P4 giải quyết bằng parser programmable.
+
+7. **§1.6 Nicira / ONF / decline (2007-2018)**: Nicira (Casado + McKeown + Shenker, 2007 Palo Alto) → NVP 2011 → VMware acquisition 23/07/2012 $1.26B → rebrand NSX 2013. ONF thành lập 21/03/2011 với sáu operator (Deutsche Telekom, Facebook, Google, Microsoft, Verizon, Yahoo!). Suy giảm 2016+ do P4 + gNMI + vendor-specific API + SONiC. OpenFlow vẫn sống trong OVS/OVN data plane — ngôn ngữ máy để debug sản xuất. Production readiness assessment về lựa chọn platform SDN năm 2026.
+
+8. **§1.7 Kết nối với phần sau**: forward reference đến Part 1.1 (controllers landscape), Part 2.0 (Linux bridge/netns), Part 3.0 (OVS architecture), Part 4.0 (OpenFlow trên OVS).
+
+9. **Exam Preparation Tasks**: Review Key Topics table (14 entries), Define Key Terms (21 terms), Command Reference (5 commands từ GE 1), 7 review questions.
+
+10. **Tài liệu tham khảo**: 16 URLs verified (bao gồm toàn bộ 6 OpenFlow spec PDFs, Wikipedia ONF/OpenFlow/Nicira/Clean Slate, ovs-fields(7), TR-535 SDN Evolution, HPL-2014-41 Casado evolution paper, Ryu Nicira Extension Ref, ACM Ethane).
+
+Verified facts bằng WebSearch trước khi commit claims:
+- Dates 6 OpenFlow versions + wire protocols
+- ONF founding date 21/03/2011 + 6 operator members
+- Nicira → VMware acquisition date + price
+- OpenFlow 1.6 tình trạng ONF-member-only
+- NXM → OXM format lineage
+
+### Pending S4 (chưa hoàn thành)
+
+1. **Part 1.1** (`1.1 - sdn-controllers-landscape.md`, ~800 dòng): NOX/POX (2008), Ryu (NTT 2012), Floodlight (BigSwitch 2012), ONOS (ONF 2014), OpenDaylight (Linux Foundation 2013), Faucet, vendor SDN (Cisco ACI 2014, Juniper Contrail/Tungsten, Arista CloudVision), NSX từ Nicira → VMware.
+
+2. **Capstone Lab Block I**: Mininet + Ryu ↔ đẩy OpenFlow 1.3 flow đầu tiên bằng Python Ryu app.
+
+3. **S3 rename operations** (vẫn bị sandbox block):
+   ```
+   cd ~/path/to/network-onboard
+   git mv "sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md" \
+          "sdn-onboard/8.0 - ovn-l2-forwarding-and-fdb-poisoning.md"
+   git mv "sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md" \
+          "sdn-onboard/9.0 - ovn-arp-responder-and-bum-suppression.md"
+   git mv "sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md" \
+          "sdn-onboard/10.0 - ovn-multichassis-binding-and-pmtud.md"
+   ```
+   Sau rename: update cross-references theo plan §3.4 matrix (sdn-onboard/README.md, root README.md,
+   file-dependency-map.md, CLAUDE.md Current State).
+
+4. **Branch flow sau Part 1 hoàn chỉnh**: user apply file mới vào clone local, commit theo
+   convention `docs(sdn): Step S4 — Part 1 SDN history & OpenFlow foundation`, push lên
+   `docs/sdn-onboard-rewrite`. PR hiện tại (Part 3) có thể merge trước — Part 1 foundation
+   đi thành PR riêng.
+
+### Lưu ý cho session kế tiếp
+
+- **Ưu tiên kiểm tra CLAUDE.md Current State trước khi tiếp tục**: branch `docs/sdn-onboard-rewrite`
+  vẫn có Part 3 pending PR. Part 1 foundation mới thêm vào dưới tên trùng prefix với OVN Part 1 cũ
+  (`1.0 - ...`) → khi push phải cẩn thận thứ tự (rename OVN 1.0→8.0 TRƯỚC khi push foundation 1.0,
+  hoặc dùng branch tách biệt).
+- Sandbox git index vẫn corrupt — không chạy được `git status`, `git add`, `git commit`. User phải
+  chạy tất cả git ops local.
 
 ---
 
