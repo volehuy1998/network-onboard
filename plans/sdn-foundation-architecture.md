@@ -1697,35 +1697,65 @@ Khi renumber `1.0 → 17.0`, `2.0 → 18.0`, `3.0 → 19.0`, các file sau phả
 
 Residual S20 scope: Part 17/18 có những stale references đến mục `2.X`, `3.X`, `4.1/4.6/4.8/4.9` — những mục chưa tồn tại vì Part 17 hiện chỉ có đến mục 17.7. Sẽ được audit khi foundation content mở rộng thêm (ví dụ: khi viết Part 13 OVN foundation, có thể bổ sung mục 17.X mới rồi re-link).
 
-### S4-S19. Viết từng Block (2-22 weeks tùy pace)
+### S4-S19. Hai phase tách biệt — Architecture-First Doctrine (CLAUDE.md Rule 10)
 
-Mỗi S từ S4 đến S19 tương ứng với một Block (I-XVII minus XVII trivial):
+> **Chỉnh sửa doctrine 2026-04-21 (session 7):** Plan rev 2 ban đầu gộp architecture và content
+> vào cùng S4-S19, khiến session 6-7 viết 772 dòng content (0.0, 0.1, 1.0) khi chưa cần. User
+> correction: project đang ở **Architecture Phase** — xây khung toàn bộ trước, viết content sau.
+> Plan này tách thành Phase A (architecture, các step Sa) và Phase B (content, các step Sb).
+
+#### Phase A — Architecture Phase (S4a-S19a, ~10-14 ngày)
+
+Mục tiêu: mỗi Block có skeleton file theo đúng Rule 10 CLAUDE.md — header block + Mục tiêu
+bài học + section headings đầy đủ + tóm tắt 1-3 câu dưới mỗi heading + exercise/lab placeholders
+(title + mục đích) + references placeholder. Target: **30-60 dòng/file**, không > 80 dòng.
+
+| Step | Block | Part | Files | Skel lines est | Thời gian | Trạng thái |
+|------|-------|------|-------|----------------|-----------|-----------|
+| S4a | 0 | 0 | 2 | 60-120 | done | **OVER-SCOPE** — 574 dòng content viết ở session 6 (file 0.0 + 0.1). Giữ nguyên, coi như reference implementation. |
+| S5a | I | 1 | 3 | 90-180 | in progress | Part 1.0 OVER-SCOPE (198 dòng, session 7). Part 1.1 + 1.2 chờ viết skeleton theo Rule 10. |
+| S6a | II | 2 | 5 | 150-300 | pending | 5 file skeleton đã có sẵn từ S2; cần audit và nâng chuẩn (bỏ "Sẽ phát triển" mơ hồ → tóm tắt 1-3 câu cụ thể). |
+| S7a | III | 3 | 3 | 90-180 | pending | Tương tự: audit + refine skeleton S2. |
+| S8a | IV | 4 | 7 | 210-420 | pending | 7 file; Block OpenFlow evolution 1.0-1.5 + controller-southbound. |
+| S9a | V | 5 | 3 | 90-180 | pending | Alt SDN models (SDN via APIs, Hypervisor Overlays, Whitebox). |
+| S10a | VI | 6 | 3 | 90-180 | pending | Emerging models — P4, intent-based, etc. |
+| S11a | VII | 7 | 4 | 120-240 | pending | SDN in data center. |
+| S12a | VIII | 8 | 4 | 120-240 | pending | SDN service providers (NFV, SD-WAN). |
+| S13a | IX | 9 | 6 | 180-360 | partial | 6 file skeleton tồn tại (9.0-9.5); 9.5 đã có heading structure từ S2 session 4. Audit Rule 10 compliance. |
+| S14a | X | 10 | 2 | 60-120 | pending | OVSDB protocol + management. |
+| S15a | XI | 11 | 3 | 90-180 | pending | Overlay networks (VXLAN, Geneve). |
+| S16a | XII | 12 | 3 | 90-180 | pending | DC architectures (leaf-spine, Clos). |
+| S17a | XIII | 13 | 4 | 120-240 | pending | OVN foundation. |
+| S18a | XIV | 14 | 4 | 120-240 | pending | OpenStack Neutron + kolla. |
+| S19a | XV-XVI | 15, 16 | 4 | 120-240 | pending | Future directions + capstone. |
+
+**Mỗi step Architecture Phase:**
+1. Tạo/audit skeleton files theo Rule 10 (không content chi tiết)
+2. Update `memory/file-dependency-map.md` với entry Block
+3. Chạy Checklist B (trước khi viết skeleton) — không chạy Checklist C full vì chưa commit content
+4. Commit incremental: `docs(sdn): S{N}a Block {X} skeleton architecture`
+
+**Gate chuyển sang Phase B:** User review toàn bộ skeleton end-to-end và approve bằng lệnh
+explicit "chuyển sang viết content" hoặc "bắt đầu content phase". Claude không tự ý chuyển.
+
+#### Phase B — Content Phase (S4b-S19b, ~22-28 ngày)
+
+Mục tiêu: viết nội dung chi tiết vào khung đã architecture xong. Target: **400-1200 dòng/file**
+theo `plans/sdn-foundation-architecture.md` original rev 2 targets.
 
 | Step | Block | Part | Files | Lines est | Thời gian |
 |------|-------|------|-------|-----------|-----------|
-| S4 | 0 | 0 | 2 | 600 | 0.5 ngày |
-| S5 | I | 1 | 3 | 1200 | 1 ngày |
-| S6 | II | 2 | 5 | 2500 | 2 ngày |
-| S7 | III | 3 | 3 | 1800 | 1.5 ngày |
-| S8 | IV | 4 | 7 | 3500 | 3 ngày |
-| S9 | V | 5 | 3 | 1500 | 1 ngày |
-| S10 | VI | 6 | 3 | 1500 | 1 ngày |
-| S11 | VII | 7 | 4 | 2000 | 1.5 ngày |
-| S12 | VIII | 8 | 4 | 2500 | 2 ngày |
-| S13 | IX | 9 | 5 | 3500 | 3 ngày |
-| S14 | X | 10 | 2 | 1500 | 1 ngày |
-| S15 | XI | 11 | 3 | 2000 | 1.5 ngày |
-| S16 | XII | 12 | 3 | 2000 | 1.5 ngày |
-| S17 | XIII | 13 | 4 | 3000 | 2.5 ngày |
-| S18 | XIV | 14 | 4 | 3000 | 2.5 ngày |
-| S19 | XV-XVI | 15, 16 | 4 | 2500 | 2 ngày |
+| S4b | 0 | 0 | 2 | 600 | done (2026-04-21) |
+| S5b | I | 1 | 3 | 1200 | 1/3 done (Part 1.0 = 198 dòng, session 7). Part 1.1 + 1.2 viết sau khi Phase A complete. |
+| S6b-S19b | II-XVI | 2-16 | 55 | 33000 | ~22-26 ngày |
 
-**Mỗi step:**
-1. Viết content các file thuộc Block
-2. Viết Capstone Lab cuối Block
-3. Chạy Checklist C (quality-gate Rule 6)
-4. Update `memory/haproxy-series-state.md` (hoặc file SDN tương đương)
-5. Commit incremental
+**Mỗi step Content Phase:**
+1. Viết content chi tiết vào skeleton (expand tóm tắt → full section)
+2. Guided Exercises với step-by-step, code blocks, output thật
+3. Capstone Lab cuối Block (POE framework)
+4. Fact-check: verify mọi technical claim, URL HTTP 200
+5. Chạy Checklist C (quality-gate Rule 6) đầy đủ
+6. Commit incremental: `docs(sdn): S{N}b Block {X} content`
 
 ### S20. Post-foundation audit (1 ngày)
 

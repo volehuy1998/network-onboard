@@ -7,9 +7,37 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-21 (session 7 — S5.1 Part 1.0 content)
-**Branch:** `docs/sdn-foundation-rev2` @ commit `76173cd` (handoff session 6) + working tree modified
-**Plan:** `plans/sdn-foundation-architecture.md` — S5 in progress (Part 1.0 DONE, 1.1+1.2 pending)
+**Ngày:** 2026-04-21 (session 7 — S5.1 Part 1.0 content + doctrine correction)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `9cd8041` (S5.1 pushed) → working tree doctrine update
+**Plan:** `plans/sdn-foundation-architecture.md` — **Phase A (Architecture) in progress; Part 1.0 over-scope**
+
+### ⚠️ Course correction — Architecture-First Doctrine (2026-04-21)
+
+Khoảng giữa session 7, sau khi commit S5.1 Part 1.0 (198 dòng content) và bắt đầu research
+cho Part 1.1 (đã gọi curl verify RFC 7348 §3.3, Hedera NSDI 2010 paper, RFC 7498 SFC), user
+đưa ra correction:
+
+> "Tôi nhắc cho bạn nhớ, chúng ta đang xây dựng chương trình đào tạo, chúng ta đang kiến trúc
+> bài giảng chứ chưa hề đi sâu vào nội dung. Bạn có quyền kiến trúc thư mục, file, ghi trước
+> tựa đề và tóm tắt nội dung của tựa đề đó nhưng đừng sa đà vào nội dung !!! Nếu bạn quên hãy
+> cập nhật vào claude.md và plan."
+
+**Root cause:** Plan rev 2 line 7 đã ghi `Mode: skeleton-only` nhưng §4 S4-S19 table lại ghi
+"Lines est: 600-3500" và "Viết content các file thuộc Block" → mâu thuẫn nội tại khiến Claude
+chọn theo §4 table. Architecture-content boundary không rõ ràng trong plan.
+
+**Correction actions (session 7 second half):**
+1. Thêm **Rule 10 Architecture-First Doctrine** vào `CLAUDE.md` — quy tắc rõ ràng: Phase hiện
+   tại CHỈ được làm skeleton (30-60 dòng/file), không viết content chi tiết, không fact-check
+   từng claim, không viết guided exercise step-by-step.
+2. Restructure plan §4: tách S4-S19 thành **Phase A (Sa)** + **Phase B (Sb)**. Phase A target
+   30-60 dòng/file skeleton; Phase B target 400-1200 dòng/file content. Gate chuyển phase
+   yêu cầu user explicit approval.
+3. Đánh dấu 3 file over-scope (0.0, 0.1, 1.0) = 772 dòng content đã viết → KHÔNG revert,
+   coi như reference implementation cho style/structure khi chạy Phase B sau này.
+4. Update CLAUDE.md Current State: `Current phase = Architecture Phase`.
+
+### Bối cảnh session 7 (trước course correction)
 
 ### Bối cảnh session 7
 
@@ -49,11 +77,13 @@ Phát hiện đầu session: git index stale (HEAD và working tree đều `9537
 
 4. **CLAUDE.md Current State:** S4 status → DONE, S5 status → In progress Block I Part 1.0.
 
-### Pending cho session 8 (S5.2 + S5.3)
+### Pending cho session 8 (Architecture Phase — Rule 10)
 
-- **Part 1.1 — data center pain points (~400 dòng):** scope dự kiến: multi-tenancy pain (VLAN exhaustion thực nghiệm, AWS re:Invent case), MAC table overflow ở DC scale, STP convergence storm, operational overhead từ CLI scaling. Thúc đẩy từ Part 1.0 (3 giới hạn kỹ thuật + 3 giới hạn vận hành).
-- **Part 1.2 — five drivers why SDN (~400 dòng):** scope dự kiến: (1) cloud/virtualization demand, (2) multi-tenant isolation, (3) automation velocity, (4) open programmability, (5) economic (white-box + merchant silicon). Cite Nick McKeown/Martin Casado talks, OCP roadmap.
-- **Commit + push:** tương tự S4, commit S5.1 qua git plumbing path (do sandbox FUSE lock), user chạy `git reset --mixed HEAD` + `git push` trên local.
+- **S5a Part 1.1 skeleton (~30-60 dòng):** audit skeleton hiện tại (49 dòng, có "Sẽ phát triển" mơ hồ), thay mỗi bullet "Sẽ phát triển:..." bằng tóm tắt 1-3 câu cụ thể về nội dung sẽ viết. KHÔNG viết content chi tiết, KHÔNG fact-check curl URLs, KHÔNG code block.
+- **S5a Part 1.2 skeleton (~30-60 dòng):** tương tự — audit + refine skeleton theo Rule 10.
+- **S6a Block II (5 file 2.0-2.4 skeleton):** audit + refine mỗi file về chuẩn 30-60 dòng.
+- **Thứ tự đề xuất:** hoàn thành S5a trước (2 file còn lại Block I), sau đó S6a-S19a tuần tự theo plan §4 Phase A. Tổng Phase A: ~10-14 ngày làm việc thực tế.
+- **Gate Phase B:** sau khi toàn bộ skeleton Block 0-XVI complete, user review end-to-end. Chỉ chuyển sang Phase B khi user explicit approve "chuyển sang content phase". Không tự ý.
 
 ### Lệnh local cần chạy sau session 7
 

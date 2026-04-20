@@ -273,6 +273,65 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 - File size bất thường lớn so với số dòng (ví dụ: 93KB cho 1169 dòng text thuần)
 - GitHub hiển thị file như binary hoặc wall of text không format
 
+### Rule 10: Architecture-First Doctrine (BẮT BUỘC)
+
+> Nguồn gốc: session 2026-04-21 (session 7). Khi bắt đầu S5.1, Claude đã viết full content 198
+> dòng cho Part 1.0 (networking-industry-before-sdn) thay vì chỉ skeleton (title + summary).
+> User correction: "chúng ta đang kiến trúc bài giảng chứ chưa hề đi sâu vào nội dung... bạn có
+> quyền kiến trúc thư mục, file, ghi trước tựa đề và tóm tắt nội dung của tựa đề đó nhưng đừng
+> sa đà vào nội dung". Nguyên nhân gốc: plan `sdn-foundation-architecture.md` ghi "S5 = Block I
+> content (~1200 dòng)" khiến Claude hiểu nhầm đây là content phase. Thực tế project đang ở
+> **architecture phase** — xây khung toàn bộ 17 blocks trước, viết content sau khi khung xong.
+
+**Quy tắc:**
+
+Trong phase hiện tại (**Architecture Phase**), Claude CHỈ được phép:
+
+```
+1. Tạo cấu trúc thư mục (mkdir)
+2. Tạo file skeleton theo naming convention X.Y - <name>.md
+3. Viết trong mỗi skeleton:
+   - Header block (trạng thái, block, part, prerequisites, ebook mapping)
+   - Mục tiêu bài học (3-5 Bloom objectives)
+   - Section headings (## X.Y.Z) với tên đầy đủ
+   - Tóm tắt ngắn dưới mỗi heading (1-3 câu mô tả nội dung SẼ viết — không phải nội dung)
+   - Placeholder cho exercises/labs (tên + mục đích, không chi tiết)
+   - Tài liệu tham khảo placeholder
+```
+
+**Claude KHÔNG được viết trong phase này:**
+
+```
+1. Đoạn văn giải thích khái niệm chi tiết (>3 câu liên tục)
+2. Ví dụ cụ thể (config snippet, CLI output, log lines)
+3. Bảng so sánh đầy đủ dữ liệu
+4. Guided Exercise có nội dung step-by-step
+5. References với URL đầy đủ và annotation
+6. Analysis/reasoning content
+```
+
+**Dấu hiệu cảnh báo over-scope:**
+- File skeleton > 80 dòng (skeleton target: 30-60 dòng)
+- Đang gọi curl/WebFetch để verify technical claims → DỪNG, claim đó là content
+- Đang viết `### ▶ Guided Exercise N: ...` có bullet steps → DỪNG, chỉ ghi title + 1-2 câu mục đích
+- Đang viết code block với output cụ thể → DỪNG, placeholder `*Code example sẽ được thêm khi viết content phase*`
+
+**Khi nào chuyển sang Content Phase:**
+
+Chỉ khi (a) toàn bộ skeleton Block 0-XVI completed (~60 file), (b) user review architecture end-to-end, (c) user explicitly nói "chuyển sang viết content" hoặc "bắt đầu content phase". Không tự ý chuyển.
+
+**Di sản over-scope đã xảy ra:**
+
+```
+sdn-onboard/0.0 - how-to-read-this-series.md     148 dòng content (S4, session 6)
+sdn-onboard/0.1 - lab-environment-setup.md       426 dòng content (S4, session 6)
+sdn-onboard/1.0 - networking-industry-before-sdn.md  198 dòng content (S5.1, session 7)
+```
+
+Các file này KHÔNG revert (commit đã push lên remote). Nhưng từ Part 1.1 trở đi + mọi Block mới
+PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là reference implementation
+(style, cấu trúc heading, reference format) và viết lại các Part còn lại theo cùng chuẩn.
+
 ## Current State
 
 | Key | Value |
@@ -289,7 +348,9 @@ trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ 
 | SDN Block 0 | `sdn-onboard/0.0 - how-to-read-this-series.md` (148 lines) + `0.1 - lab-environment-setup.md` (426 lines) = 574 dòng content. S4 DONE. |
 | S3 status | S3.1-S3.6 completed 2026-04-20. User đã push commit remote ở session 6. Legacy artifacts đã cleanup. |
 | S4 status | **DONE** (2026-04-21). S4.1-S4.3 content Block 0, S4.4 quality gate (null byte 0, URL 6/7 → 7/7 sau fix Vanderbilt, cross-file sync, version annotation). Commit `c38c3c9` + handoff `76173cd` đã push lên remote. Index stale do plumbing path đã được refresh ở session 7. |
-| S5 status | In progress (2026-04-21). Block I (Part 1): scope = ~1200 dòng × 3 file (1.0, 1.1, 1.2). Current focus: **Part 1.0** (networking industry before SDN, ~400 dòng). |
+| Current phase | **Architecture Phase** (Rule 10) — skeleton + title + summary cho toàn bộ 17 blocks. Content Phase chỉ bắt đầu sau khi skeleton complete và user approve. |
+| S5 status | In progress (2026-04-21). Part 1.0 đã viết full content (over-scope, 198 dòng, commit `9cd8041` đã push). Từ Part 1.1 trở đi: chỉ skeleton (~30-60 dòng/file). Scope Block I còn lại: Part 1.1 skeleton + Part 1.2 skeleton (~100-120 dòng tổng). |
+| Architecture backlog | Sau Block I: Block II (5 file), Block III (3 file), ... Block XVI. Tổng ~60 file skeleton cần đạt chuẩn Rule 10. Phần lớn đã có skeleton từ S2 — cần audit và nâng chuẩn (title + summary đầy đủ, không để *Sẽ phát triển* mơ hồ). |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
 
 ## Skill Quick Reference
