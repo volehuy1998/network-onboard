@@ -7,6 +7,38 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-20 (session 6 — S4 Block 0 content)
+**Branch:** `docs/sdn-foundation-rev2` (tiếp nối từ session 5; S4 pending commit sau quality gate)
+**Plan:** `plans/sdn-foundation-architecture.md` — S4 in progress (0.0 + 0.1 đã viết content)
+
+### Bối cảnh session 6
+
+Session 5 đã đóng S3 (rename + renumber 3 file OVN advanced). User đã push `docs/sdn-foundation-rev2` lên remote, xóa FUSE phantom, và `git rm` legacy artifact `1.0 - sdn-history-and-openflow-protocol.md` trên local. Session 6 thực thi S4 theo plan: viết content cho 2 file Block 0.
+
+### Đã hoàn thành session 6
+
+1. **S4.1 — Fact-check:** Verified Ubuntu 22.04 package versions qua Launchpad (`openvswitch-switch 2.17.9-0ubuntu0.22.04.1`, `ovn 22.03.8-0ubuntu0.22.04.1` trong jammy-updates 2025-08-12). Verified kolla-ansible → OpenStack mapping qua `releases.openstack.org/teams/kolla.html` (16.x=Antelope, 17.x=Bobcat, 18.x=Caracal, 19.x=Dalmatian, 20.x=Epoxy). Phát hiện lỗi skeleton 0.1 ghi "17.x = Antelope/Bobcat" — sửa lại trong content.
+
+2. **S4.2 — Content 0.0 how-to-read-this-series (148 dòng):** Meta orientation. Sections: định vị series trong bộ onboard, 4 reading paths (linear/OVS-only/OVN-focused/incident-responder), convention markers (Key Topic/Guided Exercise/Lab/Trouble Ticket/version annotation), CCNA+RHCSA+CKA mapping table, self-check guidelines.
+
+3. **S4.3 — Content 0.1 lab-environment-setup (426 dòng):** Lab procedures. Sections: 3 lab modes (A/B/C), Ubuntu 22.04 + kernel 5.15 baseline, OVS+OVN apt install với version annotation Ubuntu 20.04/22.04/24.04, Mininet 2.3.0 từ source, kolla-ansible version matrix đầy đủ, health check playbook (OVS/OVN/Geneve/kolla), teardown procedure, Guided Exercise 1 (4-check verify baseline).
+
+4. **S4.4 — Quality gate Checklist C:**
+   - Null byte check (Rule 9): 0 bytes trong cả 2 file
+   - URL check: 6/7 URLs return HTTP 200; `bloomstaxonomy.net` fail → thay bằng Vanderbilt CFT Bloom's Taxonomy (verified 200)
+   - Cross-file sync: dependency map Tầng 2d rewritten (Block 0 content), Tầng 2e (placeholder cho các Block khác)
+   - Version annotation: `> **Lưu ý phiên bản:**` block cho Ubuntu 20.04/22.04/24.04 trong 0.1.3
+
+### Status cuối session 6
+
+- Working tree: 3 file modified (`0.0`, `0.1`, `memory/file-dependency-map.md`, `memory/session-log.md`), pending commit
+- S4 done theo plan (Block 0 content = 2 file × ~300 dòng = 574 dòng tổng, gần với estimate 600)
+- Next: S5 — Block I (Part 1: `1.0 - networking-industry-before-sdn.md`, `1.1 - data-center-pain-points.md`, `1.2 - five-drivers-why-sdn.md`), ~1200 dòng, 1 ngày theo plan
+
+---
+
+## Session 5 (archived)
+
 **Ngày:** 2026-04-20 (session 5 — S3 rename + renumber + metadata sync)
 **Branch:** `docs/sdn-foundation-rev2` (S3 work-in-progress; pending commit + push to remote)
 **Plan:** `plans/sdn-foundation-architecture.md` — S3 marked complete, S4+ ready

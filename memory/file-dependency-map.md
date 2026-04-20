@@ -76,11 +76,22 @@
 > xuất phát từ nguyên tắc accessibility: Block capstone không được đòi hỏi hardware mà
 > phần lớn học viên không có.
 
-### Tầng 2d: SDN foundation skeletons rev 2 (các Block khác — placeholder)
+### Tầng 2d: SDN foundation Block 0 (content written — S4 hoàn tất 2026-04-20)
 
-> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c-tương đương
-> và liệt kê cross-ref. Hiện tại chỉ track Block IX vì đó là Block duy nhất vừa thay đổi
-> cấu trúc (5→6 file).
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `sdn-onboard/0.0 - how-to-read-this-series.md` | Meta orientation: định vị series trong bộ onboard, 4 reading paths (linear/OVS-only/OVN-focused/incident-responder), convention markers (Key Topic, Guided Exercise, Lab, Trouble Ticket, version annotation), mapping CCNA/RHCSA/CKA (148 dòng) | `sdn-onboard/README.md` (TOC), `sdn-onboard/0.1` (tham chiếu lab mode A/B/C) |
+| `sdn-onboard/0.1 - lab-environment-setup.md` | Lab setup: 3 mode (single-node / two-node chassis pair / multi-node kolla), Ubuntu 22.04 baseline (kernel 5.15, OVS 2.17.9, OVN 22.03.8 jammy-updates), Mininet 2.3.0 từ source, kolla-ansible version matrix (16.x=Antelope → 20.x=Epoxy verified từ releases.openstack.org), health check playbook, teardown/reset, Guided Exercise 1 (426 dòng) | `sdn-onboard/README.md` (baseline OVS/OVN/Ubuntu phải khớp), `plans/sdn-foundation-architecture.md` §3.3 Block 0 |
+
+> **Quy tắc version sync:** Khi sửa baseline OVS/OVN/Ubuntu version trong `sdn-onboard/README.md`,
+> PHẢI cập nhật song song `0.1` mục 0.1.2 và 0.1.3 (package version block + version annotation).
+> Ngược lại khi phát hiện version mismatch ở `0.1`, kiểm tra `README.md` Phụ lục A Version
+> Evolution Tracker có khớp không.
+
+### Tầng 2e: SDN foundation skeletons rev 2 (các Block khác — placeholder)
+
+> Khi bắt đầu S5-S19 cho một Block mới, di chuyển skeleton entries sang Tầng 2c/2d-tương đương
+> và liệt kê cross-ref. Hiện tại track Block IX (đã thay đổi 5→6 file) và Block 0 (S4 đã viết content).
 
 **Conflict numbering — đã giải quyết (S3 hoàn tất 2026-04-20):**
 

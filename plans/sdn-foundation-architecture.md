@@ -1762,8 +1762,8 @@ Mỗi S từ S4 đến S19 tương ứng với một Block (I-XVII minus XVII tr
 |------|-----------|----------|---------|--------|
 | S1 | Done (implicit) | Plan rev 2 được chấp thuận qua user directive "làm theo plan nhé" | Session 2 (2026-04-20 sáng) | Không có reply explicit "approved rev 2" nhưng user đã cho phép tiến hành |
 | S2 | **DONE** | `sdn-onboard/README.md` rev 2 (33937 bytes, 60 internal links verified) | Session 4 (2026-04-20 chiều) | Header + baseline OVS 2.17.9/OVN 22.03.8 + Mermaid graph P0-P19 + 7 reading paths + TOC 20 Parts + Phụ lục A/B/C |
-| S3 | Pending | Chưa rename 3 file OVN advanced → 17.0/18.0/19.0 | — | Blocked: chờ user approve để chạy `git mv` + sed cross-refs. Legacy filename vẫn được reference trong README với ghi chú "chờ rename" |
-| S4 | Pending | Skeleton Block 0 đã có (`0.0`, `0.1`), chưa viết content | — | 2 file skeleton × ~300 lines content = 600 dòng ước lượng |
+| S3 | **DONE** | 3 file OVN renamed 17.0/18.0/19.0 + §17-19 renumbering + cross-refs + metadata sync | Session 5-6 (2026-04-20) | S3.1-S3.5 completed. User đã push commit remote ở local. Legacy `1.0 - sdn-history-and-openflow-protocol.md` đã untrack + rm local |
+| S4 | **DONE** | `0.0 - how-to-read-this-series.md` (148 dòng) + `0.1 - lab-environment-setup.md` (426 dòng) = 574 dòng content | Session 6 (2026-04-20) | Cả 2 file đã viết đầy đủ: learning objectives, reading paths, convention markers, CCNA/RHCSA mapping table, 3 lab modes, Ubuntu 22.04 baseline, OVS+OVN apt install, Mininet 2.3.0 from source, kolla-ansible version matrix (16.x-20.x), health check playbook, teardown, Guided Exercise 1 |
 | S5 | Pending | Skeleton Block I (1.0, 1.1, 1.2) đã có | — | Chưa viết content |
 | S6 | Pending | Skeleton Block II (2.0-2.4) đã có | — | Chưa viết content |
 | S7 | Pending | Skeleton Block III (3.0-3.2) đã có | — | Collision với advanced 3.0 — đợi S3 |
@@ -1783,18 +1783,18 @@ Mỗi S từ S4 đến S19 tương ứng với một Block (I-XVII minus XVII tr
 | S21 | Pending | Legacy cleanup | — | Xóa `plans/sdn-restructure-multichassis-pmtud.md` khi series hoàn tất |
 | S22 | Pending | PR + merge `docs/sdn-foundation-rev2` → master | — | |
 
-**Progress summary (cuối session 4 — 2026-04-20):**
+**Progress summary (cuối session 6 — 2026-04-20):**
 
-- Skeleton toàn bộ 59 foundation file + 3 file advanced đã rename sang 17/18/19 = 62 file đã tồn tại vật lý trên disk (artifact `1.0 - sdn-history-and-openflow-protocol.md` chờ `git rm` local)
-- S1-S3 completed (2026-04-20): phê duyệt, README rev 2, rename + renumber + cross-refs + metadata sync. S3.6 (commit) pending.
-- Tổng content đã viết (không tính skeleton placeholders): 4 file — `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (1178 dòng), `18.0 - ovn-arp-responder-and-bum-suppression.md` (496 dòng), `19.0 - ovn-multichassis-binding-and-pmtud.md` (1379 dòng), `README.md` rev 2 (~450 dòng metadata/TOC)
-- Branch active: `docs/sdn-foundation-rev2` (branched từ `master` sau merge PR #49)
-- Commit chờ: S3 changes ở working tree (3 file OVN renamed + 3 metadata file synced), pending null byte check + commit
+- Skeleton toàn bộ 59 foundation file + 3 file advanced đã rename sang 17/18/19 = 62 file đã tồn tại vật lý trên disk
+- S1-S4 completed (2026-04-20 sessions 2-6): phê duyệt plan, README rev 2, rename + renumber + cross-refs + metadata sync, Block 0 content
+- Tổng content đã viết (không tính skeleton placeholders): 6 file — `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` (1178 dòng), `18.0 - ovn-arp-responder-and-bum-suppression.md` (496 dòng), `19.0 - ovn-multichassis-binding-and-pmtud.md` (1379 dòng), `README.md` rev 2 (~450 dòng metadata/TOC), `0.0 - how-to-read-this-series.md` (148 dòng), `0.1 - lab-environment-setup.md` (426 dòng). Tổng ~4077 dòng content.
+- Branch active: `docs/sdn-foundation-rev2` (branched từ `master` sau merge PR #49), đã push remote ở session 6
+- Commit chờ: S4 changes ở working tree (2 file Block 0 content + 2 metadata file synced), pending null byte check + commit
 
 **Khuyến nghị cho session kế tiếp:**
 
-1. S3.6 — commit S3 rename+renumber+metadata sync (pending user push to remote)
-2. Start S4 (Block 0 content — 2 file ngắn) hoặc S13 (Block IX — DOCA mới viết để "nóng" kiến thức vừa nghiên cứu)
+1. S5 — Block I content (3 file: 1.0, 1.1, 1.2 — ~1200 dòng) — giải thích "tại sao SDN ra đời"
+2. Hoặc S13 — Block IX (DOCA mới viết để "nóng" kiến thức vừa nghiên cứu) nếu muốn ưu tiên chủ đề nóng
 3. Mỗi Block đóng lại bằng Capstone Lab trước khi chuyển Block sau
 
 ---
