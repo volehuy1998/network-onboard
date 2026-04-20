@@ -7,9 +7,68 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-20
-**Branch:** `docs/sdn-onboard-rewrite` (reset to master `65ca274`, Part 3 re-applied)
-**Plan:** `plans/sdn-restructure-multichassis-pmtud.md` — 8 steps hoàn thành
+**Ngày:** 2026-04-20 (session 2 — kiến trúc lại sdn-onboard foundation)
+**Branch:** `master` (clean, sau khi PR #47/#48/#49 merged)
+**Plan:** `plans/sdn-foundation-architecture.md` — rev 1 draft, CHỜ user phê duyệt
+
+### Bối cảnh session này
+
+User nêu vấn đề: `sdn-onboard/` chỉ có 3 Part advanced (1.0 L2+FDB, 2.0 ARP, 3.0 Multichassis)
+nhưng lịch sử OpenFlow/OVS/OVN không có chương nền tảng riêng — chúng rải rác trong case study
+FDP-620. Kiến trúc sai: người đọc phải tự biết prerequisites mà series không dạy.
+
+### Đã hoàn thành session này
+
+1. **Khảo sát cấu trúc hiện tại** 3 series onboard (linux, network, haproxy) để học pattern.
+   HAProxy có 6 Block / 29 Part + dependency graph; SDN chưa có gì tương đương.
+
+2. **Lấy quyết định user qua AskUserQuestion** 4 câu:
+   - Coverage: tất cả OVS + OVN
+   - Numbering: renumber hoàn toàn, foundation 1-7, advanced 8/9/10
+   - Volume: comprehensive 18-24 Parts mô hình haproxy
+   - Labs: Lab sau mỗi Part + Capstone cuối mỗi Block
+
+3. **Fact-check 6 mốc lịch sử** cho plan (web-fetcher + web-search):
+   - OpenFlow 1.0 spec: 31/12/2009 (Stanford, McKeown/Casado/Shenker)
+   - Nicira founded: 2007, Palo Alto
+   - VMware acquisition Nicira: 23/07/2012, $1.26 tỷ USD
+   - OVN announcement: 13/01/2015 trên blog Network Heresy, bởi Justin Pettit + Ben Pfaff +
+     Chris Wright + Madhu Venugopal
+   - RFC 7047 OVSDB: tháng 12/2013
+   - RFC 8926 Geneve: tháng 11/2020
+
+4. **Viết `plans/sdn-foundation-architecture.md`** (380 dòng, 27223 bytes, 0 null bytes):
+   - Kiến trúc 10 Part / 8 Block / 19 file (+1 README) / ~17500 dòng viết mới
+   - Foundation: Part 1-7 (SDN history → Linux primer → OVS datapath → CLI+OF programming →
+     OVSDB → Overlay → OVN+OpenStack)
+   - Advanced: Part 8-10 = rename từ 1.0/2.0/3.0 hiện tại, nội dung giữ nguyên
+   - Dependency graph Mermaid + 4 reading paths
+   - S1-S10 execution steps với thời gian ước lượng 6-10 tuần
+   - Cross-reference migration matrix cho rename 1.0→8.0, 2.0→9.0, 3.0→10.0
+   - Phụ lục A: Standards map (ISO/IEC/IEEE/WCAG/ANSI/DITA + Merrill/Bloom)
+   - Phụ lục B: RFC references verify table
+
+### Pending (user chạy trên máy local)
+
+1. **Xoá plan cũ đã done** (sandbox chặn file delete — phải chạy local):
+   ```
+   cd ~/path/to/network-onboard
+   git rm "plans/sdn-restructure-multichassis-pmtud.md"
+   git add "plans/sdn-foundation-architecture.md" "memory/session-log.md"
+   git commit -m "chore(plans): remove completed Part 3 plan, add foundation architecture plan"
+   ```
+
+2. **Review `plans/sdn-foundation-architecture.md`** → reply approve hoặc điều chỉnh scope
+   trước khi execute S2 (tạo branch `docs/sdn-foundation-architecture`).
+
+3. **Sau khi duyệt**: execute S2-S10 trong các session tiếp theo theo tuần tự.
+
+### Sandbox limitations session này
+
+- `git rm` và `rm` đều fail với "Operation not permitted" trên mount
+- `mcp__cowork__allow_cowork_file_delete` cần user interaction, không available trong
+  unsupervised mode
+- Workaround: cleanup commands đã ghi vào section "Pending"; user chạy trên máy local
 
 ### Đã hoàn thành
 
