@@ -7,9 +7,9 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-20 (session 6 — S4 Block 0 content)
-**Branch:** `docs/sdn-foundation-rev2` (tiếp nối từ session 5; S4 pending commit sau quality gate)
-**Plan:** `plans/sdn-foundation-architecture.md` — S4 in progress (0.0 + 0.1 đã viết content)
+**Ngày:** 2026-04-20 → 2026-04-21 (session 6 — S4 Block 0 content DONE + pushed)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `c38c3c9` (đã push lên remote)
+**Plan:** `plans/sdn-foundation-architecture.md` — S4 **DONE**, next target S5 Block I
 
 ### Bối cảnh session 6
 
@@ -31,9 +31,22 @@ Session 5 đã đóng S3 (rename + renumber 3 file OVN advanced). User đã push
 
 ### Status cuối session 6
 
-- Working tree: 3 file modified (`0.0`, `0.1`, `memory/file-dependency-map.md`, `memory/session-log.md`), pending commit
-- S4 done theo plan (Block 0 content = 2 file × ~300 dòng = 574 dòng tổng, gần với estimate 600)
+- Commit S4: `c38c3c9` — `docs(sdn): S4 Block 0 content - how to read series + lab environment setup`
+  - 6 file modified: 2 content (0.0, 0.1) + 4 metadata (CLAUDE.md, file-dependency-map.md, session-log.md, plan)
+  - +565 / −66 dòng
+  - Author: VO LE (volehuy1998@gmail.com); Co-Authored-By Claude
+- Commit được tạo qua git plumbing path (`write-tree` + `commit-tree` + direct ref write) do FUSE giữ `.git/index.lock` trong sandbox. User đã chạy `git reset --mixed HEAD` + `git push` trên Windows local → commit đã lên remote `origin/docs/sdn-foundation-rev2`
+- S4 done theo plan (Block 0 content = 2 file, 574 dòng tổng, gần với estimate 600)
+- Plan §4 S4 status đã update Pending → DONE; progress summary đã cập nhật (tổng content 4077 dòng)
 - Next: S5 — Block I (Part 1: `1.0 - networking-industry-before-sdn.md`, `1.1 - data-center-pain-points.md`, `1.2 - five-drivers-why-sdn.md`), ~1200 dòng, 1 ngày theo plan
+
+### Quick-start cho session 7 (S5)
+
+1. Đọc CLAUDE.md → skills (professor-style, document-design, fact-checker, web-fetcher)
+2. Đọc `memory/file-dependency-map.md` → biết related files khi viết Block I
+3. Đọc skeleton 3 file Block I đã có (tại `sdn-onboard/1.0 - ...`, `1.1 - ...`, `1.2 - ...`) — skeleton chứa Learning Objectives placeholder
+4. Kiểm tra `git status` + `git log --oneline -3` để xác nhận remote state
+5. Bắt đầu S5.1 — nghiên cứu nguồn: SDN ebook Chapter 1-2 (origins, pre-SDN era), blog posts từ Nick McKeown/Martin Casado, Cisco IOS configuration pain points pre-2007
 
 ---
 
