@@ -47,10 +47,12 @@
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
-| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim, FDP-620 (1234 lines, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0 |
-| `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
+| `sdn-onboard/README.md` | TOC SDN series, dependency graph, log file metadata | `README.md` (root — SDN section), `sdn-onboard/1.0`, `sdn-onboard/2.0`, `sdn-onboard/3.0` (section titles phải khớp TOC) |
+| `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | OVN L2 Forwarding, FDB Poisoning case study VLAN 3808, multichassis/claim, FDP-620 (1234 lines, production log forensics) | `README.md` (root — SDN section), `sdn-onboard/README.md` (TOC), `sdn-onboard/2.0` nếu 2.0 cross-reference 1.0, `sdn-onboard/3.0` (multichassis/PMTUD cross-refs) |
+| `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` | OVN ARP Responder, BUM suppression (496 lines, rewritten 2026-04-10) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (cross-references đến tunnel key, localnet port, MC_FLOOD từ Part 1) |
+| `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` | OVN multichassis binding lifecycle + Geneve PMTUD bug FDP-620 root cause + RARP activation-strategy + 3 Labs (1379 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/1.0` (live migration trigger, localnet, Chassis/Claim baseline), `README.md` (root — SDN section) |
 
-> **Quy tắc:** Khi sửa SDN 1.0, kiểm tra SDN 2.0 có references đến localnet/MC_UNKNOWN không. Khi sửa SDN 2.0, kiểm tra SDN 1.0 có concepts nào được tái sử dụng không.
+> **Quy tắc:** Khi sửa SDN 1.0, kiểm tra SDN 2.0 có references đến localnet/MC_UNKNOWN không, và SDN 3.0 có cross-ref đến live migration/multichassis của Part 1 không. Khi sửa SDN 2.0, kiểm tra SDN 1.0 có concepts nào được tái sử dụng không. Khi sửa SDN 3.0, kiểm tra consistency với Part 1 section 1.2 (Chassis/Claim) và section 1.6 (live migration trigger).
 
 ### Tầng 5: Image files (SVG → Markdown captions)
 
