@@ -332,6 +332,58 @@ Các file này KHÔNG revert (commit đã push lên remote). Nhưng từ Part 1.
 PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là reference implementation
 (style, cấu trúc heading, reference format) và viết lại các Part còn lại theo cùng chuẩn.
 
+### Rule 11: Vietnamese Prose Discipline (BẮT BUỘC)
+
+> Nguồn gốc: session 13, 2026-04-21. User chỉ ra 9 ví dụ điển hình về English abuse
+> trong Phase B content Block I-VI (~890 English hit trên 24 file, mật độ 5-26%).
+> Ví dụ: "hypervisor overlay paradigm" thay vì "mô hình hypervisor overlay",
+> "VMware announce acquisition Nicira" thay vì "VMware thông báo mua lại Nicira",
+> "troubleshoot tunnel issue cần inspect 2 layer" thay vì "khắc phục sự cố tunnel
+> cần kiểm tra 2 lớp". Root cause: mental model khái niệm trừu tượng hình thành
+> trong tiếng Anh, không translate khi viết Việt → câu lai bad.
+
+**Khi viết content tiếng Việt cho onboard series, tuân thủ:**
+
+1. **Giữ tiếng Anh chỉ cho**:
+   - Tên sản phẩm/dự án (OpenFlow, NETCONF, OVS, OVN, NSX, Nicira, VMware, Linux, Kubernetes, Docker).
+   - Protocol/acronym (TCP, UDP, VLAN, VXLAN, Geneve, BGP, OSPF, MPLS, TLS).
+   - CLI verbatim (`ovs-ofctl`, `ovs-vsctl`, `ovn-nbctl`).
+   - Spec field name (match fields, flow entry, OXM, NXM).
+   - Acronym ngành (SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC).
+
+2. **Dịch sang tiếng Việt cho vocabulary tư duy**:
+   - paradigm → mô hình
+   - architecture → kiến trúc
+   - approach → cách tiếp cận
+   - deployment → triển khai
+   - support → hỗ trợ
+   - adoption → sự chấp nhận / việc áp dụng
+   - trade-off → sự đánh đổi
+   - backward compat → tương thích ngược
+   - lock-in → bị phụ thuộc vào
+   - production (IT context) → **môi trường production** (GIỮ "production", KHÔNG dịch "sản xuất")
+   - production (manufacturing) → sản xuất (ODM sản xuất hardware)
+   - rebrand → đổi tên thương hiệu
+   - announce → thông báo / công bố
+   - troubleshoot → khắc phục sự cố
+   - inspect → kiểm tra
+   - integration → tích hợp
+   - exclusive → độc quyền
+   - steep learning curve → quá trình học hỏi rất khó khăn
+
+3. **Test đọc đơn lập**: sau khi viết xong một câu, đọc tách biệt khỏi context.
+   Nếu câu có > 3 từ tiếng Anh không phải technical term chuẩn → rewrite bằng
+   từ nối tiếng Việt.
+
+4. **Hybrid acceptable**: "tích hợp với vSphere" (không phải "integrate với
+   vSphere"). Technical term tiếng Anh + từ nối thuần Việt.
+
+5. **Misconception callout**: câu quote trong "Hiểu sai:" phải đầy đủ tiếng
+   Việt, không phải shortform tiếng Anh.
+
+Từ điển dịch đầy đủ tham khảo: `.claude/plans/tender-scribbling-comet.md`
+Phần 1 (plan session 13).
+
 ## Current State
 
 | Key | Value |

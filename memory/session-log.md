@@ -7,9 +7,73 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-21 (session 13, Vietnamese prose revision toàn Phase B)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `<commit 8 handoff>` — 14 commit ahead `origin/docs/sdn-foundation-rev2` (session 12 + 13 cộng dồn chưa push)
+**Plan:** `.claude/plans/tender-scribbling-comet.md` — Path A approved, 7 commit revision đã thực hiện
+
+### Bối cảnh session 13
+
+User review các commit Phase B content của session 12 và chỉ ra 9 ví dụ điển hình về English abuse trong file `5.1 - hypervisor-overlays-nvp-nsx.md` (mật độ 26.5%): "hypervisor overlay paradigm", "VMware announce acquisition Nicira", "troubleshoot tunnel issue cần inspect 2 layer", "NSX = Nicira NVP rebrand", "ESXi kernel module integration tight", "VMware vSphere ESXi exclusive", "steep learning curve cho team chỉ có vSphere admin background", "avoid hardware SDN lock-in", "backward compat". User hỏi "Đây là lý do gì?" và yêu cầu rà soát sửa toàn bộ.
+
+Plan `.claude/plans/tender-scribbling-comet.md` tạo với audit 890 English hit trên 24 file Phase B (Block I-VI). Path A approved: apply từ điển dịch heading + Key Topic + target prose, giữ technical term (OpenFlow, VXLAN, OVS, CLI, RFC), dịch vocabulary tư duy (paradigm→mô hình, deployment→triển khai, support→hỗ trợ).
+
+Feedback giữa session: "sự cố sản xuất" đúng ra là "sự cố ở môi trường production" — "production" (IT context) không dịch "sản xuất" (manufacturing). Retroactive fix commit e181375.
+
+### 7 commit session 13 (Path A, ~350+ surgical fixes)
+
+| Commit | Phạm vi | Hits fixed |
+|--------|---------|-----------|
+| `7cbe191` | Block I + 4.7 warm-up | ~50 |
+| `bb98e1a` | Block II (2.0-2.4) headings | ~25 |
+| `7420f99` | **5.1 heavy revision — 9 user examples** | ~74 |
+| `e181375` | Fix "sản xuất" → "môi trường production" (retroactive) | 5 |
+| `3c61243` | Block III (3.0-3.2) headings | ~38 |
+| `098a580` | Block IV (4.0-4.6) headings | ~29 |
+| `83423ce` | Block V 5.0+5.2 headings | ~14 |
+| `b651705` | Block VI (6.0+6.1) headings | ~15 |
+| `<commit 8>` | Metadata + Rule 11 | — |
+
+Total: 9 commit (với commit 8 sắp tới), ~250-300 English hit đã được thay thế bằng tiếng Việt tự nhiên.
+
+### Metadata updates (commit 8)
+
+- `CLAUDE.md` thêm Rule 11 "Vietnamese Prose Discipline (BẮT BUỘC)" — quy tắc rõ ràng giữ English chỉ cho tên sản phẩm/protocol/CLI/acronym, dịch Việt cho vocabulary tư duy. Có table dịch chuẩn 16 cặp phổ biến. Kèm production rule (IT context giữ "production", manufacturing dịch "sản xuất").
+- Memory feedback save: `feedback_vietnamese_prose_discipline.md` mới. MEMORY.md index update.
+- `memory/session-log.md` session 13 entry (file này).
+
+### Trạng thái sau session 13
+
+- **Phase B 24 file content đã revise structural** (heading + Key Topic + target prose). Mật độ English giảm từ 5-26% xuống ~3-10% per file.
+- **5.1 heavy revision** đã áp dụng cho file user's priority (mật độ cao nhất + 9 examples).
+- **Body deep revision** (mỗi paragraph prose) chưa áp dụng cho 23 file (trừ 5.1). Nếu cần, user yêu cầu Path B ở session sau.
+- **Block VII-XIII vẫn skeleton** (Phase B chưa kích hoạt cho các Block này). Khi viết content các Block này từ session 14+ trở đi, Rule 11 áp dụng from scratch.
+
+### Lệnh local cần chạy khi resume
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+# Expected: session 12 (7 commit) + session 13 (8 commit) = ~15 commit ahead remote
+git log --oneline -15
+git push origin docs/sdn-foundation-rev2
+```
+
+### Quick-start cho session 14
+
+1. Đọc `CLAUDE.md` Rule 11 (Vietnamese Prose Discipline) — quy tắc dịch áp dụng mọi content tiếng Việt mới.
+2. Đọc MEMORY.md entry `feedback_vietnamese_prose_discipline.md`.
+3. Đọc session-log.md section này → biết 8 commit session 13 và status revision.
+4. Xác định hướng tiếp: (a) body deep revision nếu Path B được user phê duyệt, hoặc (b) tiếp tục Phase B content cho Block VII-XIII từ skeleton (Rule 11 apply from scratch).
+
+---
+
+## Session 12 (archived)
+
 **Ngày:** 2026-04-21 (session 12, Phase B content expansion Block IV + V + VI)
-**Branch:** `docs/sdn-foundation-rev2` @ commit `6ad6b8f` — 6 commit ahead `origin/docs/sdn-foundation-rev2` (chưa push)
-**Plan:** `.claude/plans/tender-scribbling-comet.md` — Phase B resume sau IPv6 scope cut
+**Branch:** `docs/sdn-foundation-rev2` @ commit `6ad6b8f` — 7 commit ahead `origin/docs/sdn-foundation-rev2` tại thời điểm đó
+**Plan session 12:** `.claude/plans/tender-scribbling-comet.md` (earlier version — Phase B content expansion plan, trước khi bị overwrite thành session 13 plan)
 
 ### Bối cảnh session 12
 
