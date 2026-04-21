@@ -86,7 +86,7 @@ sdn-onboard/
 │
 ├── 4.0 - openflow-1.1-multi-table-groups.md                    [new, from Ch5.3.1]
 ├── 4.1 - openflow-1.2-oxm-tlv-match.md                         [new, from Ch5.3.2]
-├── 4.2 - openflow-1.3-meters-pbb-ipv6.md                       [new, from Ch5.3.3]
+├── 4.2 - openflow-1.3-meters-pbb-lts.md                        [new, from Ch5.3.3, IPv6 removed scope rev 3]
 ├── 4.3 - openflow-1.4-bundles-eviction.md                      [new, from Ch5.3.4]
 ├── 4.4 - openflow-1.5-egress-l4l7.md                           [new, from Ch5.3.5]
 ├── 4.5 - ttp-table-type-patterns.md                            [new, from Ch5.4 + ONF TS-017]
@@ -512,17 +512,17 @@ Mục đích: Từng phiên bản OF 1.1 → 1.5 có problem/solution riêng, c�
 
 1. Phân biệt (Analyze) 12-tuple fixed (OF 1.0) vs OXM TLV extensible (OF 1.2)
 2. Giải thích (Understand) OXM (OpenFlow Extensible Match) structure: class + field + length + value
-3. Liệt kê (Remember) IPv6 match fields added in 1.2
+3. Liệt kê (Remember) match field extensions mới (ARP, ICMP, TCP flags) added in 1.2 beyond 12-tuple của 1.0
 
 **Section sketch:**
 
 - `## 4.1.1 OF 1.2 release: 05/12/2011`
 - `## 4.1.2 OXM TLV format`
-- `## 4.1.3 IPv6 match: src/dst, flow label, ND target`
+- `## 4.1.3 Match field extensions: ARP, ICMP, TCP flags`
 - `## 4.1.4 Controller roles: EQUAL, MASTER, SLAVE`
 - `## 4.1.5 Migration OF 1.0 → 1.2: backward compat?`
 
-##### `4.2 - openflow-1.3-meters-pbb-ipv6.md`
+##### `4.2 - openflow-1.3-meters-pbb-lts.md`
 
 - **Status:** new
 - **Ebook mapping:** `ebook-coverage-map.md` row Ch5.3.3 (KEEP — 1.3 là long-term LTS của OF world)
@@ -540,7 +540,7 @@ Mục đích: Từng phiên bản OF 1.1 → 1.5 có problem/solution riêng, c�
 - `## 4.2.2 Meter table: per-flow QoS`
 - `## 4.2.3 Per-connection auxiliary channels (multi-socket)`
 - `## 4.2.4 PBB (802.1ah) match + set`
-- `## 4.2.5 Extended IPv6 support (extension headers)`
+- `## 4.2.5 Tại sao 1.3 là LTS: vendor alignment, OVS support, Ryu/ODL baseline (IPv6 content removed rev 3)`
 - `## 4.2.6 Tại sao 1.3 là LTS: vendor alignment, OVS support, Ryu/ODL support`
 
 ##### `4.3 - openflow-1.4-bundles-eviction.md`
@@ -1505,7 +1505,7 @@ bài học + section headings đầy đủ + tóm tắt 1-3 câu dưới mỗi h
 | S5a | I | 1 | 3 | 90-180 | **DONE** | Part 1.0 OVER-SCOPE (198 dòng content, session 7, commit `9cd8041`). Part 1.1 + 1.2 refined Rule 10 (~70 dòng/file) ở session 8, commit `10ab5cb`. |
 | S6a | II | 2 | 5 | 150-300 | **DONE** | Session 8 (2026-04-21). 5 file skeleton refined — Part 2.0 DCAN/Open Signaling/GSMP RFC 3292, 2.1 Ipsilon RFC 1953 + Active Networking DARPA, 2.2 NAC/orchestration/VMware ESX pressure, 2.3 ForCES RFC 3654/3746 + 4D SIGCOMM 2005, 2.4 Ethane SIGCOMM 2007 direct OpenFlow predecessor. Tầng 2g thêm vào dependency map. Commit `dc1b0b9`. |
 | S7a | III | 3 | 3 | 90-180 | **DONE** | Session 8 (2026-04-21). 3 file skeleton refined — Part 3.0 Stanford Clean Slate 2006-2012 + Nicira 08/2007 + VMware $1.26B 07/2012, 3.1 OpenFlow 1.0 spec 31/12/2009 + 12-tuple + 8 actions + TCP 6633/6653, 3.2 ONF 21/03/2011 + 6 operators + 2018 ON.Lab merger + Capstone Block III. Tầng 2h thêm. Commit `ff0dd14`. |
-| S8a | IV | 4 | 7 | 210-420 | **DONE** | Session 8 (2026-04-21). 7 file skeleton refined — 4.0 OF 1.1 multi-table + 4 group types, 4.1 OF 1.2 OXM TLV + controller roles, 4.2 OF 1.3 LTS + meters + PBB + IPv6, 4.3 OF 1.4 bundles + eviction + optical, 4.4 OF 1.5 egress + TCP flags + packet type, 4.5 TTP ONF TS-017 + Flow Objectives, 4.6 5 limitations + Google B4 SIGCOMM 2013 + Capstone POE. Tầng 2i thêm. Commit `908279d`. |
+| S8a | IV | 4 | 7 | 210-420 | **DONE** | Session 8 (2026-04-21). 7 file skeleton refined, 4.0 OF 1.1 multi-table + 4 group types, 4.1 OF 1.2 OXM TLV + controller roles, 4.2 OF 1.3 LTS + meters + PBB + auxiliary channels (IPv6 removed rev 3), 4.3 OF 1.4 bundles + eviction + optical, 4.4 OF 1.5 egress + TCP flags + packet type, 4.5 TTP ONF TS-017 + Flow Objectives, 4.6 5 limitations + Google B4 SIGCOMM 2013 + Capstone POE. Tầng 2i thêm. Commit `908279d`. |
 | S9a | V | 5 | 3 | 90-180 | pending | Alt SDN models (SDN via APIs NETCONF/YANG, Hypervisor Overlays NVP/NSX/Contrail, Whitebox SAI/SONiC). **Next up trên máy mới.** |
 | S10a | VI | 6 | 3 | 90-180 | pending | Emerging models — P4, intent-based, etc. |
 | S11a | VII | 7 | 4 | 120-240 | pending | SDN in data center. |

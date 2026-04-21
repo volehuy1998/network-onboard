@@ -116,8 +116,8 @@ Khối này là câu chuyện cụ thể của Stanford Clean Slate Program 2006
 Khối dài nhất của phần lịch sử, đi qua từng phiên bản OpenFlow từ 1.1 đến 1.5, Table Type Patterns (TTP), và lý do OpenFlow dần nhường chỗ cho OVSDB-centric control.
 
 - Part 4.0, [OpenFlow 1.1 multi-table và groups](4.0%20-%20openflow-1.1-multi-table-groups.md) *(skeleton)*, pipeline multi-table, Group table (all/select/indirect/ff).
-- Part 4.1, [OpenFlow 1.2, OXM TLV match](4.1%20-%20openflow-1.2-oxm-tlv-match.md) *(skeleton)*, OXM TLV extensible match, IPv6 extension headers.
-- Part 4.2, [OpenFlow 1.3, meters, PBB, IPv6](4.2%20-%20openflow-1.3-meters-pbb-ipv6.md) *(skeleton)*, meters per RFC 2697 srTCM, PBB, IPv6 router solicitations.
+- Part 4.1, [OpenFlow 1.2, OXM TLV match](4.1%20-%20openflow-1.2-oxm-tlv-match.md) *(skeleton)*, OXM TLV extensible match, controller roles EQUAL/MASTER/SLAVE.
+- Part 4.2, [OpenFlow 1.3, meters, PBB, LTS](4.2%20-%20openflow-1.3-meters-pbb-lts.md) *(skeleton)*, meters per RFC 2697 srTCM, PBB, auxiliary channels, phiên bản long-term stable.
 - Part 4.3, [OpenFlow 1.4, bundles, eviction](4.3%20-%20openflow-1.4-bundles-eviction.md) *(skeleton)*, atomic bundle commit, eviction policy, monitoring.
 - Part 4.4, [OpenFlow 1.5, egress tables, L4-L7](4.4%20-%20openflow-1.5-egress-l4l7.md) *(skeleton)*, egress pipeline, packet type aware, TCP flags match.
 - Part 4.5, [TTP, Table Type Patterns](4.5%20-%20ttp-table-type-patterns.md) *(skeleton, ONF TS-017)*, Negotiable Data Plane Model, TTP JSON schema.
@@ -348,7 +348,6 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 | RFC 7047 | OVSDB Management Protocol | December 2013 | Part 10.0 |
 | RFC 7348 | VXLAN | August 2014 | Part 11.0 |
 | RFC 7432 | BGP EVPN | February 2015 | Part 11.2 |
-| RFC 8201 | PMTUD cho IPv6 | July 2017 | Part 11.1 |
 | RFC 8926 | Geneve | November 2020 | Part 11.0 |
 | OpenFlow 1.0 Spec | OpenFlow baseline | 31 December 2009 | Part 3.1 |
 | OpenFlow 1.3 Spec | Multi-table, groups, meters | April 2012 | Part 4.2 |
