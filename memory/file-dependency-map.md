@@ -139,6 +139,20 @@
 > Nicira lineage → 3.1 không lặp lại Stanford history, chỉ nhắc "Stanford shepherd spec 1.0";
 > 3.2 không lặp lại Ethane → OF transition (đã ở 2.4.5), chỉ tập trung governance process.
 
+### Tầng 2j: SDN foundation Block XIII expansion (P1 rev 3 — 2026-04-21)
+
+> **Scope:** Block XIII mở rộng từ 4 → 7 file sau khi absorb concept OVN-native từ Block XIV (đã bị xóa ở P0).
+> 3 file mới: 13.4 br-int architecture, 13.5 Port_Binding types upstream taxonomy, 13.6 HA_Chassis_Group + BFD.
+> Dependency chain: 13.0 → 13.1 → 13.2 → 13.3 → 13.4 → 13.5 → 13.6.
+
+| File | Nội dung chính (skeleton) | Related Files — PHẢI kiểm tra khi sửa |
+|------|--------------------------|---------------------------------------|
+| `sdn-onboard/13.4 - br-int-architecture-and-patch-ports.md` | Skeleton 6 section: br-int role + ownership ovn-controller + external bridge pattern (br-ex/br-provider qua ovn-bridge-mappings) + patch port zero-copy cross-bridge + DPDK patch port caveat + cross-ref Block IX/XI. | `sdn-onboard/README.md` TOC Block XIII, `plans/sdn-foundation-architecture.md` §3.3 Block XIII, `sdn-onboard/9.1` (OVS 3-component prerequisite), `sdn-onboard/9.4` (CLI baseline), `sdn-onboard/13.5` (localnet triggers patch port), `sdn-onboard/13.3` prerequisite |
+| `sdn-onboard/13.5 - port-binding-types-ovn-native.md` | Skeleton 9 section: Port_Binding SBDB schema + 8 types (vif/localnet/l2gateway/l3gateway/chassisredirect/patch/localport/virtual) + diagnosis workflow `ovn-sbctl list Port_Binding`. **KHÔNG dùng Neutron terminology (Nova/libvirt/iface-id từ orchestrator được mô tả neutral).** | `sdn-onboard/README.md` TOC, §3.3 Block XIII, `sdn-onboard/13.1` prerequisite (NBDB/SBDB architecture), `sdn-onboard/13.4` (br-int + patch port auto-creation), `sdn-onboard/13.6` (chassisredirect lifecycle) |
+| `sdn-onboard/13.6 - ha-chassis-group-and-bfd.md` | Skeleton 6 section: HA_Chassis_Group NBDB schema + HA_Chassis priority + BFD session RFC 5880 + failover 3-5s sequence + tuning sub-second + relation với Part 19 live migration | `sdn-onboard/README.md` TOC, §3.3 Block XIII, `sdn-onboard/13.5` prerequisite (chassisredirect Port_Binding), `sdn-onboard/19.0` (live migration case study uses HA_Chassis_Group), `sdn-onboard/11.1` (MTU/PMTUD liên quan multichassis) |
+
+> **Quy tắc dependency Block XIII expansion:** Ba file mới 13.4/13.5/13.6 absorb concept OVN-native từ Block XIV (đã xóa). KHÔNG được dùng OpenStack/Neutron/kolla/Nova/libvirt terminology — tất cả concept phải portable với bất kỳ orchestrator (OVN standalone, OVN-Kubernetes, bare-metal). Forward reference tới Part 19 (live migration case study) phải chính xác — Part 19 là production forensic content đã fact-checked.
+
 ### Tầng 2i: SDN foundation Block IV (skeleton refined — S8a hoàn tất 2026-04-21)
 
 > **Scope:** Block IV "OpenFlow evolution" sau S8a refinement (Rule 10 architecture phase). 7 file skeleton,
