@@ -336,8 +336,8 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `<session 9 handoff>` (rev 3 scope tightening + absorption complete, push state = 7 commit ahead origin) |
-| Last 7 commits trên branch (rev 3) | `<handoff>` P5 memory → `27be0d7` P4b Block VII+VIII+XII → `eef4c8e` P4a Block V+VI → `327a07b` P3 add 4.7+10.2+11.3+11.4 → `f4e8881` P2 Block IX +9 → `cde76d7` P1 Block XIII +3 → `51a6dbf` P0 scope cut -9 |
+| Active branch | `docs/sdn-foundation-rev2` @ `6ad6b8f` (Phase B content expansion progressing, push state = 6 commit ahead origin at session 12 end) |
+| Last 8 commits trên branch | `6ad6b8f` em-dash scripts archive → `6009320` Block VI content → `ced93e0` Block V content → `4da6a98` Part 4.7 content → `2eef2e6` Block IV 4.2-4.6 content → `b3de38c` Part 4.1 content → `6aef52b` IPv6 scope cut → `6bae8f4` Block III content |
 | Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
 | HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
@@ -349,14 +349,16 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 | SDN Block 0 | `sdn-onboard/0.0 - how-to-read-this-series.md` (148 lines) + `0.1 - lab-environment-setup.md` (426 lines) = 574 dòng content. S4 DONE. |
 | S3 status | S3.1-S3.6 completed 2026-04-20. User đã push commit remote ở session 6. Legacy artifacts đã cleanup. |
 | S4 status | **DONE** (2026-04-21). S4.1-S4.3 content Block 0, S4.4 quality gate (null byte 0, URL 6/7 → 7/7 sau fix Vanderbilt, cross-file sync, version annotation). Commit `c38c3c9` + handoff `76173cd` đã push lên remote. Index stale do plumbing path đã được refresh ở session 7. |
-| Current phase | **Architecture Phase** (Rule 10) — skeleton + title + summary cho toàn bộ 17 blocks. Content Phase chỉ bắt đầu sau khi skeleton complete và user approve. |
+| Current phase | **Content Phase (Phase B) — in progress**. Block I (1.0/1.1/1.2), Block II (2.0-2.4), Block III (3.0-3.2), Block IV (4.0-4.7), Block V (5.0-5.2), Block VI (6.0-6.1) DONE = 20/~66 foundation file content-expanded. Remaining skeleton: Block VII-XIII + 4.x leftovers. |
 | S5 status | Block I content + skeleton DONE. Part 1.0 = 198 dòng content (over-scope, commit `9cd8041`). Part 1.1 + Part 1.2 skeleton refined Rule 10 (~70 dòng/file) ở S5a, commit `10ab5cb`. |
 | S6a status | **DONE** (session 8, 2026-04-21). Block II skeleton refined Rule 10: Part 2.0 (DCAN/Open Signaling/GSMP RFC 3292), 2.1 (Ipsilon RFC 1953/Active Networking DARPA), 2.2 (NAC/orchestration/virtualization), 2.3 (ForCES RFC 3654/3746 + 4D Project Princeton/CMU 2005), 2.4 (Ethane SIGCOMM 2007 — direct OpenFlow predecessor). Tầng 2g thêm vào dependency map. Commit `dc1b0b9`. |
 | S7a status | **DONE** (session 8b, 2026-04-21). Block III skeleton refined Rule 10: Part 3.0 (Stanford Clean Slate 2006-2012 + Nicira founding 08/2007 + VMware $1.26B 07/2012), 3.1 (OpenFlow 1.0 spec 31/12/2009 + 12-tuple match + 8 actions), 3.2 (ONF formation 21/03/2011 + 6 founding operators + 2018 ON.Lab merger). Tầng 2h thêm vào dependency map với non-repetition rules + Phase B fact-check list. Commit `ff0dd14`. |
 | S8a status | **DONE** (session 8c, 2026-04-21). Block IV skeleton refined Rule 10: Part 4.0 (OF 1.1 multi-table + 4 group types FAST_FAILOVER), 4.1 (OF 1.2 OXM TLV + controller roles MASTER/SLAVE), 4.2 (OF 1.3 LTS — meter table + PBB + IPv6 ext headers), 4.3 (OF 1.4 bundles + eviction + optical), 4.4 (OF 1.5 egress + TCP flags + packet type), 4.5 (TTP ONF TS-017 + Flow Objectives ONOS), 4.6 (5 limitations + Google B4 SIGCOMM 2013 + lessons → P4). Tầng 2i thêm vào dependency map. Commit `908279d`. |
-| Architecture backlog (**rev 3 COMPLETE 2026-04-21**) | Phase P0-P5 all DONE. Total 70 markdown files (66 foundation + 3 advanced + 1 README). 7 commit ahead origin/docs/sdn-foundation-rev2 — chờ user push lên remote. Next: user review architecture rev 3 end-to-end + approve explicit trước khi enter Content Phase (Phase B). Content Phase sẽ start với Block I Part 1.1/1.2 expansion (hiện skeleton 30-60 dòng → target 600-1000 dòng với references fact-checked), sau đó lan xuống Block II-VII + IX-XIII. Plan chi tiết: `.claude/plans/flickering-baking-fern.md`. |
+| Architecture backlog (rev 3) | P0-P5 COMPLETE 2026-04-21. Total 70 markdown files. |
+| Phase B content progress (session 12 end) | **20/~66 file content-expanded**. Block I 3/3 (1.0 over-scope, 1.1 274, 1.2 264), Block II 5/5 (2.0-2.4 140-322), Block III 3/3 (3.0-3.2 218-384), Block IV 8/8 (4.0 375, 4.1 328, 4.2 255, 4.3 294, 4.4 323, 4.5 252, 4.6 417, 4.7 764), Block V 3/3 (5.0 365, 5.1 305, 5.2 313), Block VI 2/2 (6.0 359, 6.1 291). Tổng ~7500 dòng content đã viết. Plan sesion 12: `.claude/plans/tender-scribbling-comet.md`. |
+| Phase B remaining (session 13+) | Block VII (7.0-7.3: controllers NOX/POX/Ryu/ODL/ONOS/vendor) → VIII (8.0-8.3: Linux primer) → IX (9.0-9.14: OVS 15 files, biggest) → X (10.0-10.2: OVSDB) → XI (11.0-11.4: overlay + GRE/IPsec labs) → XII (12.0-12.2: DC topology) → XIII (13.0-13.6: OVN 7 files). Advanced XVII-XIX skip (already production). |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
-| Push state on next machine | Branch `docs/sdn-foundation-rev2` đã up-to-date với origin per local `git status`. Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` để đồng bộ 4 commit `10ab5cb`/`dc1b0b9`/`ff0dd14`/`908279d`. |
+| Push state on next machine | Branch `docs/sdn-foundation-rev2` ahead origin bởi 6 commit (session 12 content expansion). Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` + `git push origin docs/sdn-foundation-rev2` nếu chưa push. |
 
 ## Skill Quick Reference
 

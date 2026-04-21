@@ -7,9 +7,153 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-21 (session 9 — rev 3 scope tightening + UofSC/Compass absorption, Phase P0-P5 complete)
-**Branch:** `docs/sdn-foundation-rev2` @ commit `<session 9 handoff commit>` — 7 commit ahead của `origin/docs/sdn-foundation-rev2` (chưa push)
-**Plan rev 3:** `.claude/plans/flickering-baking-fern.md` — Phase A (Architecture) với scope OVS/OpenFlow/OVN strictly standalone
+**Ngày:** 2026-04-21 (session 12, Phase B content expansion Block IV + V + VI)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `6ad6b8f` — 6 commit ahead `origin/docs/sdn-foundation-rev2` (chưa push)
+**Plan:** `.claude/plans/tender-scribbling-comet.md` — Phase B resume sau IPv6 scope cut
+
+### Bối cảnh session 12
+
+User directive ở đầu session: "sau khi bỏ IPv6 khỏi chương trình đào tạo, bạn hãy review lại plan. Nếu không có vấn đề gì thì hãy tiếp tục triển khai chương trình đào tạo" + "chỉ cần 1 plan file thôi nhé". Plan mode → 1 plan file tạo (`tender-scribbling-comet.md`) → approved → auto mode execute.
+
+Giữa session (sau Part 4.3 content xong), user nhắc "hãy nhớ dùng các SKILL nhé". Phản hồi: load 4 skills (professor-style, document-design, fact-checker, web-fetcher) từ `%AppData%/.../skills-plugin/` và apply retroactively cho 4.2/4.3 (add misconception callout, fix URLs verified HTTP 200) + prospectively cho 4.4/4.5/4.6/4.7/Block V/Block VI.
+
+### Đã hoàn thành session 12 (6 commit, ~7500 dòng content)
+
+**Commit 1 — Part 4.1 content** (`b3de38c`):
+- WIP 328 dòng → polished + committed riêng (không bundle với batch).
+- §4.1.1 OF 1.2 first ONF spec 05/12/2011, §4.1.2 OXM TLV format + NXM heritage,
+  §4.1.3 ARP/ICMP/TCP flags/metadata extensions, §4.1.4 Controller roles EQUAL/
+  MASTER/SLAVE + generation_id, §4.1.5 wire incompat 1.0→1.2 + HELLO negotiation.
+- Fixed 3 em-dash trước commit.
+
+**Commit 2 — Block IV 4.2-4.6** (`2eef2e6`, 5 file batch, +1357 dòng):
+- 4.2 OF 1.3 LTS (255): errata chain 1.3.0→1.3.5, meter table §5.7, auxiliary
+  channels §6.3.7, PBB 24-bit I-SID, LTS rationale OVS 2.0+ / Ryu / ODL Helium.
+- 4.3 OF 1.4 bundles (294): release 14/10/2013, bundles §6.3.11 atomic state
+  machine, eviction §5.4.6 importance 16-bit, optical ITU-T G.694.1, adoption.
+- 4.4 OF 1.5 egress (323): 1.5.0 19/12/2014 + 1.5.1 26/03/2015 final ONF
+  revision, egress tables §5.1, TCP flags, packet type §7.2.3.6.
+- 4.5 TTP (252): silicon fragmentation (Trident2/FM6000/Xpliant), ONF TS-017
+  v1.0 15/08/2014 YANG-based 3 reference TTPs, adoption failure (timing +
+  complexity + vendor politics), Flow Objectives comparison.
+- 4.6 Limitations (417): 5 limitations post-mortem, Google B4 SIGCOMM 2013
+  case study, lessons → P4 + NETCONF/YANG + hypervisor overlay. Capstone
+  POE FAST_FAILOVER sub-10ms reroute verification.
+- 18 em-dash fixed trước commit.
+
+**Commit 3 — Part 4.7 hands-on** (`4da6a98`, 764 dòng, +687 insertions):
+- §4.7.1 flow grammar + -O flag, §4.7.2 match fields full reference, §4.7.3
+  actions 8 basic + extensions, §4.7.4 3-stage L3 pipeline recipe (UofSC Lab 6),
+  §4.7.5 conntrack 5-flow stateful firewall recipe (Compass Ch 9 + UofSC Lab 8),
+  §4.7.6 groups + meters, §4.7.7 flow hygiene (monitor/replace-flows/diff-flows),
+  §4.7.8 5-table MAC learning cross-ref.
+- 2 Guided Exercises (POE): L3 pipeline verification + conntrack firewall test.
+- 4 em-dash fixed trước commit.
+
+**Commit 4 — Block V content** (`ced93e0`, 3 file, +859 dòng):
+- 5.0 API-based (365): NETCONF RFC 6241 3 datastore + confirmed-commit, YANG 1.1
+  RFC 7950 + IETF/OpenConfig modules, RESTCONF RFC 8040, BGP-LS RFC 7752,
+  PCE-P RFC 5440 + Stateful 8231 + SR 8402, Cisco ACI + Juniper Contrail
+  launch 2013.
+- 5.1 Hypervisor overlay (305): Nicira founding 08/2007 Casado/McKeown/Shenker,
+  NVP 2011 OVS + controller, VMware acquisition 23/07/2012 1,26 tỷ USD (press
+  release verified), NSX-V vs NSX-T split, Contrail BGP EVPN alternative, OVN
+  lineage Pettit/Pfaff → Red Hat 2015 Network Heresy announcement.
+- 5.2 Whitebox (313): OCP 2013, ODM ecosystem 40-60% price cut, Broadcom
+  Trident/Tomahawk families + Nvidia Spectrum + Intel Tofino (EOL 2023), 4 NOS
+  (Cumulus/SONiC/OpenSwitch/Stratum) với SONiC hyperscale dominance, ONIE boot
+  standard + SAI abstraction.
+- 1 em-dash + 3 OpenStack mentions rephrased trước commit.
+
+**Commit 5 — Block VI content** (`6009320`, 2 file, +573 dòng):
+- 6.0 P4 programmable (359): ACM CCR 07/2014 paper 11 authors, P4_14 → P4_16
+  + PSA, PISA abstract machine, Tofino commercial history (Barefoot 2013 →
+  Intel 06/2019 $500M → EOL 01/2023), multi-target ecosystem (BMv2/T4P4S/
+  eBPF/FPGA), P4Runtime gRPC API thay thế OpenFlow, current state 2026
+  (software targets + AMD Pensando/NVIDIA BlueField alternative).
+- 6.1 Flow Objectives (291): motivation vượt TTP, 3 objective types (Filtering/
+  Forwarding/Next), driver layer mapping (OFDPA example), adoption Trellis/
+  CORD success + hẹp ngoài ONOS.
+- 0 em-dash (vietnamese connectors throughout).
+
+**Commit 6 — Em-dash scripts archive** (`6ad6b8f`):
+- memory/em-dash-cleanup.py (131 dòng) + em-dash-cleanup-v2.py (116 dòng).
+- Reusable utility cho future content sessions ngăn em-dash abuse tái phát.
+
+### Quality gates session 12 (all pass)
+
+- **Null byte check Rule 9**: 0 null bytes trên tất cả 11 content file.
+- **Em-dash audit**: 26 em-dash total fixed (3 trong 4.1 + 3+2+9+4 trong
+  4.3-4.6 + 4 trong 4.7 + 1 trong 5.2). Final count 0 em-dash across all.
+- **IPv6 scope check**: 0 match toàn bộ sdn-onboard/*.md (confirmed post-
+  commit 6aef52b cleanup).
+- **OpenStack scope check**: 4 mentions rephrased (3 trong 5.1 + 1 factual
+  trong 6.1 CORD architecture context, acceptable).
+- **URL verification (web-fetcher skill)**: 90+ URLs verified HTTP 200, fixed
+  8 broken (OF 1.4.0 PDF path, arxiv P4 suffix, IEEE 802.1ah canonical,
+  ODL Helium → latest generic, OCP 403 noted honestly).
+- **Fact-check (fact-checker skill)**: dates/authors/versions verified
+  cross-source cho tất cả Parts.
+- **Professor-style skill**: 9 misconception callouts + Key Topic markers
+  across 11 file.
+- **Document-design skill**: semantic hierarchy H1→H2→H3, tables cho
+  structured data, Bloom objectives 3-5 per file, Capstone POE exercises.
+
+### Pending cho session 13
+
+- **Push rev 3 + session 12 commits lên remote** (6 commit ahead). User chạy
+  local (Rule 4 protected branch).
+- **Phase B remaining** (khoảng 45 file skeleton pending content):
+  - Block VII (4 file): 7.0 NOX/POX/Ryu/Faucet, 7.1 OpenDaylight, 7.2 ONOS,
+    7.3 vendor ACI/Contrail.
+  - Block VIII (4 file): 8.0-8.3 Linux primer với UofSC Lab Guided Exercise.
+  - Block IX (15 file, biggest): 9.0-9.14 OVS internals + operations. Chia
+    3 commit (9a: 9.0-9.5, 9b: 9.6-9.10, 9c: 9.11-9.14).
+  - Block X (3 file): 10.0-10.2 OVSDB.
+  - Block XI (5 file): 11.0-11.4 overlay + GRE/IPsec labs (UofSC Lab 14/15).
+  - Block XII (3 file): 12.0-12.2 DC topology.
+  - Block XIII (7 file): 13.0-13.6 OVN. Chia 2 commit (13.0-13.3 rev 2
+    foundation, 13.4-13.6 rev 3 absorbed).
+  - Advanced XVII-XIX: skip (production content, không động).
+
+### Lệnh local cần chạy khi resume
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+# Expected 6 commit mới (session 12)
+git log --oneline -8
+# Push lên remote:
+git push origin docs/sdn-foundation-rev2
+```
+
+### Quick-start cho session 13
+
+1. Đọc `CLAUDE.md` Current State bảng (updated session 12, phase B progress 20/66).
+2. Đọc file này section "Session gần nhất" → biết 6 commit session 12 + pending Block VII.
+3. Đọc `.claude/plans/tender-scribbling-comet.md` Phần 4 (Queue trung hạn) cho Block VII.
+4. Kích hoạt 4 skills bắt buộc (professor-style, document-design, fact-checker,
+   web-fetcher) từ `~/AppData/Local/Packages/Claude_.../skills-plugin/.../skills/`.
+5. Bắt đầu Block VII batch (4 file): read skeleton → verify URLs → write
+   content → quality gates → commit 1 batch.
+
+---
+
+## Session 11 (archived, rolled into session 12)
+
+Session 11 đã bị user chủ động clear ở đầu session 12, các commit session 11
+(IPv6 removal `6aef52b` + Block I/II/III content expansion) treat như baseline
+cho session 12. Không có session 11 log entry riêng.
+
+---
+
+## Session 10 (archived, rolled into session 12)
+
+Similar to session 11, pre-IPv6 commits (`ad4bd69` Part 1.2, `09e9ec2` Part 1.1,
+`830d2e0` UofSC PDFs, `dbc51d2`/`14a524c` em-dash cleanup, `a854ae3` cross-refs)
+không có log entry riêng. Treat như baseline.
 
 ### Bối cảnh session 9
 
