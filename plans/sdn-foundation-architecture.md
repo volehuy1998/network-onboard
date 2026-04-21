@@ -1388,17 +1388,14 @@ graph TD
   P3[Part 3: OF Birth]
   P4[Part 4: OF Evolution]
   P5[Part 5: Alt SDN]
-  P6[Part 6: Emerging]
+  P6[Part 6: P4 + Flow Objectives]
   P7[Part 7: Controllers]
   P8[Part 8: Linux Net]
-  P9[Part 9: OVS Internals]
+  P9[Part 9: OVS Internals + Ops]
   P10[Part 10: OVSDB]
-  P11[Part 11: Overlay Encap]
-  P12[Part 12: DC SDN]
+  P11[Part 11: Overlay + Tunnel Labs]
+  P12[Part 12: DC Topology]
   P13[Part 13: OVN Foundation]
-  P14[Part 14: OpenStack OVN]
-  P15[Part 15: NFV]
-  P16[Part 16: SDN Ngoài DC]
   P17[Part 17: L2 FDB]
   P18[Part 18: ARP BUM]
   P19[Part 19: Multichassis PMTUD]
@@ -1419,27 +1416,19 @@ graph TD
   P9 --> P13
   P10 --> P13
   P11 --> P13
-  P13 --> P14
-  P12 --> P14
-  P14 --> P15
-  P5 --> P16
-  P11 --> P16
   P13 --> P17
-  P14 --> P17
   P17 --> P18
   P17 --> P19
   P11 --> P19
 ```
 
-### 3.5 Reading paths
+### 3.5 Reading paths (rev 3, 5 con đường)
 
-1. **Linear (sách giáo khoa đại học — 50-80 giờ)**: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18 → 19
+1. **Linear (sách giáo khoa đại học, 50-80 giờ)**: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 17 → 18 → 19 (gap XIV-XVI rev 3).
 2. **Historian (chỉ lịch sử + concept)**: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Dừng ở controller landscape.
-3. **OVS-only (production engineer không làm OpenStack)**: 0 → 1 (skim) → 8 → 9 → 10 → 11.
-4. **OVN-focused (đã vững OVS + networking)**: 0 → 3 (skim) → 5.1 (overlay) → 9 (skim) → 11 → 13 → 14 → 17 → 18 → 19.
-5. **Incident responder (advanced reader muốn đi thẳng case study)**: 0 → 13 (skim) → 14 (skim) → 17 → 18 → 19.
-6. **NFV architect**: 0 → 1 → 5 → 10 → 12 → 14 → 15.
-7. **SD-WAN/Campus architect**: 0 → 1 → 4 → 5 → 7 → 11 → 16.
+3. **OVS-only (production engineer quan tâm data plane)**: 0 → 1 (skim) → 4 → 8 → 9 → 10 → 11. Bỏ qua OVN.
+4. **OVN-focused (đã vững OVS + networking)**: 0 → 3 (skim) → 5.1 (overlay) → 9 (skim) → 11 → 13 → 17 → 18 → 19.
+5. **Incident responder (advanced reader)**: 0 → 13 (skim) → 17 → 18 → 19.
 
 ### 3.6 Cross-reference migration matrix
 
