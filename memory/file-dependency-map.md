@@ -54,12 +54,13 @@
 
 > **Quy tắc:** Khi sửa SDN 17.0, kiểm tra SDN 18.0 có references đến localnet/MC_UNKNOWN không, và SDN 19.0 có cross-ref đến live migration/multichassis của Part 17 không. Khi sửa SDN 18.0, kiểm tra SDN 17.0 có concepts nào được tái sử dụng không. Khi sửa SDN 19.0, kiểm tra consistency với Part 17 section 17.2 (Chassis/Claim) và section 17.6 (live migration trigger).
 
-### Tầng 2c: SDN foundation skeletons rev 2 (Block IX — OpenvSwitch internals)
+### Tầng 2c: SDN foundation Block IX — OpenvSwitch internals + operations (rev 3 expansion, P2 2026-04-21)
 
-> **Scope:** Block IX sau khi thêm 9.5 (session 2026-04-20 session 4). 6 file skeleton,
-> dependency chain tuyến tính 9.0 → 9.1 → 9.2 → 9.3 → 9.4 → 9.5.
-> Các Block khác (0, I-VIII, X-XVI) cũng có skeleton tồn tại nhưng chưa nhập vào bảng này
-> — sẽ được ghi nhận khi S5-S19 bắt đầu viết content từng Block.
+> **Scope:** Block IX sau rev 3 P2 expansion. **15 file** skeleton (6 cũ + 9 mới absorbing
+> Compass Part II chapters). Dependency chain: 9.0 history → 9.1 architecture → 9.2 kernel
+> datapath → 9.3 userspace datapath → 9.4 CLI playbook → 9.5 HW offload → 9.6 bonding →
+> 9.7 mirror → 9.8 sFlow/NetFlow/IPFIX → 9.9 QoS → 9.10 TLS → 9.11 appctl reference →
+> 9.12 upgrade → 9.13 libvirt/docker → 9.14 incident response (Capstone mở rộng).
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
 |------|---------------|---------------------------------------|
@@ -69,12 +70,21 @@
 | `sdn-onboard/9.3 - ovs-userspace-dpdk-afxdp.md` | Skeleton: DPDK PMD + hugepages + NUMA, AF_XDP alternative, trade-off matrix | §3.3 Block IX, 9.2 (prerequisite), **9.5 (complement: DPDK vs DOCA so sánh)** |
 | `sdn-onboard/9.4 - ovs-cli-tools-playbook.md` | Skeleton: ovs-vsctl/ofctl/appctl/dpctl, 6-layer troubleshooting playbook, Capstone Block IX Lab 2 | §3.3 Block IX, 9.3 (prerequisite), 9.5 (CLI là tool verify DOCA offload counters) |
 | `sdn-onboard/9.5 - hw-offload-switchdev-asap2-doca.md` | Skeleton mới 2026-04-20: switchdev, ASAP² eSwitch, 3 DPIFs comparison, OVS-DOCA internals, vDPA, BlueField DPU, megaflow scaling 200k-2M | §3.3 Block IX (entry 9.5 mới), 9.3 (trade-off bridge → DOCA), 9.4 (CLI cho `ovs-appctl coverage/show` read DOCA counters), Part 8.1 (Linux bridge/veth tiên quyết) |
+| `sdn-onboard/9.6 - bonding-and-lacp.md` | Skeleton 5 section (P2 rev 3): 3 bond mode (active-backup/balance-slb/balance-tcp) + LACP active/passive/off + fast-timer + fallback-ab + bond/show + lacp/show letter salad ACEGIKNP | 9.1 prerequisite, Part 8.2 (Linux VLAN bonding), Compass Ch E |
+| `sdn-onboard/9.7 - port-mirroring-and-packet-capture.md` | Skeleton 5 section: Mirror table OVSDB schema + canonical `--id=@` atomic idiom + local SPAN (output_port) + RSPAN (output_vlan) + cleanup auto-GC | 9.1 prerequisite, 9.6 OVSDB idiom, Compass Ch G |
+| `sdn-onboard/9.8 - flow-monitoring-sflow-netflow-ipfix.md` | Skeleton 6 section: sFlow (RFC 3176 sampling) + NetFlow v5/v9 (RFC 3954) + IPFIX (RFC 7011 template negotiation) + atomic idiom cho cả 3 + collector stack (goflow2/nfdump/ntopng) | 9.1, 9.7, Compass Ch H |
+| `sdn-onboard/9.9 - qos-policing-shaping-metering.md` | Skeleton 5 section: OVS configure via tc/rte_sched + ingress policing + egress shaping linux-htb recipe verbatim + OF 1.3+ meter-based policing + CIR/PIR 2-color marking + explicit destroy QoS/Queue (no auto-GC) | 9.1, Part 8.3 (tc/qdisc), Part 4.2 (OF 1.3 meters), Compass Ch I + UofSC Lab 9 |
+| `sdn-onboard/9.10 - tls-pki-hardening.md` | Skeleton 5 section: ptcp vs ssl (production chỉ ssl) + ovs-pki workflow (init + req+sign switch/controller) + openssl s_client verification + CA rotation add-then-switch + cipher suite restriction | 9.1, Part 10.0 (Manager/Controller URIs), Compass Ch K |
+| `sdn-onboard/9.11 - ovs-appctl-reference-playbook.md` | Skeleton 8 section (reference playbook): Unix-socket RPC architecture + vlog control + coverage/show + memory/show + ofproto/trace + dpctl/dpif/upcall introspection + DPDK PMD telemetry + tunnel neighbor tables | 9.4 prerequisite (6-layer playbook), Compass Ch L + R |
+| `sdn-onboard/9.12 - upgrade-and-rolling-restart.md` | Skeleton 5 section: 3 golden rules (schema trước binary, 1 daemon một lúc, không kernel+OVS đồng thời) + 5-step choreography + --bundle atomic + failure mode schema convert + in-place vs cordon-and-replace | 9.1, 10.0 (OVSDB schema), Compass Ch P + 19 |
+| `sdn-onboard/9.13 - libvirt-docker-integration.md` | Skeleton 6 section: libvirt virtualport=openvswitch + external_ids:iface-id contract + libvirt troubleshoot + ovs-docker helper + manual veth attach production-grade + CNI plugin pattern (OVN-Kubernetes context) | 9.1, Part 8.1, Compass Ch S + T compressed |
+| `sdn-onboard/9.14 - incident-response-decision-tree.md` | Skeleton 7 section (Capstone mở rộng): 4-layer mental model (OVSDB/OpenFlow/datapath/wire) + 5-branch decision tree (packet loss/drops/tunnel/bond/OVSDB) + Appendix C compressed reconciliation | 9.4, 9.6, 9.11, Part 13.6 (HA Chassis Group), Compass Ch 20 + Appendix C |
 
-> **Capstone positioning trong Block IX:** "Capstone Block IX Lab 2" giữ tại 9.4 (CLI) —
-> baseline cho mọi user (không yêu cầu NIC đặc biệt). Lab của 9.5 là **capstone mở rộng**
-> cho user có NIC ConnectX-5+ hoặc BlueField (so sánh throughput 3 DPIFs). Quyết định này
-> xuất phát từ nguyên tắc accessibility: Block capstone không được đòi hỏi hardware mà
-> phần lớn học viên không có.
+> **Capstone positioning Block IX (rev 3):**
+> - Baseline Capstone (accessible mọi user): 9.4 CLI playbook Lab 2 — giữ nguyên.
+> - Hardware-specific mở rộng: 9.5 DOCA/switchdev (cần ConnectX-5+/BlueField).
+> - Advanced operational: **9.14 Incident Response Capstone** (drill 5 scenario với 4-layer reconciliation) — mới thêm rev 3. Không yêu cầu hardware đặc biệt, chỉ cần 2-node lab thông thường.
+> - Depth gradient: 9.9 QoS (UofSC Lab 9 deep absorb) + 9.12 Upgrade choreography (production drill) đều có Guided Exercise riêng trong Phase B.
 
 ### Tầng 2d: SDN foundation Block 0 (content written — S4 hoàn tất 2026-04-20)
 
