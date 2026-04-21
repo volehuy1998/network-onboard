@@ -7,6 +7,116 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-21 (session 9 — rev 3 scope tightening + UofSC/Compass absorption, Phase P0-P5 complete)
+**Branch:** `docs/sdn-foundation-rev2` @ commit `<session 9 handoff commit>` — 7 commit ahead của `origin/docs/sdn-foundation-rev2` (chưa push)
+**Plan rev 3:** `.claude/plans/flickering-baking-fern.md` — Phase A (Architecture) với scope OVS/OpenFlow/OVN strictly standalone
+
+### Bối cảnh session 9
+
+User gửi 3 tài liệu chính quy trong `sdn-onboard/doc/`: (a) `compass_artifact_wf-*.md` — Anthropic 20-chapter textbook upstream-grounded, (b) `Day 4-lab3-Introduction to Open vSwitch.pptx` — UofSC slide, (c) `ovs.zip` — University of South Carolina Dr. Jorge Crichigno NSF Award 1829698 lab book (15 lab + 5 exercise, Mininet step-by-step). Yêu cầu: đọc toàn bộ, so sánh với roadmap, lên kế hoạch cập nhật. Giữa session user quy định scope chặt: "chương trình đào tạo openvswitch/openflow/ovn không cần những thứ đó" (về OpenStack/Neutron/kolla).
+
+Plan mode được invoke → plan approved tại `.claude/plans/flickering-baking-fern.md`. Auto mode execute Phase P0-P5 liên tiếp trong cùng session.
+
+### Đã hoàn thành session 9 — 7 commit
+
+**P0 scope cut (commit `51a6dbf`):**
+- `git rm` 9 file scope-out: Block XIV (4 file) + Block XV (2 file) + Block XVI (2 file) + Part 6.2 IBN.
+- Scrub 5 file: `0.1` (xóa Lab mode C kolla + 0.1.5 kolla section), `2.2` (ML2 forward ref → modular plugin architecture), `7.0` (xóa §7.0.5), `sdn-onboard/README.md` (header scope note, Mermaid graph xóa P14-P16, 7→5 reading paths, TOC 17→13 Block), `README.md` root (SDN section header).
+- Metadata: plan §3.1/§3.2/§3.3 update, dependency map Tầng 2b+2g, CLAUDE.md Current State.
+
+**P1 Block XIII expansion (commit `cde76d7`):**
+- Tạo 3 skeleton pure-OVN absorbing concept từ Block XIV đã xóa:
+  - `13.4 - br-int-architecture-and-patch-ports.md` (59 dòng) — 6 section br-int role, ownership, external bridge pattern, patch port zero-copy.
+  - `13.5 - port-binding-types-ovn-native.md` (70 dòng) — 9 section với 8 Port_Binding types upstream (không dùng Neutron terminology).
+  - `13.6 - ha-chassis-group-and-bfd.md` (70 dòng) — 6 section HA_Chassis_Group + BFD RFC 5880 + failover sequence.
+- Dependency map Tầng 2j thêm với non-repetition rule "KHÔNG dùng Neutron/Nova/libvirt terminology".
+
+**P2 Block IX operational expansion (commit `f4e8881`):**
+- Tạo 9 skeleton absorbing Compass Part II Ch E/G/H/I/K/L+R/P+19/S+T/20:
+  - `9.6 bonding-and-lacp` (62 dòng) — Compass Ch E
+  - `9.7 port-mirroring-and-packet-capture` (65 dòng) — Ch G
+  - `9.8 flow-monitoring-sflow-netflow-ipfix` (82 dòng) — Ch H
+  - `9.9 qos-policing-shaping-metering` (95 dòng) — Ch I + UofSC Lab 9
+  - `9.10 tls-pki-hardening` (85 dòng) — Ch K
+  - `9.11 ovs-appctl-reference-playbook` (95 dòng) — Ch L + R
+  - `9.12 upgrade-and-rolling-restart` (66 dòng) — Ch P + 19
+  - `9.13 libvirt-docker-integration` (101 dòng) — Ch S + T compressed
+  - `9.14 incident-response-decision-tree` (86 dòng, Capstone mở rộng) — Ch 20 + Appendix C
+- Block IX từ 6 → 15 file. Dependency map Tầng 2c rewrite.
+
+**P3 cross-Block additions (commit `327a07b`):**
+- `4.7 openflow-programming-with-ovs.md` (132 dòng) — reference playbook: 12-tuple match + NXM/OXM, 8+ actions, multi-table 3-stage recipe (UofSC Lab 6), conntrack 5-flow firewall (Compass Ch 9 + UofSC Lab 8), flow hygiene.
+- `10.2 ovsdb-backup-restore-compact-rbac.md` (95 dòng) — Compass Ch M + O: append-only log, live compaction, backup/restore, schema conversion, RBAC Manager.role.
+- `11.3 gre-tunnel-lab.md` (119 dòng) — UofSC Lab 14: GRE + OSPF + Docker-nested Mininet + Wireshark inspection.
+- `11.4 ipsec-tunnel-lab.md` (108 dòng) — UofSC Lab 15: IKE Phase 1/2 + strongSwan + PSK/RSA + IPsec-over-GRE.
+- Dependency map Tầng 2k.
+
+**P4 Block V/VI/VII/VIII/XII refinement (2 commits `eef4c8e` + `27be0d7`):**
+- P4a: Block V (5.0 NETCONF/YANG, 5.1 NVP/NSX, 5.2 whitebox) + Block VI (6.0 P4, 6.1 Flow Objectives) — 5 file refined.
+- P4b: Block VII (7.0-7.3 controllers) + Block VIII (8.0-8.3 Linux primer) + Block XII (12.0-12.2 DC topology) — 11 file refined.
+- Tất cả "Sẽ phát triển: X" placeholder được thay bằng 1-3 câu summary.
+- Range dòng 46-80 sau refinement.
+
+**P5 end-to-end review + memory handoff (commit này):**
+- Sửa OpenStack taint residual trong `0.0 how-to-read-this-series.md` (5 edit: header scope note, reading path descriptions, CCNA/RHCSA mapping table), `13.0` (2 edit: Evaluate objective + Neutron ML2 ref), `13.3` (2 edit: forward ref + Port_Group framing).
+- Final null byte check Rule 9: 0 null bytes trên toàn bộ 71 file sdn-onboard/ + metadata files.
+- Final file count: 71 file (60 Block foundation rev 3 sau xóa 9/thêm 15 = 66 + 3 advanced + 1 README + 1 doc/).
+
+### Rev 3 summary
+
+- **Trước rev 3:** 60 skeleton Block 0-XVI + 3 advanced = 63 markdown files. Scope: OpenStack/kolla/Neutron-aware SDN curriculum.
+- **Sau rev 3:** 66 skeleton (60 cũ - 9 xóa + 15 thêm) + 3 advanced + 1 README = 70 file markdown. Scope: OVS + OpenFlow + OVN standalone (portable).
+- **Block structure:** Block 0, I, II, III, IV (+4.7), V, VI (-6.2), VII, VIII, IX (+9.6-14), X (+10.2), XI (+11.3-11.4), XII, XIII (+13.4-6). Block XIV-XVI REMOVED. Block XVII-XIX (Part 17/18/19) GIỮ NGUYÊN (production advanced content).
+
+### Lệnh local cần chạy khi resume trên máy khác
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+# Expected: 7 commit mới rev 3
+git log --oneline -10
+#   <handoff>    chore(memory): session 9 handoff - rev 3 architecture complete
+#   27be0d7      docs(sdn): P4b rev 3 - Block VII + VIII + XII skeleton refinement
+#   eef4c8e      docs(sdn): P4a rev 3 - Block V + VI skeleton refinement
+#   327a07b      docs(sdn): P3 rev 3 - add 4.7 OF programming + 10.2 OVSDB ops + 11.3 GRE + 11.4 IPsec
+#   f4e8881      docs(sdn): P2 rev 3 - Block IX expansion absorb Compass Part II (9.6-9.14)
+#   cde76d7      docs(sdn): P1 rev 3 - Block XIII expansion absorb OVN primitives
+#   51a6dbf      refactor(sdn): rev 3 scope tightening - remove OpenStack/Neutron/NFV/WAN
+
+# Push rev 3 lên remote (7 commits):
+git push origin docs/sdn-foundation-rev2
+```
+
+### Pending sau session 9
+
+- **Push rev 3 commits lên remote** — user chạy trên local (Rule 4 protected branch).
+- **User review architecture rev 3 end-to-end** — trước khi gate Content Phase.
+- **Content Phase (Phase B):** chưa bắt đầu. Khi user explicit approve "bắt đầu content phase", sẽ Start với Part 1.0 → Part 4.6 (Block I-IV) rồi lan xuống Block V-XIII.
+- **Pre-existing over-scope content files** (viết trước rev 3):
+  - `sdn-onboard/0.0` — 148 dòng, đã scrub OpenStack framing session 9 (P5). Vẫn kỹ thuật over Rule 10 target.
+  - `sdn-onboard/0.1` — 340 dòng (after P0 scrub), giảm từ 426 dòng gốc.
+  - `sdn-onboard/1.0` — 198 dòng content historical (OpenStack Neutron 2012 mention là historical context, không phải OpenStack integration — OK).
+
+### Session 9 artifacts
+
+- Plan file: `.claude/plans/flickering-baking-fern.md` (rev 3 plan, approved)
+- Memory feedback: `feedback_sdn_scope.md` (curriculum scope), `feedback_plan_interview.md` (plan mode interview budget)
+- Python 3.12.10 installed via winget, ~/.bashrc prepended để `python`/`python3`/`py` đều hoạt động trong bash session mới.
+
+### Quick-start cho session 10
+
+1. Đọc `CLAUDE.md` Current State (updated rev 3 với Phase P0-P5 DONE).
+2. Đọc session-log.md (section này) — biết 7 commit rev 3 và state architecture.
+3. Đọc `memory/file-dependency-map.md` Tầng 2j/2c/2k (rev 3 additions) + dependency chain mới cho Block IX/XIII.
+4. Verify `git log --oneline -10` — 7 commit rev 3 phải thấy.
+5. Khi user approve Content Phase: bắt đầu từ Part 1.0 content expansion (hiện 198 dòng) → target 800-1200 dòng với references verified. Pre-work: fact-check cross-source cho RFC/SIGCOMM/CCR citation đã ở placeholder.
+
+---
+
+## Session 8 (archived)
+
 **Ngày:** 2026-04-21 (session 8 — S5a Block I + S6a Block II + S7a Block III + S8a Block IV skeleton refinement theo Rule 10)
 **Branch:** `docs/sdn-foundation-rev2` @ commit `908279d` (working tree clean, local `git status` báo up-to-date với origin)
 **Plan:** `plans/sdn-foundation-architecture.md` — Phase A progress: Block 0 content + Block I (1.0 content + 1.1/1.2 skeleton) + Blocks II/III/IV skeleton = **4/16 blocks architecture complete**
