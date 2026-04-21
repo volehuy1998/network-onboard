@@ -1,6 +1,8 @@
 # SDN Onboard — OVN / OpenvSwitch / OpenFlow từ nền tảng đến production
 
-Chuỗi tài liệu này dẫn dắt một kỹ sư mạng đã có CCNA và RHCSA đi qua trọn vẹn hành trình Software Defined Networking theo mô hình học thuật quốc tế, bắt đầu từ năm 2006 với Stanford Clean Slate Program, qua mốc OpenFlow 1.0 ngày 31/12/2009, Nicira thành lập 2007 và được VMware mua lại ngày 23/07/2012 với giá 1,26 tỷ USD, cho đến các production incident forensic trong kolla-ansible năm 2026. Lộ trình giảng dạy xây dựng trên baseline OpenvSwitch 2.17.9 và OVN 22.03.8 trên Ubuntu Server 22.04 LTS (Canonical official repository) — phiên bản thực tế đang vận hành trên hàng trăm node kolla-ansible, đồng thời ghi nhận những thay đổi ở OVS 3.3 + OVN 24.03 trên Ubuntu 24.04 Noble cho lộ trình upgrade.
+Chuỗi tài liệu này dẫn dắt một kỹ sư mạng đã có CCNA và RHCSA đi qua trọn vẹn hành trình Software Defined Networking theo mô hình học thuật quốc tế, bắt đầu từ năm 2006 với Stanford Clean Slate Program, qua mốc OpenFlow 1.0 ngày 31/12/2009, Nicira thành lập 2007 và được VMware mua lại ngày 23/07/2012 với giá 1,26 tỷ USD, cho đến các production incident forensic trong môi trường OVN multichassis năm 2026. Lộ trình giảng dạy xây dựng trên baseline OpenvSwitch 2.17.9 và OVN 22.03.8 trên Ubuntu Server 22.04 LTS (Canonical official repository) — phiên bản phổ biến trong sản xuất, đồng thời ghi nhận những thay đổi ở OVS 3.3 + OVN 24.03 trên Ubuntu 24.04 Noble cho lộ trình upgrade.
+
+> **Scope:** Curriculum thuần OVS + OpenFlow + OVN standalone. Không dạy OpenStack / Neutron / kolla-ansible. Các khái niệm OVN (Logical_Switch, Port_Binding, HA_Chassis_Group, Logical_Flow) được trình bày dưới góc nhìn upstream OVN portable, dùng được với bất kỳ orchestrator nào (OVN-Kubernetes, bare-metal OVN, OVN standalone, v.v.).
 
 Môi trường thực hành chính: Ubuntu Server 22.04 LTS, OVS 2.17.9 + OVN 22.03.8 cài qua `apt install openvswitch-switch ovn-central ovn-host`. Tài liệu tham khảo chính thống bao gồm [OVS Documentation](https://docs.openvswitch.org/en/latest/), [OVN Architecture Manual](https://man7.org/linux/man-pages/man7/ovn-architecture.7.html), [OpenFlow Switch Specification 1.0](https://opennetworking.org/wp-content/uploads/2013/04/openflow-spec-v1.0.0.pdf) đến [1.5.1](https://opennetworking.org/wp-content/uploads/2014/10/openflow-switch-v1.5.1.pdf), RFC 7047 (OVSDB, December 2013), RFC 7348 (VXLAN, August 2014), RFC 8926 (Geneve, November 2020), và bộ tài liệu NVIDIA DOCA OVS cho phần hardware offload (Block IX Part 9.5).
 
@@ -8,7 +10,7 @@ Môi trường thực hành chính: Ubuntu Server 22.04 LTS, OVS 2.17.9 + OVN 22
 
 ## Kiến thức tiên quyết cho toàn bộ series
 
-Trước khi bắt đầu, người đọc cần có bốn nhóm kiến thức nền tảng. Thứ nhất là Linux networking cơ bản ở mức `ip`, `bridge`, `tc`, network namespaces — nội dung này đã được trình bày ở linux-onboard phần 2.6. Thứ hai là TCP/IP model, Ethernet frame, ARP, VLAN 802.1Q ở mức CCNA — xem network-onboard, INE 1-10 và Cisco module 1-2. Thứ ba là Linux process và systemd ở linux-onboard phần 2.4 — cần thiết để hiểu lifecycle của daemon `ovs-vswitchd`, `ovsdb-server`, `ovn-controller`. Thứ tư là khái niệm OpenStack (Neutron ML2, Nova live migration) chỉ bắt buộc cho Khối XIV và các case study advanced (17/18/19).
+Trước khi bắt đầu, người đọc cần có ba nhóm kiến thức nền tảng. Thứ nhất là Linux networking cơ bản ở mức `ip`, `bridge`, `tc`, network namespaces — nội dung này đã được trình bày ở linux-onboard phần 2.6. Thứ hai là TCP/IP model, Ethernet frame, ARP, VLAN 802.1Q ở mức CCNA — xem network-onboard, INE 1-10 và Cisco module 1-2. Thứ ba là Linux process và systemd ở linux-onboard phần 2.4 — cần thiết để hiểu lifecycle của daemon `ovs-vswitchd`, `ovsdb-server`, `ovn-controller`.
 
 Part 0.0 (how-to-read-this-series) và Part 0.1 (lab-environment-setup) được thiết kế để thu hẹp những khoảng trống này nếu có. Ai chưa cài môi trường lab nên bắt đầu từ Part 0.1 trước tiên.
 
@@ -16,7 +18,7 @@ Part 0.0 (how-to-read-this-series) và Part 0.1 (lab-environment-setup) được
 
 ## Sơ đồ phụ thuộc kiến thức (Knowledge Dependency Map)
 
-Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa 20 Part của series (Part 0 → Part 19). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian.
+Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa các Part chính của series (Part 0 → Part 19, gap 14-16 do scope OVS/OpenFlow/OVN standalone). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian.
 
 ```mermaid
 graph TD
@@ -24,19 +26,16 @@ graph TD
   P1[Part 1: Why SDN]
   P2[Part 2: Forerunners]
   P3[Part 3: OF Birth]
-  P4[Part 4: OF Evolution]
+  P4[Part 4: OF Evolution + Programming]
   P5[Part 5: Alt SDN]
-  P6[Part 6: Emerging]
+  P6[Part 6: P4 + Flow Objectives]
   P7[Part 7: Controllers]
   P8[Part 8: Linux Net]
-  P9[Part 9: OVS Internals]
+  P9[Part 9: OVS Internals + Ops]
   P10[Part 10: OVSDB]
-  P11[Part 11: Overlay Encap]
-  P12[Part 12: DC SDN]
+  P11[Part 11: Overlay + Tunnel Labs]
+  P12[Part 12: DC Topology]
   P13[Part 13: OVN Foundation]
-  P14[Part 14: OpenStack OVN]
-  P15[Part 15: NFV]
-  P16[Part 16: SDN Ngoài DC]
   P17[Part 17: L2 FDB]
   P18[Part 18: ARP BUM]
   P19[Part 19: Multichassis PMTUD]
@@ -57,13 +56,7 @@ graph TD
   P9 --> P13
   P10 --> P13
   P11 --> P13
-  P13 --> P14
-  P12 --> P14
-  P14 --> P15
-  P5 --> P16
-  P11 --> P16
   P13 --> P17
-  P14 --> P17
   P17 --> P18
   P17 --> P19
   P11 --> P19
@@ -71,28 +64,26 @@ graph TD
 
 ---
 
-## Reading paths — bảy con đường đọc
+## Reading paths — năm con đường đọc
 
-Series này được kiến trúc để phục vụ bảy persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
+Series này được kiến trúc để phục vụ năm persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
 
-1. **Linear (sách giáo khoa đại học, 50-80 giờ đọc)** — 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18 → 19. Phù hợp cho kỹ sư mới vào OVS/OVN cần nền tảng lịch sử và lý thuyết đầy đủ trước khi chạm production.
+1. **Linear (sách giáo khoa đại học, 50-80 giờ đọc)** — 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 17 → 18 → 19. Phù hợp cho kỹ sư mới vào OVS/OVN cần nền tảng lịch sử và lý thuyết đầy đủ trước khi chạm production.
 2. **Historian (chỉ lịch sử + concept)** — 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Dừng ở controller landscape. Mục tiêu: hiểu tại sao SDN tồn tại và các nhánh evolution, không đi vào implementation chi tiết.
-3. **OVS-only (production engineer không làm OpenStack)** — 0 → 1 (skim) → 8 → 9 → 10 → 11. Bỏ qua OVN hoàn toàn, tập trung vào OVS như switch lập trình được trên bare-metal hoặc VM.
-4. **OVN-focused (đã vững OVS + networking)** — 0 → 3 (skim) → 5.1 → 9 (skim) → 11 → 13 → 14 → 17 → 18 → 19. Path chính cho kỹ sư OpenStack Neutron migrate sang ML2/OVN.
-5. **Incident responder (advanced reader muốn đi thẳng case study)** — 0 → 13 (skim) → 14 (skim) → 17 → 18 → 19. Dành cho on-call engineer xử lý sự cố khẩn cấp, đã có nền OVN.
-6. **NFV architect** — 0 → 1 → 5 → 10 → 12 → 14 → 15. Tập trung service chaining, ETSI NFV, OPNFV/Anuket.
-7. **SD-WAN / Campus architect** — 0 → 1 → 4 → 5 → 7 → 11 → 16. Tập trung SD-WAN, campus fabric, mobile packet core.
+3. **OVS-only (production engineer chỉ quan tâm OVS data plane)** — 0 → 1 (skim) → 4 → 8 → 9 → 10 → 11. Tập trung OVS như switch lập trình được + OpenFlow programming + OVSDB + overlay tunnel. Bỏ qua OVN hoàn toàn.
+4. **OVN-focused (đã vững OVS + networking, đang build OVN deployment)** — 0 → 3 (skim) → 5.1 → 9 (skim) → 11 → 13 → 17 → 18 → 19. Path chính cho kỹ sư triển khai OVN standalone.
+5. **Incident responder (advanced reader muốn đi thẳng case study)** — 0 → 13 (skim) → 17 → 18 → 19. Dành cho on-call engineer xử lý sự cố khẩn cấp, đã có nền OVN.
 
 ---
 
-## Mục lục (17 Block foundation + 3 Part advanced)
+## Mục lục (13 Block foundation + 3 Part advanced)
 
 ### Block 0 — Orientation (2 file)
 
 Khối này không có content kỹ thuật sâu, thuần meta/procedural. Mục đích: trả lời trước khi vào series "đọc thế nào, cần chuẩn bị gì, đâu là starting point".
 
 - Part 0.0 — [How to read this series](0.0%20-%20how-to-read-this-series.md) *(skeleton)* — bốn reading path; convention Key Topic, Guided Exercise, Lab, Trouble Ticket; mapping với CCNA/RHCSA/CKA.
-- Part 0.1 — [Lab environment setup](0.1%20-%20lab-environment-setup.md) *(skeleton)* — Ubuntu 22.04 baseline, OVS 2.17+ và OVN 22.03+ cài đặt, Mininet cho OpenFlow labs, kolla-ansible cho OpenStack labs, health check playbook.
+- Part 0.1 — [Lab environment setup](0.1%20-%20lab-environment-setup.md) *(skeleton)* — Ubuntu 22.04 baseline, OVS 2.17+ và OVN 22.03+ cài đặt, Mininet cho OpenFlow labs, hai cấu hình lab (single-node, two-node chassis pair), health check playbook.
 
 ### Block I — Động lực ra đời SDN (Part 1, 3 file)
 
@@ -140,13 +131,12 @@ Không phải SDN nào cũng dùng OpenFlow. Khối này giới thiệu ba loạ
 - Part 5.1 — [Hypervisor overlays — NVP, NSX](5.1%20-%20hypervisor-overlays-nvp-nsx.md) *(skeleton)* — Nicira NVP 2011, VMware NSX-V và NSX-T.
 - Part 5.2 — [Opening the device — whitebox](5.2%20-%20opening-device-whitebox.md) *(skeleton)* — ONIE, SONiC, Cumulus Linux.
 
-### Block VI — Mô hình SDN mới nổi (Part 6, 3 file)
+### Block VI — Mô hình SDN mới nổi (Part 6, 2 file)
 
-Khối này nhìn về tương lai với P4 programmable data plane, Flow Objectives abstraction (ONOS), và Intent-Based Networking.
+Khối này nhìn về tương lai với P4 programmable data plane và Flow Objectives abstraction (ONOS).
 
 - Part 6.0 — [P4 programmable data plane](6.0%20-%20p4-programmable-data-plane.md) *(skeleton, p4.org)* — P4_16 language, PSA, Tofino architecture, Intel EOL 2023.
 - Part 6.1 — [Flow Objectives abstraction](6.1%20-%20flow-objectives-abstraction.md) *(skeleton)* — ONOS Flow Objective API, forwarding/filtering/next objectives.
-- Part 6.2 — [Intent-Based Networking](6.2%20-%20intent-based-networking.md) *(skeleton)* — declarative intent, closed-loop assurance, Cisco DNA.
 
 ### Block VII — Controller ecosystem (Part 7, 4 file)
 
@@ -179,7 +169,7 @@ Khối then chốt mở hộp đen OVS để thấy cơ chế bên trong: ba th�
 
 ### Block X — OVSDB management (Part 10, 2 file)
 
-Khối này tách riêng giao thức OVSDB vì đây là backbone vận hành của cả OVS và OVN — mọi config change từ `ovs-vsctl` hay `ovn-nbctl` đều đi qua OVSDB. Raft clustering ở Part 10.1 là cơ sở cho HA deployment trong OpenStack Neutron.
+Khối này tách riêng giao thức OVSDB vì đây là backbone vận hành của cả OVS và OVN — mọi config change từ `ovs-vsctl` hay `ovn-nbctl` đều đi qua OVSDB. Raft clustering ở Part 10.1 là cơ sở cho HA deployment trong OVN Northbound/Southbound DB production.
 
 - Part 10.0 — [OVSDB — RFC 7047 schema và transactions](10.0%20-%20ovsdb-rfc7047-schema-transactions.md) *(skeleton, RFC 7047 Dec 2013)* — JSON-RPC, schema language, mười operations, monitor_cond protocol.
 - Part 10.1 — [OVSDB Raft clustering](10.1%20-%20ovsdb-raft-clustering.md) *(skeleton)* — active-active cluster với Raft consensus, leader election, production 3-node và 5-node.
@@ -196,37 +186,22 @@ Khối chuyên sâu về encapsulation layer mà OVN dùng để nối các chas
 
 - Part 12.0 — [DC network topologies — Clos leaf-spine](12.0%20-%20dc-network-topologies-clos-leaf-spine.md) *(skeleton, Ebook Ch8.1-8.3)* — Clos 1953, Facebook F4/F16, Google Jupiter.
 - Part 12.1 — [DC overlay integration — VXLAN + EVPN](12.1%20-%20dc-overlay-integration-vxlan-evpn.md) *(skeleton)* — VXLAN data plane + EVPN control plane, anycast gateway.
-- Part 12.2 — [Micro-segmentation và service chaining](12.2%20-%20micro-segmentation-service-chaining.md) *(skeleton)* — ACL-based micro-seg, NSH SFC, Neutron Port Chaining.
+- Part 12.2 — [Micro-segmentation và service chaining](12.2%20-%20micro-segmentation-service-chaining.md) *(skeleton)* — ACL-based micro-seg với OVN ACL/Port_Group, NSH (Network Service Header) RFC 8300 cho service function chaining.
 
 ### Block XIII — OVN foundation (Part 13, 4 file)
 
 Khối then chốt thứ hai — OVN logical model. OVN công bố ngày 13/01/2015 trên blog Network Heresy bởi Justin Pettit, Ben Pfaff, Chris Wright, Madhu Venugopal.
 
-- Part 13.0 — [OVN announcement 2015 và rationale](13.0%20-%20ovn-announcement-2015-rationale.md) *(skeleton)* — OVN 2015-01-13, lý do thay thế Neutron ML2/OVS native + l2population.
+- Part 13.0 — [OVN announcement 2015 và rationale](13.0%20-%20ovn-announcement-2015-rationale.md) *(skeleton)* — OVN 2015-01-13, lý do thiết kế SDN controller portable dựa trên OVS data plane + OVSDB control plane.
 - Part 13.1 — [NBDB, SBDB architecture](13.1%20-%20ovn-nbdb-sbdb-architecture.md) *(skeleton)* — Northbound intent → ovn-northd translator → Southbound flows + chassis state.
 - Part 13.2 — [Logical switches và routers](13.2%20-%20ovn-logical-switches-routers.md) *(skeleton)* — Logical Switch, Logical Router, Logical Switch Port, Logical Router Port, 24+27 tables trong OVN 22.03.
 - Part 13.3 — [ACL, LB, NAT, port groups](13.3%20-%20ovn-acl-lb-nat-port-groups.md) *(skeleton)* — ACL stateful, Load_Balancer health checks, SNAT/DNAT, Port_Group aggregation.
 
-### Block XIV — OpenStack + OVN (Part 14, 4 file)
+> **Block XIV-XVI đã được xóa khỏi scope rev 3** (OpenStack/Neutron/NFV/SD-WAN không thuộc curriculum OVS/OpenFlow/OVN standalone). Các khái niệm OVN-native (br-int, Port_Binding types, HA_Chassis_Group, BFD) đã được absorb vào Block XIII mở rộng (13.4-13.6). Block numbering giữ nguyên gap XIV-XVI để tránh rename cascade trong Part 17-19 advanced.
 
-- Part 14.0 — [ML2/OVN — từ networking-ovn đến upstream](14.0%20-%20ml2-ovn-driver-from-networking-ovn.md) *(skeleton)* — migration path networking-ovn stackforge → Neutron ML2/OVN mainline.
-- Part 14.1 — [Integration bridges — br-int, br-ex](14.1%20-%20integration-bridges-br-int-br-ex.md) *(skeleton)* — br-int patch port, br-ex external bridge, br-provider cho VLAN provider networks.
-- Part 14.2 — [Port binding types](14.2%20-%20port-binding-types.md) *(skeleton)* — localnet, chassisredirect, patch, localport, l3gateway.
-- Part 14.3 — [HA_Chassis_Group và gateway routing](14.3%20-%20ha-chassis-group-gateway-routing.md) *(skeleton)* — distributed gateway ports, HA priority, BFD liveness.
+### Block XVII-XIX — OVN Advanced case studies (Part 17, 18, 19 — 3 file)
 
-### Block XV — NFV (Part 15, 2 file)
-
-- Part 15.0 — [ETSI NFV architecture](15.0%20-%20etsi-nfv-architecture.md) *(skeleton, Ebook Ch10.1-10.3)* — NFVI, VNF, MANO (NFVO, VNFM, VIM).
-- Part 15.1 — [OPNFV Anuket journey](15.1%20-%20opnfv-anuket-journey.md) *(skeleton)* — OPNFV 2014, Anuket rebrand 2021, Reference Architectures.
-
-### Block XVI — SDN ngoài Data Center (Part 16, 2 file)
-
-- Part 16.0 — [SDN trong WAN và SD-WAN](16.0%20-%20sdn-in-wan-and-sd-wan.md) *(skeleton, Ebook Ch9.3 + Ch15.3.2)* — B4 Google, SWAN Microsoft, SD-WAN vendors (VMware VeloCloud, Cisco Viptela).
-- Part 16.1 — [Campus, mobile, optical](16.1%20-%20sdn-in-campus-mobile-optical.md) *(skeleton)* — Cisco SD-Access (LISP+VXLAN), 5G UPF CUPS 3GPP Release 14, OpenROADM MSA.
-
-### Block XVII — Advanced case studies (Part 17, 18, 19 — 3 file)
-
-Ba Part advanced là forensic analysis trên production kolla-ansible hàng trăm node, đi từ hiện tượng quan sát được (blackhole, FDB poisoning, migration failure) đến root cause trong source code OVN. Đọc Khối này yêu cầu đã hoàn thành Block I đến XIV.
+Ba Part advanced là forensic analysis trên production OVN multichassis environment, đi từ hiện tượng quan sát được (blackhole, FDB poisoning, migration failure) đến root cause trong source code OVN. Đọc Khối này yêu cầu đã hoàn thành Block I đến XIII.
 
 - **Part 17** — [OVN L2 Forwarding và FDB Poisoning](17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md) *(1178 dòng)* — distributed control plane, MC_FLOOD multicast group, localnet port, FDB dynamic MAC learning, case study FDB poisoning VLAN 3808 với forensic timeline ba daemon logs.
 - **Part 18** — [OVN ARP Responder và BUM Suppression](18.0%20-%20ovn-arp-responder-and-bum-suppression.md) *(496 dòng)* — ARP Responder ingress table 26, port_security gate, bốn kiến trúc ARP suppression và arp_proxy.
@@ -236,15 +211,21 @@ Ba Part advanced là forensic analysis trên production kolla-ansible hàng tră
 
 ## Labs, Capstones và POE framework
 
-Mỗi Part foundation (Parts 0 đến 16) có ít nhất một Guided Exercise 15-30 phút để kiểm chứng kiến thức vừa học, viết theo mô hình Red Hat Student Guide với Outcomes / Before You Begin / Instructions sub-steps / Finish. Cuối mỗi Block lớn (Block I, IV, IX, XIII, XIV) có Capstone Lab 2-4 giờ kết hợp nhiều Part — ví dụ Capstone Block XIV là end-to-end packet trace từ VM nguồn qua br-int qua Geneve tunnel tới chassis đích với ovn-trace và ovn-detrace correlation. Part 17, 18, 19 giữ nguyên Lab POE (Predict-Observe-Explain) sáu-lớp hiện có cho forensic analysis.
+Mỗi Part foundation (Parts 0 đến 13) có ít nhất một Guided Exercise 15-30 phút để kiểm chứng kiến thức vừa học, viết theo mô hình Red Hat Student Guide + UofSC Mininet lab với Outcomes / Before You Begin / Instructions sub-steps / Finish. Cuối mỗi Block lớn (Block I, IV, IX, XI, XIII) có Capstone Lab 2-4 giờ kết hợp nhiều Part — ví dụ Capstone Block XIII là end-to-end packet trace từ workload port qua br-int qua Geneve tunnel tới chassis đích với ovn-trace và ovn-detrace correlation. Part 17, 18, 19 giữ nguyên Lab POE (Predict-Observe-Explain) sáu-lớp hiện có cho forensic analysis.
 
 ---
 
-## Trạng thái migration rev 1 → rev 2
+## Trạng thái migration rev 1 → rev 2 → rev 3
 
-Series này đang trong quá trình tái cấu trúc theo plan `plans/sdn-foundation-architecture.md`. Tại thời điểm 2026-04-20, bước S3 đã hoàn tất: ba file OVN advanced đã được rename từ `1.0`, `2.0`, `3.0` sang `17.0`, `18.0`, `19.0`; headings nội bộ và cross-references trong ba file đã được renumber tương ứng (Phần 1 → Phần 17, mục 1.X → 17.X, v.v.). 60 file skeleton cho Block 0 → Block XVI đã tồn tại với header block, Learning Objectives, section sketch — nhưng content chi tiết chưa được viết. README này đã được viết theo target state rev 2 với TOC 20 Part.
+Series này đang trong quá trình tái cấu trúc theo plan `plans/sdn-foundation-architecture.md` + `.claude/plans/flickering-baking-fern.md` (rev 3 scope tightening).
 
-Bước tiếp theo theo kế hoạch là viết foundation Parts 1-16 (substantive content thay cho skeleton hiện tại), sau đó audit toàn bộ cross-references còn sót (ví dụ: những tham chiếu đến mục 4.1/4.6/4.8/4.9 của Part 17 — những mục chưa tồn tại vì Part 17 chỉ có đến mục 17.7 — sẽ được giải quyết khi foundation content mở rộng thêm).
+**Rev 3 (2026-04-21):** Scope thu hẹp về OVS + OpenFlow + OVN standalone. Xóa 9 file skeleton (Block XIV OpenStack/Neutron 4 file, Block XV NFV 2 file, Block XVI SDN WAN/Campus 2 file, Part 6.2 Intent-Based Networking). Block numbering giữ nguyên gap XIV-XVI để tránh rename cascade cho Part 17-19 advanced.
+
+**Absorb từ hai nguồn chính quy:**
+- *Compass Anthropic curriculum* (20 chapter upstream-grounded, `sdn-onboard/doc/compass_artifact*.md`): absorb Part II A-W vào Block IX mở rộng (9.6 bonding, 9.7 mirror, 9.8 sFlow/NetFlow/IPFIX, 9.9 QoS, 9.10 TLS, 9.11 appctl reference, 9.12 upgrade, 9.13 libvirt/docker, 9.14 incident response), absorb Ch M/O vào 10.2 OVSDB backup/RBAC, absorb Ch 5-10 vào 4.7 OF programming.
+- *University of South Carolina Dr. Jorge Crichigno NSF Award 1829698* (15 lab Mininet, `sdn-onboard/doc/ovs/`): absorb Lab 14 GRE + Lab 15 IPsec vào 11.3/11.4, mỗi Part foundation có 1 Guided Exercise Mininet step-by-step.
+
+**Rev 2 (2026-04-20):** S3 rename 3 file OVN advanced 1.0/2.0/3.0 → 17.0/18.0/19.0 + renumber nội bộ. S4 hoàn tất content Block 0 (2 file). S5-S8 hoàn tất skeleton refinement Block I-IV theo Rule 10 Architecture-First Doctrine.
 
 ---
 
@@ -258,7 +239,7 @@ Toàn bộ series sử dụng các quy ước sau trong code blocks và ví dụ
 | `[compute01]#` | Lệnh chạy với quyền root trên compute node |
 | `[network01]#` | Lệnh chạy với quyền root trên network node (nơi có chassisredirect, NAT) |
 | `[controller01]#` | Lệnh chạy trên controller node (nơi có ovsdb-server NBDB/SBDB và ovn-northd) |
-| `[client]$` | Lệnh chạy trên máy client ngoài OpenStack (gửi/nhận traffic test) |
+| `[client]$` | Lệnh chạy trên máy client ngoài cluster OVN (gửi/nhận traffic test) |
 | `[vm-a]$` | Lệnh chạy trong VM guest A (test topology) |
 | **Boldface** trong command syntax | Lệnh hoặc keyword gõ nguyên văn |
 | *Italic* trong command syntax | Tham số thay thế bằng giá trị thực tế |
@@ -346,7 +327,7 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 | Metric | Giá trị dự kiến (sau khi hoàn thành series) |
 |---|---|
 | Tổng số thay đổi sẽ ghi nhận | ~50 |
-| Parts sẽ đóng góp dữ liệu | Parts 4, 9, 10, 11, 13, 14, 17, 18, 19 |
+| Parts sẽ đóng góp dữ liệu | Parts 4, 9, 10, 11, 13, 17, 18, 19 |
 | Baseline reference | OVS 2.17 + OVN 22.03 trên Ubuntu 22.04 |
 
 ---
@@ -380,9 +361,11 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 
 ### Sách giáo khoa
 
-1. Paul Göransson, Chuck Black, Timothy Culver. *Software Defined Networks: A Comprehensive Approach* (2nd edition), Morgan Kaufmann, 2017. Ebook gốc cho Blocks I-VII, XII, XV, XVI. Mapping chi tiết trong `plans/ebook-coverage-map.md`.
+1. Paul Göransson, Chuck Black, Timothy Culver. *Software Defined Networks: A Comprehensive Approach* (2nd edition), Morgan Kaufmann, 2017. Ebook gốc cho Blocks I-VII, XII. Mapping chi tiết trong `plans/ebook-coverage-map.md`.
 2. Andrew S. Tanenbaum, David J. Wetherall. *Computer Networks* (5th edition), Pearson, 2011. Nền tảng TCP/IP, Ethernet, routing.
 3. Michael Kerrisk. *The Linux Programming Interface* (TLPI), No Starch Press, 2010. Nền tảng file descriptor, namespace — tham chiếu từ Block VIII.
+4. Jorge Crichigno et al. *Open Virtual Switch Lab Series* (Book version 09-30-2021), University of South Carolina, NSF Award 1829698. 15 lab Mininet + 5 exercise step-by-step. Nguồn cho Guided Exercise ở Block VIII-XI và Capstone Lab Block IX/XI. Local: `sdn-onboard/doc/ovs/OVS.pdf`.
+5. Anthropic. *Open vSwitch — A Senior Engineer's Training Curriculum* (compass artifact), 2026. 20 chapter + 4 appendix upstream-grounded textbook. Nguồn cho Block IX operational expansion (Part II A-W) và 4.7 OF programming (Part III Ch 5-10). Local: `sdn-onboard/doc/compass_artifact_wf-*.md`.
 
 ### Papers
 
@@ -394,8 +377,7 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 
 1. [NVIDIA DOCA OVS Documentation](https://docs.nvidia.com/doca/sdk/) — nguồn chính cho Part 9.5 (NVIDIA ASAP², OVS-DOCA DPIF, BlueField DPU, vDPA).
 2. [Linux kernel switchdev documentation](https://docs.kernel.org/networking/switchdev.html) — Part 9.5.
-3. [Cisco SD-Access Deployment Guide](https://www.cisco.com/c/en/us/solutions/collateral/enterprise-networks/software-defined-access/guide-c07-739524.html) — Part 16.1.
-4. [Juniper Contrail architecture](https://www.juniper.net/documentation/us/en/software/contrail23/contrail-architecture/index.html) — Part 7.3.
+3. [Juniper Contrail architecture](https://www.juniper.net/documentation/us/en/software/contrail23/contrail-architecture/index.html) — Part 7.3.
 
 ### Blog posts / Announcements
 
@@ -406,10 +388,10 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 
 1. [OVS Documentation](https://docs.openvswitch.org/en/latest/) — documentation chính thức project OpenvSwitch.
 2. [OVN Architecture Manual](https://man7.org/linux/man-pages/man7/ovn-architecture.7.html) — `ovn-architecture(7)` manpage.
-3. [OpenStack Neutron ML2/OVN Admin Guide](https://docs.openstack.org/neutron/latest/admin/ovn/ovn.html) — Part 14.
-4. [kolla-ansible OVN driver](https://docs.openstack.org/kolla-ansible/latest/reference/networking/neutron.html) — Part 14.
-5. [OpenFlow Switch Specification 1.0 → 1.5](https://opennetworking.org/software-defined-standards/specifications/) — Block III-IV.
-6. [p4.org specifications](https://p4.org/specs/) — Part 6.0.
+3. [OpenFlow Switch Specification 1.0 → 1.5](https://opennetworking.org/software-defined-standards/specifications/) — Block III-IV.
+4. [p4.org specifications](https://p4.org/specs/) — Part 6.0.
+5. [OVSDB Schema Reference — ovs-vswitchd.conf.db(5)](https://docs.openvswitch.org/en/latest/ref/ovs-vswitchd.conf.db.5/) — Block IX, X.
+6. [ovs-actions(7), ovs-fields(7)](https://docs.openvswitch.org/en/latest/ref/) — Part 4.7 OpenFlow programming.
 
 ### IETF / IEEE / ISO standards
 

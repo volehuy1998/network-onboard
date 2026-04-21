@@ -98,7 +98,6 @@ sdn-onboard/
 │
 ├── 6.0 - p4-programmable-data-plane.md                         [new, from Ch7.1 + P4.org]
 ├── 6.1 - flow-objectives-abstraction.md                        [new, from Ch7.2]
-├── 6.2 - intent-based-networking.md                            [new, from Ch7.3-7.4]
 │
 ├── 7.0 - nox-pox-ryu-faucet.md                                 [new, from Ch11.2 + external]
 ├── 7.1 - opendaylight-architecture.md                          [new, from Ch11.3]
@@ -132,24 +131,19 @@ sdn-onboard/
 ├── 13.1 - ovn-nbdb-sbdb-architecture.md                        [new, external gap]
 ├── 13.2 - ovn-logical-switches-routers.md                      [new, external gap]
 ├── 13.3 - ovn-acl-lb-nat-port-groups.md                        [new, external gap]
+├── 13.4 - br-int-architecture-and-patch-ports.md               [new rev 3, absorbed from Block XIV]
+├── 13.5 - port-binding-types-ovn-native.md                     [new rev 3, absorbed from Block XIV]
+├── 13.6 - ha-chassis-group-and-bfd.md                          [new rev 3, absorbed from Block XIV]
 │
-├── 14.0 - ml2-ovn-driver-from-networking-ovn.md                [new, external gap]
-├── 14.1 - integration-bridges-br-int-br-ex.md                  [new, external gap]
-├── 14.2 - port-binding-types.md                                [new, external gap]
-├── 14.3 - ha-chassis-group-gateway-routing.md                  [new, external gap]
-│
-├── 15.0 - etsi-nfv-architecture.md                             [new, from Ch10.1-10.3]
-├── 15.1 - opnfv-anuket-journey.md                              [new, from Ch10.4-10.5 + external]
-│
-├── 16.0 - sdn-in-wan-and-sd-wan.md                             [new, from Ch9.3 + Ch15.3.2]
-├── 16.1 - sdn-in-campus-mobile-optical.md                      [new, from Ch9.1-9.2, 9.5-9.6]
+│  # Block XIV (OpenStack/Neutron 4 file), XV (NFV 2 file), XVI (SDN WAN 2 file): REMOVED rev 3 scope tightening
+│  # Block numbering gap XIV-XVI giữ để tránh rename cascade 17/18/19
 │
 ├── 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md               [rename từ 1.0, 1178 lines]
 ├── 18.0 - ovn-arp-responder-and-bum-suppression.md             [rename từ 2.0, 496 lines]
 └── 19.0 - ovn-multichassis-binding-and-pmtud.md                [rename từ 3.0, 1379 lines]
 ```
 
-**Tổng:** 63 file content + 1 README = **64 file**. Foundation 17 Block (Part 0 → Part 16) = 60 file (Block IX có thêm 9.5 hardware offload). Advanced 3 Part (17/18/19) = 3 file.
+**Tổng rev 3:** 57 file content + 1 README = **58 file** (rev 2 có 64, rev 3 xóa 9 file scope-out, thêm 3 file Block XIII absorb). Sẽ tiếp tục tăng trong Phase P2/P3 khi absorb Compass Part II (+9 file Block IX) + Compass OVSDB ops (+1 file 10.2) + UofSC labs (+2 file 11.3/11.4) + OF programming (+1 file 4.7) = tổng cuối ~70 file. Foundation 13 Block (Part 0 → Part 13) sau absorption ~57 file. Advanced 3 Part (17/18/19) = 3 file.
 
 ### 3.2 Block-level summary
 
@@ -159,20 +153,18 @@ sdn-onboard/
 | I. Động lực ra đời SDN | 1 | 3 | Ebook Ch1-2 | Trả lời "tại sao SDN tồn tại" |
 | II. Tiền thân SDN | 2 | 5 | Ebook Ch3.1-3.11 | Bảy forerunner lịch sử |
 | III. Khai sinh OpenFlow | 3 | 3 | Ebook Ch3.12, Ch5.1-5.2, Ch5.7 | Stanford Clean Slate → OF 1.0 → ONF |
-| IV. OpenFlow evolution | 4 | 7 | Ebook Ch5.3-5.6 + ONF TS-017 | Từng phiên bản OF 1.1-1.5 + TTP + limitations |
+| IV. OpenFlow evolution + programming | 4 | 7 (+1 rev 3: 4.7 OF programming) | Ebook Ch5.3-5.6 + ONF TS-017 + Compass Ch 5-10 + UofSC Lab 4/5/6 | Từng phiên bản OF 1.1-1.5 + TTP + limitations + hands-on programming với ovs-ofctl |
 | V. Mô hình SDN thay thế | 5 | 3 | Ebook Ch6 | Ba loại SDN không dùng OpenFlow |
-| VI. Mô hình SDN mới nổi | 6 | 3 | Ebook Ch7 + P4.org | P4, Flow Objectives, Intent-Based |
+| VI. Mô hình SDN mới nổi | 6 | 2 (rev 3: xóa 6.2 IBN) | Ebook Ch7 + P4.org | P4, Flow Objectives |
 | VII. Controller ecosystem | 7 | 4 | Ebook Ch11 + external | NOX→ONOS→ODL+vendor |
-| VIII. Linux networking primer | 8 | 4 | External gap | Nền tảng Linux cần thiết cho OVS/OVN |
-| IX. OpenvSwitch internals | 9 | 6 | NSDI 2015 + external + NVIDIA DOCA | OVS architecture, datapath, CLI, hardware offload |
-| X. OVSDB management | 10 | 2 | RFC 7047 + external | Protocol + Raft clustering |
-| XI. Overlay encapsulation | 11 | 3 | RFC 7348, 8926, 7432 | VXLAN, Geneve, EVPN |
+| VIII. Linux networking primer | 8 | 4 | External gap + UofSC Lab 1 | Nền tảng Linux cần thiết cho OVS/OVN |
+| IX. OpenvSwitch internals + ops | 9 | 6 (+9 rev 3: 9.6-9.14 Compass Part II absorption) | NSDI 2015 + external + NVIDIA DOCA + Compass A-W | OVS architecture, datapath, CLI, hardware offload, bond/mirror/sflow/QoS/TLS/appctl/upgrade/libvirt/incident-response |
+| X. OVSDB management | 10 | 2 (+1 rev 3: 10.2 backup/compact/RBAC) | RFC 7047 + Compass Ch M/O | Protocol + Raft clustering + operations |
+| XI. Overlay + tunnel labs | 11 | 3 (+2 rev 3: 11.3 GRE, 11.4 IPsec) | RFC 7348, 8926, 7432 + UofSC Lab 14/15 | VXLAN, Geneve, EVPN + GRE lab + IPsec lab |
 | XII. SDN trong Data Center | 12 | 3 | Ebook Ch8 | DC topology, overlay integration, segmentation |
-| XIII. OVN foundation | 13 | 4 | External gap | OVN objects + pipeline |
-| XIV. OpenStack + OVN | 14 | 4 | External gap | ML2/OVN integration |
-| XV. NFV | 15 | 2 | Ebook Ch10 + external | ETSI NFV + OPNFV/Anuket |
-| XVI. SDN ngoài Data Center | 16 | 2 | Ebook Ch9 partial + Ch15.3.2 | SD-WAN, campus, mobile, optical |
-| XVII. Advanced case studies | 17, 18, 19 | 3 | Production forensic | OVN L2, ARP/BUM, PMTUD |
+| XIII. OVN foundation (absorbs XIV OVN primitives) | 13 | 4 (+3 rev 3: 13.4-13.6 br-int/port-binding/ha-chassis) | External gap | OVN objects + pipeline + deployment patterns |
+| XIV-XVI. DELETED rev 3 | — | 0 | — | Scope out: OpenStack/Neutron/NFV/SD-WAN không thuộc curriculum OVS/OF/OVN standalone |
+| XVII-XIX. Advanced case studies | 17, 18, 19 | 3 | Production forensic | OVN L2, ARP/BUM, PMTUD |
 
 ### 3.3 Per-Block skeleton chi tiết
 
@@ -218,19 +210,18 @@ Mục đích: Trả lời trước khi vào series "đọc thế nào, cần chu
 
 **Learning Objectives:**
 
-1. Cài đặt (Apply) môi trường lab: Ubuntu 22.04, OVS 2.17+, OVN 22.03+, Mininet, kolla-ansible 17.x
+1. Cài đặt (Apply) môi trường lab: Ubuntu 22.04, OVS 2.17+, OVN 22.03+, Mininet
 2. Verify (Apply) ba cấp kiểm tra: OS version, package version, runtime health
-3. Phân biệt (Analyze) three lab modes: single-node all-in-one, two-node chassis pair, multi-node Kolla deployment
+3. Phân biệt (Analyze) hai lab modes (rev 3): single-node all-in-one, two-node chassis pair
 
-**Section sketch:**
+**Section sketch (rev 3):**
 
 - `## 0.1.1 Hardware/VM requirements`
 - `## 0.1.2 Ubuntu 22.04 baseline + kernel modules`
 - `## 0.1.3 OVS + OVN package installation`
 - `## 0.1.4 Mininet cho OpenFlow labs (Block III-IV)`
-- `## 0.1.5 Kolla-ansible cho OpenStack labs (Block XIV)`
-- `## 0.1.6 Health check playbook`
-- `## 0.1.7 Teardown/reset procedure`
+- `## 0.1.5 Health check playbook`
+- `## 0.1.6 Teardown/reset procedure`
 - `### ▶ Guided Exercise 1: Verify OVS 2.17 + OVN 22.03 với lệnh ovn-sbctl show`
 
 ---
@@ -753,27 +744,7 @@ Mục đích: Các paradigm post-OpenFlow (2015+).
 - `## 6.1.3 Driver → device mapping`
 - `## 6.1.4 Current state: ngoài ONOS ít adopt`
 
-##### `6.2 - intent-based-networking.md`
-
-- **Status:** new
-- **Ebook mapping:** `ebook-coverage-map.md` row Ch7.3-7.4 (KEEP)
-- **Prerequisites:** Part 5-6
-
-**Learning Objectives:**
-
-1. Giải thích (Understand) Intent-Based Networking (IBN) — declarative "what" not imperative "how"
-2. Phân biệt (Analyze) IBN vs SDN via APIs vs OpenFlow
-3. Đánh giá (Evaluate) commercial IBN (Cisco DNA Center, Juniper Apstra) — có thực sự IBN?
-
-**Section sketch:**
-
-- `## 6.2.1 IBN concept: declarative API`
-- `## 6.2.2 NL → intent → policy → config pipeline`
-- `## 6.2.3 Cisco DNA Center`
-- `## 6.2.4 Juniper Apstra`
-- `## 6.2.5 Critique: marketing vs reality`
-
-**Capstone Block VI Lab:** Nghiên cứu case study: Chọn 1 vendor IBN (Cisco DNA hoặc Juniper Apstra), trace một intent "isolate tenant X from tenant Y" xuống device config level. Verify declarative hay config-generator disguised.
+> **6.2 IBN — REMOVED rev 3.** Intent-Based Networking (Cisco DNA / Juniper Apstra) không thuộc scope OVS/OpenFlow/OVN. Block VI rev 3 giảm từ 3 → 2 file (6.0 P4 + 6.1 Flow Objectives).
 
 ---
 
@@ -789,17 +760,16 @@ Mục đích: Hệ sinh thái controller: từ NOX (2008) đến hiện đại.
 
 **Learning Objectives:**
 
-1. Liệt kê (Remember) lineage: NOX (C++, 2008) → POX (Python port, 2011) → Ryu (NTT 2012, OpenStack upstream)
+1. Liệt kê (Remember) lineage: NOX (C++, 2008) → POX (Python port, 2011) → Ryu (NTT 2012)
 2. Phân biệt (Analyze) Ryu vs Faucet — Faucet là production-focused Ryu fork
-3. Liên hệ (Analyze) Ryu với Neutron OVS agent (legacy)
+3. Liên hệ (Analyze) trade-off research controller (Ryu/POX) vs production controller (Faucet) khi chọn platform
 
-**Section sketch:**
+**Section sketch (rev 3 — xóa §7.0.5 OpenStack Neutron):**
 
 - `## 7.0.1 NOX: Ethane's runtime, 2008`
 - `## 7.0.2 POX: Python port, 2011`
 - `## 7.0.3 Ryu: NTT 2012, modular`
 - `## 7.0.4 Faucet: production focus, 2015+`
-- `## 7.0.5 Ryu trong OpenStack Neutron legacy`
 
 ##### `7.1 - opendaylight-architecture.md`
 
@@ -1362,185 +1332,15 @@ Mục đích: OVN — implementation cụ thể trên OVS của hypervisor overl
 
 ---
 
-#### Block XIV — OpenStack + OVN (Part 14, 4 files)
-
-##### `14.0 - ml2-ovn-driver-from-networking-ovn.md`
-
-- **Status:** new
-- **Ebook mapping:** External gap
-- **Prerequisites:** Part 13, OpenStack basic
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) networking-ovn → ML2/OVN upstream (Rocky release Aug 2018)
-2. Phân biệt (Analyze) ML2/OVN vs ML2/OVS (legacy) architecture
-3. Áp dụng (Apply) kolla-ansible enable_ovn=yes deployment
-
-**Section sketch:**
-
-- `## 14.0.1 networking-ovn history 2015-2018`
-- `## 14.0.2 Rocky merger (Aug 2018)`
-- `## 14.0.3 ML2 mechanism driver basics`
-- `## 14.0.4 OVN driver architecture`
-- `## 14.0.5 kolla-ansible OVN deployment pattern`
-
-##### `14.1 - integration-bridges-br-int-br-ex.md`
-
-- **Status:** new
-- **Ebook mapping:** External gap
-- **Prerequisites:** Part 14.0
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) br-int (integration), br-ex (external), br-provider
-2. Phân biệt (Analyze) chassis với patch ports kết nối các bridge
-3. Áp dụng (Apply) `ovs-vsctl show` để trace topology
-
-**Section sketch:**
-
-- `## 14.1.1 Integration bridge br-int role`
-- `## 14.1.2 External bridge br-ex — NAT/floating-IP exit`
-- `## 14.1.3 Provider bridges br-provider0, br-provider1 — physnet`
-- `## 14.1.4 Patch ports giữa bridges`
-- `## 14.1.5 Topology map qua ovs-vsctl show`
-
-##### `14.2 - port-binding-types.md`
-
-- **Status:** new
-- **Ebook mapping:** External gap
-- **Prerequisites:** Part 14.1
-
-**Learning Objectives:**
-
-1. Liệt kê (Remember) Port_Binding types: vif (default), localnet, chassisredirect, patch, localport, l3gateway, l2gateway
-2. Phân biệt (Analyze) vif vs localport vs chassisredirect use cases
-3. Áp dụng (Apply) `ovn-sbctl list Port_Binding` để diagnose binding issues
-
-**Section sketch:**
-
-- `## 14.2.1 Port_Binding overview`
-- `## 14.2.2 vif binding — VM port`
-- `## 14.2.3 localnet — underlay provider`
-- `## 14.2.4 chassisredirect — gateway offload`
-- `## 14.2.5 patch — logical router cross-datapath`
-- `## 14.2.6 localport — same-chassis metadata`
-- `## 14.2.7 l3gateway — distributed gateway port`
-
-##### `14.3 - ha-chassis-group-gateway-routing.md`
-
-- **Status:** new
-- **Ebook mapping:** External gap
-- **Prerequisites:** Part 14.2
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) HA_Chassis_Group — BFD-based active-standby selection
-2. Giải thích (Understand) distributed gateway port (DGP) vs centralized gateway
-3. Áp dụng (Apply) failover scenario: kill master chassis, observe BFD timeout
-
-**Section sketch:**
-
-- `## 14.3.1 HA_Chassis_Group schema`
-- `## 14.3.2 BFD health monitoring`
-- `## 14.3.3 Distributed gateway port`
-- `## 14.3.4 SNAT centralized vs distributed`
-- `## 14.3.5 ovs-trace diagnosis during failover`
-
-**Capstone Block XIV Lab:** POE 6-layer Lab: Kolla-ansible 3-controller + 2-compute OVN deployment, tạo VM, trace packet từ VM → floating IP qua `ovn-trace` + `ofproto/trace` correlation.
+> **Block XIV — XV — XVI: REMOVED (rev 3 scope tightening, 2026-04-21).**
+>
+> Rev 3 thu hẹp scope về OVS + OpenFlow + OVN standalone. Block XIV (OpenStack/Neutron 4 file), Block XV (NFV 2 file), Block XVI (SDN WAN/Campus 2 file) đã bị xóa khỏi curriculum. Block numbering gap XIV-XVI được giữ để tránh rename cascade trong Part 17-19 advanced.
+>
+> Concept OVN-native từ Block XIV (br-int, Port_Binding types, HA_Chassis_Group, BFD) đã được absorb vào Block XIII mở rộng thành 7 file (13.0 → 13.6). Xem chi tiết tại `.claude/plans/flickering-baking-fern.md` và Block XIII section ở trên (khi Phase P1 hoàn thành).
 
 ---
 
-#### Block XV — NFV (Part 15, 2 files)
-
-##### `15.0 - etsi-nfv-architecture.md`
-
-- **Status:** new
-- **Ebook mapping:** `ebook-coverage-map.md` row Ch10.1-10.3 (KEEP)
-- **Prerequisites:** Part 12
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) ETSI NFV ISG (Industry Specification Group) — founded October 2012
-2. Liệt kê (Remember) MANO stack: NFVO, VNFM, VIM
-3. Phân biệt (Analyze) VNF vs CNF (cloud-native network function, 2020+)
-
-**Section sketch:**
-
-- `## 15.0.1 ETSI NFV white paper October 2012`
-- `## 15.0.2 MANO stack: NFVO, VNFM, VIM`
-- `## 15.0.3 VNF → CNF evolution`
-- `## 15.0.4 Tie-in với OpenStack Tacker`
-
-##### `15.1 - opnfv-anuket-journey.md`
-
-- **Status:** new
-- **Ebook mapping:** `ebook-coverage-map.md` row Ch10.4-10.5 (KEEP) + external Anuket
-- **Prerequisites:** Part 15.0
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) OPNFV — Linux Foundation 2014 launch
-2. Liên hệ (Analyze) OPNFV → Anuket merger 2020
-3. Đánh giá (Evaluate) OPNFV/Anuket relevance 2026
-
-**Section sketch:**
-
-- `## 15.1.1 OPNFV launch 2014`
-- `## 15.1.2 Release train: Arno → Gambia`
-- `## 15.1.3 Merger với CNTT → Anuket 2020`
-- `## 15.1.4 Current state 2026`
-
-**Capstone Block XV Lab:** Deploy basic VNF (nginx) qua OpenStack Tacker, trace VNF lifecycle.
-
----
-
-#### Block XVI — SDN ngoài Data Center (Part 16, 2 files)
-
-##### `16.0 - sdn-in-wan-and-sd-wan.md`
-
-- **Status:** new
-- **Ebook mapping:** `ebook-coverage-map.md` row Ch9.3 (KEEP) + Ch15.3.2 (KEEP — SD-WAN đã thực sự ra đời) + external 2020+ sources
-- **Prerequisites:** Part 5, CCNA WAN
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) Google B4 (SIGCOMM 2013) — first production SDN WAN
-2. Phân biệt (Analyze) SD-WAN (VeloCloud, Silver Peak, Viptela) — không phải SDN thuần
-3. Đánh giá (Evaluate) MEF SASE convergence 2020+
-
-**Section sketch:**
-
-- `## 16.0.1 Google B4 SIGCOMM 2013`
-- `## 16.0.2 Microsoft SWAN 2013`
-- `## 16.0.3 SD-WAN commercial wave 2014-2020`
-- `## 16.0.4 VeloCloud (VMware), Viptela (Cisco), Silver Peak (HPE)`
-- `## 16.0.5 SASE convergence (Gartner coined 2019)`
-
-##### `16.1 - sdn-in-campus-mobile-optical.md`
-
-- **Status:** new
-- **Ebook mapping:** `ebook-coverage-map.md` row Ch9.1-9.2, 9.5-9.6 (KEEP, skip 9.4 hospitality + 9.7 P2P)
-- **Prerequisites:** Part 16.0
-
-**Learning Objectives:**
-
-1. Mô tả (Understand) Campus SDN: Cisco DNA Fabric, Aruba OS-CX
-2. Phân biệt (Analyze) Mobile packet core SDN: 5G UPF virtualization
-3. Liên hệ (Analyze) Optical SDN: OpenROADM, Open ROADM MSA
-
-**Section sketch:**
-
-- `## 16.1.1 Campus SDN: Cisco SD-Access, Aruba`
-- `## 16.1.2 Mobile packet core: 4G EPC → 5G UPF`
-- `## 16.1.3 CUPS (Control/User Plane Separation) 3GPP`
-- `## 16.1.4 Optical SDN: OpenROADM MSA`
-- `## 16.1.5 Service provider transport SDN: Transport API (TAPI)`
-
-**Capstone Block XVI Lab:** Khảo sát một SD-WAN vendor (pick 1 từ ba vendor mainstream), trace data plane packet path qua tunnel overlay.
-
----
-
-#### Block XVII — Advanced case studies (Parts 17/18/19, 3 files — renumber from existing)
+#### Block XVII-XIX — Advanced case studies (Parts 17/18/19, 3 files — renumber from existing)
 
 ##### `17.0 - ovn-l2-forwarding-and-fdb-poisoning.md`
 
@@ -1802,16 +1602,22 @@ theo `plans/sdn-foundation-architecture.md` original rev 2 targets.
 | S10 | Pending | Skeleton Block VI (6.0-6.2) đã có | — | |
 | S11 | Pending | Skeleton Block VII (7.0-7.3) đã có | — | |
 | S12 | Pending | Skeleton Block VIII (8.0-8.3) đã có | — | |
-| S13 | Pending | Skeleton Block IX (9.0-9.5) đã có (6 file, bao gồm 9.5 DOCA mới) | — | S13 đã được nâng estimate từ 5→6 file, 3500→~4200 dòng |
-| S14 | Pending | Skeleton Block X (10.0-10.1) đã có | — | |
-| S15 | Pending | Skeleton Block XI (11.0-11.2) đã có | — | |
+| S13 | Pending (rev 3 expansion pending) | Skeleton Block IX (9.0-9.5) đã có (6 file, bao gồm 9.5 DOCA mới). Rev 3 Phase P2 sẽ thêm 9.6-9.14 = 15 file total absorbing Compass Part II. | — | S13 rev 3 đã nâng target 6→15 file. |
+| S14 | Pending (rev 3 expansion pending) | Skeleton Block X (10.0-10.1) đã có. Rev 3 Phase P3 sẽ thêm 10.2 OVSDB backup/compact/RBAC = 3 file. | — | |
+| S15 | Pending (rev 3 expansion pending) | Skeleton Block XI (11.0-11.2) đã có. Rev 3 Phase P3 sẽ thêm 11.3 GRE lab + 11.4 IPsec lab = 5 file. | — | |
 | S16 | Pending | Skeleton Block XII (12.0-12.2) đã có | — | |
-| S17 | Pending | Skeleton Block XIII (13.0-13.3) đã có | — | |
-| S18 | Pending | Skeleton Block XIV (14.0-14.3) đã có | — | |
-| S19 | Pending | Skeleton Block XV-XVI (15.0, 15.1, 16.0, 16.1) đã có | — | |
-| S20 | Pending | Post-foundation audit | — | Chạy sau S19 |
+| S17 | Pending (rev 3 absorb Block XIV) | Skeleton Block XIII (13.0-13.3) đã có. Rev 3 Phase P1 absorb từ Block XIV đã xóa: thêm 13.4 br-int, 13.5 Port_Binding types, 13.6 HA Chassis Group = 7 file. | — | |
+| ~~S18~~ | **REMOVED rev 3** | ~~Block XIV~~ — scope out OpenStack/Neutron | 2026-04-21 | Block XIV 4 file đã bị `git rm` ở Phase P0 |
+| ~~S19~~ | **REMOVED rev 3** | ~~Block XV-XVI NFV+WAN~~ — scope out ecosystem breadth | 2026-04-21 | Block XV-XVI 4 file đã bị `git rm` ở Phase P0 |
+| S20 | Pending | Post-foundation audit | — | Chạy sau S17 |
 | S21 | Pending | Legacy cleanup | — | Xóa `plans/sdn-restructure-multichassis-pmtud.md` khi series hoàn tất |
 | S22 | Pending | PR + merge `docs/sdn-foundation-rev2` → master | — | |
+| **P0** | **in_progress 2026-04-21** | Rev 3 scope cut — `git rm` 9 file (XIV 4 + XV 2 + XVI 2 + 6.2 IBN) + scrub 5 file (0.1, 2.2, 7.0, README x 2) + metadata update. | Session 9 | 1 commit. |
+| **P1** | Pending | Rev 3 Block XIII expansion — create 13.4/13.5/13.6 pure-OVN skeleton (absorb from XIV 14.1/14.2/14.3). Update dependency map Tầng 2j. | — | 1 commit. |
+| **P2** | Pending | Rev 3 Block IX operational expansion — create 9.6-9.14 (bonding, mirror, sflow, QoS, TLS, appctl, upgrade, libvirt/docker, incident-response) absorbing Compass Part II. | — | 1 commit. |
+| **P3** | Pending | Rev 3 create 4.7 OF programming + 10.2 OVSDB ops + 11.3 GRE lab + 11.4 IPsec lab. | — | 1 commit. |
+| **P4** | Pending | Rev 3 refinement Block V/VI/VII/VIII/XII Rule 10. | — | 5 commits. |
+| **P5** | Pending | Rev 3 end-to-end review + memory handoff. | — | 1 commit. |
 
 **Progress summary (cuối session 8 — 2026-04-21):**
 
@@ -1850,13 +1656,13 @@ theo `plans/sdn-foundation-architecture.md` original rev 2 targets.
 | X (OVSDB) | 2 | 1500 | 1 | IX |
 | XI (overlay) | 3 | 2000 | 1.5 | VIII |
 | XII (DC) | 3 | 2000 | 1.5 | XI |
-| XIII (OVN) | 4 | 3000 | 2.5 | IX, X, XI |
-| XIV (OpenStack OVN) | 4 | 3000 | 2.5 | XIII |
-| XV (NFV) | 2 | 1500 | 1 | XII |
-| XVI (SDN ngoài DC) | 2 | 1500 | 1 | V, XI |
-| XVII (renumber) | 3 | 0 (no new) | 0.5 | S3 rename |
+| XIII (OVN, rev 3 absorbed XIV concepts) | 7 | 4500 | 4 | IX, X, XI |
+| ~~XIV (OpenStack OVN)~~ | ~~4~~ | **REMOVED rev 3** | — | — |
+| ~~XV (NFV)~~ | ~~2~~ | **REMOVED rev 3** | — | — |
+| ~~XVI (SDN ngoài DC)~~ | ~~2~~ | **REMOVED rev 3** | — | — |
+| XVII-XIX (advanced, renamed) | 3 | 0 (no new) | 0.5 | S3 rename |
 
-**Tổng content mới:** ~35,000 lines. Thời gian viết thuần (không audit): ~28 ngày. Pace realistic: 3-5 tháng calendar time.
+**Tổng content mới rev 3:** ~30,000 lines (sau khi xóa 9 file + thêm 15 file absorb). Thời gian viết thuần (không audit): ~28 ngày. Pace realistic: 3-5 tháng calendar time.
 
 **Parallel execution opportunity:** Block VIII (Linux) không phụ thuộc Block I-VII — có thể viết parallel trong S4-S11.
 

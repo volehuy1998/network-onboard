@@ -211,9 +211,9 @@
 
 ---
 
-# SDN — Software Defined Networking (OVN/OVS)
+# SDN — Software Defined Networking (OVN/OVS/OpenFlow)
 
-Nghiên cứu chuyên sâu về OVN, OpenvSwitch, và OpenFlow trong môi trường OpenStack production.
+Chương trình đào tạo Software Defined Networking tập trung thuần vào **OpenvSwitch, OpenFlow, và OVN** như các nền tảng portable. Xây dựng từ lịch sử Stanford Clean Slate 2006 đến production forensic analysis OVN multichassis 2026. Xem chi tiết roadmap: [`sdn-onboard/README.md`](sdn-onboard/README.md).
 
 [Part 17 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
 
