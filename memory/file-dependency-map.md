@@ -163,6 +163,25 @@
 
 > **Quy tắc dependency Block XIII expansion:** Ba file mới 13.4/13.5/13.6 absorb concept OVN-native từ Block XIV (đã xóa). KHÔNG được dùng OpenStack/Neutron/kolla/Nova/libvirt terminology — tất cả concept phải portable với bất kỳ orchestrator (OVN standalone, OVN-Kubernetes, bare-metal). Forward reference tới Part 19 (live migration case study) phải chính xác — Part 19 là production forensic content đã fact-checked.
 
+### Tầng 2k: SDN foundation P3 additions (4.7 + 10.2 + 11.3 + 11.4) — rev 3 2026-04-21
+
+> **Scope:** Phase P3 thêm 4 file skeleton cross-Block: 4.7 OF programming (Block IV),
+> 10.2 OVSDB ops (Block X), 11.3 GRE lab + 11.4 IPsec lab (Block XI). Mỗi file absorb
+> từ source: UofSC Lab 4/5/6/8 + Compass Ch 5-10 cho 4.7; Compass Ch M+O cho 10.2;
+> UofSC Lab 14 cho 11.3; UofSC Lab 15 cho 11.4.
+
+| File | Nội dung chính (skeleton) | Related Files |
+|------|--------------------------|---------------|
+| `sdn-onboard/4.7 - openflow-programming-with-ovs.md` | Skeleton 8 section (132 dòng — reference playbook): flow grammar + -O flag / 12-tuple match + NXM/OXM extensions / 8+ actions / multi-table 3-stage L3 routing recipe (UofSC Lab 6 verbatim) / conntrack 5-flow stateful firewall recipe (Compass Ch 9 + UofSC Lab 8) / groups + meters / flow hygiene monitor/replace-flows/diff-flows / 5-table MAC learning advanced tutorial placeholder. | Block IV 4.0-4.6 prerequisite, Part 9.1 (OVS architecture), Part 9.9 (QoS meter), 9.11 (ofproto/trace), Part 13.x (OVN uses OF under-the-hood) |
+| `sdn-onboard/10.2 - ovsdb-backup-restore-compact-rbac.md` | Skeleton 7 section (95 dòng): append-only log + compact rationale / offline ovsdb-tool compact vs live ovsdb-server/compact / backup+restore workflow / schema conversion needs-conversion/convert / transaction log inspection show-log + db-cksum / RBAC Manager.role / cluster fresh member after leave | Part 10.0 (OVSDB schema), Part 10.1 (Raft), Part 9.12 (upgrade choreography), Compass Ch M + O |
+| `sdn-onboard/11.3 - gre-tunnel-lab.md` | Skeleton 7 section (119 dòng — hands-on lab): GRE header RFC 2784 + vì sao còn relevant / OVS gre port config / UofSC Lab 14 topology 3 ISP router + 2 Docker-nested Mininet container / OSPF FRR/Quagga config / GRE tunnel giữa 2 site / Wireshark inspection outer + inner / MTU math pitfall | Part 11.0 (VXLAN/Geneve), Part 8.0 (netns), Part 4.7 (OF rules), UofSC Lab 14 |
+| `sdn-onboard/11.4 - ipsec-tunnel-lab.md` | Skeleton 7 section (108 dòng — hands-on lab): IPsec AH vs ESP, tunnel vs transport mode / IKE Phase 1 ISAKMP SA + DH + identity auth / IKE Phase 2 Child SA cho ESP / OVS option psk auto-program strongSwan / strongSwan daemon + ovs-monitor-ipsec / IPsec-over-GRE topology / PSK rotation procedure | Part 11.3 (GRE prerequisite), Part 9.10 (TLS/PKI cross-ref), UofSC Lab 15 |
+
+> **Skeleton length note:** 4 file rev 3 P3 (95-132 dòng) vượt Rule 10 soft target 30-60 dòng
+> do bản chất reference playbook — cần liệt kê đầy đủ match fields, actions, recipes verbatim.
+> Content vẫn là section headers + 1-3 câu summary + code block placeholder, không paragraph
+> giải thích dài, không fact-check deep. Phase B sẽ expand lên 600-1200 dòng/file.
+
 ### Tầng 2i: SDN foundation Block IV (skeleton refined — S8a hoàn tất 2026-04-21)
 
 > **Scope:** Block IV "OpenFlow evolution" sau S8a refinement (Rule 10 architecture phase). 7 file skeleton,
