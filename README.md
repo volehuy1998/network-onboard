@@ -215,6 +215,13 @@
 
 Chương trình đào tạo Software Defined Networking tập trung thuần vào **OpenvSwitch, OpenFlow, và OVN** như các nền tảng portable. Xây dựng từ lịch sử Stanford Clean Slate 2006 đến production forensic analysis OVN multichassis 2026. Xem chi tiết roadmap: [`sdn-onboard/README.md`](sdn-onboard/README.md).
 
+**Cấu trúc 19 Part (rev 4, 2026-04-22)**:
+- **Foundation (Block 0-XIII)**: 13 block với 63 file — từ "Why SDN" (Part 1) qua OpenFlow evolution (Part 3-4), alternative SDN paradigms (Part 5-6), controller ecosystem (Part 7), Linux primer (Part 8), OVS internals + ops (Part 9), OVSDB (Part 10), overlay + tunnel labs (Part 11), DC topology (Part 12), đến OVN foundation (Part 13).
+- **Expert Extension (Block XIV-XVI, optional)**: 3 block với 9 file — P4 programmable pipeline (Part 14), service mesh + Kubernetes CNI (Part 15), kernel+DPDK performance tuning (Part 16). Đầy đủ 18 exercises với lab specs (Mục đích/Chuẩn bị/Mô hình/Bước/Output/Bài học/Cleanup).
+- **Advanced case studies (Block XVII-XIX)**: 3 Part forensic analysis trên production OVN multichassis.
+
+Trọng tâm flagship:
+
 [Part 17 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
 
 - 17.1 - Tại sao OVN tồn tại: bài toán gốc và hành trình giải quyết
