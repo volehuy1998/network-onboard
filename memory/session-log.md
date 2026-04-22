@@ -7,6 +7,78 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-22 (session 14, Phase B content expansion Block VII + IX + VIII start)
+**Branch:** `docs/sdn-foundation-rev2` @ commit handoff — đã push origin sau session 14
+**Plans:** `.claude/plans/tender-scribbling-comet.md` (session 12-13) — reference cho Rule 11
+
+### Bối cảnh session 14
+
+User directive đầu session: "sdn-onboard, load skills, read architecture + plan, understand toàn cảnh trước khi triển khai, cài skills từ sdn-onboard/doc/*.skill vào Claude Code local."
+
+Workflow session 14:
+
+1. **Skills install**: copy `.claude-skills/professor-style`, `document-design`, `fact-checker` vào `~/.claude/skills/` (`deep-research` đã có sẵn).
+2. **Context load**: read README.md sdn-onboard (16 blocks + 3 advanced Part), plan file, memory state.
+3. **Hướng A approved**: viết content Block VII + IX (skip Block VIII tạm thời).
+4. **Block VII (4 file)**: 7.0 NOX/POX/Ryu/Faucet, 7.1 ODL, 7.2 ONOS, 7.3 vendor ACI/Contrail/NSX/Arista.
+5. **User interrupt** (critical feedback): "sdn-onboard/doc/* là tài liệu offline quý giá nhưng vì sao không nằm trong file/line tham chiếu?" — phát hiện bỏ sót toàn bộ kho `sdn-onboard/doc/ovs/` (USC/Crichigno NSF 1829698 lab series, 11 PDF+TXT).
+6. **Remediation**: Glob recursive đầy đủ, backfill 9.0/9.1 references, viết tiếp 9.2-9.14 với đầy đủ doc/* citation, Rule 12 codified.
+7. **Block IX (15 file)**: 9.0-9.14 OVS internals + ops. Lớn nhất trong curriculum. Absorb compass Ch A-Q + USC Lab 1/3/4/9/14.
+8. **Block VIII start**: 8.0 Linux namespaces + cgroups (1 file), dừng lại theo user request để handoff.
+
+### Đã hoàn thành session 14 (4 commit ahead của session 13 handoff)
+
+| Commit | Phạm vi | Content |
+|--------|---------|---------|
+| `9f5bc80` | docs(sdn): Block VII content (7.0-7.3) | ~1036 dòng |
+| `107f71c` | docs(sdn): Block IX content (9.0-9.14) | ~4500 dòng, 15 file |
+| `e7fef07` | chore(rules): add Rule 12 — Exhaustive Offline Source Exploration | CLAUDE.md update |
+| `6d11c15` | docs(sdn): Block VIII start — 8.0 namespaces + cgroups | ~165 dòng |
+
+**Commit handoff session 14** (sắp tạo): update session-log + CLAUDE.md Current State.
+
+### Trạng thái sau session 14
+
+- **Phase B: 40/~66 file content-expanded** (60.6%).
+  - Block 0-VI 20 file (sessions 12-13).
+  - Block VII 4/4 (session 14).
+  - Block VIII 1/4 (session 14, mới start).
+  - Block IX 15/15 (session 14, lớn nhất).
+- **Tổng ~15.200 dòng content Phase B**.
+- **Remaining 22 file**: Block VIII 3 file còn lại (8.1/8.2/8.3), Block X (10.0-10.2), XI (11.0-11.4), XII (12.0-12.2), XIII (13.0-13.6). Advanced 17-19 skip (production).
+
+### Rule 12 mới thêm vào CLAUDE.md
+
+**Exhaustive Offline Source Exploration** — codify bài học session 14:
+
+- Session start BẮT BUỘC recursive Glob `sdn-onboard/doc/**/*` (không phải `doc/*`).
+- Mỗi Write BẮT BUỘC liệt kê offline source trong 3 vị trí: fact-forcing gate answer, header block `Nguồn offline chính:`, References section.
+- Dấu hiệu vi phạm rõ ràng → dễ detect.
+
+### Lệnh local cần chạy khi resume
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+git log --oneline -10
+```
+
+### Quick-start cho session 15
+
+1. Đọc CLAUDE.md Rule 12 (Exhaustive Offline Source Exploration) — mandatory cho mọi Phase B work.
+2. Đọc session-log.md section này.
+3. Quyết định hướng tiếp:
+   - **Option A**: Tiếp Block VIII (8.1/8.2/8.3 Linux bridge/VLAN/tc) — complete primer.
+   - **Option B**: Chuyển Block X-XIII (OVSDB + overlay + DC topology + OVN).
+   - **Option C**: Mixed — Block VIII tiếp + Block XI overlay với USC Lab 6 (VLAN trunking), Lab 14 (QoS reference).
+4. Offline sources đã inventory: `sdn-onboard/doc/compass_artifact_*.md` (20 chapter) + `sdn-onboard/doc/ovs/` (OVS.pdf, OpenVSwitch.pdf, Day 4/5 lab PDFs).
+
+---
+
+## Session 13 (archived)
+
 **Ngày:** 2026-04-21 (session 13, Vietnamese prose revision toàn Phase B)
 **Branch:** `docs/sdn-foundation-rev2` @ commit `<commit 8 handoff>` — 14 commit ahead `origin/docs/sdn-foundation-rev2` (session 12 + 13 cộng dồn chưa push)
 **Plan:** `.claude/plans/tender-scribbling-comet.md` — Path A approved, 7 commit revision đã thực hiện
