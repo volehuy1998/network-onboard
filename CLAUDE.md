@@ -651,11 +651,16 @@ Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `85e6cbd` (session 23 CLOSED — Phase D 3/5 Part mới DONE; 2 commit pending push) |
+| Active branch | `docs/sdn-foundation-rev2` @ `24bb66b` (session 24 CLOSED — Phase D 5/5 Part mới DONE + Rule 13 retrofit); session 25 P0+P1.4 retrofit in progress |
 | Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful — 3 Part tạo pedagogical arc multi-table → stateless → stateful. Offline source: OVS.pdf Lab 6/7/8 verbatim extract qua pymupdf. |
 | Session 22+23 deliverables | 3 file mới: 9.22 (447 dòng, Lab 6 multi-table pipeline), 9.23 (346 dòng, Lab 7 stateless ACL), 9.24 (671 dòng, Lab 8 conntrack). Tổng **+1464 dòng** content. README TOC + lab tracker updated. |
-| Phase D progress | **3/5 Part mới DONE** (9.22, 9.23, 9.24). Còn **9.21 Mininet** (350-450 dòng, Lab 2) + **9.25 flow debugging** (420-500 dòng, compass Ch 10 + NSRC) — session 24. Sau đó 4 expansion (9.9 QoS, 11.3 GRE, 11.4 IPsec, 9.2 kernel datapath lab) session 25-27. |
-| Phase D commits (session 22+23) | `66b4a64` (9.24 conntrack, 682 insertions) + `85e6cbd` (9.22+9.23, 803 insertions). Ahead origin 2 commit — user sẽ push. |
+| Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 flow debugging + Part 9.21 Mininet foundation + Rule 13 Em-dash Discipline ra đời + Rule 11 retrofit session 22+23 Parts. |
+| Session 24 deliverables | 2 file mới: 9.25 (636 dòng, NSRC + compass Ch 10 flow debugging) + 9.21 (571 dòng, Lab 2 Mininet foundation). Rule 13 retrofit 9.22/9.23/9.24 em-dash 361→155 (57% reduction). CLAUDE.md Rule 13 + Rule 11 dictionary mở rộng. Tổng **+2300 dòng** content + rule ecosystem. |
+| Session 25 status | **In progress (2026-04-23)**. Audit-driven retrofit: P0 (README TOC 14 orphans + 2 dead URL) + P1.4 (Rule 13 em-dash top 10 violators 508→156, 69% reduction). |
+| Phase D progress | **5/5 Part mới DONE** (9.22, 9.23, 9.24, 9.25, 9.21). Chuyển sang Phase D expansion: 9.9 QoS (session 25-26), 11.3 GRE (session 26), 11.4 IPsec + 9.2 kernel datapath (session 27). Sau đó C1b Lab Verification + C6b Final Publish v2.0. |
+| Phase D commits (session 22-24) | `66b4a64` (9.24, +682) + `85e6cbd` (9.22+9.23, +803) + `ce2c13b` (Rule 11 retrofit, +444/-338) + `41f6533` (9.25 + Rule 13, +861/-126) + `24bb66b` (9.21, +866). All pushed. |
+| Audit 2026-04-23 state | `memory/sdn-onboard-audit-2026-04-23.md` — 292 dòng comprehensive audit 4 chiều (TOC, Rule 11 prose, Rule 13 em-dash, URL). Skill stack: professor-style + document-design + fact-checker + web-fetcher. Priority matrix P0-P3. |
+| Audit fix progress (session 25) | P0.1 README TOC 14 orphan entries added (Block 0/IV/IX/XI/XIII file count updated). P0.2 dead URL `docs.openvswitch.org/en/latest/intro/install/upgrade/` fixed → general/ + NEWS. P1.4 top 10 Rule 13 retrofit. P1.3 deferred (9.18-9.25 đã có modern header, 17.0/18.0/19.0 pre-Architecture). P2/P3.9-10 deferred session 26+. |
 | Session 17 status | **🎉 COMPLETE — C5.4 + C5.5 + C7 + C8 + C9 + C10 all DONE + pushed** (2026-04-22). Core OVS/OpenFlow/OVN đạt bề rộng + bề sâu + cross-cutting view. |
 | Session 17 deliverables | 17 file mới (9 core blocks + 3 cross-cutting + 5 Rule 11 retrofit) + expand 14 file Block XIV/XV/XVI cũ. Tổng +8315 dòng content. README TOC updated 3 lần (Block X + XIII + Block 0). |
 | Curriculum state (end session 23) | **91 file, ~34.8K dòng** content OVS/OpenFlow/OVN. Block IX (24 file — cao nhất curriculum, 4 tier + Firewall foundation 9.22-9.24), các block khác unchanged vs session 17. |
