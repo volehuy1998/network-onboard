@@ -2706,4 +2706,120 @@ Sau khi tất cả 9 Part phase D verified-lab → tag `v2.0-Verified` theo C6b 
 
 ---
 
-**Hết Phụ lục F Phase D plan.** Đang chờ user review §F.10 → execute session 21. F.11/F.12 cung cấp lab readiness detail cho tất cả 9 Part; khi user có host, Claude sẽ follow F.12 workflow.
+---
+
+### F.13 Visual Evidence from PDF — Corrections + Additions (session 21 update)
+
+> User directive session 21: "Đừng nhìn văn bản text mà hãy dùng công nghệ để xem hình ảnh luôn." + "Mọi kiến thức truyền tải không chỉ phụ thuộc vào văn bản mà còn ở hình ảnh."
+
+Session 20 đã absorb từ `.txt` extract. Session 21 rendered các PDF sang PNG (dùng pymupdf, 112 pages), Read các topology/architecture diagram. Phát hiện 3 loại sai lệch:
+
+#### F.13.1 Topology khác biệt so với text-based interpretation
+
+**Lab 5 — Implementing Routing (Day 5 Lab 7 PDF p04-p05):**
+- **Thực tế:** 2 switch (s1, s2), mỗi switch đóng vai router cho subnet của nó. Trunk giữa s1-eth2 ↔ s2-eth2.
+  - h1 (192.168.1.0/24) → s1 → trunk → s2 → h2 (192.168.2.0/24)
+- **Part 9.18 tôi đã viết:** 1 switch `br-router` đóng cả hai subnet. Đơn giản hóa quá mức.
+- **Action:** Không revert Part 9.18 (đơn giản cho pedagogy), nhưng thêm callout trong Part 9.22 (multi-table) nối về "nếu làm theo lab gốc USC Lab 5, topology 2-switch demo inter-router trunk — concept này chúng ta mở rộng trong Part 9.22 multi-table dùng 2 switch".
+
+**Lab 13 — VLAN trunking (Day 5 Lab 6 PDF p04):**
+- **Thực tế:** 3 switch (s1 — s3 — s2) theo hình sao. s3 là **switch trung gian** mang trunk của cả hai VLAN từ s1 sang s2. h1+h2 gắn vào s1; h3+h4 gắn vào s2; trunk s1-eth3 ↔ s3-eth1, trunk s3-eth2 ↔ s2-eth3.
+- **Part 9.20 tôi đã viết:** 2 switch s1 ↔ s2 trực tiếp, thiếu s3. Đơn giản hóa.
+- **Action:** Backfill Part 9.20 với callout "Lab 13 gốc USC có topology 3-switch để minh hoạ trunk qua nhiều hop. Bản lab trong Part này đơn giản 2-switch cho clarity, nhưng principle giống hệt — trunk port có thể transit qua N switch trung gian."
+
+#### F.13.2 Architecture diagrams thiếu trong curriculum hiện tại
+
+**OVS Kernel Datapath slow path / fast path (Day 4 Lab 9 PDF p03):**
+- Diagram chính: Controller off-box (bên ngoài), OVSDB + ovs-vswitchd trong userspace, Kernel datapath bên dưới. First packet → đường cong slow path (kernel → userspace để lookup → quay lại kernel). Subsequent packets → đường thẳng fast path (kernel direct).
+- **Hiện tại:** Part 9.2 có content lý thuyết NSDI 2015 nhưng **không có diagram visual** thể hiện slow path vs fast path. Đây là kiến thức nền tảng để hiểu caching.
+- **Action:** F.4.9 expansion Part 9.2 **PHẢI** bao gồm ASCII art hoặc reference URL tới diagram. Tốt hơn: dedicate tạo file SVG nội bộ trong `sdn-onboard/images/` tái hiện diagram này.
+
+**OVS QoS shaping M-A Table → Queue → Scheduler (Day 5 Lab 14 PDF p04):**
+- Diagram: packets đến s1, qua M-A (Match-Action) Table với rule `Port 80 → Queue 1`, `Port 443 → Queue 2`, scheduler giữa các queue, output ra link s1 → s2 → destination host.
+- **Hiện tại:** Part 9.9 skeleton không có visual — người đọc khó hình dung packet "đi đâu" trong QoS pipeline.
+- **Action:** F.4.6 Part 9.9 expansion phải có ASCII art hoặc SVG tái hiện M-A Table + Queue chain + Scheduler.
+
+**Flow Entry structure (Day 4 Lab 4 PDF p04):**
+- Visual: bảng với 4 column cho 4 flow entry, mỗi entry có 3 row (Header Fields / Counters / Actions). Layout cho thấy flow table là **array of records**, mỗi record 3-field.
+- **Hiện tại:** Part 9.19 mô tả bằng bảng markdown, đủ tốt nhưng chưa có visual "array of records".
+- **Action:** Enhancement optional cho Part 9.19 — thêm ASCII art bảng structure.
+
+#### F.13.3 Concept diagrams mới phát hiện (chưa có trong curriculum)
+
+Đang nội suy từ 4 PDF đã Read. Cần Read thêm các PDF khác (Day 4 Motivation 41 pages; OpenVSwitch NSRC 21 pages; OVS.pdf 331 pages sample Lab 6 + Lab 8) để đầy đủ inventory. Session 21+ sẽ tiếp tục sample và update F.13 với findings mới.
+
+#### F.13.4 Tooling note
+
+- **Rendered:** 112 PNG pages trong `tmp-pdf-pages/` (local, NOT committed — thêm vào `.gitignore`)
+- **Tool:** `pymupdf` 1.27.2.2 (pip `--user`), DPI 100
+- **Script:** Inline Python rendering mọi PDF trong `sdn-onboard/doc/ovs/` trừ OVS.pdf (28 MB, 331 pages — render on-demand khi cần Lab 6/7/8 pages)
+- **Limitation:** Các PDF là PowerPoint slide chính (không có scanned handwriting), nên text extract khá đầy đủ; images mang giá trị chính ở **topology diagram + architecture flowchart**.
+
+#### F.13.5 Action items phát sinh từ F.13
+
+| # | Action | Part ảnh hưởng | Priority | Session |
+|---|--------|----------------|----------|---------|
+| 1 | Backfill Part 9.18 callout về 2-switch topology Lab 5 gốc | 9.18 | Low | 21 |
+| 2 | Backfill Part 9.20 callout về 3-switch Lab 13 gốc | 9.20 | Low | 21 |
+| 3 | Part 9.2 expansion PHẢI có slow/fast path visual | 9.2 | **High** | 27 |
+| 4 | Part 9.9 expansion PHẢI có M-A Table → Queue visual | 9.9 | **High** | 24 |
+| 5 | Read OVS.pdf sample Lab 6 + Lab 8 để verify topology trước khi viết 9.22 + 9.24 | Pre-session 21, 22 | **Critical** | 21 |
+| 6 | Read OpenVSwitch.pdf NSRC 21 pages for kernel/userspace diagrams | 9.1 + 9.2 | Medium | Before 27 |
+| 7 | Read Day 4 Motivation PDF (41 pages) for SDN history diagrams | Block I/II/III cross-ref | Medium | Future |
+| 8 | Add `tmp-pdf-pages/` vào `.gitignore` | Git hygiene | Critical | Immediate |
+
+---
+
+### F.14 Plan summary — what, why, how, when (minh bạch pass)
+
+> Bổ sung sau user request "làm nội dung plan trở nên minh bạch, chi tiết, rõ ràng, dễ hiểu, dễ dàng nắm bắt."
+
+Đây là **one-page recap** cho người đọc skim plan nhanh:
+
+**WHAT (cái gì?)**
+
+Phase D thêm **5 Part mới + 4 expansion** vào curriculum OVS/OpenFlow/OVN, lấy từ 9 lab chưa khai thác trong USC Crichigno lab book (OVS.pdf, 15 labs) + NSRC OpenVSwitch.pdf + compass_artifact. Sau Phase D: **93 file, ~39K dòng**, offline source **100% exhausted**.
+
+**WHY (tại sao?)**
+
+- Session 20 tôi tuyên bố "offline exhausted" sai — chỉ map 6/15 labs.
+- Thiếu foundation cho **conntrack** (9.24), **multi-table pipeline** (9.22), **stateless ACL** (9.23), **flow debugging** (9.25), **Mininet** (9.21).
+- Expansion 9.9 QoS + 11.3 GRE + 11.4 IPsec + 9.2 kernel — đều có offline lab content thật sự mà skeleton hiện tại chỉ preview.
+- User goal: "chương trình đào tạo giá trị hơn, người đọc bị lôi cuốn hơn" → engagement patterns (drama + POE + trace thật + OVN bridge).
+
+**HOW (làm thế nào?)**
+
+Mỗi Part theo đúng cấu trúc:
+1. Header block 7-field + Learning objectives Bloom-aligned + Prerequisites cross-ref
+2. Drama opening 80-120 chữ (sự kiện thực)
+3. Concept sections §9.X.Y với 2-4 misconception callout
+4. Guided Exercise với Predict-Observe-Explain phản chứng
+5. Section "So sánh với OVN" cuối → link Part 13.X
+6. References 5-8 items (offline + RFC + man pages)
+
+Rule compliance: Rule 9 (null bytes), Rule 11 (Vietnamese prose — technical Anh, vocabulary Việt), Rule 12 (offline source explicit).
+
+**WHEN (khi nào?)**
+
+| Session | Deliverable | Dependencies |
+|---------|-------------|--------------|
+| 21 | Part 9.24 conntrack (550-650 dòng) | Đọc OVS.pdf Lab 8 pages first |
+| 22 | Part 9.23 ACL + 9.22 multi-table | Lab 7 + Lab 6 pages first |
+| 23 | Part 9.25 flow debug + 9.21 Mininet | OpenVSwitch.pdf NSRC pages first |
+| 24 | Part 9.9 QoS expansion | Lab 14 PDF p04 M-A Table visual |
+| 25 | Part 11.3 GRE expansion | Lab 14 GRE pages |
+| 26 | Part 11.4 IPsec expansion | Lab 15 IPsec pages |
+| 27 | Part 9.2 kernel datapath lab | Lab 9 PDF slow/fast path visual |
+| 28 | README reorganization + Rule 11 Round 4 | Final pass |
+
+**Khi user có lab host:** Claude sẽ follow F.12 workflow để replace doc-plausible output bằng verified-lab output.
+
+**Điểm then chốt:**
+
+- **Priority cao nhất:** Part 9.24 conntrack (session 21) — foundation OVN ACL/NAT/LB.
+- **Rủi ro lớn nhất:** Fake/inaccurate content khi viết về lab không test được → mitigation: đọc PDF visual trước khi viết (F.13.5 action item #5).
+- **Deliverable đo được:** Mỗi Part ≥ 400 dòng, có ≥ 1 POE, có ≥ 2 misconception, link ≥ 1 Part 13.X.
+
+---
+
+**Hết Phụ lục F Phase D plan.** Đang chờ user review §F.10 → execute session 21. F.11/F.12 cung cấp lab readiness detail; F.13 ghi nhận PDF visual findings; F.14 one-page recap minh bạch.
