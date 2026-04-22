@@ -458,7 +458,7 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 | C5 expert extension | 3 skeleton files created per Rule 10: 14.0 P4 Language Fundamentals (56 lines), 15.0 Service Mesh Integration (61 lines), 16.0 Kernel+DPDK+AF_XDP Performance Tuning (69 lines). Content phase deferred. Commit `2c6d052`. |
 | C6a publish pipeline | `scripts/build-sdn-pdf.sh` + `scripts/README.md` — Pandoc XeLaTeX Vietnamese PDF + EPUB3 builder. Targets v1.0-preVerified (current state) → v2.0-Verified (post C1b) → v2.1+ (future content expansion). Commit `ce13e49`. |
 | Lab verification tracker | `memory/lab-verification-pending.md` — fully populated C1a pass. Resume point for C1b (chờ user notify lab host available). |
-| Push state next session | 8 commit ahead origin: `ec0521e`, `d821e65`, `10fe2e5`, `3a92e27`, `e6d7a8b`, `2c6d052`, `ce13e49` + final handoff commit. User manual push: `git push origin docs/sdn-foundation-rev2`. |
+| Push state (session 16 extension) | Session 16 initial 8 commits pushed `74cb6a6` đã lên origin. 2 commit mới ahead origin sau push: `dc8634e` (C5.2 siblings) + handoff commit. User manual push: `git push origin docs/sdn-foundation-rev2`. |
 | Last 8 commits trên branch | `6ad6b8f` em-dash scripts archive → `6009320` Block VI content → `ced93e0` Block V content → `4da6a98` Part 4.7 content → `2eef2e6` Block IV 4.2-4.6 content → `b3de38c` Part 4.1 content → `6aef52b` IPv6 scope cut → `6bae8f4` Block III content |
 | Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |

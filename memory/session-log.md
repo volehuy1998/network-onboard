@@ -52,7 +52,9 @@ User direction sau khi Phase B complete (session 15): chọn giải pháp tốt 
 | `e6d7a8b` | C4 URL audit + C1a lab inventory | 3 files (2 markdown + tracker) |
 | `2c6d052` | C5 Expert Extension skeleton Block XIV/XV/XVI | 3 new files |
 | `ce13e49` | C6a Interim Publish Pipeline | 2 new files in scripts/ |
-| `<handoff>` | Session 16 final handoff | CLAUDE.md + session-log + plans update |
+| `74cb6a6` | Session 16 initial handoff (pushed to origin) | CLAUDE.md + session-log + plans update |
+| `dc8634e` | C5.2 Block XIV/XV/XVI 6 sibling skeletons | 14.1/14.2/15.1/15.2/16.1/16.2 (~349 lines) |
+| `<handoff-2>` | Session 16 extension handoff | CLAUDE.md + plan + session-log update for C5.2 |
 
 ### 🎉 Phase C active phases COMPLETE
 
