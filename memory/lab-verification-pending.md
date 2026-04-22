@@ -148,11 +148,16 @@ Replacements TBD in C4 follow-up commit; not blocking Phase C progression.
 |------|---------|------|--------|----------|--------|
 | _Populated during C1a pass_ | | | | | |
 
-### Block IX — OVS Internals + Operations (15 file, highest density)
+### Block IX — OVS Internals + Operations (22 file, highest density)
 
 | File | Section | Type | Origin | Priority | Status |
 |------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
+| 9.24 | Guided Exercise 1 — POE TCP reply auto-allowed | POE, measured | OVS.pdf Lab 8 p11-15 + netfilter docs | HIGH | doc-plausible (session 22 Phase D) |
+| 9.24 | Guided Exercise 2 — TCP lifecycle 5 state transitions via `conntrack -E` | Measured CLI output | OVS.pdf Lab 8 p16-18 + conntrack-tools 1.4.6 | HIGH | doc-plausible |
+| 9.24 | Guided Exercise 3 — UDP conntrack POE (pseudo-state bi-directional) | POE, measured | compass Ch 9 + `ovs-fields(7)` ct_state bitfield | MEDIUM | doc-plausible |
+| 9.24 | `ovs-dpctl dump-conntrack` output TCP ESTABLISHED + ICMP echo | CLI verbatim | OVS.pdf Lab 8 p15-18 Figures 27/33/35 | HIGH | doc-plausible |
+| 9.24 | `conntrack -E` event stream NEW/UPDATE/DESTROY | CLI verbatim | OVS.pdf Lab 8 p16-18 Figure 30/34 + conntrack-tools man | HIGH | doc-plausible |
+| _Populated during C1a pass for earlier parts_ | | | | | |
 
 ### Block X — OVSDB
 
