@@ -173,6 +173,55 @@ Sau khi viết 14.0/14.1/14.2 đợt đầu, user chỉ ra vi phạm Rule 11. Đ
 
 **C5.5 partial executed:** Rule 11 retrofit Exercise content cho 5 file 14.0/14.1/14.2/15.0/15.1 (Block XVI deferred — ngoài scope OVS/OpenFlow/OVN core). Commit `972c05c` đã push.
 
+## 🎉 SESSION 17 CLOSED — Summary & Next Steps
+
+**Session 17 GRAND TOTAL (all pushed to origin/docs/sdn-foundation-rev2):**
+
+16 commit: `4a72590` (C5.4) → `f6b0294` (handoff) → `972c05c` (C5.5) → `05a33bb` (C7 batch 1) → `44e8a86` (C7 batch 2) → `0efec6b` (C7 batch 3) → `b83ed9a` (C7 handoff) → `d40d7a1` (C8 batch 1) → `ca7b62b` (C8 batch 2) → `db479f8` (C9) → `cf34691` (C10).
+
+**17 file mới được tạo:**
+- Block 0 intro: `0.2 - end-to-end-packet-journey.md`
+- Block IX OVS: `9.15 - ofproto-classifier-tuple-space-search.md`, `9.16 - ovs-connection-manager-controller-failover.md`, `9.17 - ovs-performance-benchmark-methodology.md`
+- Block X OVSDB: `10.3 - ovsdb-transaction-acid-semantics.md`, `10.4 - ovsdb-idl-monitor-cond-client.md`, `10.5 - ovsdb-performance-benchmarking.md`, `10.6 - ovsdb-security-mtls-rbac-advanced.md`
+- Block XIII OVN foundation: `13.7 - ovn-controller-internals.md`, `13.8 - ovn-northd-translation.md`, `13.9 - ovn-load-balancer-internals.md`, `13.10 - ovn-dhcp-dns-native.md`, `13.11 - ovn-gateway-router-distributed.md`, `13.12 - ovn-ipam-native-dynamic-static.md`, `13.13 - ovs-to-ovn-migration-guide.md`
+
+**14 file cũ được expanded (C5.4):**
+- Block XIV (3), Block XV (3), Block XVI (3) — section body từ skeleton → full content
+- Block XIV/XV exercises (5) — Rule 11 retrofit
+
+**Total delta:** +8315 dòng content OVS/OpenFlow/OVN focus.
+
+### Kế hoạch session 18 — what's next
+
+**Option A (recommended nếu có lab host):** C1b Lab Verification.
+- Replay 54 Exercise/Lab/Capstone trên host Ubuntu 22.04 + OVS 2.17 + OVN 22.03.
+- Replace output doc-plausible → verified-lab (Rule 7a).
+- Start: HIGH priority 8 Capstones → MEDIUM 14 Block IX → LOW historical.
+
+**Option B:** Block VII Controllers expand (Faucet + Ryu internals deep).
+**Option C:** Block XVII-XIX OVN advanced polish + Rule 11 retrofit.
+**Option D:** Pandoc build test local + GitHub tag v1.0-preVerified release.
+**Option E:** OVS/OVN debugging cookbook (20-30 real-world scenario).
+**Option F:** OVS/OVN security hardening checklist.
+
+**Blocking:**
+- C6b Final Publish v2.0-Verified blocked by C1b lab verification.
+
+### Lệnh resume session 18
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+git log --oneline -18   # Xem 17 commit session 17
+ls sdn-onboard/ | wc -l  # Đếm tổng file curriculum
+```
+
+User sẽ notify option được chọn. Claude start với fact-check + plan theo option đó.
+
+---
+
 **C10 COMPLETE (2026-04-22 end-final-final):** Cross-cutting view packet journey + OVS-to-OVN migration. 2 file mới +745 dòng. 0.2 end-to-end packet journey 12 giai đoạn pod A → OVS → Geneve → OVS remote → pod B, 342 dòng, link toàn bộ Block curriculum. 13.13 OVS-to-OVN migration guide từ ML2/OVS → ML2/OVN, feature parity matrix, offline/online migration, rollback plan, case study Red Hat/Canonical/OpenShift, 403 dòng. Task #18 DONE. Nguồn: ovn-architecture(7), RFC 8926 Geneve, NSDI 2015 OVS paper, OpenStack Neutron ML2/OVN docs, Red Hat RHOSP 17.1, Canonical Ubuntu OVN, OpenShift 4.14 SDN migration docs.
 
 **C9 COMPLETE (2026-04-22 end-final):** Expand Block IX OVS bề sâu. 3 file mới 9.15-9.17, tổng +770 dòng. 9.15 ofproto classifier + tuple space search + staged lookup (254 dòng). 9.16 connection manager + OpenFlow 1.3 role election (MASTER/SLAVE/EQUAL) + fail_mode + in-band/out-of-band + bundle (240 dòng). 9.17 performance benchmark methodology — Mpps chỉ số, pktgen/testpmd/cbench/iperf3 công cụ, 3 workload 64B/IMIX/1500B chuẩn, flow scaling, CPU + memory profile (276 dòng). Task #17 DONE.

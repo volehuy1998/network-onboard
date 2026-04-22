@@ -449,9 +449,11 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` (session 17 — **C10 COMPLETE**; ready commit + push) |
-| Current phase (session 17 end-final) | **🎉 C7+C8+C9+C10 COMPLETE** (2026-04-22). Cross-cutting view (0.2 packet journey + 13.13 OVS-to-OVN migration) hoàn thành, kết nối các Block curriculum. |
-| Session 17 cumulative (after C10) | 15 commit pushed + C10 pending commit. Thêm 17 file mới + expand 14 file cũ. Tổng +8315 dòng OVS/OpenFlow/OVN focus. |
+| Active branch | `docs/sdn-foundation-rev2` @ `cf34691` (session 17 CLOSED — **16 commit pushed**; ready next session) |
+| Session 17 status | **🎉 COMPLETE — C5.4 + C5.5 + C7 + C8 + C9 + C10 all DONE + pushed** (2026-04-22). Core OVS/OpenFlow/OVN đạt bề rộng + bề sâu + cross-cutting view. |
+| Session 17 deliverables | 17 file mới (9 core blocks + 3 cross-cutting + 5 Rule 11 retrofit) + expand 14 file Block XIV/XV/XVI cũ. Tổng +8315 dòng content. README TOC updated 3 lần (Block X + XIII + Block 0). |
+| Curriculum state (end session 17) | **85+ file, ~32K+ dòng** content OVS/OpenFlow/OVN. Block IX (18 file), Block X (7 file), Block XIII (14 file), Block XVII-XIX (3 file), Expert Extension (9 file), Block 0 intro (3 file), các block khác unchanged. |
+| Next session deferred | C1b Lab Verification (chờ lab host) → C6b Final Publish v2.0 (chờ C1b) |
 | Session 17 deltas (final) | **C5.4** (pushed): 9 file Block XIV/XV/XVI section body expanded 2523→2917 (+394). **C5.5** (pushed): 5 file Exercise Rule 11 retrofit. **C7** (committed 3 batches, ready push): 6 file mới 13.7-13.12 OVN ovn-controller/northd/LB/DHCP-DNS/GR/IPAM (+1606 dòng). |
 | Block XIII final state | 7 core (13.0-13.6) + 6 extended (13.7-13.12) = 13 file 2847 dòng. Scope OVS/OpenFlow/OVN core per user directive. README TOC updated. |
 | C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |

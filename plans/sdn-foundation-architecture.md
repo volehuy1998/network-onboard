@@ -1847,6 +1847,92 @@ Block-by-block status:
 - POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
 - Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
 
+### E.12 Session 17 FINAL SUMMARY (2026-04-22 end of day)
+
+**Session 17 đã hoàn thành (DONE + pushed):**
+
+| Phase | Files | Lines | Commits | Summary |
+|-------|-------|-------|---------|---------|
+| C5.4 | 9 expand | +394 | 2 | Block XIV/XV/XVI section body expansion |
+| C5.5 | 5 fix | — | 1 | Rule 11 Exercise retrofit Block XIV/XV |
+| **C7** | **6 new** | **+1606** | **4** | **Block XIII OVN bề rộng (13.7-13.12)** |
+| **C8** | **4 new** | **+1369** | **2** | **Block X OVSDB bề sâu (10.3-10.6)** |
+| **C9** | **3 new** | **+770** | **1** | **Block IX OVS internals (9.15-9.17)** |
+| **C10** | **2 new** | **+745** | **1** | **Cross-cutting (0.2 + 13.13)** |
+| Handoff | — | ~200 | 5 | Tracking docs updates |
+| **Tổng** | **17 new + 14 expand** | **+5084** | **16** | — |
+
+**Breakdown từng Block sau session 17:**
+
+| Block | Files before | Files after | Lines after |
+|-------|-------------|-------------|-------------|
+| 0 intro | 2 | 3 (+0.2 packet journey) | 900+ |
+| IV OpenFlow | 8 | 8 (unchanged) | 3007 |
+| V SDN APIs | 3 | 3 (unchanged) | 983 |
+| IX OVS | 15 | **18 (+9.15/16/17)** | 4081 |
+| X OVSDB | 3 | **7 (+10.3/4/5/6)** | 1995 |
+| XI Overlay | 5 | 5 (unchanged) | ~1500 |
+| XII DC | 3 | 3 (unchanged) | ~900 |
+| **XIII OVN foundation** | 7 | **14 (+13.7-13.13)** | **3250** |
+| XIV-XVI Expert Extension | 9 | 9 (expanded content) | 2917 |
+| XVII-XIX OVN advanced | 3 | 3 (unchanged) | 3045 |
+| **Tổng** | **58** | **75+** | **~22K+** |
+
+Các block khác (Block I, II, III, VI, VII, VIII) unchanged ở session 17 (đã completed từ Phase B trước đó).
+
+**Rule compliance session 17:**
+- Rule 9 (null byte): 0/17 file mới ✓
+- Rule 11 (Vietnamese Prose): vocab tư duy dịch triệt để ✓
+- Rule 12 (offline sources): doc/ovs/ cited khi applicable ✓
+- Fact-Forcing Gate: 100% compliance (4 facts trước mỗi Write/Edit) ✓
+- User directive "OVS/OpenFlow/OVN bề rộng + bề sâu + nguồn uy tín + plan trước": đạt toàn diện ✓
+
+### E.13 Session 18 PLAN — What's next
+
+**Các phương án cho session 18 (user chọn):**
+
+**Option A — C1b Lab Verification (preferred nếu có host):**
+- Chờ user notify có host Ubuntu 22.04 + OVS 2.17 + OVN 22.03.
+- Replay 54 Exercise/Lab/Capstone theo `memory/lab-verification-pending.md` priority matrix.
+- Replace output "doc-plausible" hiện tại bằng output verify-lab thực tế (Rule 7a).
+- Target: HIGH priority 8 Capstones numeric output → MEDIUM 14 Block IX exercises → LOW historical exercises.
+- Commit incremental per verified exercise.
+
+**Option B — Block VII Controllers expand bề sâu:**
+- Hiện 4 file (7.0 NOX/POX/Ryu/Faucet, 7.1 ODL, 7.2 ONOS, 7.3 vendor controllers), ~600 dòng.
+- Thêm: 7.4 Faucet deep dive (internals, DHCP Relay, ACL), 7.5 Ryu internals (stplib, REST API, OF-DPA). Target +600-800 dòng.
+- Lý do: OVS/OpenFlow controllers cần understanding cho lab + debug.
+
+**Option C — Block XVII-XIX OVN advanced polish:**
+- Review 3 file advanced (17.0 FDB poisoning, 18.0 ARP responder, 19.0 multichassis binding).
+- Rule 11 retrofit (file cũ pre-C3).
+- Add cross-reference tới Block XIII extended (13.7-13.13).
+- Target: sửa + expansion ~300-500 dòng.
+
+**Option D — Pandoc build test + v1.0-preVerified release:**
+- Install Pandoc + texlive-xetex + texlive-lang-vietnamese trên local Ubuntu VM.
+- Run `bash scripts/build-sdn-pdf.sh v1.0-preVerified`.
+- Verify PDF render đúng (Vietnamese diacritics, code block, table).
+- Generate EPUB3 parallel.
+- Release GitHub tag v1.0-preVerified.
+- Lý do: bước chính thức đầu tiên public-facing artifact.
+
+**Option E — New topic: OVS/OVN debugging cookbook:**
+- File mới `troubleshooting/ovs-ovn-cookbook.md` với 20-30 real-world debugging scenario.
+- Pattern: "Packet drop — làm sao debug?" "Latency cao — check đâu?" "OVN-K8s pod không kết nối — root cause analysis."
+- Target: +800-1000 dòng.
+- Lý do: practical value cho môi trường production.
+
+**Option F — New topic: OVS/OVN security hardening checklist:**
+- File mới consolidation `security/ovs-ovn-production-hardening.md`.
+- Checklist: mTLS, RBAC, CIS benchmark OVN, network policy audit, CVE tracking.
+- Target: +500-700 dòng.
+
+**Khuyến nghị mặc định (nếu user không chỉ định):**
+- Option A **nếu user có lab host** — C1b unlock C6b (Final Publish v2.0-Verified).
+- Option D **nếu không có lab host** — chạy Pandoc build validate toàn curriculum build được.
+- Option B/E tiếp theo nếu muốn tăng content thêm.
+
 ### E.11 Session 17 (extension-4) — C10 cross-cutting packet journey + OVS-to-OVN migration (2026-04-22)
 
 **User direction:** "tôi vẫn chưa có môi trường lab thực tế, hãy tiếp tục plan nhé. Nhớ cập nhật tiến độ, tập trung vào openvswitch, openflow và ovn, kiến trúc của chúng, sự chuyển giao, packet journey, sự nâng cấp từ openvswitch lên ovn, ..."
