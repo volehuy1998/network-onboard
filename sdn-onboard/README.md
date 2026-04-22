@@ -18,7 +18,7 @@ Part 0.0 (how-to-read-this-series) và Part 0.1 (lab-environment-setup) được
 
 ## Sơ đồ phụ thuộc kiến thức (Knowledge Dependency Map)
 
-Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa các Part chính của series (Part 0 → Part 19, gap 14-16 do scope OVS/OpenFlow/OVN standalone). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian.
+Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa các Part chính của series (Part 0 → Part 19, với Expert Extension Part 14-16 ở rev 4). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian. Block XIV-XVI (Expert Extension, styled dashed border) là optional track, không block foundation path 0-XIII → 17-19.
 
 ```mermaid
 graph TD
@@ -36,6 +36,9 @@ graph TD
   P11[Part 11: Overlay + Tunnel Labs]
   P12[Part 12: DC Topology]
   P13[Part 13: OVN Foundation]
+  P14[Part 14: P4 Language + Tofino + P4Runtime]:::expert
+  P15[Part 15: Service Mesh + OVN-K8s + Cilium eBPF]:::expert
+  P16[Part 16: Kernel+DPDK+AF_XDP Performance]:::expert
   P17[Part 17: L2 FDB]
   P18[Part 18: ARP BUM]
   P19[Part 19: Multichassis PMTUD]
@@ -60,6 +63,15 @@ graph TD
   P17 --> P18
   P17 --> P19
   P11 --> P19
+
+  %% Expert Extension (optional track, rev 4)
+  P6 -.-> P14
+  P13 -.-> P15
+  P11 -.-> P15
+  P9 -.-> P16
+  P8 -.-> P16
+
+  classDef expert stroke-dasharray: 5 5,stroke:#7b1fa2
 ```
 
 ---
