@@ -59,11 +59,31 @@ Commit: `b1200c9`.
 
 Commits: `497d9e7` (P2.6+P2.7), `434890f` (P2.5 safe).
 
-### Deferred sang session sau
+### Deferred sang session sau (pre-session 29)
 
 - **P2.5 Rule 11 context-review** ~385 hits còn lại across 10 Critical files. Strategy: 1-2 file/session human review, không bulk. Priority: 19.0 (132 hits), 17.0 (60), 18.0 (30).
 - **C1b Lab Verification**: chờ lab host available để verify `doc-plausible` → `verified-lab` trong tất cả Guided Exercise Phase B+D.
 - **C6b Final Publish v2.0**: build PDF + EPUB sau khi lab verified.
+
+### Session 29 (cùng ngày với session 28) — P2.5 context-review 3 priority files
+
+Xử lý 3 file priority cao nhất pre-existing trước Rule 11 (chưa retrofit session 13).
+
+- **Part 19.0** ovn-multichassis-binding-and-pmtud: 87 replacements, 1379 lines, density 0.012/line, 0 nulls.
+- **Part 17.0** ovn-l2-forwarding-and-fdb-poisoning: 19 replacements, 1180 lines, density 0.008/line, 0 nulls.
+- **Part 18.0** ovn-arp-responder-and-bum-suppression: 17 replacements, 490 lines, density 0.000/line, 0 nulls.
+
+Patterns áp dụng: engineer → kỹ sư, operator → người vận hành, incident → sự cố, fail (skip failover/failsafe/failback) → thất bại, verify → kiểm chứng, version → phiên bản, deployment → triển khai, support (skip supports/supported/supporting) → hỗ trợ.
+
+Skip (keep English technical): overhead (packet metric), event (Nova lifecycle), behavior inside English quote, performance (OVS config), feature/context/lookup/monitoring (OVS concept).
+
+Bug post-script: URL protection failed cho markdown link `[text](URL)` có `)` gần `http://` cùng line. 10 URLs bị replace "support" → "hỗ trợ" → restore bằng regex aggressive `\[([^\]]+)\]\((https?://[^\)]+)\)`. Tất cả URL hiện valid.
+
+Commit: `2f152f6`.
+
+**Session 29 deferred:**
+- 7 file Critical còn lại (3.2/3.1/3.0/2.1/2.4/4.6/6.0) đã retrofit ở session 13. Prose hits còn lại là low-priority cosmetic refinements.
+- C1b Lab Verification + C6b Final Publish vẫn chờ lab host.
 
 ### Curriculum state end session 28
 
