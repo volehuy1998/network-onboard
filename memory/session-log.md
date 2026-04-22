@@ -7,6 +7,78 @@
 
 ## Session gần nhất
 
+## Session 18 — Options E/F/B/C extension (Phase C deepening)
+
+**Ngày:** 2026-04-22 (session 18, tiếp nối session 17 sau compaction)
+**Branch:** `docs/sdn-foundation-rev2` — tiếp từ `cfc6204` (session 17 final handoff đã push)
+**Compaction trong session:** 5 lần (context window pressure từ 85+ file curriculum)
+
+### Bối cảnh session 18
+
+Session 17 kết thúc với curriculum 85+ file / 32K dòng trên OVS/OpenFlow/OVN core. Session 18 mở rộng theo 4 option scope-appropriate:
+
+- **Option E**: Part 20.0 — systematic debugging cookbook (OVS + OVN troubleshooting playbook)
+- **Option F**: Part 20.1 — security hardening (port_security + ACL default-deny + audit logging)
+- **Option B**: Block VII expansion — Part 7.4 (Faucet pipeline + Gauge) + Part 7.5 (Ryu flow management)
+- **Option C**: Cross-ref polish 17.0/18.0/19.0 ↔ 13.7/13.8 (OVN foundation ↔ internals wiring)
+
+Option D (Pandoc build test) giữ lại deferred — build pipeline đã có từ C6a commit `ce13e49`, chỉ kích hoạt khi user request publish.
+
+### Thực thi session 18
+
+| Commit | Option | Files | Nội dung chính |
+|--------|--------|-------|----------------|
+| `a2a618e` | E | `20.0 - ovs-ovn-systematic-debugging.md` | Playbook 4-layer debugging: ovs-vsctl → ovs-ofctl → ovn-sbctl → ovn-trace/ofproto-trace. Decision tree cho common sự cố. |
+| `fe873ab` | F | `20.1 - ovs-ovn-security-hardening.md` (475 dòng) | 3-layer security: port_security (MAC+IP anti-spoof), ACL default-deny stateful (`allow-related`, `ct.est && !ct.inv`), audit logging (`name=` field). 10-point posture checklist. Guided Exercise 1. |
+| `a5a9c15` | B | `7.4 - faucet-pipeline-and-operations.md` (272 dòng) + `7.5 - ryu-flow-management.md` (419 dòng) + README TOC | Faucet: 4 bảng canonical (VLAN/ETH_SRC/ETH_DST/FLOOD), ACL YAML stateless, Gauge + Prometheus. Ryu: `@set_ev_cls` event system, `OFPFlowMod` helper, REST API pattern, OFPPortStatsRequest. |
+| `<pending>` | C | 17.0/18.0/19.0 Prerequisites | Cross-ref thêm `13.7 - ovn-controller-internals` và `13.8 - ovn-northd-translation`. 17.0 ← 13.7 + 13.8. 18.0 ← 13.8 (§18.3 `ls_in_arp_rsp`). 19.0 ← 13.7 (§19.1 `controller/physical.c`). |
+
+### Fact-Forcing Gate behavior
+
+Gate fired 3 lần session 18 (Write 7.4, Write 7.5, triple-Edit 17/18/19). Pattern xác lập:
+
+1. Present 4 facts (files referencing, symbols affected, I/O data, user quote verbatim) trong CÙNG message với tool call
+2. Retry tool — gate pass
+3. Phân loại facts cho doc .md: (1) importers từ Grep, (2) "Không áp dụng — Markdown không export symbol", (3) "Không áp dụng — không I/O data", (4) user instruction verbatim
+
+### Rule compliance
+
+- **Rule 9** (null byte check): tất cả 5 file modified session 18 = 0 null bytes — verified Python subprocess
+- **Rule 11** (Vietnamese Prose Discipline): technical terms giữ tiếng Anh (OVS, OVN, Faucet, Ryu, `OFPFlowMod`, `@set_ev_cls`), vocabulary thinking dịch Việt (triết lý, chuỗi, kiến trúc, phân lớp)
+- **Rule 12** (Offline Source Exploration): Part 7.4/7.5 explicitly notes "Không có offline source — controller ecosystem nằm ngoài compass/USC labs scope". Part 20.0/20.1 tổng hợp từ compass_artifact (OVS debugging chapter) + online sources.
+
+### Chưa hoàn thành sau session 18
+
+- [ ] Commit Option C edits (17.0/18.0/19.0 — 3 files, 3 inline additions)
+- [ ] Push 4 commits lên origin: `a2a618e` + `fe873ab` + `a5a9c15` + new Option C commit
+- [ ] **C1b Lab Verification** — deferred, chờ user signal lab host available (Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8)
+- [ ] **C6b Final Publish v2.0** — blocked by C1b
+- [ ] Option D (Pandoc build test) — optional, không blocker
+
+### Git state cuối session 18 (trước commit Option C)
+
+```
+Branch: docs/sdn-foundation-rev2 (4 commit ahead origin, uncommitted Option C edits pending)
+Last push: cfc6204 (session 17 final)
+Pending ahead: a2a618e → fe873ab → a5a9c15 → <Option C new>
+Files modified (uncommitted):
+  - sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md (+2 bullets)
+  - sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md (+1 bullet)
+  - sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md (+1 bullet)
+  - memory/session-log.md (this entry)
+```
+
+### Push instructions cho next session
+
+```bash
+git push origin docs/sdn-foundation-rev2
+# Push 4 new commits: a2a618e + fe873ab + a5a9c15 + <Option C handoff commit>
+```
+
+---
+
+## Session 16 — Phase C kickoff — Master Quality Plan
+
 **Ngày:** 2026-04-22 (session 16, Phase C kickoff — Master Quality Plan)
 **Branch:** `docs/sdn-foundation-rev2` @ `b9a28d9` (in sync with origin, session 15 đã push)
 **Plans:** `plans/sdn-foundation-architecture.md` Phụ lục E — Phase C Master Quality Plan
