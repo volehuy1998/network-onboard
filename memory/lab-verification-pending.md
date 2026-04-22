@@ -148,10 +148,15 @@ Replacements TBD in C4 follow-up commit; not blocking Phase C progression.
 |------|---------|------|--------|----------|--------|
 | _Populated during C1a pass_ | | | | | |
 
-### Block IX — OVS Internals + Operations (22 file, highest density)
+### Block IX — OVS Internals + Operations (24 file, highest density)
 
 | File | Section | Type | Origin | Priority | Status |
 |------|---------|------|--------|----------|--------|
+| 9.22 | Guided Exercise 1 — `ofproto/trace` 3-table pipeline Lab 6 | CLI verbatim + POE goto_table reverse | OVS.pdf Lab 6 p116-135 + `ovs-appctl` man | HIGH | doc-plausible (session 23 Phase D) |
+| 9.22 | `ovs-appctl ofproto/trace` output format | CLI verbatim | OVS.pdf Lab 6 p19-20 Figure 37 | HIGH | doc-plausible |
+| 9.23 | Guided Exercise 1 — `ofproto/trace` verify permit + deny path Lab 7 | CLI verbatim + POE priority ordering | OVS.pdf Lab 7 p141-156 + OpenFlow 1.3.5 §5.3 | HIGH | doc-plausible (session 23 Phase D) |
+| 9.23 | `ovs-ofctl dump-flows` output priority ordering | CLI verbatim | OVS.pdf Lab 7 p13 Figure 19 | MEDIUM | doc-plausible |
+| 9.23 | POE stateless bidirectional breaking — iperf test | POE, measured | compass Ch 8 priority + OVS tutorial | HIGH | doc-plausible |
 | 9.24 | Guided Exercise 1 — POE TCP reply auto-allowed | POE, measured | OVS.pdf Lab 8 p11-15 + netfilter docs | HIGH | doc-plausible (session 22 Phase D) |
 | 9.24 | Guided Exercise 2 — TCP lifecycle 5 state transitions via `conntrack -E` | Measured CLI output | OVS.pdf Lab 8 p16-18 + conntrack-tools 1.4.6 | HIGH | doc-plausible |
 | 9.24 | Guided Exercise 3 — UDP conntrack POE (pseudo-state bi-directional) | POE, measured | compass Ch 9 + `ovs-fields(7)` ct_state bitfield | MEDIUM | doc-plausible |
