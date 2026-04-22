@@ -132,8 +132,17 @@ Khi BẮT ĐẦU session mới:
 □ 5a. SVG spacing+diacritics: nếu có SVG mới/sửa → chạy svg-audit.py + diacritics-audit.py (Rule 6). 0 violation.
 □ 5b. SVG-caption consistency: chạy svg-caption-consistency.py cho mỗi SVG đã sửa (Rule 8). 0 mismatch.
 □ 6. File integrity: chạy null byte check (Rule 9) trên MỌI file text đã modified. 0 null bytes.
-□ 7. Git workflow skill: đọc trước khi commit
-□ 8. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
+□ 7a. Rule 11 Vietnamese Prose scan (BẮT BUỘC — không skip):
+     - Chạy regex `§11.6` full trên MỌI file .md đã modified — KHÔNG chỉ `inspect|support`
+     - Phân loại từng hit theo §11.3 (named identifier vs prose)
+     - Fix mọi prose hit bold label + section heading + câu văn tư duy
+     - Nếu gặp từ mới chưa có trong §11.2 dictionary → bổ sung vào CLAUDE.md cùng commit
+□ 7b. Rule 11 spot-check bold label + section heading:
+     - grep '^##' <file> — mọi heading prose phải Việt (trừ tên concept/stage)
+     - grep -E '^\*\*[A-Z][a-z]+' <file> — mọi bold label đầu câu phải Việt (trừ tên concept)
+     - grep -E '^> \*\*(Key Topic|Hiểu sai|Điểm mấu chốt)' <file> — callout label phải Việt
+□ 8. Git workflow skill: đọc trước khi commit
+□ 9. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
 ```
 
 **Checklist E — Khi thêm Part mới (BẮT BUỘC):**
@@ -334,55 +343,152 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 
 ### Rule 11: Vietnamese Prose Discipline (BẮT BUỘC)
 
-> Nguồn gốc: session 13, 2026-04-21. User chỉ ra 9 ví dụ điển hình về English abuse
+> Nguồn gốc ban đầu: session 13, 2026-04-21. User chỉ ra 9 ví dụ điển hình về English abuse
 > trong Phase B content Block I-VI (~890 English hit trên 24 file, mật độ 5-26%).
 > Ví dụ: "hypervisor overlay paradigm" thay vì "mô hình hypervisor overlay",
 > "VMware announce acquisition Nicira" thay vì "VMware thông báo mua lại Nicira",
 > "troubleshoot tunnel issue cần inspect 2 layer" thay vì "khắc phục sự cố tunnel
 > cần kiểm tra 2 lớp". Root cause: mental model khái niệm trừu tượng hình thành
 > trong tiếng Anh, không translate khi viết Việt → câu lai bad.
+>
+> Mở rộng session 22+23, 2026-04-22. User phát hiện Part 9.22+9.23+9.24 tái phạm
+> Rule 11 có hệ thống (60+ hit trên 1464 dòng): "Sequential evaluation" bold label,
+> "Abstraction level / Auto zone assignment / Distributed commit" bold label,
+> "operator manage thứ tự", "experiment để verify", "fail" lặp 4 lần, "motivation
+> cho Part 9.24", "performance cho traffic symmetric", v.v. Session log tự báo
+> cáo "Rule 11 OK" vì chỉ chạy regex catch `inspect|support` — bỏ sót toàn bộ
+> nhóm vocabulary mới. User làm rõ nguyên tắc **dịch đúng nơi đúng chỗ**: cùng
+> một từ (routing, output, table, state, flow, forwarding), nếu xuất hiện như
+> named identifier / syntax / tên stage của OVS-OpenFlow-OVN thì GIỮ English;
+> nếu xuất hiện trong prose mô tả thì DỊCH Việt.
 
-**Khi viết content tiếng Việt cho onboard series, tuân thủ:**
+**Đây là chương trình đào tạo cho người Việt Nam đọc** — ưu tiên tiếng Việt tự nhiên, chỉ giữ tiếng Anh cho named entity/cú pháp/identifier. Nguyên tắc cốt lõi: **dịch đúng nơi đúng chỗ**.
 
-1. **Giữ tiếng Anh chỉ cho**:
-   - Tên sản phẩm/dự án (OpenFlow, NETCONF, OVS, OVN, NSX, Nicira, VMware, Linux, Kubernetes, Docker).
-   - Protocol/acronym (TCP, UDP, VLAN, VXLAN, Geneve, BGP, OSPF, MPLS, TLS).
-   - CLI verbatim (`ovs-ofctl`, `ovs-vsctl`, `ovn-nbctl`).
-   - Spec field name (match fields, flow entry, OXM, NXM).
-   - Acronym ngành (SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC).
+#### 11.1. Giữ English khi từ xuất hiện như một trong các vai trò sau
 
-2. **Dịch sang tiếng Việt cho vocabulary tư duy**:
-   - paradigm → mô hình
-   - architecture → kiến trúc
-   - approach → cách tiếp cận
-   - deployment → triển khai
-   - support → hỗ trợ
-   - adoption → sự chấp nhận / việc áp dụng
-   - trade-off → sự đánh đổi
-   - backward compat → tương thích ngược
-   - lock-in → bị phụ thuộc vào
-   - production (IT context) → **môi trường production** (GIỮ "production", KHÔNG dịch "sản xuất")
-   - production (manufacturing) → sản xuất (ODM sản xuất hardware)
-   - rebrand → đổi tên thương hiệu
-   - announce → thông báo / công bố
-   - troubleshoot → khắc phục sự cố
-   - inspect → kiểm tra
-   - integration → tích hợp
-   - exclusive → độc quyền
-   - steep learning curve → quá trình học hỏi rất khó khăn
+- **Tên sản phẩm / dự án / tổ chức**: OpenFlow, OVS, OVN, Open vSwitch, NETCONF, NSX, Nicira, VMware, Linux, Ubuntu, Mininet, Cisco, Broadcom Trident, Stanford, ONF, GitHub, Spamhaus, Prometheus, Arbor Networks, Cloudflare, DigitalOcean, Red Hat, NVIDIA ConnectX-6, Intel E810, Anthropic.
+- **Protocol / acronym chuẩn quốc tế**: TCP, UDP, IP, ICMP, SCTP, ARP, DNS, TLS, SSH, HTTP, HTTPS, VLAN, VXLAN, Geneve, BGP, OSPF, BFD, MPLS, NAT, SNAT, DNAT, DDoS, RPC, ECMP, FTP.
+- **CLI verbatim & flag**: `ovs-ofctl`, `ovs-vsctl`, `ovs-appctl`, `ovs-dpctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-northd`, `ovn-controller`, `conntrack`, `iptables`, `modprobe`, `sysctl`, `sudo`, `ping`, `iperf`, `tcpdump`, `--dpdk`, man page reference `ovs-fields(7)`, `ovs-actions(7)`, `ovn-architecture(7)`.
+- **Spec field name / match field / OpenFlow identifier**: `ct_state`, `ct_zone`, `ct_mark`, `ct_label`, `metadata`, `cookie`, `priority`, `in_port`, `nw_src`, `nw_dst`, `dl_src`, `dl_dst`, `dl_type`, `tp_dst`, `sport`, `dport`, `reg0..reg15`, `xreg0..xreg7`, OXM, NXM.
+- **Action name / instruction name / stage name của OpenFlow-OVS-OVN**: `goto_table`, `resubmit`, `output`, `normal`, `drop`, `mod_dl_src`, `mod_dl_dst`, `dec_ttl`, `ct()`, `ct(commit)`, `ct_next`, `ct_commit`, `ct_lb`, `ct_clear`, `apply_actions`, `write_actions`, `write_metadata`, `clear_actions`, `Apply-Actions`, `Write-Actions`, `Clear-Actions`, `Write-Metadata`, `Goto-Table`, `allow`, `allow-related`, `reject`, `set_queue`, action value như `ct_state=+trk+new`.
+- **Pipeline stage / table name khi dùng như nhãn**: "Table 0 Classifier", "Table 1 L3 Forwarding", "Ingress ACL", "Egress ACL", "(ACL, routing, output)", "(ingress ACL → LB → routing → egress ACL)". Các từ này là **tên stage** trong kiến trúc pipeline OVS/OVN, KHÔNG dịch dù thoạt nhìn giống vocabulary thường.
+- **Literal value của state / flag / protocol**: `NEW`, `ESTABLISHED`, `RELATED`, `INVALID`, `SYN_SENT`, `SYN_RECV`, `FIN_WAIT`, `TIME_WAIT`, `CLOSE`, `CLOSE_WAIT`, `LAST_ACK`, `UNREPLIED`, `ASSURED`, `[NEW]`, `[UPDATE]`, `[DESTROY]`.
+- **Thuật ngữ ngành mạng quốc tế phổ biến**: SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC, MAC, VIP, NFV, SR-IOV, SmartNIC, FIB, BUM, DMZ, VPN, L2, L3, L4, five-tuple (5-tuple), three-way handshake, pseudo-state, bitfield, tuple, hairpin, subnet, broadcast, multicast, unicast, datapath, bridge, kernel, userspace, namespace, tenant, multi-tenant, chassis, overlay, underlay, east-west, north-south, fast path, slow path, line-rate, offload, DPDK.
+- **Concept từ OpenFlow / OVS spec dùng như noun**: flow, flow entry, flow table, flow rule, pipeline, multi-table pipeline, match field, action set, instruction, controller, stateful, stateless, conntrack, handshake.
 
-3. **Test đọc đơn lập**: sau khi viết xong một câu, đọc tách biệt khỏi context.
-   Nếu câu có > 3 từ tiếng Anh không phải technical term chuẩn → rewrite bằng
-   từ nối tiếng Việt.
+#### 11.2. Dịch Việt khi từ xuất hiện trong prose mô tả / giải thích
 
-4. **Hybrid acceptable**: "tích hợp với vSphere" (không phải "integrate với
-   vSphere"). Technical term tiếng Anh + từ nối thuần Việt.
+**Vocabulary tư duy — LUÔN dịch:**
 
-5. **Misconception callout**: câu quote trong "Hiểu sai:" phải đầy đủ tiếng
-   Việt, không phải shortform tiếng Anh.
+| English | Vietnamese | English | Vietnamese |
+|---|---|---|---|
+| paradigm | mô hình | architecture | kiến trúc |
+| approach | cách tiếp cận | deployment | triển khai |
+| support | hỗ trợ | adoption | sự chấp nhận / việc áp dụng |
+| trade-off | sự đánh đổi | backward compat | tương thích ngược |
+| lock-in | bị phụ thuộc vào | rebrand | đổi tên thương hiệu |
+| announce | thông báo / công bố | troubleshoot | khắc phục sự cố |
+| inspect | kiểm tra | integration | tích hợp |
+| exclusive | độc quyền | steep learning curve | quá trình học hỏi rất khó khăn |
+| operator | người vận hành | engineer | kỹ sư |
+| developer / dev team | nhóm phát triển | performance | hiệu năng |
+| optimization | tối ưu hoá | overhead | chi phí phụ |
+| compile (verb) | biên dịch | compiler (noun) | compiler (giữ) / trình biên dịch |
+| deploy (verb) | triển khai | deployment (noun) | việc triển khai |
+| experiment (noun) | thử nghiệm / thí nghiệm | verify | kiểm chứng |
+| fail / failure | thất bại | behavior | hành vi |
+| motivation | động cơ | criteria | tiêu chí |
+| subtle | tinh tế | pedagogical | sư phạm |
+| explicit | tường minh | implicit | ngầm định |
+| version | phiên bản | strict | nghiêm ngặt |
+| tolerate | chấp nhận | undefined | không xác định |
+| guideline | hướng dẫn | convention | quy ước |
+| bypass (verb) | né / vượt qua | modify | sửa |
+| rewrite | sửa / viết lại | report (verb) | báo / báo cáo |
+| input / output (noun, prose) | đầu vào / kết quả | control (noun, prose) | điều khiển / kiểm soát |
+| tracking mechanism | cơ chế theo dõi | state tracking | theo dõi trạng thái |
+| track (verb, prose) | theo dõi | monitoring | giám sát |
+| monitor event | theo dõi sự kiện | event stream | luồng sự kiện |
+| symmetric | đối xứng | asymmetric | không đối xứng / một chiều |
+| bidirectional | hai chiều | unidirectional / one-way | một chiều |
+| communication | giao tiếp | connection (prose) | kết nối |
+| session (prose) | phiên | lookup (prose) | tra cứu |
+| pattern (prose) | mẫu | template (prose) | khuôn mẫu |
+| namespace isolation | cô lập namespace | multi-tenant isolation | cô lập multi-tenant |
+| overlap | chồng lấn | multiplex | ghép kênh |
+| modularization | module hoá | modular | module hoá |
+| flexibility | tính linh hoạt | concern | nhiệm vụ / mối quan tâm |
+| transfer control | chuyển giao điều khiển | recirculate (trong prose) | đưa về pipeline |
+| expression (prose) | biểu thức | assignment (prose) | việc gán |
+| read-only (prose) | chỉ đọc | read / write (prose) | đọc / ghi |
+| junior / senior | mới vào nghề / kỳ cựu | production (IT) | **môi trường production** (giữ "production") |
+| production (manufacturing) | sản xuất | incident | sự cố |
+| post-mortem | báo cáo hậu sự | beyond lifetime | vượt quá vòng đời |
+| debug (verb, prose) | gỡ lỗi | debugging (noun) | việc gỡ lỗi |
+| scale (noun, prose) | quy mô | scalability | khả năng mở rộng |
+| flow explosion | bùng nổ flow | table explosion | bùng nổ bảng |
+| cross-product | tích chéo | termination | tính kết thúc |
+| traffic (prose) | lưu lượng | packet (prose) | gói tin |
+| forwarding (prose, verb nghĩa "chuyển tiếp") | chuyển tiếp | routing (prose, verb nghĩa "định tuyến") | định tuyến |
+| rule ordering | thứ tự rule | first-match wins | ai match trước thì thắng |
 
-Từ điển dịch đầy đủ tham khảo: `.claude/plans/tender-scribbling-comet.md`
-Phần 1 (plan session 13).
+#### 11.3. Cùng một từ, lúc dịch lúc không — minh hoạ
+
+| Từ | Giữ English khi | Dịch Việt khi |
+|---|---|---|
+| `routing` | Tên stage: `(ACL, routing, output)`, `L3 Forwarding`, `distributed routing` (cụm danh từ OVN) | Prose động từ: "gói tin được định tuyến sang subnet khác" |
+| `output` | Action: `action=output:3`; tên stage trong tuple `(ACL, routing, output)` | Prose: "kết quả của toàn bộ pipeline", "đầu ra của trace" |
+| `table` | OpenFlow concept: `table=0`, "multi-table pipeline", "table lookup trong OpenFlow" | Prose: "bảng FIB L3", "bảng MAC", "bảng trạng thái conntrack" |
+| `forwarding` | Tên table: "Table 2 L2 Forwarding" | Prose: "chuyển tiếp gói tin sang h3" |
+| `state` | Field name: `ct_state`; literal: `state=ESTABLISHED` | Prose: "theo dõi trạng thái", "máy trạng thái" |
+| `flow` | OpenFlow concept: "flow entry", "flow table", "flow rule" | Generic (hiếm dùng): "luồng dữ liệu" |
+| `traffic` | Hiếm khi giữ | Prose: "lưu lượng đông-tây", "lưu lượng reply" |
+| `connection` | Conntrack literal: `connection ESTABLISHED` | Prose: "kết nối hai chiều", "kết nối h1 → h3" |
+| `switch` | Tên thiết bị: switch `s1`, OVS switch | Động từ "chuyển đổi" thì dịch |
+| `monitoring` | Tên công cụ/component: "Monitoring tool" | Prose: "giám sát bảng trạng thái" |
+| `pattern` | Code/config pattern name | Prose: "mẫu 7-flow Lab 8" |
+| `commit` | CLI/action: `ct(commit)`, `commit entry` | Prose: "tạo entry tồn tại vượt quá vòng đời gói tin" |
+
+**Câu hỏi để tự phân loại:** từ này có phải là *tên riêng* mà tài liệu OVS/OpenFlow/OVN dùng để gọi một entity, syntax, hoặc stage không? Nếu CÓ → giữ English. Nếu KHÔNG (từ dùng để mô tả, giải thích, kể chuyện) → dịch Việt.
+
+#### 11.4. Bold label và section heading
+
+**KHÔNG được để English cho:**
+- Section heading prose: `## Guided Exercise 2 — State table inspection và TCP lifecycle` → `## Guided Exercise 2 — Kiểm tra state table và vòng đời TCP` (giữ `Guided Exercise` + `state table` là concept; dịch `inspection` → `Kiểm tra`, `TCP lifecycle` → `vòng đời TCP`).
+- Bold label mở đầu đoạn: `**Sequential evaluation.**` → `**Đánh giá tuần tự.**`; `**Abstraction level.**` → `**Mức trừu tượng.**`; `**Auto zone assignment.**` → `**Tự động gán zone.**`; `**Distributed commit.**` → `**Commit phân tán.**`.
+- Callout label nội bộ: `> **Key Topic:**` → `> **Điểm mấu chốt:**`.
+
+**Được giữ English cho:**
+- Section heading là tên concept/stage: `## 9.24.3 Action ct() — ngữ nghĩa đầy đủ`, `## 9.24.7 ct_zone — cô lập multi-tenant`.
+- Bold label là tên concept: `**NEW**`, `**ESTABLISHED**`, `**commit**`, `**zone=N**`.
+
+#### 11.5. Test đọc đơn lập + Hybrid acceptable + Misconception callout
+
+- Sau khi viết xong một câu, đọc tách biệt khỏi context. Nếu câu có > 3 từ tiếng Anh không phải technical term chuẩn → rewrite.
+- Hybrid acceptable: "tích hợp với vSphere" (technical term + từ nối thuần Việt). Không viết "integrate với vSphere".
+- Câu quote trong `> **Hiểu sai:** *"..."*` phải đầy đủ tiếng Việt — chỉ giữ tên sản phẩm / action / field / literal.
+
+#### 11.6. Checklist scan trước khi commit (BẮT BUỘC)
+
+Không được tin tưởng vào regex lẻ `inspect|support`. BẮT BUỘC chạy lần lượt:
+
+```bash
+# Scan nhóm vocabulary tư duy — dùng ripgrep case-insensitive
+grep -niE '\b(paradigm|architecture|approach|deployment|adoption|trade-?off|lock-?in|rebrand|announce|troubleshoot|inspect|integration|exclusive|operator|engineer|performance|optimization|overhead|compile[rd]?|deploy(ment)?|experiment|verify|fail(ure)?|behavior|motivation|criteria|subtle|pedagogical|explicit|implicit|version|strict|tolerate|undefined|guideline|convention|bypass|modify|rewrite|report(ing)?|input|output|control|tracking|symmetric|bidirectional|communication|session|lookup|pattern|template|namespace|overlap|multiplex|modular|flexibility|concern|expression|assignment|junior|senior|incident|post-?mortem|lifetime|debug(ging)?|scale|scalability|rule|first-?match|track(ing)?|monitor(ing)?|event)\b' <file.md>
+```
+
+Kết quả không nên trống — phần lớn hit là false positive (trong URL, code block, product name). Phân loại từng hit:
+1. **Inside URL, code block, CLI sample** → skip.
+2. **Tên sản phẩm/tổ chức/concept OpenFlow-OVS-OVN** → skip.
+3. **Bold label / section heading / prose tư duy** → FIX Việt hóa.
+
+Nếu nghi ngờ, áp dụng câu hỏi §11.3: "đây có phải tên riêng trong thế giới OVS không?"
+
+#### 11.7. Khi thêm từ mới vào dictionary
+
+Nếu trong quá trình review gặp một từ chưa có trong §11.2, BỔ SUNG vào bảng ngay lập tức trong cùng commit fix, kèm ví dụ ngữ cảnh. Dictionary là tài liệu sống — không đông cứng ở phiên bản session 22+23.
+
+Từ điển mở rộng chi tiết: `.claude/plans/tender-scribbling-comet.md` Phần 1 (plan session 13) + retrofit session 22+23 trong cùng file này.
 
 ### Rule 12: Exhaustive Offline Source Exploration (BẮT BUỘC)
 
