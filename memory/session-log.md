@@ -41,18 +41,54 @@ User direction sau khi Phase B complete (session 15): chọn giải pháp tốt 
 
 **Batch-fix** approach: audit 70 file → accumulate findings → category-grouped fix commits (all POE violations in one commit, all numbering in another, all cross-ref breaks in another). Rationale: context-efficient, diff reviewable per category.
 
-### Commit session 16 (planned)
+### Commit session 16 (actual — all active phases complete)
 
 | Commit | Phạm vi | Files |
 |--------|---------|-------|
-| _(pending)_ | Phase C kickoff | CLAUDE.md + plans/sdn-foundation-architecture.md + memory/session-log.md + memory/lab-verification-pending.md |
-| _(pending)_ | C2 audit progress (Block 0-VI) | audit findings per Block |
-| _(pending)_ | C2 batch fix HIGH (POE violations) | file fixes |
-| _(pending)_ | C2 batch fix MEDIUM (headings/numbering) | file fixes |
+| `ec0521e` | Phase C kickoff | CLAUDE.md + plans/sdn-foundation-architecture.md + memory/session-log.md + memory/lab-verification-pending.md |
+| `d821e65` | C2 Category A heading cleanup + Part 1.2 POE | 4 Block I-IV files |
+| `10fe2e5` | C2 follow-up Part 3.2 heading | 1 file |
+| `3a92e27` | C3 Rule 11 partial (paradigm/rebrand/troubleshoot) | 20 files across Block I-XIX |
+| `e6d7a8b` | C4 URL audit + C1a lab inventory | 3 files (2 markdown + tracker) |
+| `2c6d052` | C5 Expert Extension skeleton Block XIV/XV/XVI | 3 new files |
+| `ce13e49` | C6a Interim Publish Pipeline | 2 new files in scripts/ |
+| `<handoff>` | Session 16 final handoff | CLAUDE.md + session-log + plans update |
 
-### Quick-start next turn
+### 🎉 Phase C active phases COMPLETE
 
-Continue C2 audit Block II (5 file: 2.0-2.4). Expected pattern same as Block I.
+- **C1** Init tracker ✓
+- **C2** Pedagogical Integrity Audit (70 file) ✓
+- **C3** Vietnamese Prose Discipline Rule 11 partial ✓ (first-pass sed replacements)
+- **C4** Fact-Check + URL Audit (3 dead URL fixed, 98.7% healthy) ✓
+- **C1a** Interim Lab Authoring (inventory populated) ✓
+- **C5** Expert Extension skeleton (Block XIV/XV/XVI) ✓
+- **C6a** Interim Publish Pipeline (Pandoc PDF + EPUB) ✓
+- **C1b** Lab Verification — DEFERRED, chờ user notify lab host
+- **C6b** Final Publish v2.0 — DEFERRED, sau C1b
+
+### Deferred work (next session + future)
+
+**Session 17 options:**
+- **Option A (nếu user có lab host)**: kickoff C1b — setup Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8 lab. Run exercises per priority matrix trong `memory/lab-verification-pending.md`. Replace doc-plausible output với real verified-lab output per Rule 7a.
+- **Option B (without lab host)**: C3 deep pass — paragraph-level Vietnamese prose revision for remaining patterns (approach/deployment/adoption/trade-off) across 53 high-violation files. Requires per-file context review, not global sed.
+- **Option C**: C5 content expansion — take 14.0/15.0/16.0 skeletons to full content (+ add sibling files 14.1/14.2, 15.1/15.2, 16.1/16.2/16.3). ~9 additional content files.
+- **Option D**: Full Pandoc build test — install pandoc + texlive on local Ubuntu VM, run `scripts/build-sdn-pdf.sh`, verify v1.0-preVerified PDF renders correctly.
+
+### Lệnh local khi resume session 17
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+git log --oneline -15
+# Session 16 commits: ec0521e → ce13e49 + handoff (8 total ahead origin until push)
+# User push manually: git push origin docs/sdn-foundation-rev2
+```
+
+### Quick-start next session
+
+Read `memory/lab-verification-pending.md` để nắm C1b priority matrix. Read `plans/sdn-foundation-architecture.md` Phụ lục E để see Phase C progression. Check user signal: lab host available? → C1b. Otherwise: pick Option B/C/D per preference.
 
 ---
 

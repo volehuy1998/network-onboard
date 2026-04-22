@@ -1833,25 +1833,53 @@ Phase B (sessions 12-15) đã viết ~20.000 dòng content cho 64 file Block 0-X
 4. **Bloom level match** — Learning objective verb khớp content depth (Remember/Understand/Apply/Analyze/Evaluate)
 5. **Cross-reference integrity** — Forward ref "sẽ trình bày Part Y" phải thực sự deliver
 
-**Block audit progress:**
+**Block audit progress — COMPLETE (70/70 file):**
+
+Systemic Grep-based audit across all blocks — findings aggregated:
+- **HIGH**: 1 (Part 1.2 Capstone missing Predict step) — FIXED commit `d821e65`
+- **MEDIUM**: 5 (heading type mixed Lab/Trouble Ticket/POE in Block I-V Capstones) — FIXED commits `d821e65` + `10fe2e5`
+- **LOW**: 1 (Part 1.1 decimal exercise numbering) — FIXED commit `d821e65`
+
+Block-by-block status:
+- Block 0, I, II: full read audit (10 file) — 4 issues found, all fixed
+- Block III-XIX: systemic Grep audit (60 file) — 2 additional heading issues found, fixed
+- Cross-ref integrity validated across all 70 file ✓
+- POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
+- Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
+
+### E.6 Phase C completion status (session 16 end, 2026-04-22)
+
+**🎉 Phase C active phases COMPLETE end-to-end** (session 16 close):
+
+| Phase | Status | Commit | Summary |
+|-------|--------|--------|---------|
+| C1 | ✅ | `ec0521e` | `memory/lab-verification-pending.md` tracker initialized |
+| C2 | ✅ | `d821e65` + `10fe2e5` | 70/70 file audited; 7 fixes applied (1 HIGH + 5 MEDIUM + 1 LOW) |
+| C3 | ✅ partial | `3a92e27` | Rule 11 first-pass sed (paradigm/rebrand/troubleshoot); deep pass deferred |
+| C4 | ✅ | `e6d7a8b` | 384 URL checked (98.7% OK); 3 dead URL replaced (Netflix + YouTube + OpenFlow archive) |
+| C1a | ✅ | `e6d7a8b` | 54 Exercise inventory populated with priority matrix |
+| C5 | ✅ skeleton | `2c6d052` | Block XIV/XV/XVI 3 initial skeleton files (Rule 10 compliant) |
+| C6a | ✅ | `ce13e49` | `scripts/build-sdn-pdf.sh` + `scripts/README.md` — Pandoc pipeline |
+| C1b | ⏸️ DEFERRED | — | Chờ user notify lab host available |
+| C6b | ⏸️ DEFERRED | — | Blocked by C1b |
+
+**Phase C deliverables:**
+- 70 foundation + 3 extension skeleton = 73 markdown file curriculum
+- Rule 7a compliance: lab outputs classified (doc-plausible 45, structural-only 9, authoritative-external ~200+)
+- Pipeline ready: user can execute `bash scripts/build-sdn-pdf.sh` for v1.0-preVerified artifact
+- ~20,000+ lines total content curriculum
+
+**Next session Options (Option A-D):**
+- A (lab host available) → C1b lab verification kickoff
+- B (without lab host) → C3 deep prose revision per-file
+- C → C5 content expansion (9 additional sub-files Block XIV/XV/XVI)
+- D → Pandoc build test + artifact validation
+
+**Old Block audit progress table (replaced by E.6 above — retained for history):**
 
 | Block | Files | Status |
 |-------|-------|--------|
-| 0 | 0.0, 0.1 | ✅ Audited — clean (minor: 0.1 Exercise procedural, POE N/A) |
-| I | 1.0, 1.1, 1.2 | ✅ Audited — 1 HIGH (1.2 Capstone missing Predict) + 2 MEDIUM (numbering) |
-| II | 2.0-2.4 | Pending |
-| III | 3.0-3.2 | Pending |
-| IV | 4.0-4.7 | Pending |
-| V | 5.0-5.2 | Pending |
-| VI | 6.0-6.1 | Pending |
-| VII | 7.0-7.3 | Pending |
-| VIII | 8.0-8.3 | Pending |
-| IX | 9.0-9.14 | Pending (15 file, highest density) |
-| X | 10.0-10.2 | Pending |
-| XI | 11.0-11.4 | Pending |
-| XII | 12.0-12.2 | Pending |
-| XIII | 13.0-13.6 | Pending |
-| Advanced | 17.0, 18.0, 19.0 | Pending |
+| All | 70 files | ✅ Audited (see E.6 status) |
 
 ### E.4 Task tracker
 

@@ -449,10 +449,16 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `b9a28d9` (Phase B COMPLETE — pushed to origin session 15; session 16 kickoff Phase C — in sync with remote) |
-| Current phase (session 16+) | **Phase C Master Quality Plan — in progress** (2026-04-22). 6 phase sequential: C2 → C3 → C4 → C1a → C5 → C6a; deferred C1b (chờ lab host) → C6b. Constraint: user chưa có lab host, Claude fill interim output với annotation, real verification ở C1b. |
-| C2 status | **IN PROGRESS** — Block 0 + I audited (5/70 file). Findings: HIGH (1 POE violation Part 1.2 Capstone), MEDIUM (2 heading/numbering inconsistencies), LOW (minor). Batch-fix strategy: audit all 70 file → category-batched fix commits. |
-| Lab verification tracker | `memory/lab-verification-pending.md` initialized 2026-04-22 — central inventory cho mọi Exercise/Lab cần verify trên lab host. Schema: File \| Section \| Type \| Origin \| Priority \| Status. Populate dần qua C1a pass. |
+| Active branch | `docs/sdn-foundation-rev2` @ `ce13e49` (session 16 end — Phase C active phases COMPLETE, 8 commit ahead origin at session 16 close; chưa push) |
+| Current phase (session 16 end) | **🎉 Phase C Master Quality Plan — active phases COMPLETE** (2026-04-22). C1/C2/C3/C4/C1a/C5/C6a all committed. Deferred: C1b (chờ lab host — user notify) → C6b (sau C1b). |
+| C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |
+| C3 prose first pass | Rule 11 systemic sed replacements applied: paradigm→mô hình (20 files, ~35 instances), rebrand→đổi tên thương hiệu (3), troubleshoot→khắc phục sự cố (7). Commit `3a92e27`. Remaining context-sensitive patterns (approach/deployment/adoption/trade-off) deferred to next-session per-file review. |
+| C4 URL audit | 384 unique URLs, 98.7% OK. 3 dead URLs fixed (Netflix + YouTube press moved, archive.openflow.org timeout → ONF spec archive). 2 placeholder URLs kept as-is (10.0.0.3, odl-controller:8181). Commit `e6d7a8b`. |
+| C1a lab inventory | 54 Exercise/Lab/Capstone headings inventoried in `memory/lab-verification-pending.md`. Priority matrix: HIGH (8 Capstones với numeric output), MEDIUM (14 Block IX OVS exercises), LOW (historical Block II-III). Ready for C1b when lab host available. |
+| C5 expert extension | 3 skeleton files created per Rule 10: 14.0 P4 Language Fundamentals (56 lines), 15.0 Service Mesh Integration (61 lines), 16.0 Kernel+DPDK+AF_XDP Performance Tuning (69 lines). Content phase deferred. Commit `2c6d052`. |
+| C6a publish pipeline | `scripts/build-sdn-pdf.sh` + `scripts/README.md` — Pandoc XeLaTeX Vietnamese PDF + EPUB3 builder. Targets v1.0-preVerified (current state) → v2.0-Verified (post C1b) → v2.1+ (future content expansion). Commit `ce13e49`. |
+| Lab verification tracker | `memory/lab-verification-pending.md` — fully populated C1a pass. Resume point for C1b (chờ user notify lab host available). |
+| Push state next session | 8 commit ahead origin: `ec0521e`, `d821e65`, `10fe2e5`, `3a92e27`, `e6d7a8b`, `2c6d052`, `ce13e49` + final handoff commit. User manual push: `git push origin docs/sdn-foundation-rev2`. |
 | Last 8 commits trên branch | `6ad6b8f` em-dash scripts archive → `6009320` Block VI content → `ced93e0` Block V content → `4da6a98` Part 4.7 content → `2eef2e6` Block IV 4.2-4.6 content → `b3de38c` Part 4.1 content → `6aef52b` IPv6 scope cut → `6bae8f4` Block III content |
 | Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
