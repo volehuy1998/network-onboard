@@ -7,6 +7,137 @@
 
 ## Session gần nhất
 
+## Session 21 — Phase D plan + PDF visual inspection (không execute, chờ tomorrow)
+
+**Ngày:** 2026-04-22 (session 21, cuối ngày)
+**Branch:** `docs/sdn-foundation-rev2` @ `4bdeba9` — **đã push lên origin**
+**Trạng thái:** **Plan-only session**, chưa triển khai Part nào. Chờ user confirm để execute ngày mai.
+
+### Bối cảnh session 21
+
+User hỏi: "bạn đã khai thác toàn bộ kiến thức của OpenVSwitch.pdf và OVS.pdf chưa?" — tôi buộc phải thừa nhận **chưa**. Session 20 tuyên bố "offline exhausted" là sai:
+
+- `OVS.txt` thực chất là giáo trình NSF Award 1829698 (Principal Investigator Jorge Crichigno, USC, WASTC 2021) — **8543 dòng, 15 labs + 5 exercises**
+- Đã map chỉ **6/15 labs** (3 → 9.0/9.1, 4 → 9.19, 5 → 9.18, 9 → 9.9 skeleton, 11 → 9.2 partial, 13 → 9.20) + **0/5 exercises**
+- 9 labs + 5 exercises chưa có Part dedicated
+
+User direct: "hãy nghiên cứu và cập nhật plan một cách kỹ lưỡng. Người đọc bị lôi cuốn hơn." + "dùng công nghệ để xem hình ảnh luôn nhé" (không chỉ .txt extract).
+
+### Thực thi session 21
+
+**1. Plan Phase D — Phụ lục F** trong `plans/sdn-foundation-architecture.md` (commit `d764598`, 573 dòng thêm):
+
+- F.1 Rationale — gap analysis sau session 20 tuyên bố sai
+- F.2 Triết lý engagement: (a) Narrative arc drama, (b) POE phản chứng giá trị, (c) Trace thật, (d) OVN bridge cuối
+- F.3 Inventory đầy đủ: OVS.txt 15 labs + 5 exercises + compass_artifact 20+ chapters + OpenVSwitch.txt NSRC
+- F.4 **5 Part mới + 4 expansion:**
+  - **9.21** Mininet cho OVS labs (Lab 2, 350-450 dòng)
+  - **9.22** Multi-table OpenFlow pipeline (Lab 6 + compass Ch 8, 400-500 dòng)
+  - **9.23** Stateless ACL firewall (Lab 7, 380-450 dòng)
+  - **9.24** Connection tracking + stateful firewall (Lab 8 + compass Ch 9, **550-650 dòng, PRIORITY CAO NHẤT**)
+  - **9.25** Flow debugging + ofproto/trace + ovs-dpctl (NSRC + compass Ch 10/Q, 420-500 dòng)
+  - **9.9** QoS expansion (Lab 9, 400-500 add)
+  - **11.3** GRE expansion (Lab 14, 350-400 add)
+  - **11.4** IPsec expansion (Lab 15, 380-450 add)
+  - **9.2** Kernel datapath lab (Lab 11, 200-250 add)
+- F.5 Sequencing session 21-28
+- F.6 Quality criteria (structure + content + rule compliance + engagement metrics)
+- F.7 Execution checklist per Part
+- F.8 Risk management
+- F.9 Pre-release checklist phase D
+- F.10 **Questions cho user review** (sequencing/scope/patterns/size/start?)
+
+**2. F.11-F.12 Lab Preparation Briefs + Verification Workflow** (commit `d764598`):
+
+Mỗi Part phase D có brief 4-field:
+- (a) **Mục đích bài lab** — sau lab người đọc làm được gì
+- (b) **Kiến thức tiên quyết** — phải vững / nên nắm / đọc trước
+- (c) **Môi trường lab** — OS, OVS version, topology, packages, thời gian, CPU/RAM/disk
+- (d) **Output thực tế sẽ thu** — command + kết quả paste vào chat khi user chạy
+
+F.12 workflow: khi user có host → step-by-step Claude đưa command, user paste output thật, Claude diff với expected, update `memory/lab-verification-pending.md` từ doc-plausible sang verified-lab.
+
+**3. F.13 PDF Visual Evidence** (commit `4bdeba9`):
+
+User direct: "dùng công nghệ xem hình ảnh". Tôi install pymupdf 1.27.2.2, render 112 PNG pages từ 9 PDF (skip OVS.pdf 331p). Read key topology + architecture diagrams. Phát hiện:
+
+- **Topology mismatch:**
+  - Lab 5 (Routing) thực có **2 switch** (s1 + s2 mỗi subnet 1 router), Part 9.18 đơn giản 1 switch
+  - Lab 13 (VLAN trunking) thực có **3 switch** chain (s1 — s3 — s2), Part 9.20 đơn giản 2 switch
+  - → backfill callout 9.18 và 9.20
+
+- **Architecture diagrams thiếu:**
+  - OVS kernel slow/fast path curve (Lab 9 p04) → Part 9.2 expansion PHẢI có visual
+  - QoS M-A Table → Queue → Scheduler (Lab 14 p04) → Part 9.9 expansion PHẢI có visual
+  - Flow Entry multi-column structure (Lab 4 p04) → Part 9.19 optional enhancement
+
+- **Chưa Read:** OVS.pdf 331 pages (28 MB, skip vì lớn). Cần sample Lab 6 + 7 + 8 pages **TRƯỚC khi viết** Part 9.22, 9.23, 9.24 (session 21-22 prereq).
+
+**4. F.14 One-page recap** (commit `4bdeba9`):
+
+Bổ sung sau user request "làm plan minh bạch, chi tiết, rõ ràng, dễ nắm bắt":
+- WHAT: 5 Part mới + 4 expansion, 93 file / ~39K dòng, offline 100% exhausted
+- WHY: session 20 tuyên bố sai, thiếu conntrack + multi-table + ACL + debug foundation
+- HOW: 6-step Part structure, engagement patterns, rule compliance
+- WHEN: bảng session 21-28 với dependencies
+
+**5. `.gitignore`:** thêm `tmp-pdf-pages/` (112 PNG files local render, không commit).
+
+### Commits pushed session 21
+
+```
+d764598  docs(plan): Phase D Offline Source Deep Exhaustion plan (Phụ lục F)
+4bdeba9  docs(plan): Phase D F.13 visual evidence + F.14 one-page recap (minh bạch pass)
+```
+
+Push OK — origin `docs/sdn-foundation-rev2` @ `4bdeba9`, in sync.
+
+### Trạng thái curriculum (KHÔNG thay đổi session 21)
+
+- **88 file / ~33.3K dòng** content OVS/OpenFlow/OVN (unchanged vs session 20)
+- Block IX = 21 file (core 9.0-9.5 + ops 9.6-9.14 + deep 9.15-9.17 + applied 9.18-9.20)
+- Plans: `sdn-foundation-architecture.md` 3282 dòng (thêm 691 dòng phase D F.1-F.14)
+
+### Chờ user review trước khi execute session 22 (ngày mai)
+
+**F.10 questions:**
+1. Sequencing OK? Priority 9.24 conntrack session 22?
+2. Scope 5+4 OK? Thêm/bớt?
+3. Engagement patterns (drama + POE + misconception + OVN bridge) OK?
+4. Ngưỡng 400-600 dòng/Part OK?
+5. Bắt đầu 9.24 ngay khi confirm?
+
+**F.13.5 action items critical:**
+- Read OVS.pdf sample Lab 6 (2930-3476) + Lab 7 (3621-4083) + Lab 8 (4084-4612) **TRƯỚC khi viết** 9.22/9.23/9.24 để verify topology. pymupdf render on-demand cụ thể pages khi cần.
+- Read OpenVSwitch.pdf NSRC 21 pages (kernel/userspace diagram) trước session 27 (9.2 expansion).
+
+### Quick-start ngày mai (session 22)
+
+```bash
+cd /c/Users/voleh/Documents/network-onboard
+git status                                   # expect: clean on docs/sdn-foundation-rev2
+git log --oneline -5                         # expect: 4bdeba9 ở top
+cat plans/sdn-foundation-architecture.md | grep -A 20 "^### F.10"    # F.10 review questions
+ls tmp-pdf-pages/ | wc -l                    # 112 PNG local (chưa commit)
+```
+
+Sau đó:
+1. User confirm F.10 answer (có thể sửa sequencing/scope/patterns)
+2. Claude sample OVS.pdf Lab 8 pages (~4084-4612 lines → page ranges) → verify topology conntrack
+3. Execute session 22 Part 9.24 conntrack (~550-650 dòng)
+
+### Git state cuối session 21
+
+```
+Branch: docs/sdn-foundation-rev2
+HEAD: 4bdeba9 (in sync origin)
+Ahead: 0 commit
+Working tree: clean (memory/session-log.md sắp commit riêng)
+Untracked (local only): tmp-pdf-pages/ 112 PNG, .claude-skills/*
+```
+
+---
+
 ## Session 20 — Part 9.19+9.20 flow table + VLAN (offline exhaustion)
 
 **Ngày:** 2026-04-22 (session 20, tiếp nối session 19 cùng ngày)
