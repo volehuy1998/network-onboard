@@ -7,6 +7,107 @@
 
 ## Session gần nhất
 
+## Session 20 — Part 9.19+9.20 flow table + VLAN (offline exhaustion)
+
+**Ngày:** 2026-04-22 (session 20, tiếp nối session 19 cùng ngày)
+**Branch:** `docs/sdn-foundation-rev2` @ `649f4ef` — **đã push lên origin** (`9174885..649f4ef`)
+
+### Bối cảnh session 20
+
+Session 19 đã khai thác Lab 7 → Part 9.18 (OVS native L3 routing). Cuối session 19, inventory xác nhận còn 2 offline lab chưa khai thác:
+
+- `doc/ovs/Day 4-lab4-ovs flow table.txt` (102 dòng, Crichigno/Sharif/Kfoury USC WASTC 2021)
+- `doc/ovs/Day 5-lab6-VLAN trunking in Open vSwitch.txt` (132 dòng, Crichigno/Sharif USC WASTC 2021)
+
+User directive session 20: "Hãy lên plan nếu chưa có, triển khai nó" → tôi draft plan (2 Part dedicated) và thực thi luôn trong cùng session.
+
+### Thực thi session 20
+
+Hai deliverable hoàn thành:
+
+**Part 9.19 — OVS flow table granularity L1→L4 + priority** (~370 dòng):
+- §9.19.1 Cấu trúc flow entry: 7 thành phần (match, priority, counters, actions, timeouts, cookie, table)
+- §9.19.2 Bốn cấp match trên cùng topology (Lab 4 2-host): L1 port, L2 MAC, L3 IP, L4 TCP port
+- §9.19.3 Priority resolution: specific cao, catch-all thấp (pattern ACL kinh điển)
+- §9.19.4 Lifecycle management với `idle_timeout` + `hard_timeout` + `cookie` — cookie đặc biệt quan trọng để link OpenFlow runtime với OVN Logical Flow
+- Guided Exercise 1 POE: giả thuyết ngược "OVS auto-learn MAC như switch Cisco" bị bác bỏ bằng `ovs-appctl fdb/show` rỗng khi flow table không có `NORMAL`
+
+**Part 9.20 — OVS VLAN access/trunk + 802.1Q** (~450 dòng):
+- §9.20.1 VLAN rationale: phân vùng broadcast domain, 3 ứng dụng (flexibility/security/mobility) từ Seifert & Edwards (Wiley 2008) + Cisco Catalyst 4500 config guide 2018
+- §9.20.2 802.1Q frame format: TPID 0x8100 (16 bit) + TCI (PCP 3 bit + DEI 1 bit + VID 12 bit) + baby giant 1522 byte
+- §9.20.3 Access port (`tag=N`) vs trunk port (`trunks=N,M`) — hành vi strip/preserve tag
+- §9.20.4 Topology Lab 6: 4-host 2-switch VLAN 10+20, trunk inter-switch
+- Guided Exercise 1 POE: giả thuyết ngược "VLAN chỉ tag logic không chặn" bị bác bỏ bằng ping cross-VLAN cùng subnet fail + tcpdump không capture → VLAN thực sự chặn ở bridge
+- §9.20.5 Đối chiếu OVN Logical Switch: VLAN 4094 giới hạn vs Geneve tunnel_key 24-bit 16 triệu VNI
+
+**README Block IX TOC** updated: 19 → **21 file**, "Applied technique" tier mở rộng từ 9.18 → 9.18-9.20.
+
+### Rule compliance
+
+- **Rule 9** (null byte): 0 null bytes trên 9.19 + 9.20 + README sau edit — verified
+- **Rule 11** (Vietnamese Prose): technical terms giữ tiếng Anh (OVS, flow entry, access port, trunk port, TPID, VID, tunnel_key, Logical Switch, 802.1Q); vocabulary tư duy dịch Việt (ngộ nhận, phân vùng, kế thừa, đóng gói, chiết xuất, bác bỏ, tối giản)
+- **Rule 12** (Offline Source): explicit header block + References section → traceable cả 2 file
+
+### Online sources authoritative session 20
+
+1. `ovs-ofctl(8)`, `ovs-fields(7)`, `ovs-vsctl(8)` — official OVS project man pages (man.openvswitch.org)
+2. [docs.openvswitch.org FAQ OpenFlow + VLAN](https://docs.openvswitch.org/en/latest/faq/) — official project docs
+3. IEEE Std 802.1Q-2018 — standards.ieee.org
+4. Seifert, R., Edwards, J. *The All-New Switch Book* (Wiley Publishing, 2008) — authoritative reference cho VLAN theory
+5. Cisco Systems *Catalyst 4500 Series Switch IOS Software Configuration Guide* 2018 — vendor standard cho access/trunk port
+6. Pfaff et al. USENIX NSDI 2015 — OVS design paper
+7. OpenFlow Switch Specification 1.3.5 §5 (OpenFlow Tables) — ONF standard
+
+Tất cả từ nhà phát hành chính thức (IEEE, ONF, USENIX, OVS project, Cisco, Wiley) — khớp directive "hãng lớn chính hãng chính chủ".
+
+### Trạng thái offline exhaustion
+
+Kho offline `sdn-onboard/doc/ovs/` đã được khai thác toàn bộ (11 PDF + 10 TXT):
+
+| Source | Đích |
+|--------|------|
+| OVS.pdf / OpenVSwitch.pdf (Crichigno) | Block IX 9.0-9.5 (session 14) |
+| Day 4 Motivation/Overview OVS Labs | Block IX 9.0, 9.1 (session 14) |
+| Day 4 Lab 3 Introduction OVS | Block IX 9.0, 9.1 (session 14) |
+| Day 4 Lab 4 ovs flow table | **Part 9.19** (session 20) |
+| Day 4 Lab 9 Kernel Datapath | Block IX 9.2 (session 14) |
+| Day 5 Lab 6 VLAN trunking | **Part 9.20** (session 20) |
+| Day 5 Lab 7 Implementing Routing | **Part 9.18** (session 19) |
+| Day 5 Lab 14 QoS | Block IX 9.9 (session 14) |
+| compass_artifact Anthropic OVS curriculum | Tổng thể Block IX + Block XX 20.0 debugging |
+
+**Không còn offline source nào trong sdn-onboard/doc/ chưa được exploit.**
+
+### Commit + push session 20
+
+```
+649f4ef  docs(sdn): Block IX Part 9.19+9.20 — flow table granularity + VLAN (Lab 4+6 offline exploitation)
+```
+
+Push OK: `9174885..649f4ef  docs/sdn-foundation-rev2 -> docs/sdn-foundation-rev2`
+
+### Curriculum state post-session 20
+
+- **Tổng 88 file** / ~33.3K dòng content OVS/OpenFlow/OVN
+- **Block IX** = **21 file** (cao nhất toàn curriculum, đạt completeness theo 4 tier: Core 9.0-9.5 + Ops 9.6-9.14 + Deep internals 9.15-9.17 + Applied 9.18-9.20)
+- Offline source inventory: **exhausted** — mọi lab trong `doc/ovs/` đã có Part dedicated
+
+### Chưa hoàn thành sau session 20
+
+- [ ] **Content expansion candidates** (không offline source, từ online authoritative): P4 runtime lab chi tiết (Block XIV extension), DPDK PMD tuning deep-dive, SmartNIC ASAP² DOCA implementations deep-dive
+- [ ] **C1b Lab Verification** — deferred, chờ user báo lab host available
+- [ ] **C6b Final Publish v2.0** — blocked by C1b
+
+### Git state cuối session 20
+
+```
+Branch: docs/sdn-foundation-rev2
+HEAD: 649f4ef (in sync with origin)
+Working tree: clean (chỉ còn memory/session-log.md sắp commit)
+```
+
+---
+
 ## Session 19 — Part 9.18 OVS native L3 routing (offline Lab 7 exploitation)
 
 **Ngày:** 2026-04-22 (session 19, tiếp nối session 18 sau compaction)
