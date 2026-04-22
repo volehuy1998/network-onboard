@@ -1858,7 +1858,7 @@ Block-by-block status:
 | C3 | ✅ partial | `3a92e27` | Rule 11 first-pass sed (paradigm/rebrand/troubleshoot); deep pass deferred |
 | C4 | ✅ | `e6d7a8b` | 384 URL checked (98.7% OK); 3 dead URL replaced (Netflix + YouTube + OpenFlow archive) |
 | C1a | ✅ | `e6d7a8b` | 54 Exercise inventory populated with priority matrix |
-| C5 | ✅ architecture phase COMPLETE | `2c6d052` + `dc8634e` | Block XIV/XV/XVI 9 skeleton files — 14.0/14.1/14.2 P4 stack, 15.0/15.1/15.2 Service Mesh, 16.0/16.1/16.2 Kernel+DPDK. Total ~535 lines. Content phase deferred. |
+| C5 | ✅ arch + Exercise content COMPLETE | `2c6d052` + `dc8634e` + `562bee9` | Block XIV/XV/XVI 9 files với 18 exercises fully specified (Mục đích/Mô hình/Bước/Output/Bài học/Cleanup). 2523 lines total. Section X.Y.Z skeleton giữ nguyên cho future content phase. User greenlight content phase cho Exercises chỉ. |
 | C6a | ✅ | `ce13e49` | `scripts/build-sdn-pdf.sh` + `scripts/README.md` — Pandoc pipeline |
 | C1b | ⏸️ DEFERRED | — | Chờ user notify lab host available |
 | C6b | ⏸️ DEFERRED | — | Blocked by C1b |
