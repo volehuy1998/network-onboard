@@ -449,7 +449,10 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `6ad6b8f` (Phase B content expansion progressing, push state = 6 commit ahead origin at session 12 end) |
+| Active branch | `docs/sdn-foundation-rev2` @ `b9a28d9` (Phase B COMPLETE — pushed to origin session 15; session 16 kickoff Phase C — in sync with remote) |
+| Current phase (session 16+) | **Phase C Master Quality Plan — in progress** (2026-04-22). 6 phase sequential: C2 → C3 → C4 → C1a → C5 → C6a; deferred C1b (chờ lab host) → C6b. Constraint: user chưa có lab host, Claude fill interim output với annotation, real verification ở C1b. |
+| C2 status | **IN PROGRESS** — Block 0 + I audited (5/70 file). Findings: HIGH (1 POE violation Part 1.2 Capstone), MEDIUM (2 heading/numbering inconsistencies), LOW (minor). Batch-fix strategy: audit all 70 file → category-batched fix commits. |
+| Lab verification tracker | `memory/lab-verification-pending.md` initialized 2026-04-22 — central inventory cho mọi Exercise/Lab cần verify trên lab host. Schema: File \| Section \| Type \| Origin \| Priority \| Status. Populate dần qua C1a pass. |
 | Last 8 commits trên branch | `6ad6b8f` em-dash scripts archive → `6009320` Block VI content → `ced93e0` Block V content → `4da6a98` Part 4.7 content → `2eef2e6` Block IV 4.2-4.6 content → `b3de38c` Part 4.1 content → `6aef52b` IPv6 scope cut → `6bae8f4` Block III content |
 | Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
 | HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |

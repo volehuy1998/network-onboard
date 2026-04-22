@@ -1791,3 +1791,93 @@ Mỗi file trong series back-reference đến một hoặc nhiều section của
 ---
 
 **Hết plan rev 2.** Chờ user phê duyệt skeleton trước khi execute S2-S22.
+
+---
+
+## Phụ lục E — Phase C Master Quality Plan (rev 3, 2026-04-22)
+
+> **Trạng thái:** Active — Session 16 kickoff. Phase B complete end-to-end (64 file content).
+> **Mode:** Post-content quality uplift. Non-content polish + verification + publish pipeline.
+> **Constraint:** User chưa có lab host. Execution sequence respects lab-independence.
+
+### E.1 Rationale
+
+Phase B (sessions 12-15) đã viết ~20.000 dòng content cho 64 file Block 0-XIII + 3 advanced XVII-XIX. Viết nhanh với skeleton-driven workflow dẫn đến các loại debt kỹ thuật:
+
+1. **Pedagogical debt**: POE structure không đồng nhất, prerequisite chain có gap, cross-ref có thể break, misconception callout chưa fully vetted.
+2. **Prose debt**: Vietnamese prose inconsistency — Block I-VI phần lớn đã revise Path B (session 13) nhưng paragraph-level polish chưa toàn diện.
+3. **Fact debt**: ~200-300 URL chưa fully verified với web-fetcher ở current state; technical claims chưa cross-referenced với primary sources đồng loạt.
+4. **Lab debt**: CLI output trong Exercise/Lab có thể fabricated (doc-plausible nhưng chưa verified-lab). User chưa có host để verify.
+5. **Scope debt**: Missing expert-level content (P4/Tofino, service mesh, kernel tuning) mặc dù foundation đầy đủ.
+
+### E.2 Phase breakdown
+
+| Thứ tự | Phase | Lab-dependent? | Scope | Output |
+|--------|-------|----------------|-------|--------|
+| 1 | **C2 — Pedagogical Integrity Audit** | ❌ | 70 file × 5 criteria (prereq, POE, misconception, Bloom, cross-ref) | Audit report + category-batched fix commits |
+| 2 | **C3 — Vietnamese Prose Discipline** | ❌ | Rule 11 paragraph-level toàn bộ 70 file | Clean prose diff per Block |
+| 3 | **C4 — Fact-Check + URL Audit** | ❌ | Claims vs primary sources + web-fetcher URL | Fact-check report + dead-URL fix |
+| 4 | **C1a — Interim Lab Authoring** | ⚠ | Review mọi Exercise/Lab output plausibility, mark pending | Populated `memory/lab-verification-pending.md` + file header annotations |
+| 5 | **C5 — Expert Extension** | ❌ | Block XIV P4/Tofino, XV service mesh, XVI DPDK tuning | 3 Block mới skeleton → content |
+| 6 | **C6a — Interim Publish v1.0** | ❌ | Pandoc PDF + GitHub Pages + PR review | Distributable artifact pre-verified |
+| — | **C1b — Lab Verification** | ✅ | Run flagged Exercise/Lab trên Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8 | Replace placeholder → real output (Rule 7a) |
+| — | **C6b — Final Publish v2.0** | ✅ | Updated PDF/eBook + release tag | v2.0 verified release |
+
+### E.3 C2 — Pedagogical Integrity Audit (active)
+
+**5 audit criteria:**
+
+1. **Prerequisite chain integrity** — Part X prereqs Part Y: Y thực sự dạy assumed knowledge?
+2. **POE compliance** (professor-style 2.7) — Exercise phải có Predict-Observe-Explain; flag missing Predict step
+3. **Misconception accuracy** — Callout phải là real production misconception, không phải pedagogical device
+4. **Bloom level match** — Learning objective verb khớp content depth (Remember/Understand/Apply/Analyze/Evaluate)
+5. **Cross-reference integrity** — Forward ref "sẽ trình bày Part Y" phải thực sự deliver
+
+**Block audit progress:**
+
+| Block | Files | Status |
+|-------|-------|--------|
+| 0 | 0.0, 0.1 | ✅ Audited — clean (minor: 0.1 Exercise procedural, POE N/A) |
+| I | 1.0, 1.1, 1.2 | ✅ Audited — 1 HIGH (1.2 Capstone missing Predict) + 2 MEDIUM (numbering) |
+| II | 2.0-2.4 | Pending |
+| III | 3.0-3.2 | Pending |
+| IV | 4.0-4.7 | Pending |
+| V | 5.0-5.2 | Pending |
+| VI | 6.0-6.1 | Pending |
+| VII | 7.0-7.3 | Pending |
+| VIII | 8.0-8.3 | Pending |
+| IX | 9.0-9.14 | Pending (15 file, highest density) |
+| X | 10.0-10.2 | Pending |
+| XI | 11.0-11.4 | Pending |
+| XII | 12.0-12.2 | Pending |
+| XIII | 13.0-13.6 | Pending |
+| Advanced | 17.0, 18.0, 19.0 | Pending |
+
+### E.4 Task tracker
+
+Task system (session 16) đã tạo 9 tasks với dependencies:
+- #1 Init lab-verification-pending.md (✅ completed)
+- #2 C2 Pedagogical Integrity Audit (🔄 in_progress)
+- #3 C3 Vietnamese Prose Discipline (pending, blocked by #2)
+- #4 C4 Fact-Check + URL Audit (pending)
+- #5 C1a Interim Lab Authoring (pending)
+- #6 C5 Expert Extension (pending)
+- #7 C6a Interim Publish v1.0 (pending, blockedBy #2,#3,#4,#5)
+- #8 C1b Lab Verification (pending, blockedBy #5, DEFERRED chờ host)
+- #9 C6b Final Publish v2.0 (pending, blockedBy #8, DEFERRED)
+
+### E.5 Interim lab authoring strategy
+
+User directive session 16: "tôi chưa có host để lab vì thế bạn hãy tự fill vào miễn sao đúng hướng chương trình đào tạo, sau khi có host tôi sẽ thông báo cho bạn để quay lại phần lab để có được output thực tế."
+
+Implementation:
+- C1a: review 64 file Exercise/Lab output, ensure plausible per OVS 2.17.9 + OVN 22.03.8 doc/man page
+- File header annotation: `> **Trạng thái lab verification:** Output kỳ vọng dựa trên compass + man pages; CHỜ verify trên Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8 thực.`
+- `memory/lab-verification-pending.md`: central inventory với Type {verified-lab, doc-plausible, structural-only, authoritative-external}
+- C1b resume khi user notify host available
+
+**Rule 7/7a compliance:** Rule 7 "không cắt output" vẫn áp dụng cho content hiện có; doc-plausible output được giữ với annotation rõ ràng (không phải vi phạm Rule 7a vì không claim "real output"). Sau C1b, mọi output phải verified-lab hoặc remove.
+
+---
+
+**Hết Phụ lục E Phase C plan.** Phase C2 đang execute; audit progress tracked trong section E.3.

@@ -7,9 +7,56 @@
 
 ## Session gần nhất
 
-**Ngày:** 2026-04-22 (session 15, Phase B COMPLETE — Block VIII/X/XI/XII/XIII end-to-end)
-**Branch:** `docs/sdn-foundation-rev2` @ handoff commit — đã push origin
-**Plans:** `.claude/plans/tender-scribbling-comet.md` (session 12-13 reference)
+**Ngày:** 2026-04-22 (session 16, Phase C kickoff — Master Quality Plan)
+**Branch:** `docs/sdn-foundation-rev2` @ `b9a28d9` (in sync with origin, session 15 đã push)
+**Plans:** `plans/sdn-foundation-architecture.md` Phụ lục E — Phase C Master Quality Plan
+**Task tracker:** 9 tasks created (C2 in_progress, C1a+C1b deferred chờ lab host)
+
+### Bối cảnh session 16
+
+User direction sau khi Phase B complete (session 15): chọn giải pháp tốt nhất cho training material quality, không gấp gáp, chi phí không quan trọng. Thỏa thuận:
+
+1. **Master plan 6-phase** (C2 → C3 → C4 → C1a → C5 → C6a → [C1b → C6b deferred]): đi xa hơn 4 option B/C/D đơn lẻ, add Pedagogical Integrity Audit (C2) mà B/C/D thiếu.
+2. **Constraint: chưa có lab host.** User chỉ đạo: "bạn hãy tự fill vào miễn sao đúng hướng chương trình đào tạo, sau khi có host tôi sẽ thông báo cho bạn để quay lại phần lab để có được output thực tế." → C1 tách thành C1a (interim authoring) + C1b (lab verification deferred).
+
+### Thực thi session 16
+
+1. **Task system:** 9 task created với dependencies (TaskCreate). Hierarchy: C2 → C3 → C4 → C1a → C5 → C6a; C1b blockedBy C1a (DEFERRED); C6b blockedBy C1b (DEFERRED).
+2. **Lab tracker:** `memory/lab-verification-pending.md` created (central inventory schema với Type classification: verified-lab / doc-plausible / structural-only / authoritative-external).
+3. **Plan doc update:** Phụ lục E thêm vào `plans/sdn-foundation-architecture.md` (Phase C Master Quality Plan đầy đủ).
+4. **CLAUDE.md update:** Current State table có row mới cho Phase C kickoff, C2 status, Lab verification tracker.
+5. **C2 audit Block 0 + I:** 5/70 file audited. Findings:
+   - Block 0 clean (0.0, 0.1): no cross-ref break, Bloom match, POE N/A hoặc acceptable procedural.
+   - Block I: Part 1.0 clean full POE; Part 1.1 minor numbering (Guided Exercise 1.1 → 1); Part 1.2 **HIGH — Capstone missing explicit Predict step** before measurement (Bước 1 jumps to Setup, not Predict X1/X2 estimates).
+
+### Audit findings tổng hợp tạm thời (Block 0 + I)
+
+| File | Criterion | Severity | Fix description |
+|------|-----------|----------|-----------------|
+| 1.1 | Exercise numbering | LOW | `Guided Exercise 1.1` → `Guided Exercise 1` |
+| 1.2 | Capstone heading type | MEDIUM | `Capstone Block I Lab / Trouble Ticket 1-1` → `Capstone Block I Guided Exercise 1` (mixed type, has sub-steps so is Guided Exercise) |
+| 1.2 | Capstone POE missing Predict | HIGH | Add explicit Predict step before Bước 1 (estimate X1/X2 CLI count) |
+
+### Strategy quyết định
+
+**Batch-fix** approach: audit 70 file → accumulate findings → category-grouped fix commits (all POE violations in one commit, all numbering in another, all cross-ref breaks in another). Rationale: context-efficient, diff reviewable per category.
+
+### Commit session 16 (planned)
+
+| Commit | Phạm vi | Files |
+|--------|---------|-------|
+| _(pending)_ | Phase C kickoff | CLAUDE.md + plans/sdn-foundation-architecture.md + memory/session-log.md + memory/lab-verification-pending.md |
+| _(pending)_ | C2 audit progress (Block 0-VI) | audit findings per Block |
+| _(pending)_ | C2 batch fix HIGH (POE violations) | file fixes |
+| _(pending)_ | C2 batch fix MEDIUM (headings/numbering) | file fixes |
+
+### Quick-start next turn
+
+Continue C2 audit Block II (5 file: 2.0-2.4). Expected pattern same as Block I.
+
+---
+
+## Session 15 (archived)
 
 ### Bối cảnh session 15
 
