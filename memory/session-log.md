@@ -56,7 +56,18 @@ User direction sau khi Phase B complete (session 15): chọn giải pháp tốt 
 | `dc8634e` | C5.2 Block XIV/XV/XVI 6 sibling skeletons | 14.1/14.2/15.1/15.2/16.1/16.2 (~349 lines) |
 | `73856a4` | Session 16 extension-1 handoff (pushed origin) | CLAUDE.md + plan + session-log |
 | `562bee9` | C5.3 Block XIV/XV/XVI Exercise content expansion | 9 files, 18 exercises, +2006 lines |
-| `<handoff-3>` | Session 16 extension-2 handoff | CLAUDE.md + plan + session-log for C5.3 |
+| `8a0b8fb` | Session 16 extension-2 handoff | CLAUDE.md + plan + session-log C5.2 |
+| `03e6c0b` | sdn-onboard/README TOC Block XIV/XV/XVI entries | README |
+| `b452388` | README mermaid dependency graph with Expert nodes | README |
+| `1fe4ac5` | README 6th reading path (Expert Extension track) | README |
+| `c78cb39` | C3 Rule 11 round 2 (scalability/bottleneck/real-time/backward-compat) | 21 files, 32 instances |
+| `a0bf84c` | Root README SDN structure rev 4 note | root README |
+| `76a4418` | CLAUDE.md session 16 state sync | CLAUDE.md |
+| `c0fbccc` | Foundation forward-refs 6.0/9.3/13.3 → Block XIV/XV/XVI | 3 files |
+| `739db7f` | C3 Rule 11 round 3 (adoption/deprecation) | 17 files, 53 instances |
+| `63a0506` | Fix sed over-replacement in 3.2 (English quote + URL) | 1 file |
+| `7b22823` | Fix sed over-replacement in 1.1 (RFC 7348 quote) | 1 file |
+| `<handoff-final>` | Session 16 final handoff + push | CLAUDE.md + plan + session-log sync |
 
 ### 🎉 Phase C active phases COMPLETE
 

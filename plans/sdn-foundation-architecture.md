@@ -1855,7 +1855,7 @@ Block-by-block status:
 |-------|--------|--------|---------|
 | C1 | ✅ | `ec0521e` | `memory/lab-verification-pending.md` tracker initialized |
 | C2 | ✅ | `d821e65` + `10fe2e5` | 70/70 file audited; 7 fixes applied (1 HIGH + 5 MEDIUM + 1 LOW) |
-| C3 | ✅ partial | `3a92e27` | Rule 11 first-pass sed (paradigm/rebrand/troubleshoot); deep pass deferred |
+| C3 | ✅ 3 rounds sed + 2 reverts | `3a92e27` + `c78cb39` + `739db7f` + `63a0506` + `7b22823` | Rule 11 127 net replacements (paradigm/rebrand/troubleshoot/scalability/bottleneck/real-time/backward-compat/adoption/deprecation). Per-file deep prose revision deferred cho Block VII-XIII. |
 | C4 | ✅ | `e6d7a8b` | 384 URL checked (98.7% OK); 3 dead URL replaced (Netflix + YouTube + OpenFlow archive) |
 | C1a | ✅ | `e6d7a8b` | 54 Exercise inventory populated with priority matrix |
 | C5 | ✅ arch + Exercise content COMPLETE | `2c6d052` + `dc8634e` + `562bee9` | Block XIV/XV/XVI 9 files với 18 exercises fully specified (Mục đích/Mô hình/Bước/Output/Bài học/Cleanup). 2523 lines total. Section X.Y.Z skeleton giữ nguyên cho future content phase. User greenlight content phase cho Exercises chỉ. |
