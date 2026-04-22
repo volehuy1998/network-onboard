@@ -7,6 +7,93 @@
 
 ## Session gần nhất
 
+## Session 19 — Part 9.18 OVS native L3 routing (offline Lab 7 exploitation)
+
+**Ngày:** 2026-04-22 (session 19, tiếp nối session 18 sau compaction)
+**Branch:** `docs/sdn-foundation-rev2` @ `499cb99` — **đã push lên origin** (`cfc6204..499cb99`)
+
+### Bối cảnh session 19
+
+Session 18 kết thúc với 4 option (E/F/B/C) + handoff entry — curriculum đạt 85 file. Session 19 focus scope-appropriate: khai thác kho offline chưa dùng hết (`sdn-onboard/doc/ovs/*.txt`). Inventory cho thấy 3 lab source offline USC/Crichigno (WASTC 2021) chưa có Part dedicated:
+
+| Source | Line | Trạng thái trước session 19 |
+|--------|------|----------------------------|
+| Day 5 -Lab 7 Implementing Routing in OVS | 58 | **Chưa có Part dedicated** — chỉ mention trong 4.6/7.0/7.3/8.1/13.13 |
+| Day 4-lab4 ovs flow table | 102 | Partial trong 4.7 + 9.4, không dedicated POE lab |
+| Day 5-lab6 VLAN trunking in OVS | 132 | Partial trong 4.7 + 8.2, không OVS-specific VLAN |
+
+Lab 7 có gap pedagogical rõ nhất: "OVS có thể route packet WITHOUT OVN" là kiến thức nền tảng data plane programmability, student thường nhầm "L3 trong SDN = OVN router". Đã được chọn làm deliverable session 19.
+
+### Thực thi session 19
+
+Deliverable: Part 9.18 (`sdn-onboard/9.18 - ovs-native-l3-routing.md`, 330 dòng):
+
+- §9.18.1 Ngộ nhận phổ biến + vị trí bài học (data plane trước control plane)
+- §9.18.2 Sáu action cốt lõi: `mod_dl_src`, `mod_dl_dst`, `dec_ttl`, `set_field`, `resubmit`, `output` — thứ tự theo semantics router
+- §9.18.3 Topology Lab 7 + flow design ba nhóm (ARP responder priority 1000 + routing priority 100 + default drop priority 0)
+- §9.18.4 Guided Exercise 1 với POE: setup 2 network namespace + OVS bridge, install flow, verify bằng `tcpdump` TTL=63 (bác bỏ giả thuyết "chỉ forward") + MAC rewrite + flow counter
+- §9.18.5 Đối chiếu OVN Logical Router — cùng primitive OpenFlow, khác ở 3 lớp: abstraction/distributed/stateful
+- §9.18.6 Production readiness assessment — ngưỡng chuyển đổi OVS standalone → OVN là operational complexity, không phải performance
+
+**Block IX TOC reorganized** trong `sdn-onboard/README.md`: count 6 → 19 file, structure 4 tier (Core 9.0-9.5 foundation + Ops 9.6-9.14 session 14 + Deep internals 9.15-9.17 session 17 C9 + Applied 9.18 session 19). Trước session 19 TOC chỉ liệt kê tier Core — session 14 additions (9.6-9.14) + session 17 C9 (9.15-9.17) chưa được phản ánh, session 19 backfill luôn cả 3 tier.
+
+### Rule compliance
+
+- **Rule 9** (null byte): 0 null bytes trên 9.18 + README sau edit — verified
+- **Rule 11** (Vietnamese Prose): technical terms tiếng Anh giữ nguyên (OVS, flow entry, `mod_dl_src`, `dec_ttl`, Logical Router, OpenFlow); vocabulary tư duy dịch Việt (ngộ nhận, lột bỏ, trần trụi, đối chiếu, ngưỡng, đóng gói, đồng bộ)
+- **Rule 12** (Offline Source): explicit trong header block (`> **Nguồn offline chính:** sdn-onboard/doc/ovs/Day 5 -Lab 7 ... USC WASTC 2021`) + References section item 1 → đầy đủ traceable
+
+### Online sources authoritative
+
+1. `ovs-actions(7)` man page — reference cho mọi action
+2. `ovs-fields(7)` man page — match fields
+3. [docs.openvswitch.org](https://docs.openvswitch.org/en/latest/ref/) — official OVS project docs
+4. Pfaff et al. *The Design and Implementation of Open vSwitch* (USENIX NSDI 2015) — section 5 Flow Table Operations
+5. OpenFlow Switch Specification 1.3.5 §7.2 (Action Types) — chuẩn hóa `dec_ttl`
+
+Tất cả từ nhà phát hành chính thức (man.openvswitch.org, USENIX, ONF) — khớp directive "hãng lớn chính hãng chính chủ".
+
+### Commit + push
+
+Branch `docs/sdn-foundation-rev2`:
+
+```
+499cb99  docs(sdn): Block IX Part 9.18 — OVS native L3 routing (Lab 7 offline exploitation)
+06b44db  docs(sdn): Option C — cross-ref polish 17.0/18.0/19.0 ↔ 13.7/13.8 + session 18 handoff
+a5a9c15  docs(sdn): Block VII Part 7.4+7.5 — Faucet pipeline internals và Ryu flow management
+fe873ab  docs(sdn): Block XX Part 20.1 — OVN security hardening
+a2a618e  docs(sdn): Option E — Block XX Part 20.0 OVS/OVN systematic debugging cookbook
+```
+
+Push OK: `cfc6204..499cb99  docs/sdn-foundation-rev2 -> docs/sdn-foundation-rev2`
+
+### Chưa hoàn thành sau session 19
+
+- [ ] **Part 9.19** — flow table dedicated lab từ `doc/ovs/Day 4-lab4-ovs flow table.txt` (priority, masks, cookies, idle_timeout POE) — candidate session tiếp theo
+- [ ] **Part 9.20** — OVS VLAN trunking từ `doc/ovs/Day 5-lab6-VLAN trunking in Open vSwitch.txt` (access/trunk/native modes, VLAN filter) — candidate session tiếp theo
+- [ ] **Block IX TOC** description header cần update cho "3 kiểu datapath" vì section hiện nói tổng quan chung, nhưng 19 file vượt xa phạm vi đó — refine trong TOC polish pass
+- [ ] **C1b Lab Verification** — deferred, chờ user báo lab host available
+- [ ] **C6b Final Publish v2.0** — blocked by C1b
+
+### Git state cuối session 19
+
+```
+Branch: docs/sdn-foundation-rev2
+HEAD: 499cb99 (in sync with origin)
+Ahead origin: 0 commit
+Working tree: clean (chỉ còn memory/session-log.md sắp commit)
+```
+
+### Curriculum state post-session 19
+
+- **Tổng 86 file** / ~32.3K dòng content trên OVS/OpenFlow/OVN
+- **Block IX** = 19 file (cao nhất toàn curriculum về OVS depth)
+- **Block XIII** = 14 file (OVN foundation + internals)
+- **Block XX** = 2 file (debugging + security hardening)
+- **Block 0-XVI** + XVII-XIX + Expert Extension: đầy đủ như session 17 final
+
+---
+
 ## Session 18 — Options E/F/B/C extension (Phase C deepening)
 
 **Ngày:** 2026-04-22 (session 18, tiếp nối session 17 sau compaction)
