@@ -15,15 +15,72 @@
 
 ## Metadata
 
-- **Tracker status:** Initialized 2026-04-22 (session 16, Phase C kickoff)
+- **Tracker status:** Populated 2026-04-22 (session 16, C1a first pass)
 - **Verified on real lab:** 0 / pending (chưa có host)
-- **Last audit pass:** pending Phase C1a
+- **Last audit pass:** C1a systemic Grep (2026-04-22) — 54 Exercise/Lab/Capstone headings identified across 70 files
 - **Lab environment required:**
   - Ubuntu 22.04.3 LTS (kernel 5.15+)
   - OVS 2.17.9 (apt install openvswitch-switch)
   - OVN 22.03.8 (apt install ovn-central ovn-host)
   - Minimum 3 VM/container cho HA test
   - Dedicated physical NIC cho hw-offload labs (Block IX.5)
+
+## C1a Summary (Exercise Inventory)
+
+Systemic Grep `^### .*(?:Guided Exercise|Lab|Capstone|Trouble Ticket)` across 70 files = **54 exercise/lab/capstone headings**. Distribution:
+
+| Block | Exercises | Capstone | Type mix |
+|-------|-----------|----------|----------|
+| 0 | 1 (0.1 Ex1) | — | Procedural (version verify) |
+| I | 2 (1.0 Ex1, 1.1 Ex1) | 1 (1.2 Block I POE) | POE + Measurement |
+| II | — | 1 (2.4 Block II research audit) | Analyze |
+| III | — | 1 (3.2 Block III POE) | POE (first-flow install) |
+| IV | 2 (4.7 Ex1/Ex2) | 1 (4.6 Block IV POE) | POE (FAST_FAILOVER) |
+| V | — | 1 (5.2 Block V troubleshoot) | Trouble Ticket |
+| VI | — | — | No exercises (P4 theoretical) |
+| VII | 1 (7.0 Ex1 Ryu) | 1 (7.3 Block VII compare) | Procedural + Analyze |
+| VIII | 3 (8.0-8.2) | 1 (8.3 Block VIII POE) | POE (stateful firewall) |
+| IX | 14 (9.0-9.13) | 1 (9.14 Block IX 6-layer) | Mix procedural + POE + diagnostic |
+| X | 3 (10.0-10.2) | — | Procedural (OVSDB ops) |
+| XI | 5 (11.0-11.4) | — | Procedural + POE (tunnel) |
+| XII | 1 (12.1 design) | — | Design task |
+| XIII | 4 (13.1-13.3, 13.5) | 1 (13.6 Block XIII HA) | Procedural (OVN workflow) |
+| XVII | 2 Guided + 1 Lab | — | POE + Trouble Ticket (FDB poisoning) |
+| XVIII | 2 Guided + 1 Lab | — | POE (ARP responder) |
+| XIX | Multi (Lab ENV setup) | — | POE (multichassis) |
+
+**Phân loại output Type (assumed):**
+
+| Origin type | Count est. | Files |
+|-------------|------------|-------|
+| verified-lab | 0 | (none until C1b) |
+| doc-plausible | ~45 | most exercises with compass + USC lab source |
+| structural-only | ~9 | schema dumps, workflow templates |
+| authoritative-external | ~200+ (in-prose) | RFC quotes, spec fragments |
+
+**Priority matrix cho C1b (khi có lab host):**
+
+- **HIGH**: Capstone Block I-IV + Block VIII-XIII (8 capstones với numeric output: failover latency, throughput, CPU, command counts).
+- **MEDIUM**: Guided Exercises Block IX OVS internals (14 exercises với CLI output specific to 2.17.9).
+- **LOW**: Historical/narrative exercises Block II-III, design tasks Block XII.
+
+## C4 URL Audit Summary (session 16)
+
+Systemic `curl -L --max-time 8` check on 384 unique URLs:
+
+- **379 OK (98.7%)** — 200/301/302 status
+- **5 issues (1.3%)**:
+  - `http://10.0.0.3/` — placeholder IP trong CLI demo (no fix needed)
+  - `http://odl-controller:8181/restconf/...` — placeholder hostname trong demo (no fix needed)
+  - `https://about.netflix.com/en/company-info` — 404 (Netflix moved page) → replace với IR page
+  - `https://about.youtube/press/` — 404 (YouTube press moved) → replace với blog company history
+  - `https://archive.openflow.org/wk/index.php/OpenFlow_1.1` — 000 timeout (archive.openflow.org intermittent) → replace với ONF spec archive
+
+Files with dead URLs:
+- `1.2 - five-drivers-why-sdn.md` (Netflix + YouTube refs)
+- `4.0 - openflow-1.1-multi-table-groups.md` (OpenFlow archive)
+
+Replacements TBD in C4 follow-up commit; not blocking Phase C progression.
 
 ---
 
