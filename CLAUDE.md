@@ -449,9 +449,10 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` (session 17 complete — 9 file Block XIV/XV/XVI expanded +394 dòng, Rule 11 compliant; ready push) |
-| Current phase (session 17 end) | **🎉 Phase C C5.4 COMPLETE** (2026-04-22). Tất cả 43 skeleton section của Block XIV/XV/XVI đã content-expanded. Tổng 2523 → 2917 dòng. 0 placeholder còn. Rule 11 + Rule 12 compliant. Deferred: C1b (chờ lab host) → C6b. |
-| Session 17 delta | 9 file: 14.0/14.1/14.2/15.0/15.1/15.2/16.0/16.1/16.2 — mỗi file 4-6 section body expanded. Nguồn: P4 spec v1.2.2, PSA v1.1, Istio/Linkerd/Cilium docs, OVN-K8s docs, DPDK Programmer's Guide, offline compass_artifact Chapter 14-15. Null byte check 0/9. |
+| Active branch | `docs/sdn-foundation-rev2` (session 17 — **C7 COMPLETE**, chờ push final batch + README update) |
+| Current phase (session 17 end) | **🎉 Phase C C7 COMPLETE** (2026-04-22). Block XIII foundation 7→13 file, 1241→2847 dòng (+1606). Cân bằng với XVII-XIX advanced. Session 17 tổng thêm 8 commit (C5.4 + C5.5 + C7 batch 1-3). |
+| Session 17 deltas (final) | **C5.4** (pushed): 9 file Block XIV/XV/XVI section body expanded 2523→2917 (+394). **C5.5** (pushed): 5 file Exercise Rule 11 retrofit. **C7** (committed 3 batches, ready push): 6 file mới 13.7-13.12 OVN ovn-controller/northd/LB/DHCP-DNS/GR/IPAM (+1606 dòng). |
+| Block XIII final state | 7 core (13.0-13.6) + 6 extended (13.7-13.12) = 13 file 2847 dòng. Scope OVS/OpenFlow/OVN core per user directive. README TOC updated. |
 | C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |
 | C3 prose passes (3 rounds + 2 reverts) | **R1** `3a92e27`: paradigm/rebrand/troubleshoot (45). **R2** `c78cb39`: scalability/bottleneck/real-time/backward-compat (32). **R3** `739db7f`: adoption/deprecation (53). **Reverts**: `63a0506` (3.2 English quote + URL), `7b22823` (1.1 RFC 7348 quote). **Net 127 replacements** across 50+ files. Remaining (approach/deployment/trade-off/announce) deferred. |
 | C4 URL audit | 384 unique URLs, 98.7% OK. 3 dead URLs fixed (Netflix + YouTube press moved, archive.openflow.org timeout → ONF spec archive). 2 placeholder URLs kept as-is (10.0.0.3, odl-controller:8181). Commit `e6d7a8b`. |

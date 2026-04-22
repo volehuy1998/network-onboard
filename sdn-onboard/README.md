@@ -204,14 +204,26 @@ Khối chuyên sâu về encapsulation layer mà OVN dùng để nối các chas
 - Part 12.1, [DC overlay integration, VXLAN + EVPN](12.1%20-%20dc-overlay-integration-vxlan-evpn.md) *(skeleton)*, VXLAN data plane + EVPN control plane, anycast gateway.
 - Part 12.2, [Micro-segmentation và service chaining](12.2%20-%20micro-segmentation-service-chaining.md) *(skeleton)*, ACL-based micro-seg với OVN ACL/Port_Group, NSH (Network Service Header) RFC 8300 cho service function chaining.
 
-### Block XIII, OVN foundation (Part 13, 4 file)
+### Block XIII, OVN foundation (Part 13, 13 file)
 
 Khối then chốt thứ hai, OVN logical model. OVN công bố ngày 13/01/2015 trên blog Network Heresy bởi Justin Pettit, Ben Pfaff, Chris Wright, Madhu Venugopal.
 
-- Part 13.0, [OVN announcement 2015 và rationale](13.0%20-%20ovn-announcement-2015-rationale.md) *(skeleton)*, OVN 2015-01-13, lý do thiết kế SDN controller portable dựa trên OVS data plane + OVSDB control plane.
-- Part 13.1, [NBDB, SBDB architecture](13.1%20-%20ovn-nbdb-sbdb-architecture.md) *(skeleton)*, Northbound intent → ovn-northd translator → Southbound flows + chassis state.
-- Part 13.2, [Logical switches và routers](13.2%20-%20ovn-logical-switches-routers.md) *(skeleton)*, Logical Switch, Logical Router, Logical Switch Port, Logical Router Port, 24+27 tables trong OVN 22.03.
-- Part 13.3, [ACL, LB, NAT, port groups](13.3%20-%20ovn-acl-lb-nat-port-groups.md) *(skeleton)*, ACL stateful, Load_Balancer health checks, SNAT/DNAT, Port_Group aggregation.
+**Core (13.0-13.6) — 7 file foundation ban đầu:**
+- Part 13.0, [OVN announcement 2015 và rationale](13.0%20-%20ovn-announcement-2015-rationale.md) *(content)*, OVN 2015-01-13, lý do thiết kế SDN controller portable dựa trên OVS data plane + OVSDB control plane.
+- Part 13.1, [NBDB, SBDB architecture](13.1%20-%20ovn-nbdb-sbdb-architecture.md) *(content)*, Northbound intent → ovn-northd translator → Southbound flows + chassis state.
+- Part 13.2, [Logical switches và routers](13.2%20-%20ovn-logical-switches-routers.md) *(content)*, Logical Switch, Logical Router, Logical Switch Port, Logical Router Port, 24+27 tables trong OVN 22.03.
+- Part 13.3, [ACL, LB, NAT, port groups](13.3%20-%20ovn-acl-lb-nat-port-groups.md) *(content)*, ACL stateful, Load_Balancer health checks, SNAT/DNAT, Port_Group aggregation.
+- Part 13.4, [br-int architecture và patch ports](13.4%20-%20br-int-architecture-and-patch-ports.md) *(content)*, kiến trúc br-int, role của patch ports nối Logical Switch.
+- Part 13.5, [Port binding types](13.5%20-%20port-binding-types-ovn-native.md) *(content)*, 7 port types: vif/localnet/l2gateway/chassisredirect/patch/router/l3gateway.
+- Part 13.6, [HA chassis group và BFD](13.6%20-%20ha-chassis-group-and-bfd.md) *(content)*, failover cho gateway chassis qua BFD probe + priority.
+
+**Extended (13.7-13.12) — 6 file bổ sung bề rộng C7 session 17:**
+- Part 13.7, [ovn-controller internals](13.7%20-%20ovn-controller-internals.md) *(content)*, algorithm SB→OpenFlow, I-P engine, Chassis registration, debugging.
+- Part 13.8, [ovn-northd translation](13.8%20-%20ovn-northd-translation.md) *(content)*, NB→SB compile pipeline, 24+10 LS bảng + 30+15 LR bảng, HA leader election.
+- Part 13.9, [OVN Load Balancer internals](13.9%20-%20ovn-load-balancer-internals.md) *(content)*, hash 5-tuple consistent, SNAT handling, DSR, hairpin, session affinity, distributed health check.
+- Part 13.10, [OVN DHCP/DNS native](13.10%20-%20ovn-dhcp-dns-native.md) *(content)*, DHCPv4/DHCPv6/SLAAC, action `put_dhcp_opts`/`dns_lookup` trong datapath.
+- Part 13.11, [Gateway Router distributed](13.11%20-%20ovn-gateway-router-distributed.md) *(content)*, DR vs GR, chassisredirect port, SNAT tập trung, tích hợp BGP/FRR.
+- Part 13.12, [IPAM native](13.12%20-%20ovn-ipam-native-dynamic-static.md) *(content)*, cấp phát động/tĩnh, exclude_ips, mac_prefix, IPv6 prefix delegation, ND Proxy.
 
 > **Block XIV-XVI re-introduced ở rev 4 (2026-04-22)** như **Expert Extension track**, không thuộc foundation path. Scope khác với rev 2 cũ (OpenStack/Neutron removed) — nay tập trung **advanced technology adjacent to OVS/OVN**: P4 programmable data plane, service mesh + Kubernetes CNI integration, kernel+DPDK performance tuning. User có thể skip Expert Extension nếu chỉ cần OVS/OVN foundation + advanced case studies.
 

@@ -167,12 +167,33 @@ Sau khi viết 14.0/14.1/14.2 đợt đầu, user chỉ ra vi phạm Rule 11. Đ
 - **C1b** DEFERRED (chờ lab host)
 - **C6b** DEFERRED (sau C1b)
 
+### Session 17 extension — C5.5 Rule 11 retrofit + C7 OVN foundation expand
+
+**User directive mid-session:** "xin hãy nhớ tập trung vào OpenvSwitch, OpenFlow và OVN nhé. Mọi thứ liên quan đến chúng đều phải tập trung vào, cả bề rộng lẫn bề sâu."
+
+**C5.5 partial executed:** Rule 11 retrofit Exercise content cho 5 file 14.0/14.1/14.2/15.0/15.1 (Block XVI deferred — ngoài scope OVS/OpenFlow/OVN core). Commit `972c05c` đã push.
+
+**C7 COMPLETE (2026-04-22 end):** Expand Block XIII OVN foundation bề rộng. 6 file mới 13.7-13.12 created, Block XIII từ 1241 → 2847 dòng (13 file). Cân bằng với advanced XVII-XIX (3045 dòng).
+
+| File | Topic | Lines |
+|------|-------|-------|
+| 13.7 | ovn-controller-internals | 334 |
+| 13.8 | ovn-northd-translation | 260 |
+| 13.9 | ovn-load-balancer-internals | 218 |
+| 13.10 | ovn-dhcp-dns-native | 272 |
+| 13.11 | ovn-gateway-router-distributed | 268 |
+| 13.12 | ovn-ipam-native-dynamic-static | 254 |
+| **Tổng** | | **1606** |
+
+3 commit batch: `05a33bb` (13.7+13.8) → `44e8a86` (13.9+13.10) → `0efec6b` (13.11+13.12). README TOC updated Block XIII từ 4 file stale lên 13 file actual.
+
 ### Quick-start next session
 
 Nếu user notify lab host available → C1b. Nếu không → options:
 - **Option E**: Rule 11 retrofit cho content pre-existing trong Exercise sections (từ C5.3 session 16) — một số câu vẫn có từ lai.
 - **Option F**: Content expansion cho các foundation Block khác nếu còn skeleton placeholder.
 - **Option G**: Local Pandoc build test (install pandoc + texlive + verify v1.0-preVerified PDF).
+- **Option H (active)**: C7 continue expand Block XIII OVN foundation bề rộng.
 
 ---
 
