@@ -173,6 +173,8 @@ Sau khi viết 14.0/14.1/14.2 đợt đầu, user chỉ ra vi phạm Rule 11. Đ
 
 **C5.5 partial executed:** Rule 11 retrofit Exercise content cho 5 file 14.0/14.1/14.2/15.0/15.1 (Block XVI deferred — ngoài scope OVS/OpenFlow/OVN core). Commit `972c05c` đã push.
 
+**C8 COMPLETE (2026-04-22 end extension):** Expand Block X OVSDB bề sâu. 4 file mới 10.3-10.6, Block X từ 626 → 1995 dòng (7 file). 10.3 ACID semantics, 10.4 IDL + monitor_cond, 10.5 performance + benchmark, 10.6 security mTLS + RBAC advanced. README TOC Block X updated từ 2-file stale → 7-file với breakdown core/extended. 2 commit batch: `d40d7a1` (10.3+10.4 +707) → batch 2 pending (10.5+10.6 +662). Task #16 DONE.
+
 **C7 COMPLETE (2026-04-22 end):** Expand Block XIII OVN foundation bề rộng. 6 file mới 13.7-13.12 created, Block XIII từ 1241 → 2847 dòng (13 file). Cân bằng với advanced XVII-XIX (3045 dòng).
 
 | File | Topic | Lines |
