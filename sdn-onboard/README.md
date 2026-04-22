@@ -76,15 +76,19 @@ graph TD
 
 ---
 
-## Reading paths, năm con đường đọc
+## Reading paths, sáu con đường đọc
 
-Series này được kiến trúc để phục vụ năm persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
+Series này được kiến trúc để phục vụ sáu persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
 
-1. **Linear (sách giáo khoa đại học, 50-80 giờ đọc)**, 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 17 → 18 → 19. Phù hợp cho kỹ sư mới vào OVS/OVN cần nền tảng lịch sử và lý thuyết đầy đủ trước khi chạm production.
+1. **Linear foundation (sách giáo khoa đại học, 50-80 giờ đọc)**, 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 17 → 18 → 19. Phù hợp cho kỹ sư mới vào OVS/OVN cần nền tảng lịch sử và lý thuyết đầy đủ trước khi chạm production.
 2. **Historian (chỉ lịch sử + concept)**, 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Dừng ở controller landscape. Mục tiêu: hiểu tại sao SDN tồn tại và các nhánh evolution, không đi vào implementation chi tiết.
 3. **OVS-only (production engineer chỉ quan tâm OVS data plane)**, 0 → 1 (skim) → 4 → 8 → 9 → 10 → 11. Tập trung OVS như switch lập trình được + OpenFlow programming + OVSDB + overlay tunnel. Bỏ qua OVN hoàn toàn.
 4. **OVN-focused (đã vững OVS + networking, đang build OVN deployment)**, 0 → 3 (skim) → 5.1 → 9 (skim) → 11 → 13 → 17 → 18 → 19. Path chính cho kỹ sư triển khai OVN standalone.
 5. **Incident responder (advanced reader muốn đi thẳng case study)**, 0 → 13 (skim) → 17 → 18 → 19. Dành cho on-call engineer xử lý sự cố khẩn cấp, đã có nền OVN.
+6. **Expert Extension track (rev 4, optional)**, after hoàn thành foundation — three parallel tracks:
+   - **P4 programmable silicon** (15-25 giờ): 6 (skim) → 14.0 → 14.1 → 14.2. Dành cho researcher hoặc kỹ sư Pensando/BlueField DPU.
+   - **Service mesh + K8s CNI** (20-30 giờ): 13 → 15.0 → 15.1 → 15.2. Dành cho kỹ sư platform engineering, CKAD/CKS candidates.
+   - **Performance tuning deep dive** (15-20 giờ): 8 → 9.2 → 9.3 → 16.0 → 16.1 → 16.2. Dành cho hyperscale operator, HPC/5G deployment. Yêu cầu hardware lab thật cho Capstone 16.0-Lab3 (40 Gbps tuning).
 
 ---
 
