@@ -141,6 +141,10 @@ Khi BẮT ĐẦU session mới:
      - grep '^##' <file> — mọi heading prose phải Việt (trừ tên concept/stage)
      - grep -E '^\*\*[A-Z][a-z]+' <file> — mọi bold label đầu câu phải Việt (trừ tên concept)
      - grep -E '^> \*\*(Key Topic|Hiểu sai|Điểm mấu chốt)' <file> — callout label phải Việt
+□ 7c. Rule 13 Em-dash density (BẮT BUỘC):
+     - Đếm em-dash/dòng mỗi file modified. Target < 0.10
+     - Nếu > 0.10: audit từng em-dash theo §13.2, fix prose overuse
+     - Final density phải < 0.10 sau fix
 □ 8. Git workflow skill: đọc trước khi commit
 □ 9. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
 ```
@@ -550,6 +554,98 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 - Viết 13 file content Block IX (9.0-9.14 + backfill) với đầy đủ doc/* citation
 - 4 file Block VII (7.0-7.3) không có doc/* vì controller ecosystem không được cover bởi compass/USC labs
 - Part 9.0-9.14 citation pattern: compass_artifact Chapter X + USC Lab Y (nếu có) + online upstream URL
+
+### Rule 13: Em-dash Discipline (BẮT BUỘC)
+
+> Nguồn gốc: session 24, 2026-04-23. User phát hiện em-dash (—) bị lạm dụng xuyên suốt Phase D Part 9.22/9.23/9.24/9.25 — mật độ 0.13-0.19 em-dash/dòng. Tổng 361 em-dash trên 4 file ~2.100 dòng. Đa phần dùng em-dash thay vì diễn đạt tự nhiên tiếng Việt (comma, period, colon, parentheses). Chữ Việt không cần nhiều em-dash như tiếng Anh — mỗi em-dash người đọc phải dừng lại suy nghĩ ngắt câu. Quá nhiều em-dash làm văn bản đứt gãy, khó đọc. User: *"Hãy audit toàn bộ em-dash, tôi thấy ký hiệu đang bị lạm dùng quá nhiều thay vì sử dụng ngôn ngữ tự nhiên để diễn đạt."*
+
+**Nguyên tắc cốt lõi: em-dash là ngoại lệ, không phải mặc định.**
+
+Khi viết prose tiếng Việt, KHÔNG dùng em-dash thay cho dấu câu thông thường. Mặc định ưu tiên:
+- **Dấu phẩy (,)** khi continuation cùng mệnh đề
+- **Dấu chấm (.) + viết hoa** khi sang câu mới
+- **Dấu hai chấm (:)** khi giới thiệu danh sách hoặc giải thích
+- **Ngoặc đơn (...)** khi aside / parenthetical
+- **Xuống dòng + bullet list** khi enumerate 3+ mục
+
+#### 13.1. Em-dash được phép dùng khi
+
+1. **Heading-subtitle separator**: `# 9.22. OVS multi-table pipeline — \`goto_table\`, \`resubmit\``. Em-dash tách tiêu đề chính và mô tả phụ trong heading level 1-3. Mỗi heading 0-1 em-dash tối đa.
+
+2. **Bold mini-label separator trong mô tả rule/flow có cấu trúc**: `**Quy tắc 1 — Luôn bắt đầu ở table 0.**`, `**Flow 1 — default normal processing**`. Em-dash ngăn cách ID và label text của rule/flow có cấu trúc đồng đều.
+
+3. **Bold noun + inline code list**: `**Instruction** là lệnh ở cấp *table entry* — \`Apply-Actions\`, \`Write-Actions\`, ...`. Em-dash introduce danh sách inline code sau câu mô tả (colon `:` cũng OK).
+
+4. **Attribution tách tổ chức/ngày**: `(Crichigno, Sharif, Kfoury — University of South Carolina, NSF Award 1829698)`. Hoặc có thể dùng ngoặc đơn / comma tuỳ ngữ cảnh.
+
+5. **Table row visual label trong code block**: `Table 0 — Port security + VLAN decap`. Khi dùng ASCII diagram trong ```` ``` ```` block để mô tả pipeline layout.
+
+#### 13.2. Em-dash KHÔNG được dùng khi
+
+1. **Thay dấu phẩy trong câu prose liền mạch**: SAI `OVS-based OVN 22.03 có optimization — `allow` bỏ qua luôn lệnh `ct()`` → ĐÚNG `OVS-based OVN 22.03 có tối ưu hoá: `allow` bỏ qua luôn lệnh `ct()`.`.
+
+2. **Thay dấu chấm khi sang câu mới**: SAI `Không có gói tin nào được gửi thật — đây là simulation thuần tuý` → ĐÚNG `Không có gói tin nào được gửi thật. Đây là simulation thuần tuý`.
+
+3. **Thay đại từ quan hệ "là, nghĩa là, tức là"**: SAI `OpenFlow 1.0.0 — bản đặc tả đầu tiên` → ĐÚNG `OpenFlow 1.0.0, bản đặc tả đầu tiên`.
+
+4. **Trong bullet definition "- X — giải thích"**: SAI `- \`cookie=0xN\` — nhãn nhóm flow (Part 9.19 §19.4).` → ĐÚNG `- \`cookie=0xN\`: nhãn nhóm flow (Part 9.19 §19.4).`.
+
+5. **Trong header block metadata (> **Label:** ...)**: SAI `> **Plan:** §F.4.5 — Phase D flow debugging toolbox.` → ĐÚNG `> **Plan:** §F.4.5, Phase D flow debugging toolbox.`.
+
+#### 13.3. Ngưỡng mật độ (density threshold)
+
+| Mức | Em-dash/dòng | Đánh giá |
+|-----|-------------|----------|
+| < 0.05 | 1 em-dash mỗi 20 dòng | Tự nhiên, đúng mức |
+| 0.05 - 0.10 | 1 em-dash mỗi 10-20 dòng | Chấp nhận được |
+| 0.10 - 0.15 | 1 em-dash mỗi 7-10 dòng | Cảnh báo, cần audit |
+| > 0.15 | > 1 em-dash mỗi 7 dòng | Lạm dụng, phải fix |
+
+Target cho onboard series: **< 0.10 em-dash/dòng**. Mọi file vi phạm ngưỡng 0.10 bắt buộc audit trước commit.
+
+#### 13.4. Checklist Em-dash Audit (BẮT BUỘC trước commit)
+
+```bash
+# 1. Đếm mật độ mỗi file modified
+for f in $(git diff --name-only --cached | grep .md); do
+  count=$(grep -c '—' "$f")
+  lines=$(wc -l < "$f")
+  ratio=$(python -c "print(f'{$count/$lines:.3f}')")
+  echo "$f: $count em-dash / $lines lines ($ratio/line)"
+done
+
+# 2. Nếu ratio > 0.10, audit từng hit:
+grep -n '—' "<file.md>" | while read line; do
+  echo "$line"
+  # Phân loại: heading / bold label / attribution / code table / prose
+  # Nếu prose → FIX theo §13.2
+done
+
+# 3. Fix theo priority:
+#    (a) Bullet definition "- X — Y" → "- X: Y"
+#    (b) Inline prose "X — Y" (Y lowercase) → "X, Y"
+#    (c) Inline prose "X — Y" (Y capital Vietnamese) → "X. Y"
+#    (d) Header block metadata "Label: X — Y" → "Label: X, Y"
+
+# 4. Final check: density phải < 0.10 sau fix
+```
+
+#### 13.5. Khi viết Part mới — dùng em-dash tối thiểu
+
+Từ session 24 trở đi, viết content mới theo nguyên tắc:
+- Đặt em-dash cuối cùng, không phải đầu tiên. Viết câu xong bằng dấu câu thông thường trước, rồi mới chuyển sang em-dash nếu thực sự cần nhấn mạnh ngắt mạnh.
+- Nếu không chắc, không dùng em-dash.
+- Check density sau khi viết 50-100 dòng. Nếu > 0.15, rewrite.
+
+#### 13.6. Di sản retrofit (session 24)
+
+Part 9.22/9.23/9.24/9.25 giảm em-dash từ 361 → 155 (57% reduction) bằng 3 script pass + manual edits:
+- `tmp-emdash-audit.py` — phân loại theo category
+- `tmp-emdash-reduce.py` — pattern replacement conservative
+- `tmp-emdash-aggressive.py` — bullet definition + Vietnamese sentence split + comma split
+- Manual edits cho dangling markup + spacing bugs
+
+Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 
 ## Current State
 
