@@ -7,6 +7,160 @@
 
 ## Session gần nhất
 
+## Session 22+23 — Phase D firewall foundation (Part 9.22 + 9.23 + 9.24)
+
+**Ngày:** 2026-04-22 (session 22+23, cùng ngày với session 21 plan)
+**Branch:** `docs/sdn-foundation-rev2` @ `85e6cbd` — **chưa push, ahead origin 2 commit**
+**Trạng thái:** **Phase D 3/5 Part mới DONE**. Còn 9.21 + 9.25 + 4 expansion → session 24-27.
+
+### Bối cảnh session 22+23
+
+Session 21 đã viết plan Phụ lục F chi tiết với 5 Part mới + 4 expansion, sequencing session 22-28. User confirm "bắt đầu đi" và "tiếp tục" → execute theo F.5 sequencing nhưng điều chỉnh thứ tự:
+
+- **Session 22 planned = 9.24**, **session 23 planned = 9.23 + 9.22**.
+- Thực thi: session 22 viết 9.24 đúng plan. Session 23 viết **9.22 trước 9.23** theo pedagogical order (multi-table foundation → stateless ACL uses goto_table).
+
+Tổng 2 session execute liên tục cùng ngày với user (plan + 3 Part deliverable trong một phiên).
+
+### Thực thi session 22 — Part 9.24 conntrack stateful firewall
+
+Deliverable: `sdn-onboard/9.24 - ovs-conntrack-stateful-firewall.md` — **671 dòng** (target 550-650 ✓).
+
+**Nguồn offline:** `doc/ovs/OVS.pdf` Lab 8 *"Configuring Stateful Firewall using Connection Tracking"* trang 157-175 (Crichigno/Sharif/Kfoury, USC NSF 1829698, document 09-13-2021). Extract verbatim qua pymupdf 1.27.2.2 (cài mới trên máy vì session 21 để lại tmp-pdf-pages/ dạng local).
+
+**Nội dung 10 mục:**
+
+- §9.24.1 Drama opening — OpenStack ngân hàng Việt Nam 2018 migration Linux bridge → OVN, `allow` thay `allow-related` → 30% traffic drop. 3 lỗ hổng stateless (IP spoof, split-handshake, ACK-scan).
+- §9.24.2 Netfilter conntrack 4 state + OVS bitfield `ct_state` 7 flag (`+trk`/`+new`/`+est`/`+rel`/`+inv`/`+rpl`/`+snat`/`+dnat`).
+- §9.24.3 `ct()` action 6 tham số (commit/zone/table/nat/force/exec) + pattern canonical 5-flow tutorial upstream.
+- §9.24.4 Topology Lab 8 (s1 + h1/h2/h3 cùng 10.0.0.0/8) + 7 flow entry verbatim từ OVS.pdf p167-168.
+- §9.24.5 Guided Exercise 1 — POE "TCP reply auto-allowed" bị bác bỏ (symmetric flow vs asymmetric + `ct(commit)`).
+- §9.24.6 Guided Exercise 2 — TCP 5-state lifecycle qua `conntrack -E` (SYN_SENT → SYN_RECV → ESTABLISHED → FIN_WAIT → LAST_ACK → TIME_WAIT → DESTROY).
+- §9.24.7 Guided Exercise 3 — UDP pseudo-state POE (conntrack track UDP bi-directional flow, `+trk+est` hoạt động cho UDP).
+- §9.24.8 `ovs-dpctl dump-conntrack` + `conntrack -E` + timeout tuning qua `nf_conntrack_*_timeout_*` sysctl.
+- §9.24.9 `ct_zone` multi-tenant isolation (OVN gán zone per-logical-switch qua `reg13[0..15]`).
+- §9.24.10 OVN bridge — `allow-related` = macro `ct(commit)`, Load Balancer = `ct(commit,nat(dst))`, SNAT gateway = `ct(commit,nat(src))`.
+- §9.24.11 6 điểm cốt lõi + 8 references (OVS.pdf Lab 8, compass Ch 9, `ovs-fields(7)`, `ovs-actions(7)`, OVS conntrack tutorial, netfilter docs, Ellingwood iptables deep-dive, Red Hat OVS conntrack blog).
+
+**Commit:** `66b4a64 docs(sdn): Block IX Part 9.24 — OVS conntrack + stateful firewall (Lab 8 offline + Phase D session 22)` (682 insertions).
+
+### Thực thi session 23 — Part 9.22 + 9.23
+
+**Part 9.22 — OVS multi-table pipeline:** `sdn-onboard/9.22 - ovs-multi-table-pipeline.md` — **447 dòng** (target 400-500 ✓).
+
+Nguồn offline: OVS.pdf Lab 6 *"Implementing Routing using multiple Flow Tables"* p116-135 + Exercise 2 p136-140 (cùng tác giả, document 09-22-2021) + compass Ch 8.
+
+Nội dung 8 mục:
+- Drama: OpenFlow 1.0 (12/2009) → 1.1 (02/2011) sau 14 tháng vì Broadcom Trident ASIC 7-bảng không map được single-table.
+- 4 quy tắc cứng multi-table: bắt đầu table 0, chỉ đi xuôi (N → M>N), action set tích luỹ qua pipeline, priority resolution.
+- `goto_table=N` (OpenFlow 1.1+ standard — transfer control) vs `resubmit(,N)` (OVS extension từ NOX, call subroutine, recursion depth 75).
+- Pipeline 3-table Lab 6: Table 0 Classifier (ARP normal + IP goto_table=1) → Table 1 L3 Forwarding (mod_dl_src/dst + dec_ttl + goto_table=2) → Table 2 L2 Forwarding (output:port). Topology 2-switch 2-subnet 192.168.1/24 ↔ 192.168.2/24, 12 flow entries total.
+- Mở rộng 5-table production (0/10/20/30/40 gap convention), action set với `write_actions`, metadata 64-bit + register `reg0..15` (OVS extension).
+- So sánh OVN 50+ table tự sinh (ovn-architecture(7) pipeline), tiêu chí chọn manual (predictable perf, SR-IOV offload) vs OVN compiler (scale, multi-tenant, distributed).
+- Guided Exercise 1 — `ofproto/trace` verify 3-table pipeline + POE `goto_table` reverse violation + so sánh với `resubmit`.
+
+**Part 9.23 — OVS stateless ACL firewall:** `sdn-onboard/9.23 - ovs-stateless-acl-firewall.md` — **346 dòng** (target 380-450, short 34 dòng, content coherent nên giữ).
+
+Nguồn offline: OVS.pdf Lab 7 *"Configuring Stateless Firewall using ACLs"* p141-156 + compass Ch 8 priority resolution.
+
+Nội dung 5 mục chính:
+- Drama: Spamhaus 2013 300 Gbps DDoS — một ISP châu Âu deploy 20.476 dòng Cisco IOS ACL emergency. OVS flow table có thể thay Cisco ACL 20k dòng trên laptop.
+- ACE semantics: sequential evaluation, first-match wins, implicit deny. Cisco "line-number ordering" vs OVS "priority ordering" — OVS không quan tâm thứ tự khai báo.
+- Pipeline 2-table 3-flow Lab 7 topology 3-host cùng 10.0.0.0/8 (trùng topology Lab 8 → pedagogical pair với 9.24).
+- POE: asymmetric rule phá bidirectional connection — iperf/ping h1↔h3 fail vì SYN-ACK reverse bị drop ở ACL chặn h3→h1.
+- So sánh OVN `allow` (stateless) vs `allow-related` (stateful) — trade-off perf + hardware offload (SmartNIC không offload `ct()`).
+- Guided Exercise 1 — `ofproto/trace` verify permit + deny + POE priority tie undefined behavior.
+
+**Commit:** `85e6cbd docs(sdn): Block IX Part 9.22+9.23 — multi-table pipeline + stateless ACL (Lab 6+7 offline + Phase D session 23)` (803 insertions cho cả 2 file + README + lab tracker).
+
+### Rule compliance (cả 3 file)
+
+- **Rule 9** (null byte): 0 null bytes trên cả 3 file mới + 2 file modified — verified pymupdf subprocess.
+- **Rule 11** (Vietnamese Prose Discipline): technical terms giữ tiếng Anh (OVS, conntrack, `ct()`, `ct_state`, `goto_table`, `resubmit`, OpenFlow, ACL, ACE, priority, bitfield); vocabulary thinking dịch Việt (drama → bối cảnh, stateless/stateful giữ chuyên ngành, trade-off dùng "đánh đổi"). Scan regex catch 4 "inspect" trong 9.24 → fix thành "kiểm tra"; 1 "support" trong 9.22 → fix thành "hỗ trợ"; hits khác đều trong URL hoặc book title protected.
+- **Rule 12** (Exhaustive Offline Source Exploration): mỗi file có explicit header block `> **Nguồn offline chính:**` với line range + document version + tác giả; References section có item 1 cho OVS.pdf Lab X + item 2 cho compass Ch Y.
+- **Rule 7a** (system log absolute integrity): CLI output trong 3 file đều marked `doc-plausible` khi chưa có lab host, format verbatim theo OVS.pdf Figures gốc.
+
+### Pedagogical arc 3 Part (important)
+
+User direction "xây dựng chương trình đào tạo OpenvSwitch, OpenFlow, OVN chất lượng" → organize 3 Part thành arc logic:
+
+```
+9.22 (multi-table foundation)
+  ↓ ["table 0 classifier + goto_table=1 forwarding" concept]
+9.23 (stateless ACL sử dụng goto_table)
+  ↓ ["asymmetric rule phá bidirectional" limitation]
+9.24 (conntrack vượt giới hạn stateless)
+  ↓ ["ct() action + ct_state bitfield"]
+OVN allow-related (wraps ct(commit) automatically)
+```
+
+Mỗi Part có drama opening thật (Broadcom Trident 2011, Spamhaus 300 Gbps 2013, OpenStack ngân hàng 2018) — không fake incident. Có POE phản chứng. Có misconception callout. Có OVN bridge ở cuối.
+
+### Side effects — README + lab tracker
+
+- `sdn-onboard/README.md` Block IX TOC: 21 → 22 → 24 file (qua 2 commit). Tier mới "Firewall foundation (9.22-9.24) — session 22+23 Phase D" gộp 3 Part theo pedagogical order.
+- `memory/lab-verification-pending.md` Block IX section: +5 row 9.24 (session 22) + 5 row cho 9.22 (2) + 9.23 (3) (session 23). Total Block IX = 10 entry doc-plausible HIGH/MEDIUM. Sẽ verify ở C1b khi lab host available.
+
+### Commits pending push
+
+```
+66b4a64  docs(sdn): Block IX Part 9.24 — OVS conntrack + stateful firewall
+85e6cbd  docs(sdn): Block IX Part 9.22+9.23 — multi-table pipeline + stateless ACL
+```
+
+Cần `git push origin docs/sdn-foundation-rev2` để sync origin. Sau commit handoff session này sẽ là 3 commit total ahead origin.
+
+### Trạng thái curriculum post-session 23
+
+- **Tổng 91 file** / ~34.8K dòng content OVS/OpenFlow/OVN (tăng +3 file, +1464 dòng vs session 17).
+- **Block IX = 24 file** (cao nhất curriculum). 4 tier: Core 9.0-9.5 + Ops 9.6-9.14 + Deep internals 9.15-9.17 + Applied 9.18-9.20 + **Firewall foundation 9.22-9.24** (mới).
+- Offline source phase D exhausted: 3/5 Part mới (9.22/9.23/9.24) đã khai thác Lab 6/7/8. Còn chưa exploit: Lab 2 Mininet (→ 9.21), compass Ch 10 debugging + OpenVSwitch.pdf NSRC Tracing Flow (→ 9.25), Lab 9 QoS (→ 9.9 expand), Lab 14 GRE (→ 11.3 expand), Lab 15 IPsec (→ 11.4 expand), Lab 11 kernel datapath (→ 9.2 expand).
+
+### Chưa hoàn thành sau session 23
+
+- [ ] **Part 9.21** Mininet cho OVS labs (350-450 dòng, Lab 2) — candidate session 24.
+- [ ] **Part 9.25** Flow debugging + `ofproto/trace` + `ovs-dpctl` (420-500 dòng, compass Ch 10 + NSRC) — candidate session 24.
+- [ ] **Part 9.9 expand** QoS (+400-500 dòng, Lab 9 HTB + metering) — session 25.
+- [ ] **Part 11.3 expand** GRE (+350-400 dòng, Lab 14 OSPF + Docker) — session 25-26.
+- [ ] **Part 11.4 expand** IPsec (+380-450 dòng, Lab 15 IKE + ESP) — session 26-27.
+- [ ] **Part 9.2 expand** Kernel datapath lab (+200-250 dòng, Lab 11) — session 27.
+- [ ] **README reorganization** Block IX 26 file rebalance 4 tier → session 28.
+- [ ] **Phase D pre-release checklist** (F.9) — kiểm tra toàn bộ offline inventory exhausted, memory/session-log.md cập nhật, Rule 11 round 4 batch cho 5 Part mới.
+- [ ] **C1b Lab Verification** — deferred, chờ user báo lab host available (Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8).
+- [ ] **C6b Final Publish v2.0** — blocked by C1b.
+
+### Quick-start next session (session 24)
+
+```bash
+cd /c/Users/voleh/Documents/network-onboard
+git fetch origin
+git status                                   # expect: clean on docs/sdn-foundation-rev2
+git log --oneline -5                         # expect: handoff commit ở top
+ls sdn-onboard/9.2[0-4]*                     # expect: 9.20, 9.22, 9.23, 9.24 present
+```
+
+Per F.5 session 24: Part 9.25 flow debugging + Part 9.21 Mininet. Prerequisite: extract compass Ch 10 (line range) + OpenVSwitch.pdf NSRC Tracing Flow (sẽ cần pymupdf render lại) + OVS.pdf Lab 2 Mininet p30-90 (pending — chưa search, session 24 first task).
+
+### Git state cuối session 23 (trước handoff commit)
+
+```
+Branch: docs/sdn-foundation-rev2
+HEAD: 85e6cbd
+Ahead origin: 2 commit (66b4a64 + 85e6cbd)
+Working tree: dirty (memory/session-log.md + CLAUDE.md sắp commit handoff)
+Untracked: (clean, tmp-*.py + tmp-*.txt đã dọn)
+```
+
+### Lệnh local cần chạy (user action)
+
+```bash
+# Trên máy này hoặc máy khác sau khi sync:
+git push origin docs/sdn-foundation-rev2
+# Push 3 commit: 66b4a64 + 85e6cbd + <handoff session 22+23>
+```
+
+---
+
 ## Session 21 — Phase D plan + PDF visual inspection (không execute, chờ tomorrow)
 
 **Ngày:** 2026-04-22 (session 21, cuối ngày)

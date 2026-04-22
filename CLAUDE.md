@@ -449,9 +449,14 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `cf34691` (session 17 CLOSED — **16 commit pushed**; ready next session) |
+| Active branch | `docs/sdn-foundation-rev2` @ `85e6cbd` (session 23 CLOSED — Phase D 3/5 Part mới DONE; 2 commit pending push) |
+| Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful — 3 Part tạo pedagogical arc multi-table → stateless → stateful. Offline source: OVS.pdf Lab 6/7/8 verbatim extract qua pymupdf. |
+| Session 22+23 deliverables | 3 file mới: 9.22 (447 dòng, Lab 6 multi-table pipeline), 9.23 (346 dòng, Lab 7 stateless ACL), 9.24 (671 dòng, Lab 8 conntrack). Tổng **+1464 dòng** content. README TOC + lab tracker updated. |
+| Phase D progress | **3/5 Part mới DONE** (9.22, 9.23, 9.24). Còn **9.21 Mininet** (350-450 dòng, Lab 2) + **9.25 flow debugging** (420-500 dòng, compass Ch 10 + NSRC) — session 24. Sau đó 4 expansion (9.9 QoS, 11.3 GRE, 11.4 IPsec, 9.2 kernel datapath lab) session 25-27. |
+| Phase D commits (session 22+23) | `66b4a64` (9.24 conntrack, 682 insertions) + `85e6cbd` (9.22+9.23, 803 insertions). Ahead origin 2 commit — user sẽ push. |
 | Session 17 status | **🎉 COMPLETE — C5.4 + C5.5 + C7 + C8 + C9 + C10 all DONE + pushed** (2026-04-22). Core OVS/OpenFlow/OVN đạt bề rộng + bề sâu + cross-cutting view. |
 | Session 17 deliverables | 17 file mới (9 core blocks + 3 cross-cutting + 5 Rule 11 retrofit) + expand 14 file Block XIV/XV/XVI cũ. Tổng +8315 dòng content. README TOC updated 3 lần (Block X + XIII + Block 0). |
+| Curriculum state (end session 23) | **91 file, ~34.8K dòng** content OVS/OpenFlow/OVN. Block IX (24 file — cao nhất curriculum, 4 tier + Firewall foundation 9.22-9.24), các block khác unchanged vs session 17. |
 | Curriculum state (end session 17) | **85+ file, ~32K+ dòng** content OVS/OpenFlow/OVN. Block IX (18 file), Block X (7 file), Block XIII (14 file), Block XVII-XIX (3 file), Expert Extension (9 file), Block 0 intro (3 file), các block khác unchanged. |
 | Next session deferred | C1b Lab Verification (chờ lab host) → C6b Final Publish v2.0 (chờ C1b) |
 | Session 17 deltas (final) | **C5.4** (pushed): 9 file Block XIV/XV/XVI section body expanded 2523→2917 (+394). **C5.5** (pushed): 5 file Exercise Rule 11 retrofit. **C7** (committed 3 batches, ready push): 6 file mới 13.7-13.12 OVN ovn-controller/northd/LB/DHCP-DNS/GR/IPAM (+1606 dòng). |
