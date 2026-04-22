@@ -7,6 +7,88 @@
 
 ## Session gần nhất
 
+## Session 24-28 — Phase D COMPLETE + Audit retrofit
+
+**Ngày:** 2026-04-23 (5 session cùng ngày, execute end-to-end).
+**Branch:** `docs/sdn-foundation-rev2` @ `434890f` — pushed.
+**Trạng thái:** **Phase D 9/9 deliverable DONE** (5 Part mới + 4 expansion). Audit retrofit P0+P1.4+P2.6+P2.7+P2.5-safe DONE. Defer P2.5-context-review sang session sau.
+
+### Session 24 — Phase D new-Part phase COMPLETE
+
+Deliverable 2 Part mới + Rule 13 Em-dash Discipline ra đời + Rule 11 retrofit session 22+23.
+
+- **Part 9.25 flow debugging** (636 dòng, density 0.053/line): NSRC OpenVSwitch slide + compass Ch 10/L/Q/R. 10 mục `ofproto/trace`, `dpif/show`, 3 lệnh dump flow so sánh, hygiene `replace-flows`/`diff-flows`, 3 ví dụ NSRC firewall 4-rule, so sánh `ovn-trace`. Guided Exercise POE "đọc dump-flows đủ debug" bác bỏ.
+- **Part 9.21 Mininet foundation** (571 dòng, density 0.002/line — gần như không em-dash): Lab 2 Crichigno + mininet.org docs + HotNets-IX 2010 Lantz/Heller/McKeown paper. 9 mục: lịch sử Stanford Clean Slate 2010, network namespace + veth, CLI cơ bản, Python `Topo` class API, MiniEdit GUI workflow + X11 SSH, router emulation, tích hợp OVS, so sánh namespace thủ công, 3 tip vận hành. Guided Exercise tái dựng Lab 5 topology.
+- **Rule 13 Em-dash Discipline** (CLAUDE.md new rule): density threshold < 0.10/line, §13.1-13.6 (được phép vs không được, checklist audit, dictionary live).
+- **Rule 11 retrofit session 22+23**: Part 9.22/9.23/9.24 em-dash 361 → 155 (57% reduction) + dictionary mở rộng (operator/engineer/performance/verify/experiment/behavior/motivation/etc.).
+
+Commits: `ce2c13b` (Rule 11 retrofit), `41f6533` (Part 9.25 + Rule 13), `24bb66b` (Part 9.21 + Phase D COMPLETE).
+
+### Session 25 — Audit retrofit P0+P1.4 + Part 9.9 QoS expansion
+
+Phase B: audit-driven retrofit theo `memory/sdn-onboard-audit-2026-04-23.md` priority matrix.
+
+- **P0.1 README TOC 14 orphan files** added: Block 0 thêm 0.2 (3 file), Block IV thêm 4.7 (8 file), Block IX expand 9.6-9.14 one-liner thành 9 entry đầy đủ (26 file), Block XI thêm 11.3+11.4 (5 file), Block XIII thêm 13.13 (14 file).
+- **P0.2 Dead URL** `docs.openvswitch.org/en/latest/intro/install/upgrade/` (404) fixed ở 2 file (9.12 + 10.2) → `install/general/` + NEWS.
+- **P1.4 Rule 13 top 10 violators** retrofit: 508 → 156 em-dash (69% reduction), tất cả dưới 0.10/line (13.8 worst 0.299 → 0.050).
+- **P3.8 CLAUDE.md Current State** refresh: actual git HEAD + session 24 state.
+- **Part 9.9 QoS expansion** (+458 dòng, 191 → 649 total, density 0.018): Lab 9 Crichigno. Drama OpenStack 5G VoLTE jitter 2023. HTB tree cơ chế borrow/ceil. Policing vs Shaping POE 500Mbps→79Mbps. 3-color metering RFC 2697/2698. Topology 4-host competing. 2 Guided Exercise mới. So sánh OVN QoS LSP.
+
+Commits: `edbba24` (P0+P1.4+P3.8), `cab7ea5` (9.9 expansion).
+
+### Session 26 — Part 11.3 GRE expansion
+
+- **Part 11.3 GRE** (+547 dòng, 195 → 742 total, density 0.022): Lab 14 Crichigno + compass Ch 11/J. Drama ngân hàng Việt Nam 2024 GRE over IPsec. Header RFC 2784/2890 bytewise 24B + comparison overhead với VXLAN/Geneve. Topology Lab 14 đầy đủ (3-FRR 2-Docker 4-Mininet). Wireshark 3-tầng header analysis. POE "GRE encrypt" bác bỏ bằng HTTP plaintext. 2 Guided Exercise (Lab 14 full + Wireshark POE). Pattern GRE over IPsec chuẩn site-to-site VPN.
+
+Commit: `b225c1d`.
+
+### Session 27 — Part 11.4 IPsec + Part 9.2 kernel datapath expansion
+
+- **Part 11.4 IPsec** (+662 dòng, 209 → 871 total, density 0.007): Lab 15 Crichigno + compass Ch 12. Drama từ GRE plaintext (Part 11.3) đến IPsec encrypted. AH vs ESP (RFC 4302/4303) — ESP thắng vì NAT-friendly + tunnel mode đầy đủ. IKE phase 1 Diffie-Hellman (DH14/19/20) + ISAKMP Main Mode 3-roundtrip. Phase 2 IPsec SA + ESP header (SPI/sequence/ICV). Lab 15 topology GRE over IPsec + `ovs-monitor-ipsec` daemon tự động sinh strongSwan config. Wireshark ISAKMP + ESP filter. 2 Guided Exercise (Lab 15 full + POE hiệu năng AES-NI 10-25% overhead). OVN cluster full-mesh IPsec via `ovn-nbctl set NB_Global ipsec=true`.
+- **Part 9.2 kernel datapath** (+251 dòng, 278 → 529 total, density 0.076): Lab 11 Crichigno — chỉ lab steps (lý thuyết megaflow+TSS đã có). `ovs-dpctl show/dump-flows`, POE "kernel flow = OpenFlow flow" bác bỏ (OpenFlow 1 entry priority=0 NORMAL → 8 megaflow kernel). `dpif/show-dp-features` list 16 capabilities. `upcall/show` capacity planning. Guided Exercise đo cache hit rate với iperf3.
+
+Commit: `b1200c9`.
+
+**Phase D COMPLETE end-to-end:** 5/5 Part mới + 4/4 Expansion. Curriculum 93 file, ~40.5K dòng content OVS/OpenFlow/OVN.
+
+### Session 28 — Audit retrofit P2.6+P2.7+P2.5-safe
+
+- **P2.6 Rule 13 retrofit 20 remaining violators**: 689 → 196 em-dash (71.6% reduction). Tất cả file dưới 0.10/line threshold. Curriculum Rule 13 compliance 100% sau session này.
+- **P2.7 Dictionary §11.2 expansion**: 12 entries mới (consumer, buy-in, shepherd, worry, favor, bent, workaround, unusual, significant, industry dynamics, promote adoption, advocate for).
+- **P2.5 safe Rule 11 replacement** 5 Critical files (19.0/17.0/18.0/3.2/4.6): 36 safe replacements với 21 patterns context-independent (trade-off/post-mortem/workaround/subtle/bidirectional/etc.). Skip ambiguous (operator/control/feature/event) cần human review per-file.
+
+Commits: `497d9e7` (P2.6+P2.7), `434890f` (P2.5 safe).
+
+### Deferred sang session sau
+
+- **P2.5 Rule 11 context-review** ~385 hits còn lại across 10 Critical files. Strategy: 1-2 file/session human review, không bulk. Priority: 19.0 (132 hits), 17.0 (60), 18.0 (30).
+- **C1b Lab Verification**: chờ lab host available để verify `doc-plausible` → `verified-lab` trong tất cả Guided Exercise Phase B+D.
+- **C6b Final Publish v2.0**: build PDF + EPUB sau khi lab verified.
+
+### Curriculum state end session 28
+
+- **93 file, ~40.5K dòng** content OVS/OpenFlow/OVN.
+- Block IX: 26 file.
+- Block XI: 5 file (11.3 + 11.4 full expansion).
+- Rules: 13 rule trong CLAUDE.md + Rule 11 dictionary ~72 entries.
+- Rule 13 compliance: 100% curriculum-wide (< 0.10 em-dash/line).
+- Rule 11 compliance: 100% safe pattern, context pending.
+- Rule 9 null bytes: 0 trên mọi file.
+
+### Tổng commits session 24-28 (8 commits pushed)
+
+1. `ce2c13b` — Rule 11 retrofit Part 9.22+9.23+9.24 + dictionary mở rộng (session 24 part 1)
+2. `41f6533` — Part 9.25 flow debugging + Rule 13 Em-dash Discipline (session 24 part 2)
+3. `24bb66b` — Part 9.21 Mininet + Phase D new-Part COMPLETE (session 24 part 3)
+4. `edbba24` — Session 25 audit retrofit P0+P1.4+P3.8
+5. `cab7ea5` — Part 9.9 QoS expansion (session 25)
+6. `b225c1d` — Part 11.3 GRE expansion (session 26)
+7. `b1200c9` — Part 11.4 IPsec + 9.2 kernel datapath expansion (session 27)
+8. `497d9e7` — Session 28 P2.6+P2.7
+9. `434890f` — Session 28 P2.5 safe
+
+---
+
 ## Session 22+23 — Phase D firewall foundation (Part 9.22 + 9.23 + 9.24)
 
 **Ngày:** 2026-04-22 (session 22+23, cùng ngày với session 21 plan)
