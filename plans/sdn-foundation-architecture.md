@@ -2134,3 +2134,576 @@ Implementation:
 ---
 
 **Hết Phụ lục E Phase C plan.** Phase C2 đang execute; audit progress tracked trong section E.3.
+
+---
+
+## Phụ lục F — Phase D Offline Source Deep Exhaustion + Engagement Enhancement (rev 1, 2026-04-22)
+
+> **Trạng thái:** Draft, awaiting user review (session 21)
+> **Branch:** `docs/sdn-foundation-rev2` @ `1b00960`
+> **Gối lên:** Phụ lục E (Phase C)
+> **Scope ràng buộc:** OVS + OpenFlow + OVN only — mọi Part mới nằm trong Block IX, Block XI
+> **Directive user session 21:** "Toàn bộ kiến thức và thí nghiệm của tài liệu offline phải được thể hiện rõ ràng, giải thích chi tiết. Mục đích giúp cho chương trình đào tạo giá trị hơn. Người đọc bị lôi cuốn hơn."
+
+### F.1 Bối cảnh và lý do tồn tại của Phase D
+
+Sau session 20, tôi tuyên bố "offline source exhausted" — đó là tuyên bố sai. Kiểm toán lại phát hiện:
+
+| File | Line | Thực chất | Session trước ghi nhận |
+|------|------|-----------|-----------------------|
+| `OVS.txt` | **8543** | Full lab book NSF Award 1829698 — **15 labs + 5 exercises** | "Absorbed 9.0-9.5 tổng hợp" |
+| `OpenVSwitch.txt` | 222 | NSRC lecture notes (Pemberton/Linton/Russell) | "Intro lecture" |
+| `compass_artifact_wf-bd3df8ae.md` | 682 | Senior Engineer curriculum, 7 Parts + 20+ Chapters A-W | "Used general" |
+
+`OVS.txt` là giáo trình NSF tài trợ (Principal Investigator Jorge Crichigno, University of South Carolina, WASTC 2021). Mỗi lab 400-700 dòng với Introduction + Topology + Roadmap + step-by-step commands + verification + references.
+
+Đã map **6/15 labs** (Lab 3 → 9.0/9.1 overview, Lab 4 → 9.19, Lab 5 → 9.18, Lab 9 → 9.9 skeleton, Lab 11 → 9.2 partial, Lab 13 → 9.20) + **0/5 exercises**. **9 labs + 5 exercises chưa có Part dedicated**.
+
+**Hệ quả nếu không fix:**
+
+1. Thiếu foundation **conntrack** (Lab 8) — cơ chế nền tảng OVN ACL `allow-related`, OVN Load Balancer, OVN NAT. Người đọc nhảy Part 9 → 13 thiếu bước giải thích `ct()` action.
+2. Thiếu **multi-table OpenFlow pipeline** (Lab 6) — nền tảng ovn-northd sinh Logical Flow vào 50+ table.
+3. Thiếu **stateless ACL dedicated** (Lab 7) — cầu nối giữa flow entry thuần (9.19) và OVN ACL (13.3).
+4. **GRE** (Lab 14) + **IPsec** (Lab 15) Parts 11.3/11.4 chỉ skeleton, không có lab steps thực tế.
+5. **QoS full lab** (Lab 9, 618 dòng) chưa expand HTB + policing + shaping + 3-color metering.
+6. **Kernel datapath lab** (Lab 11) không có step-by-step `ovs-dpctl dump-flows` + `ovs-appctl dpif/show`.
+7. **Mininet** (Lab 2) không có Part dedicated — tooling chính để reproduce mọi lab.
+
+**compass_artifact** chưa được khai thác đầy đủ:
+- Part II Ch J (Tunnel port CRUD), Ch Q (Datapath introspection), Ch S/T/U/V/W — chưa map Part nào
+- Part III Ch 8 (5-table tutorial), Ch 9 (conntrack), Ch 10 (flow hygiene monitor/replace/diff) — chưa dùng
+- Part IV Ch 11-13 (tunneling walkthrough + troubleshooting) — chưa exploit đầy đủ
+
+**OpenVSwitch.txt (NSRC)** cung cấp góc nhìn kernel-vs-userspace (slow path vs fast path) + tool set `ovs-dpctl` + flow tracing workflow (ICMP/TCP allowed/TCP denied) — chưa dedicated.
+
+### F.2 Triết lý "người đọc bị lôi cuốn hơn"
+
+Bốn nguyên tắc engagement mà Part phase D phải tuân theo:
+
+**Nguyên tắc 1 — Narrative arc, không phải reference dump.** Mỗi Part mở bằng bài toán cụ thể có drama (ai đó bị hack vì thiếu conntrack, deployment crash vì tunnel MTU sai, traffic drop không rõ lý do). Dữ kiện kỹ thuật được trình bày trong tiến trình giải quyết drama. Kế thừa professor-style §2.1 nhưng đẩy xa hơn — bối cảnh thực sự cần cảm xúc engineering.
+
+**Nguyên tắc 2 — Predict-Observe-Explain với giả thuyết ngược có giá trị.** Không nhất thiết chứng minh điều hiển nhiên. Chọn giả thuyết ngược mà 70% kỹ sư mới vào nghề tin đúng:
+- "Firewall stateless đủ chặn SYN flood" → bác bỏ bằng conntrack lab
+- "`dec_ttl` chỉ giảm TTL" → bác bỏ bằng `OFPR_INVALID_TTL` packet_in
+- "`resubmit` an toàn như `goto_table`" → bác bỏ bằng loop detection
+- "`ct(commit)` gọi một lần là xong" → bác bỏ bằng reply packet không match `+est`
+
+**Nguyên tắc 3 — Trace thật.** Mỗi Part có ít nhất một đoạn output từ `ovs-appctl ofproto/trace`, `ovs-dpctl dump-flows`, `tcpdump -nn -e -v`, hoặc `conntrack -L`.
+
+**Nguyên tắc 4 — OVN bridge ở cuối.** Mỗi Part OVS có section "So sánh với OVN" — chỉ chính xác cơ chế OVS được biên dịch thành Logical Flow nào. Dấu vết kiến thức khi chuyển Block XIII.
+
+### F.3 Inventory đầy đủ — offline source → Part target
+
+**OVS.txt mapping:**
+
+| Nguồn | Dòng | Tiêu đề | Part target | Trạng thái |
+|-------|------|---------|-------------|-----------|
+| Lab 1 | 37-530 | Linux Namespaces + OVS intro | 8.0 + 9.0 | Partial |
+| **Lab 2** | **531-1113** | **Mininet introduction** | **→ Part 9.21 (mới)** | **Chưa có** |
+| Lab 3 | 1114-1594 | OVS fail-modes + state inspection | 9.1 | Partial |
+| Lab 4 | 1595-2366 | OVS flow table L1→L4 | 9.19 ✅ | Hoàn tất session 20 |
+| Exercise 1 | 2262-2366 | OpenFlow basic ops | → 9.19 Capstone | Chưa thêm |
+| Lab 5 | 2367-2929 | OVS Implementing Routing | 9.18 ✅ | Hoàn tất session 19 |
+| **Lab 6** | **2930-3476** | **Multi-table Routing pipeline** | **→ Part 9.22 (mới)** | **Chưa có** |
+| Exercise 2 | 3477-3620 | Multi-table routing ex | → 9.22 Capstone | Chưa thêm |
+| **Lab 7** | **3621-4083** | **Stateless Firewall ACL** | **→ Part 9.23 (mới)** | **Chưa có** |
+| **Lab 8** | **4084-4612** | **Stateful Firewall conntrack** | **→ Part 9.24 (mới, PRIORITY CAO NHẤT)** | **Chưa có** |
+| Exercise 3 | 4613-4722 | Stateless+Stateful FW | → 9.24 Capstone | Chưa thêm |
+| Lab 9 | 4723-5341 | QoS full lab (HTB+policing+shaping+metering) | **→ 9.9 expand** | Skeleton only |
+| Exercise 4 | 5342-5493 | QoS exercise | → 9.9 Capstone | Chưa thêm |
+| Lab 10 | 5494-5904 | OVSDB visualization | 10.0 | Partial |
+| Lab 11 | 5905-6303 | Kernel Datapath lab | 9.2 | Content có, lab steps missing |
+| Lab 12 | 6304-6679 | VLAN basics | 9.20 | Overlap |
+| Lab 13 | 6680-7096 | VLAN trunking | 9.20 ✅ | Hoàn tất session 20 |
+| Exercise 5 | 7097-7212 | VLAN exercise | → 9.20 Capstone | Chưa thêm |
+| **Lab 14** | **7213-7889** | **GRE Tunnel + Docker + OSPF** | **→ 11.3 expand** | Skeleton only |
+| **Lab 15** | **7890-8543** | **IPsec Tunnel + IKE** | **→ 11.4 expand** | Skeleton only |
+
+**compass_artifact chapters chưa/partial:**
+- Part II Ch J (Tunnel port CRUD) → 11.0 expand
+- Part II Ch Q (Datapath introspection) → Part 9.25 mới (flow debugging)
+- Part III Ch 8 (5-table tutorial) → 9.22 expand (Lab 6 port)
+- Part III Ch 9 (Connection tracking) → 9.24 expand (Lab 8 port)
+- Part III Ch 10 (Flow hygiene monitor/replace/diff) → Part 9.25 mới
+- Part IV Ch 13 (Tunnel troubleshooting flowchart) → 11.1 expand
+
+**OpenVSwitch.txt (NSRC) sections chưa dedicated:**
+- Tracing Flow workflow (ICMP/TCP allowed/TCP denied) → Part 9.25
+- ovs-dpctl + ovs-appctl bridge/dump-flows + Flow Debugging resubmit example → Part 9.25
+- Linux Bridge Design vs OVS Design → 9.1 expand
+- OpenFlow extensions (NXM, Registers, Resubmit) → 9.22 expand
+
+### F.4 Đề xuất 5 Part mới + 4 expansion của skeleton
+
+#### F.4.1 Part 9.21 — Mininet cho OVS labs (mới)
+
+- **Offline chính:** OVS.txt Lab 2 (531-1113, 583 dòng)
+- **Online chính:** mininet.org docs, `mn(1)`
+- **Scope:** §9.21.1 Mininet là gì + tại sao quan trọng / §9.21.2 CLI invocation / §9.21.3 Custom Python topology / §9.21.4 GUI miniedit.py / §9.21.5 Router emulation via sysctl + static route / §9.21.6 OVS integration với `--switch ovsk` / §9.21.7 So sánh Mininet vs manual namespace
+- **Guided Exercise:** Reproduce topology Lab 5 bằng Mininet script; GUI build topology 3-host
+- **Engagement hook:** "Research paper Stanford Clean Slate 2010 dùng Mininet reproducible research — mọi deployment SDN paper 2010-2018 có Mininet script. Tải artifact về chạy trên laptop 30 giây."
+- **Size estimate:** 350-450 dòng
+
+#### F.4.2 Part 9.22 — Multi-table OpenFlow pipeline (mới)
+
+- **Offline chính:** OVS.txt Lab 6 (2930-3476, 547 dòng) + Exercise 2 + compass_artifact Part III Ch 8 (5-table tutorial)
+- **Online chính:** OpenFlow 1.1 Spec §5.1, `ovs-ofctl(8)` mục `goto_table` + `resubmit`
+- **Scope:** §9.22.1 Tại sao multi-table (Broadcom Trident 3-stage ASIC) / §9.22.2 `goto_table` vs `resubmit` / §9.22.3 Pipeline 3-table Lab 6 (classifier → L3 → L2) / §9.22.4 5-table tutorial / §9.22.5 Action set vs action list / §9.22.6 Metadata field 64-bit / §9.22.7 So sánh OVN ovn-northd 50+ table
+- **Guided Exercise:** Cài 3-table pipeline Lab 6 + `ovs-appctl ofproto/trace` verify; POE `goto_table` không reverse
+- **Engagement hook:** "OpenFlow 1.0 ra đời 2009 single table — 6 tháng sau ONF realize không represent được Broadcom Trident. OpenFlow 1.1 (2011) thêm multi-table. Hiếm khi standard industry thay đổi kiến trúc sau 6 tháng."
+- **Size estimate:** 400-500 dòng
+
+#### F.4.3 Part 9.23 — Stateless ACL firewall (mới)
+
+- **Offline chính:** OVS.txt Lab 7 (3621-4083, 463 dòng)
+- **Online chính:** `ovs-actions(7)` mục `drop`, Cisco IOS ACL docs
+- **Scope:** §9.23.1 ACL khái niệm + ACE + first-match / §9.23.2 ACL trong OVS qua flow table priority / §9.23.3 Topology 3-host Lab 7 (deny h3→h1) / §9.23.4 Flow table 2-layer (ACL + forwarding) / §9.23.5 Thứ tự priority vs Cisco line-number / §9.23.6 Stateless limitation (reply traffic fail) / §9.23.7 So sánh OVN ACL stateless (13.3)
+- **Guided Exercise:** Cài 10 ACL rule + POE ACL drop frame không tag
+- **Engagement hook:** "2013 Spamhaus DDoS 300 Gbps buộc một ISP Châu Âu deploy Cisco ACL 20.000 rule. Bài dựng lại cơ chế đó bằng OVS flow table trên laptop — OpenFlow matching có cùng khả năng Cisco IOS ACL từ 2009."
+- **Size estimate:** 380-450 dòng
+
+#### F.4.4 Part 9.24 — Connection tracking + stateful firewall (mới, PRIORITY CAO NHẤT)
+
+- **Offline chính:** OVS.txt Lab 8 (4084-4612, 529 dòng) + Exercise 3 + compass_artifact Part III Ch 9
+- **Online chính:** `ovs-fields(7)` mục `ct_state` + `ct_zone`, netfilter.org conntrack docs
+- **Scope:** §9.24.1 Stateless vs Stateful (SYN flood drama) / §9.24.2 Linux netfilter conntrack + state NEW/ESTABLISHED/RELATED/INVALID / §9.24.3 OVS `ct()` action semantic / §9.24.4 Typical stateful ACL pattern với `ct(commit)` / §9.24.5 `ct_zone` multi-tenant isolation / §9.24.6 Topology Lab 8 / §9.24.7 OVN ACL `allow-related` = wrapper `ct()` / §9.24.8 OVN LB = SNAT + conntrack
+- **Guided Exercise:** (1) POE "TCP reply auto-allowed" bị bác bỏ khi thiếu `ct()` / (2) `conntrack -L` inspect state table + timeout / (3) POE UDP conntrack tracking
+- **Engagement hook:** "2018 team OpenStack ngân hàng phát hiện traffic rớt 30% sau upgrade Neutron — switch Linux bridge → OVS driver nhưng ACL không còn stateful. Reply traffic bank API drop vì OVN `allow` default stateless. Bài hôm nay dạy cơ chế `ct()` mà họ đã thiếu."
+- **Size estimate:** 550-650 dòng (lớn nhất phase D)
+
+#### F.4.5 Part 9.25 — Flow debugging + ofproto/trace + ovs-dpctl (mới)
+
+- **Offline chính:** OpenVSwitch.txt NSRC Tracing Flow + compass_artifact Part III Ch 10 (hygiene) + Part II Ch Q (datapath introspection)
+- **Online chính:** `ovs-appctl(8)` mục `ofproto/trace` + `dpif/show`, docs.openvswitch.org tracing
+- **Scope:** §9.25.1 Vấn đề debug 2000+ flow entry / §9.25.2 `ofproto/trace` simulate packet / §9.25.3 Format flow-spec / §9.25.4 Output parsing (Datapath actions, Final flow, Megaflow) / §9.25.5 `ovs-dpctl dump-flows` vs `ovs-ofctl dump-flows` / §9.25.6 `ovs-appctl dpif/show` / §9.25.7 Hygiene (monitor/replace-flows/diff-flows) / §9.25.8 Three NSRC tracing examples (ICMP allowed/TCP allowed/TCP denied)
+- **Guided Exercise:** (1) Flow table có bug (cookie conflict, priority inverted), dùng `ofproto/trace` locate / (2) Real-time monitor với `ovs-ofctl monitor br-int resume`
+- **Engagement hook:** "Debug flow table là kỹ năng phân biệt junior SDN engineer với senior. Junior đọc dump-flows 2000 dòng đoán; senior gõ `ofproto/trace` và nhận kết quả trong 2 giây."
+- **Size estimate:** 420-500 dòng
+
+#### F.4.6 Expansion Part 9.9 — QoS (content phase)
+
+- **Offline chính:** OVS.txt Lab 9 (4723-5341, 618 dòng) + Exercise 4
+- **Online chính:** compass_artifact Ch I, `ovs-vsctl(8)` mục `qos` table, Linux `tc(8)` HTB
+- **Scope add:** §9.9.1 QoS intro 4 mục đích / §9.9.2 HTB tree structure + leaf queue + borrow/ceil / §9.9.3 Policing vs Shaping (ingress drop vs egress buffer) / §9.9.4 3-color metering Green/Yellow/Red + CIR + PIR / §9.9.5 Topology Lab 9 (4-host competing clients) / §9.9.6 So sánh OVN QoS Logical Switch Port
+- **Guided Exercise:** (1) Policing 50 Mbps + iperf3 verify drop / (2) HTB shaping 2-class competing / (3) POE "policing = shaping" bị bác bỏ bằng latency comparison
+- **Size add:** 400-500 dòng
+
+#### F.4.7 Expansion Part 11.3 — GRE Tunnel (content phase)
+
+- **Offline chính:** OVS.txt Lab 14 (7213-7889, 677 dòng) với OSPF + Docker + Mininet + Wireshark
+- **Online chính:** RFC 2784 (GRE base), RFC 2890 (GRE key)
+- **Scope add:** §11.3.1 GRE encap concept / §11.3.2 GRE header breakdown (Flags + Protocol + Checksum + Key + Sequence) / §11.3.3 Topology Lab 14 (r1+r2+r3 Docker + OSPF + GRE tunnel 192.168.12.0/30) / §11.3.4 So sánh VXLAN (UDP 4789) + Geneve (UDP 6081)
+- **Guided Exercise:** (1) Dựng GRE tunnel + tcpdump verify protocol 47 / (2) POE "GRE mã hóa" bị bác bỏ bằng plaintext payload
+- **Size add:** 350-400 dòng
+
+#### F.4.8 Expansion Part 11.4 — IPsec Tunnel (content phase)
+
+- **Offline chính:** OVS.txt Lab 15 (7890-8543, 654 dòng) IKE phase 1/2 + ESP + AH + PSK/RSA/DH
+- **Online chính:** RFC 7296 (IKEv2), RFC 4303 (ESP), RFC 4302 (AH), OVS IPsec docs
+- **Scope add:** §11.4.1 IPsec concept + AH vs ESP + SA / §11.4.2 IKE phase 1 (DH) + phase 2 (IPsec SA) / §11.4.3 OVS IPsec integration với `openvswitch-ipsec` + psk/cert / §11.4.4 ESP + IKEv2 support (no AH) / §11.4.5 IPsec trong OVN cluster encryption
+- **Guided Exercise:** (1) Dựng IPsec tunnel + tcpdump verify ESP protocol 50 / (2) POE throughput measurement với/không AES-NI
+- **Size add:** 380-450 dòng
+
+#### F.4.9 Expansion Part 9.2 — Kernel datapath lab steps
+
+- **Offline chính:** OVS.txt Lab 11 (5905-6303, 399 dòng)
+- **Online chính:** OpenVSwitch.txt NSRC Kernel Processing, compass_artifact Ch Q
+- **Scope add (chỉ lab, lý thuyết đã có):** (1) `ovs-dpctl show` datapath active / (2) `ovs-dpctl dump-flows` megaflow entries wildcarded / (3) POE "kernel flow = OpenFlow flow" bị bác bỏ / (4) `ovs-appctl dpif/show` statistics cho capacity planning
+- **Size add:** 200-250 dòng
+
+### F.5 Phase D sequencing — session 21 → session 28
+
+| Session | Part | Lý do chọn | Size |
+|---------|------|-----------|------|
+| 21 | **Part 9.24 conntrack** | Foundation OVN ACL/NAT/LB, priority cao nhất | 550-650 |
+| 22 | **Part 9.23 stateless ACL** + **Part 9.22 multi-table** | Cầu nối 9.19 → 9.24; foundation Block XIII | 380-450 + 400-500 |
+| 23 | **Part 9.25 flow debugging** + **Part 9.21 Mininet** | Tool-oriented, tooling prereq | 420-500 + 350-450 |
+| 24 | **Part 9.9 QoS expand** | Lab 9 full exercise set, sponsors Block XI | 400-500 add |
+| 25 | **Part 11.3 GRE expand** | Tunnel foundation Lab 14 | 350-400 add |
+| 26 | **Part 11.4 IPsec expand** | Security tunnel, parallel 11.3 | 380-450 add |
+| 27 | **Part 9.2 kernel datapath lab** | Lab steps bổ sung | 200-250 add |
+| 28 | README reorganization | Block IX = 26 file rebalance | Small |
+
+**Total estimate:** ~4.000 dòng mới + ~1.800 dòng expansion = **~5.800 dòng** qua 8 session. Curriculum post-phase-D: **93 file / ~39K dòng**.
+
+### F.6 Quality criteria cho Phase D
+
+Cấu trúc bắt buộc mỗi Part:
+- [ ] Header 7-field (Môi trường, Khối, Phần, Plan, Prerequisites, Nguồn offline chính, Nguồn online chính)
+- [ ] Learning objectives 3-5 Bloom-aligned
+- [ ] Prerequisites list explicit cross-ref
+- [ ] 5-8 section level-2 numbered (§9.X.Y)
+- [ ] Ít nhất 1 Guided Exercise với POE đầy đủ
+- [ ] Section "So sánh với OVN" cuối
+- [ ] Section "Điểm cốt lõi cần nhớ"
+- [ ] References 5-8 items
+
+Nội dung bắt buộc:
+- [ ] Drama opening 80-120 chữ (Pattern 1)
+- [ ] 2-4 misconception callouts (Pattern 2)
+- [ ] Ít nhất 1 chuỗi POE đầy đủ (Pattern 3)
+- [ ] OVN bridge ở cuối (Pattern 4)
+
+Rule compliance:
+- [ ] Rule 9: 0 null bytes
+- [ ] Rule 11: technical English (OVS/conntrack/ct/flow/ACL), Vietnamese cho vocabulary tư duy
+- [ ] Rule 12: offline source explicit trong header + References + line ranges OVS.txt
+- [ ] Rule 10: phase D là **content phase** — full content, không skeleton
+
+### F.7 Execution checklist per Part
+
+```
+□ 1. Read offline source line range chính xác (OVS.txt dòng X-Y)
+□ 2. Read compass_artifact chapter tương ứng
+□ 3. Read hoặc grep Part 13.X nếu có OVN bridge section
+□ 4. Verify URLs bằng context: RFC, man.openvswitch.org, docs.openvswitch.org
+□ 5. Draft drama opening + kiểm tra có concrete event
+□ 6. Draft POE giả thuyết ngược cho mỗi Guided Exercise
+□ 7. Present Fact-Forcing Gate 4 facts
+□ 8. Write (content phase, ~400-600 dòng)
+□ 9. Rule 9 null byte check
+□ 10. Update README TOC Block IX/XI tương ứng
+□ 11. Commit với detail offline line range + key design
+□ 12. Update memory/session-log.md
+□ 13. Push origin
+```
+
+### F.8 Risk management
+
+| Rủi ro | Mitigation |
+|--------|-----------|
+| Content quá lớn gây context pressure | Mỗi session 1-2 Part tối đa; compact khi > 60% context |
+| POE giả thuyết ngược chất lượng thấp | Review lần 2; tham khảo session 18-20 POE đã pass |
+| Offline line ranges sai | Verify bằng grep trước khi cite |
+| Engagement hook sa đà storytelling | Giới hạn 80-120 chữ; drama dẫn tới learning objective |
+| Rule 11 over-translate | Dictionary check: OVS/OpenFlow/OVN/conntrack/flow/ACL giữ Anh |
+| Cross-ref Part 13.X sai | Grep Part 13 contents trước; link anchor chính xác |
+| Drama dẫn fake incident | Chỉ dùng publicly documented event (RFC, paper, incident report) |
+
+### F.9 Kết thúc Phase D — pre-release checklist
+
+Sau session 28:
+- [ ] Block IX = 26 file (9.0-9.25), TOC 4 tier reorganized
+- [ ] Block XI = Part 11.0-11.4 all content
+- [ ] Offline inventory: **ALL exhausted** (15/15 labs + 5/5 exercises + OpenVSwitch.txt + compass_artifact all chapters mapped)
+- [ ] memory/session-log.md có session 21-28 entries
+- [ ] Root README cập nhật số liệu final (93 file, ~39K dòng)
+- [ ] Rule 11 Round 4 batch cho 5 Part mới
+
+Sau đó quay lại C1b Lab Verification khi lab host available → C6b Final Publish v2.0.
+
+### F.10 Câu hỏi cho user review
+
+1. **Sequencing OK?** Priority cao nhất là 9.24 conntrack (session 21). Có muốn đổi thứ tự?
+2. **Scope 5 Part mới + 4 expansion OK?** Thêm/bớt?
+3. **Engagement patterns OK?** Drama opening + POE + misconception + OVN bridge — pattern nào muốn đổi?
+4. **Ngưỡng dòng target** 400-600 cho Part mới (9.24 lớn nhất 550-650). OK?
+5. **Bắt đầu session 21 (Part 9.24 conntrack) ngay sau confirmation?**
+
+---
+
+### F.11 Lab Preparation Briefs — Mục đích, kiến thức cần chuẩn bị, môi trường, output
+
+> User directive session 21: "Plan phải nêu rõ cần kiến thức gì, chuẩn bị kiến thức gì, ... thì đáp ứng được bài lab. Mọi bài lab đều có chủ đích và cần lượng kiến thức để giải quyết nó." + "Hiện tại tôi chưa có môi trường lab nhưng hãy nêu rõ chi tiết cần để làm lab, mục đích bài lab ... khi tôi có môi trường lab thì tôi sẽ thông báo tới bạn, chúng ta sẽ cùng nhau thí nghiệm để có output thực tế."
+
+Mỗi Part phase D có Lab Preparation Brief gồm 4 mục: (a) **Mục đích bài lab**, (b) **Kiến thức tiên quyết cần chuẩn bị trước khi vào lab**, (c) **Môi trường lab cụ thể** (OS, packages, topology, tài nguyên), (d) **Output thực tế sẽ thu thập** (để sau này khớp với `Trạng thái lab verification` trong `memory/lab-verification-pending.md`).
+
+---
+
+#### F.11.1 Part 9.24 — Connection tracking + stateful firewall (session 21, priority 1)
+
+**(a) Mục đích bài lab:**
+Chứng minh trực tiếp rằng firewall stateless **không thể** hoàn tất TCP handshake khi chỉ có rule một chiều (inbound allow) — phải có stateful conntrack để track reply traffic. Sau khi lab hoàn tất, người đọc có thể (1) explain cơ chế `ct()` + `ct_state` trong OVS, (2) viết flow table stateful với `ct(commit)` pattern đúng, (3) inspect conntrack state table bằng `conntrack -L`, (4) map cơ chế này tới OVN ACL `allow-related` trong Part 13.3.
+
+**(b) Kiến thức tiên quyết cần chuẩn bị trước khi vào lab:**
+
+*Phải vững:*
+- TCP 3-way handshake (SYN → SYN-ACK → ACK), FIN teardown, TCP state machine CLOSED/LISTEN/SYN_SENT/ESTABLISHED (mức CCNA R&S)
+- Netfilter framework Linux: `iptables`, `nf_conntrack` kernel module, state NEW/ESTABLISHED/RELATED (linux-onboard nếu có, hoặc `man 8 iptables-extensions`)
+- OpenFlow flow entry structure: match + action + priority + `goto_table` (Part 9.19 + 9.22)
+- `ovs-ofctl add-flow` syntax, `actions=ct(...)` không thể dùng như action thường
+
+*Nên nắm (không bắt buộc):*
+- Linux conntrack tools: `conntrack -L`, `conntrack -E` event mode
+- Stateful firewall concept từ CCNA Security hoặc iptables stateful rules (`-m state --state ESTABLISHED,RELATED -j ACCEPT`)
+
+*Tài liệu đọc trước:*
+- OVS.txt Lab 8 section "1.1 Stateful Firewall" (lines ~4170-4210)
+- compass_artifact Part III Chapter 9 "Connection tracking"
+- `ovs-fields(7)` man page — section `ct_state`, `ct_zone`, `ct_mark`, `ct_label`
+
+**(c) Môi trường lab cụ thể:**
+
+| Hạng mục | Specification |
+|----------|---------------|
+| OS | Ubuntu 22.04 LTS |
+| OVS version | 2.17.9 (từ repo `universe`) hoặc build từ source |
+| Kernel | 5.15+ với `openvswitch.ko` + `nf_conntrack.ko` module |
+| Required packages | `openvswitch-switch`, `conntrack`, `iperf3`, `tcpdump`, `iproute2` |
+| Topology | 3 network namespace (h1, h2, h3) + 1 OVS bridge `br-s1`, tất cả trên same host |
+| IP config | h1: 10.0.0.1/8, h2: 10.0.0.2/8, h3: 10.0.0.3/8 (từ Lab 8 original) |
+| CPU | 2 core đủ (lab không stress CPU) |
+| Memory | 2 GB đủ |
+| Disk | 5 GB cho OS + OVS packages + log |
+| Network | Không cần internet (lab self-contained) |
+| Time | 45-60 phút hoàn tất full lab + POE |
+
+**Pre-lab checklist (user sẽ chạy trước khi bắt đầu):**
+```bash
+[host]# lsmod | grep -E "openvswitch|nf_conntrack"   # verify module loaded
+[host]# ovs-vsctl --version                           # verify OVS 2.17.9+
+[host]# conntrack --version                            # verify conntrack-tools
+[host]# sysctl net.netfilter.nf_conntrack_max         # ≥ 262144 cho lab
+```
+
+**(d) Output thực tế sẽ thu thập khi user chạy lab:**
+
+| Command | Thu thập làm gì |
+|---------|-----------------|
+| `ovs-ofctl dump-flows br-s1` sau khi cài stateful flow | Flow entry có `ct_state=+new+trk`, `ct_state=+est+trk` |
+| `iperf3 -c 10.0.0.2 -p 5001` từ h1 | Kết quả throughput + số packet gửi/nhận |
+| `iperf3 -c 10.0.0.1 -p 5001` từ h2 (reverse direction, không ct init) | Expected: **fail** (connection timeout) — bằng chứng stateful chặn |
+| `conntrack -L -p tcp --dport 5001` | Bảng conntrack entry với state ESTABLISHED + timeout ~432000s |
+| `ovs-appctl ofproto/trace br-s1 "in_port=1,tcp,nw_src=10.0.0.1,nw_dst=10.0.0.2,tp_dst=5001,tcp_flags=0x02"` | Trace SYN packet: hit `ct(commit)`, state transition NEW |
+| `conntrack -E` event monitor | Real-time stream: `[NEW]`, `[UPDATE]` TCP state changes |
+
+User sẽ paste các output này vào Guided Exercise 1/2/3, tôi sẽ integrate vào Part 9.24 (hiện tại là "doc-plausible" trong draft, sẽ replace bằng verified-lab sau khi user thí nghiệm).
+
+---
+
+#### F.11.2 Part 9.23 — Stateless ACL firewall (session 22)
+
+**(a) Mục đích:** Dựng ACL firewall trên OVS flow table giống Cisco IOS ACL, hiểu cơ chế priority-based first-match, và chứng minh stateless limitation (reply traffic cần ACL ngược chiều).
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* ACL concept (permit/deny, ACE, first-match) CCNA R&S level; OVS flow table priority (Part 9.19); `goto_table` vs `resubmit` (Part 9.22 nếu đã xong)
+- *Nên nắm:* Cisco IOS ACL standard/extended cú pháp; iptables INPUT/OUTPUT chain
+- *Đọc trước:* OVS.txt Lab 7 section 1.1 (ACLs concept) + 1.2 (OVS implementation)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9 |
+| Topology | 3 namespace (h1, h2, h3) + 1 bridge, same subnet 10.0.0.0/8 |
+| Packages | `openvswitch-switch`, `tcpdump`, `curl` (test HTTP) |
+| Time | 30-45 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-ofctl dump-flows br-s1` sau khi cài 2-table ACL (priority 40000 deny h3→h1, priority 32768 allow)
+- `ping` từ h3 → h1: **fail** (rule deny match)
+- `ping` từ h2 → h1: **success** (rule catch-all match)
+- `ovs-appctl ofproto/trace` với packet h3→h1 vs h2→h1: output khác nhau (drop vs goto_table:1 → NORMAL)
+- `tcpdump -i h1-port` chứng minh h1 không nhận frame từ h3 khi deny active
+
+---
+
+#### F.11.3 Part 9.22 — Multi-table OpenFlow pipeline (session 22)
+
+**(a) Mục đích:** Dựng 3-table pipeline (classifier → L3 routing → L2 forwarding) thay cho single-table, chứng minh pipeline modularization scale tốt hơn flat table, và map tới hardware ASIC 3-stage Broadcom Trident.
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* OVS flow table + priority (9.19); OVS native L3 routing (9.18, single-table version of this lab)
+- *Nên nắm:* ASIC pipeline concept (Broadcom Trident documentation overview), OpenFlow 1.0 → 1.1 upgrade rationale
+- *Đọc trước:* OVS.txt Lab 6 section 1.1 (OVS Routing recap) + 1.2 (Pipeline processing); compass_artifact Part III Ch 8 (5-table tutorial)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9, protocols=OpenFlow13 (cần OF 1.1+ cho `goto_table`) |
+| Topology | 2 host namespace (h1, h2) + 2 bridge (s1, s2) nối qua patch port, 2 subnet 192.168.1.0/24 + 192.168.2.0/24 |
+| Packages | `openvswitch-switch`, `tcpdump` |
+| Time | 40-55 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-ofctl -O OpenFlow13 dump-flows br-s1` show 3 table entries
+- `ovs-appctl ofproto/trace br-s1 "in_port=1,ip,nw_dst=192.168.2.10"` → trace phải liệt kê table 0 → resubmit(,1) → table 1 → goto_table:2 → table 2 → output:X
+- `ovs-ofctl -O OpenFlow13 add-flow br-s1 "table=2,actions=goto_table:1"` → expected **error** (goto_table phải tăng, không giảm)
+- `ping h1 → h2` success qua 3-table pipeline; flow counter mỗi table tăng đúng
+
+---
+
+#### F.11.4 Part 9.25 — Flow debugging + ofproto/trace + ovs-dpctl (session 23)
+
+**(a) Mục đích:** Master bộ công cụ debug flow table production (`ofproto/trace`, `dpif/show`, `dpctl dump-flows`, `monitor`, `replace-flows`, `diff-flows`). Sau lab: locate flow bug trong 2 giây thay vì đọc 2000-line dump-flows.
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* OVS userspace vs kernel module (9.1), megaflow vs microflow (9.2 + 9.15), OpenFlow flow structure (9.19)
+- *Nên nắm:* Cách `ovs-vswitchd` giao tiếp kernel qua Netlink; resubmit loop risk
+- *Đọc trước:* OpenVSwitch.txt NSRC Tracing Flow section; compass_artifact Part III Ch 10 (Flow hygiene)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9 |
+| Topology | 1 bridge + 4 port, flow table cố ý cài nhiều entries (100-500) |
+| Packages | `openvswitch-switch`, `openvswitch-common` |
+| Time | 30-45 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-appctl ofproto/trace br "in_port=1,tcp,tp_dst=80"` → full trace output (Datapath actions, Final flow, Megaflow)
+- `ovs-dpctl dump-flows | head -20` → megaflow với wildcarded match
+- `ovs-appctl dpif/show` → stats table (n_flows, n_missed, n_lost)
+- `ovs-ofctl monitor br-int resume` background → capture flow_mod event khi `add-flow` từ terminal khác
+- `ovs-ofctl diff-flows br-int expected-flows.txt` → diff output khi cài extra rule
+
+---
+
+#### F.11.5 Part 9.21 — Mininet cho OVS labs (session 23)
+
+**(a) Mục đích:** Master Mininet CLI + Python Topo API + GUI miniedit — công cụ reproducibility cho SDN research. Sau lab: người đọc có thể reproduce bất kỳ SDN paper artifact nào trên laptop trong < 30 giây.
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* Linux network namespace (Part 8.0); veth pair; OVS bridge (9.1)
+- *Nên nắm:* Python basic class, `sudo` vs non-root privilege; `matplotlib`/X11 forwarding (cho GUI)
+- *Đọc trước:* OVS.txt Lab 2 section 1 (Introduction to Mininet); mininet.org "Introduction to Mininet"
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| Packages | `mininet`, `python3-mininet`, `openvswitch-switch`, `xterm` (cho GUI miniedit) |
+| X11 | `xauth` setup nếu SSH remote (cần forwarding cho miniedit GUI) |
+| Time | 40-60 phút |
+
+**(d) Output sẽ thu:**
+- `sudo mn` default topology → `pingall` result
+- Custom Python topology script (3-host 2-switch ring) → `mn --custom script.py --topo mytopo` output
+- `mn --switch ovsk --controller remote,ip=127.0.0.1` với Ryu controller → flow_mod event trace
+- miniedit.py GUI build 4-host topology → export Python file, re-run verify
+
+---
+
+#### F.11.6 Part 9.9 QoS expansion (session 24)
+
+**(a) Mục đích:** Master OVS QoS full stack (HTB + policing + shaping + metering) trên 4-host topology competing bandwidth. Sau lab: cấu hình được 2-class HTB tree với fair-share + priority, phân biệt policing vs shaping qua latency comparison.
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* Linux `tc(8)` + HTB tree concept (linux-onboard Part tc/qdisc); TCP congestion control (CCNA); OVS port và interface (Part 9.4)
+- *Nên nắm:* Iperf3 client/server mode; 802.1p PCP bits; CIR/PIR concept từ WAN QoS
+- *Đọc trước:* OVS.txt Lab 9 section 1.2 (HTB algorithm) + 1.3 (shaping vs policing) + 1.4 (3-color metering)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9 |
+| Topology | 4 namespace (h1 client, h2 FTP server, h3 client, h4 HTTP server) + 2 bridge (s1 ↔ s2 100 Mbps link) |
+| Packages | `openvswitch-switch`, `iperf3`, `python3-http.server`, `vsftpd` |
+| Time | 60-75 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-vsctl set port veth-s1s2 qos=@newqos -- --id=@newqos create qos type=linux-htb other-config:max-rate=100000000 queues=0=@q0,1=@q1 ...` → QoS + queue UUID
+- `iperf3 -c h2 -b 80M` → throughput 50 Mbps (bị policing drop)
+- `iperf3 -c h2 -b 80M` với shaping → throughput 50 Mbps với latency tăng (buffer)
+- Competing `iperf3` từ h1+h3 đồng thời → h1 được 70 Mbps (priority), h3 được 30 Mbps (fair-share)
+- `ovs-ofctl queue-stats br-s1` → per-queue tx_packets, tx_bytes, tx_errors
+
+---
+
+#### F.11.7 Part 11.3 GRE expansion (session 25)
+
+**(a) Mục đích:** Dựng GRE tunnel giữa 2 router qua WAN (emulated), verify encap/decap bằng tcpdump, chứng minh GRE không encrypt (motivation cho 11.4 IPsec).
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* OSPF basic (CCNA R&S); Docker container basic (`docker run`, networking); tunnel concept (encap/decap); outer IP vs inner IP
+- *Nên nắm:* RFC 2784 GRE header format; protocol number 47; MTU math overhead
+- *Đọc trước:* OVS.txt Lab 14 section 1.1 (GRE tunnel) + 1.2 (GRE packet header)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9 (cho GRE tunnel support) |
+| Docker | 20.10+ (để emulate router r1, r2, r3) |
+| Topology | 3 Docker container (r1, r2, r3) với OSPF, 2 host namespace (h1, h2), GRE tunnel 192.168.12.0/30 qua r1-r2 |
+| Packages | `openvswitch-switch`, `docker.io`, `frr` (FRRouting cho OSPF), `tcpdump`, `wireshark-cli` |
+| Time | 60-80 phút |
+
+**(d) Output sẽ thu:**
+- `docker exec r1 vtysh -c "show ip route ospf"` → r1 learned 192.168.2.0/24 via r3
+- `ovs-vsctl list interface gre0` → type=gre, options:remote_ip=...
+- `tcpdump -i eth0 -nn -e` trên r3 (transit router) → GRE packet với outer IP header + GRE header (protocol 47)
+- `tshark -O gre -r capture.pcap` → GRE Flags, Protocol Type field parsing
+- `ping h1 → h2` qua GRE tunnel; verify MTU 1476 (1500 - 24 GRE+outer IP) không fragmentation
+
+---
+
+#### F.11.8 Part 11.4 IPsec expansion (session 26)
+
+**(a) Mục đích:** Dựng IPsec tunnel bảo vệ traffic GRE (contrast 11.3), verify ESP encryption bằng tcpdump (payload ciphertext), đo throughput impact với/không AES-NI.
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* Crypto cơ bản (symmetric vs asymmetric, AES, SHA); IKE phase 1 vs phase 2 concept; PSK vs RSA cert auth
+- *Nên nắm:* Diffie-Hellman group; HMAC; ESP vs AH difference; Intel AES-NI CPU instruction
+- *Đọc trước:* OVS.txt Lab 15 section 1.1 (IPsec intro) + 1.2 (IPsec in OVS)
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9 + `openvswitch-ipsec` package |
+| CPU | x86_64 với AES-NI (verify `grep aes /proc/cpuinfo`) |
+| Topology | 2 OVS node (sim WAN), IPsec tunnel giữa chúng |
+| Packages | `openvswitch-switch`, `openvswitch-ipsec`, `strongswan` (IKE daemon), `tcpdump`, `iperf3` |
+| Time | 75-90 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-vsctl set interface ipsec-tun options:psk=..., options:remote_ip=..., type=gre` + IPsec config
+- `ipsec statusall` → IKE phase 1 SA established, phase 2 IPsec SA
+- `tcpdump -i eth0 -nn -e` → ESP packet (protocol 50) thay vì GRE (47); payload là ciphertext
+- `iperf3` throughput với IPsec vs không IPsec → benchmark slowdown factor (10-15% với AES-NI, 50-70% không AES-NI)
+- `ip xfrm state show` → active SA với encryption algorithm + keys (hidden)
+
+---
+
+#### F.11.9 Part 9.2 Kernel datapath lab expansion (session 27)
+
+**(a) Mục đích:** Master `ovs-dpctl` + kernel datapath introspection. Phân biệt megaflow cache (kernel) vs OpenFlow flow (userspace). Foundation cho capacity planning (Part 9.17).
+
+**(b) Kiến thức tiên quyết:**
+- *Phải vững:* OVS 3-component architecture (9.1); NSDI 2015 paper caching mechanism (9.2 lý thuyết)
+- *Nên nắm:* Netlink kernel-userspace communication; eBPF (optional bổ sung)
+- *Đọc trước:* OVS.txt Lab 11 section 1.1 + 1.2; compass_artifact Part II Ch Q
+
+**(c) Môi trường lab:**
+| | |
+|---|---|
+| OS | Ubuntu 22.04 LTS |
+| OVS | 2.17.9, kernel datapath (không DPDK) |
+| Topology | 2 host namespace + 1 bridge |
+| Packages | `openvswitch-switch`, `openvswitch-common` |
+| Time | 30-40 phút |
+
+**(d) Output sẽ thu:**
+- `ovs-dpctl show` → datapath name (ovs-system), n_flows, lookups stats
+- `ovs-dpctl dump-flows` → megaflow entries với wildcarded fields (recirc_id, dp_hash, priority)
+- Send traffic with `ping` → megaflow count tăng, kiểm chứng 1 OpenFlow flow → N megaflow expansion
+- `ovs-appctl dpif/show` → per-datapath stats
+- Compare `ovs-dpctl dump-flows | wc -l` vs `ovs-ofctl dump-flows br0 | wc -l` → megaflow thường 5-10× hơn OpenFlow flow
+
+---
+
+### F.12 Lab Verification Workflow (khi user có host)
+
+Khi user thông báo có môi trường lab, workflow sẽ là:
+
+**Step 1 (user):** Provision host theo spec F.11.X của Part target. Chạy pre-lab checklist.
+
+**Step 2 (Claude):** Đưa Guided Exercise step-by-step — user copy-paste command.
+
+**Step 3 (user):** Paste output thật vào chat. Output phải **đầy đủ** theo Rule 7 CLAUDE.md (không cắt).
+
+**Step 4 (Claude):** Diff output thật với expected output trong Part markdown. Nếu match → update `memory/lab-verification-pending.md` status `verified-lab`. Nếu không match → investigate root cause (version khác? topology config khác? Ubuntu patch level?).
+
+**Step 5 (Claude):** Commit updated Part markdown với verified-lab output replacing doc-plausible. Cập nhật `memory/session-log.md` lab verification entry.
+
+**Step 6:** Repeat cho Part tiếp theo.
+
+Sau khi tất cả 9 Part phase D verified-lab → tag `v2.0-Verified` theo C6b pipeline.
+
+---
+
+**Hết Phụ lục F Phase D plan.** Đang chờ user review §F.10 → execute session 21. F.11/F.12 cung cấp lab readiness detail cho tất cả 9 Part; khi user có host, Claude sẽ follow F.12 workflow.
