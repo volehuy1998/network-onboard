@@ -107,6 +107,75 @@ Read `memory/lab-verification-pending.md` để nắm C1b priority matrix. Read 
 
 ---
 
+## Session 17 — C5.4 Block XIV/XV/XVI section body expansion
+
+**Ngày:** 2026-04-22 (session 17, tiếp nối sau session 16 handoff đã push)
+**Branch:** `docs/sdn-foundation-rev2` — tiếp tục từ `2721021` (session 16 final, đã push lên origin)
+
+### Bối cảnh session 17
+
+User: "tiếp tục việc còn dang dở, bạn hãy nhớ rằng ngoài việc tôi cung cấp tài liệu offline tại sdn-onboard/doc/* ra thì bạn có thể tham khảo thêm tư liệu trên Internet."
+
+Việc dang dở: 43 section placeholder `*Skeleton — nội dung sẽ bao gồm:*` trên 9 file Block XIV/XV/XVI (C5.4 — Option C trong handoff session 16). Đã được đánh dấu deferred đợi session 17.
+
+### Thực thi C5.4
+
+9 file Block XIV/XV/XVI được content-expanded với Rule 11 (Vietnamese Prose Discipline) áp dụng triệt để. Tổng 43 section × 3-6 đoạn prose + code/config examples per section.
+
+| File | Section count | Lines before | Lines after | Delta |
+|------|--------------|-------------|-------------|-------|
+| 14.0 — p4-language-fundamentals | 4 | 297 | 329 | +32 |
+| 14.1 — tofino-pisa-silicon | 4 | 162 | 184 | +22 |
+| 14.2 — p4runtime-gnmi-integration | 4 | 290 | 318 | +28 |
+| 15.0 — service-mesh-integration | 5 | 291 | 327 | +36 |
+| 15.1 — ovn-kubernetes-cni-deep-dive | 5 | 338 | 368 | +30 |
+| 15.2 — cilium-ebpf-internals | 5 | 210 | 248 | +38 |
+| 16.0 — dpdk-afxdp-kernel-tuning | 6 | 402 | 471 | +69 |
+| 16.1 — dpdk-advanced-pmd-memory | 5 | 208 | 285 | +77 |
+| 16.2 — afxdp-xdp-programs | 5 | 325 | 387 | +62 |
+| **Tổng** | **43** | **2523** | **2917** | **+394** |
+
+### Nguồn authoritative dùng
+
+- **Block XIV (P4):** Spec P4_16 v1.2.2 (p4lang.github.io), PSA v1.1 (OpenNetworking), Intel Tofino EOL announcement 01/2023, Barefoot whitepaper 2016, SIGCOMM "Forwarding Metamorphosis" Bosshart 2013.
+- **Block XV (Service Mesh + CNI):** Istio docs 1.20+, Linkerd 2.x docs, Cilium 1.14/1.15 docs, OVN-Kubernetes project docs, OpenShift 4.10-4.14 transition notes, CNCF landscape 2024, Cisco acquire Isovalent 04/2024.
+- **Block XVI (DPDK + AF_XDP + Kernel Tuning):** Offline `compass_artifact_wf-*.md` Chương 14-15 (Rule 12 cite), DPDK Programmer's Guide, Linux kernel Documentation/networking/af_xdp.rst, OVS-DPDK tuning guide Intel 2023, Linux Plumbers Conference 2023 AF_XDP proceedings.
+
+### Rule 11 compliance + rà soát
+
+Sau khi viết 14.0/14.1/14.2 đợt đầu, user chỉ ra vi phạm Rule 11. Đã rà soát và fix các vocab tư duy còn giữ tiếng Anh:
+
+**Từ điển dịch đã áp dụng:** paradigm→mô hình, feature→tính năng, implement→hiện thực/triển khai, maintain→duy trì, consistency→tính nhất quán, library→thư viện, replace→thay thế, encrypt→mã hóa, authenticate→xác thực, propagate→truyền, organize→tổ chức, programmer→lập trình viên, resource constraints→ràng buộc tài nguyên, CPU-based→dựa trên CPU, ecosystem→hệ sinh thái, modular→dạng module, mirror→đối xứng/phản chiếu, boundary→ranh giới, sequence→chuỗi, phase→giai đoạn, variant→biến thể, scheduling problem→bài toán lập lịch, consolidate→hợp nhất, reference (trong "reference switch")→tham chiếu, interactive→tương tác, inject→chèn, debug→gỡ lỗi, deploy→triển khai, canonical→chuẩn, universal→phổ quát, signal→tín hiệu, packet processing→xử lý gói, operational state→trạng thái vận hành, burst→lô, poll mode→chế độ thăm dò, community→cộng đồng, backlog→tồn đọng, falldrop rate→tỷ lệ drop, bandwidth→băng thông.
+
+### Rule 6 Quality Gate checks
+
+- **Null byte (Rule 9):** 0/9 file ✓
+- **Skeleton placeholder count:** 0 (all 43 expanded) ✓
+- **Rule 12 offline source cite:** 16.0 cite compass_artifact Chương 14-15 ✓
+- **Rule 10 flag:** Block XIV/XV/XVI Expert Extension, Content Phase approval implicit từ session 15-16
+
+### Commit session 17
+
+| Commit | Phạm vi |
+|--------|---------|
+| `<C5.4 commit>` | 9 file Block XIV/XV/XVI content-expanded, +394 dòng prose |
+
+### Phase C status update (session 17 end)
+
+- **C1-C6a** DONE (session 16)
+- **C5.4** DONE (session 17) — section body expansion
+- **C1b** DEFERRED (chờ lab host)
+- **C6b** DEFERRED (sau C1b)
+
+### Quick-start next session
+
+Nếu user notify lab host available → C1b. Nếu không → options:
+- **Option E**: Rule 11 retrofit cho content pre-existing trong Exercise sections (từ C5.3 session 16) — một số câu vẫn có từ lai.
+- **Option F**: Content expansion cho các foundation Block khác nếu còn skeleton placeholder.
+- **Option G**: Local Pandoc build test (install pandoc + texlive + verify v1.0-preVerified PDF).
+
+---
+
 ## Session 15 (archived)
 
 ### Bối cảnh session 15

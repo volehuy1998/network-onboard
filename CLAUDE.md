@@ -449,8 +449,9 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `7b22823` (session 16 final — **22 commits total**; 10 pushed up to `73856a4`, 12 pending push, về ready push khi user confirm) |
-| Current phase (session 16 end) | **🎉 Phase C Master Quality Plan — active phases COMPLETE** (2026-04-22). C1/C2/C3/C4/C1a/C5/C6a all committed. Deferred: C1b (chờ lab host — user notify) → C6b (sau C1b). |
+| Active branch | `docs/sdn-foundation-rev2` (session 17 complete — 9 file Block XIV/XV/XVI expanded +394 dòng, Rule 11 compliant; ready push) |
+| Current phase (session 17 end) | **🎉 Phase C C5.4 COMPLETE** (2026-04-22). Tất cả 43 skeleton section của Block XIV/XV/XVI đã content-expanded. Tổng 2523 → 2917 dòng. 0 placeholder còn. Rule 11 + Rule 12 compliant. Deferred: C1b (chờ lab host) → C6b. |
+| Session 17 delta | 9 file: 14.0/14.1/14.2/15.0/15.1/15.2/16.0/16.1/16.2 — mỗi file 4-6 section body expanded. Nguồn: P4 spec v1.2.2, PSA v1.1, Istio/Linkerd/Cilium docs, OVN-K8s docs, DPDK Programmer's Guide, offline compass_artifact Chapter 14-15. Null byte check 0/9. |
 | C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |
 | C3 prose passes (3 rounds + 2 reverts) | **R1** `3a92e27`: paradigm/rebrand/troubleshoot (45). **R2** `c78cb39`: scalability/bottleneck/real-time/backward-compat (32). **R3** `739db7f`: adoption/deprecation (53). **Reverts**: `63a0506` (3.2 English quote + URL), `7b22823` (1.1 RFC 7348 quote). **Net 127 replacements** across 50+ files. Remaining (approach/deployment/trade-off/announce) deferred. |
 | C4 URL audit | 384 unique URLs, 98.7% OK. 3 dead URLs fixed (Netflix + YouTube press moved, archive.openflow.org timeout → ONF spec archive). 2 placeholder URLs kept as-is (10.0.0.3, odl-controller:8181). Commit `e6d7a8b`. |

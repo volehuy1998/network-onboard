@@ -1847,6 +1847,28 @@ Block-by-block status:
 - POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
 - Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
 
+### E.7 Session 17 — C5.4 Section Body Expansion (2026-04-22)
+
+**User direction:** "tiếp tục việc còn dang dở, bạn hãy nhớ rằng ngoài việc tôi cung cấp tài liệu offline tại sdn-onboard/doc/* ra thì bạn có thể tham khảo thêm tư liệu trên Internet" + "tôi đang thấy vi phạm rule 11 trong claude.md, bạn hãy rà soát lại".
+
+**Deliverable:** Tất cả 43 skeleton section placeholder `*Skeleton — nội dung sẽ bao gồm:*` trên 9 file Block XIV/XV/XVI đã content-expanded. Rule 11 rà soát sau đợt đầu và fix các vocab tư duy (paradigm/feature/implement/replace/library/community/ecosystem/consolidate/programmability/variant/modular/mirror/boundary/sequence/phase/CPU-based/scheduling problem/signal/wire format/operational state/packet processing).
+
+**Delta 2523 → 2917 dòng (+394 dòng prose).** Null byte check 0/9. 0 skeleton placeholder còn lại.
+
+| File | Section | Before → After |
+|------|---------|---------------|
+| 14.0 | 4 | 297 → 329 (+32) |
+| 14.1 | 4 | 162 → 184 (+22) |
+| 14.2 | 4 | 290 → 318 (+28) |
+| 15.0 | 5 | 291 → 327 (+36) |
+| 15.1 | 5 | 338 → 368 (+30) |
+| 15.2 | 5 | 210 → 248 (+38) |
+| 16.0 | 6 | 402 → 471 (+69) |
+| 16.1 | 5 | 208 → 285 (+77) |
+| 16.2 | 5 | 325 → 387 (+62) |
+
+**Nguồn authoritative:** P4 spec v1.2.2 + PSA v1.1 (Block XIV); Istio/Linkerd/Cilium/OVN-K8s official docs (Block XV); DPDK Programmer's Guide + Linux kernel AF_XDP docs + offline compass_artifact Chapter 14-15 (Block XVI, Rule 12 cite).
+
 ### E.6 Phase C completion status (session 16 end, 2026-04-22)
 
 **🎉 Phase C active phases COMPLETE end-to-end** (session 16 close):
