@@ -1847,6 +1847,31 @@ Block-by-block status:
 - POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
 - Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
 
+### E.11 Session 17 (extension-4) — C10 cross-cutting packet journey + OVS-to-OVN migration (2026-04-22)
+
+**User direction:** "tôi vẫn chưa có môi trường lab thực tế, hãy tiếp tục plan nhé. Nhớ cập nhật tiến độ, tập trung vào openvswitch, openflow và ovn, kiến trúc của chúng, sự chuyển giao, packet journey, sự nâng cấp từ openvswitch lên ovn, ..."
+
+**Analysis — cross-cutting view cần thiết:**
+
+Curriculum hiện có sau C7+C8+C9 đã đủ bề rộng + bề sâu cho từng block, nhưng thiếu view **kết nối** giúp học viên hiểu:
+1. Packet đi qua toàn stack OpenFlow → OVS → Overlay → OVN như thế nào (end-to-end).
+2. OVS và OVN quan hệ với nhau ra sao (evolution + architectural bridge).
+3. Cách migrate từ deployment OVS-only (Neutron ML2/OVS) lên OVN (ML2/OVN hoặc OVN-K8s).
+
+**C10 plan — 2 file tổng hợp:**
+
+| File | Topic | Target lines |
+|------|-------|-------------|
+| 0.2 | end-to-end packet journey (Block 0 intro) | ~400 |
+| 13.13 | OVS-to-OVN migration guide (extension Block XIII) | ~400 |
+| **Tổng** | | **~800 dòng** |
+
+**Rationale:**
+- 0.2: curriculum có Block 0.0 "how to read" + 0.1 "lab env setup". 0.2 sẽ là "packet journey overview" — mỗi section mapping tới Block chi tiết sau (0.2.1 pod local egress → 9.2, 0.2.2 br-int flow → 9.15, 0.2.3 Geneve encap → 11.0, etc.). Cross-reference tight, hỗ trợ reader navigate curriculum theo dòng packet.
+- 13.13: bridge từ "OVS cũ" (Neutron ML2/OVS pre-2018) sang "OVN mới" (post-2018). Feature parity table, migration steps (canary + rollback), cost-benefit analysis.
+
+**Workflow:** Batch đơn (0.2 + 13.13) → README TOC update → commit → push.
+
 ### E.10 Session 17 (extension) — C9 Block IX OVS internals deep-dive (2026-04-22)
 
 **User direction (continuation):** "tiếp tục theo plan"
