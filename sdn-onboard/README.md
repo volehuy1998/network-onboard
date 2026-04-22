@@ -242,7 +242,7 @@ Khối chuyên sâu về encapsulation layer mà OVN dùng để nối các chas
 - Part 11.0, [VXLAN, Geneve, STT](11.0%20-%20vxlan-geneve-stt.md) *(skeleton, RFC 7348 + RFC 8926)*, VXLAN 24-bit VNI UDP 4789 overhead 50 byte, Geneve RFC 8926 TLV options overhead 58 byte, STT decline.
 - Part 11.1, [Overlay MTU, PMTUD, hardware offload](11.1%20-%20overlay-mtu-pmtud-offload.md) *(skeleton)*, MTU math, PMTUD failure modes, NIC hardware offload rx-csum/tx-csum/LRO/GRO/TSO với tunneling.
 - Part 11.2, [BGP EVPN, control plane overlay](11.2%20-%20bgp-evpn-control-plane-overlay.md) *(skeleton, RFC 7432)*, EVPN route types 1-5, Type 2 MAC/IP, Type 3 inclusive multicast.
-- Part 11.3, [GRE tunnel lab: OSPF underlay + OVS](11.3%20-%20gre-tunnel-lab.md) *(content, Lab 14 Crichigno/USC)*, dựng GRE tunnel giữa hai OVS bridge qua OSPF underlay, verify encapsulation bằng tcpdump, đối chiếu với VXLAN về overhead và MTU.
+- Part 11.3, [GRE tunnel lab — OSPF underlay, Docker, Wireshark verify](11.3%20-%20gre-tunnel-lab.md) *(content + expansion session 26 Phase D, Lab 14 Crichigno/USC)*, drama ngân hàng Việt Nam 2024 GRE over IPsec legacy interop, header RFC 2784/2890 bytewise 24B, topology 3-FRR-router 2-Docker 4-Mininet-host, cấu hình OSPF area 0 + GRE port, Wireshark dissector chứng minh encap 3-tầng, POE *"GRE encrypt"* bác bỏ bằng HTTP plaintext, Guided Exercise 11 Lab 14 full walkthrough + Guided Exercise 12 Wireshark POE, pattern chuẩn site-to-site VPN GRE inside IPsec.
 - Part 11.4, [IPsec tunnel lab: ovs-monitor-ipsec + strongSwan](11.4%20-%20ipsec-tunnel-lab.md) *(content, Lab 15 Crichigno/USC)*, IPsec integration OVS qua strongSwan, IKE phase 1+2, PSK vs certificate, verify ESP protocol, IPsec over Geneve.
 
 ### Block XII, SDN trong Data Center (Part 12, 3 file)
