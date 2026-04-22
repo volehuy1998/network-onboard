@@ -384,6 +384,67 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 Từ điển dịch đầy đủ tham khảo: `.claude/plans/tender-scribbling-comet.md`
 Phần 1 (plan session 13).
 
+### Rule 12: Exhaustive Offline Source Exploration (BẮT BUỘC)
+
+> Nguồn gốc: session 14, 2026-04-22. Khi bắt đầu Phase B cho Block VII, Claude dùng Glob
+> pattern `**/*.skill` + `.claude-skills/**/*` mà không recursive explore `sdn-onboard/doc/`.
+> Kết quả: bỏ sót toàn bộ kho offline USC/Crichigno trong `sdn-onboard/doc/ovs/` (11 PDF + TXT),
+> viết 4 file Block VII + Part 9.0 mà không cite offline sources. User chỉ ra: "tôi đã bảo
+> sdn-onboard/doc/* là tài liệu offline quý giá nhưng vì sao không nằm trong danh sách file/line
+> tham chiếu?" và "sdn-onboard/doc/ovs/* không nằm trong context của bạn à?"
+
+**Quy tắc:**
+
+Khi bắt đầu session làm việc với onboard series, TRƯỚC KHI viết bất kỳ content nào, BẮT BUỘC
+inventory đầy đủ kho offline bằng recursive Glob:
+
+```
+Glob "sdn-onboard/doc/**/*"        (không phải chỉ "sdn-onboard/doc/*")
+Glob "haproxy-onboard/doc/**/*"    (tương tự cho series khác)
+Glob "linux-onboard/doc/**/*"
+Glob "network-onboard/doc/**/*"
+Glob "references/**/*"
+```
+
+**Quy trình bắt buộc:**
+
+```
+1. Session start:
+   - Chạy recursive Glob liệt kê mọi file trong */doc/** và references/**
+   - Lập bảng mapping: file offline nào → Block/Part nào sử dụng
+   - Ghi nhớ bảng này trong memory nếu session dài
+
+2. Trước mỗi Write file .md content:
+   - Kiểm tra mapping: doc file nào phù hợp với topic này
+   - LIỆT KÊ đầy đủ trong fact-forcing gate answer:
+     "Nguồn offline cung cấp content: <đường dẫn cụ thể> — <chapter/section>"
+   - Include trong header block của file: "> **Nguồn offline chính:** ..."
+   - Include trong References section cuối file
+
+3. Nếu user cung cấp nhắc nhở về offline sources:
+   - Stop ngay lập tức
+   - Re-run recursive Glob
+   - Identify gap
+   - Propose remediation (backfill existing files + apply prospectively)
+```
+
+**Dấu hiệu vi phạm Rule 12:**
+
+- Fact-forcing gate answer thiếu dòng "Nguồn offline cung cấp content"
+- File content header không có "> **Nguồn offline chính:**"
+- References section không có mục cho offline source
+- Viết content technical mà không có doc/* citation dù topic có sẵn trong compass/USC labs
+
+**Phạm vi áp dụng:** Mọi session onboard series. Không có ngoại lệ — dù topic có vẻ "quá đơn giản"
+hay "không cần source", vẫn phải verify offline mapping trước khi kết luận.
+
+**Di sản khắc phục đã làm (session 14):**
+
+- Backfill `doc/*` references vào `9.0 - ovs-history-2007-present.md` và `9.1 - ovs-3-component-architecture.md`
+- Viết 13 file content Block IX (9.0-9.14 + backfill) với đầy đủ doc/* citation
+- 4 file Block VII (7.0-7.3) không có doc/* vì controller ecosystem không được cover bởi compass/USC labs
+- Part 9.0-9.14 citation pattern: compass_artifact Chapter X + USC Lab Y (nếu có) + online upstream URL
+
 ## Current State
 
 | Key | Value |
@@ -407,10 +468,11 @@ Phần 1 (plan session 13).
 | S7a status | **DONE** (session 8b, 2026-04-21). Block III skeleton refined Rule 10: Part 3.0 (Stanford Clean Slate 2006-2012 + Nicira founding 08/2007 + VMware $1.26B 07/2012), 3.1 (OpenFlow 1.0 spec 31/12/2009 + 12-tuple match + 8 actions), 3.2 (ONF formation 21/03/2011 + 6 founding operators + 2018 ON.Lab merger). Tầng 2h thêm vào dependency map với non-repetition rules + Phase B fact-check list. Commit `ff0dd14`. |
 | S8a status | **DONE** (session 8c, 2026-04-21). Block IV skeleton refined Rule 10: Part 4.0 (OF 1.1 multi-table + 4 group types FAST_FAILOVER), 4.1 (OF 1.2 OXM TLV + controller roles MASTER/SLAVE), 4.2 (OF 1.3 LTS — meter table + PBB + IPv6 ext headers), 4.3 (OF 1.4 bundles + eviction + optical), 4.4 (OF 1.5 egress + TCP flags + packet type), 4.5 (TTP ONF TS-017 + Flow Objectives ONOS), 4.6 (5 limitations + Google B4 SIGCOMM 2013 + lessons → P4). Tầng 2i thêm vào dependency map. Commit `908279d`. |
 | Architecture backlog (rev 3) | P0-P5 COMPLETE 2026-04-21. Total 70 markdown files. |
-| Phase B content progress (session 12 end) | **20/~66 file content-expanded**. Block I 3/3 (1.0 over-scope, 1.1 274, 1.2 264), Block II 5/5 (2.0-2.4 140-322), Block III 3/3 (3.0-3.2 218-384), Block IV 8/8 (4.0 375, 4.1 328, 4.2 255, 4.3 294, 4.4 323, 4.5 252, 4.6 417, 4.7 764), Block V 3/3 (5.0 365, 5.1 305, 5.2 313), Block VI 2/2 (6.0 359, 6.1 291). Tổng ~7500 dòng content đã viết. Plan sesion 12: `.claude/plans/tender-scribbling-comet.md`. |
-| Phase B remaining (session 13+) | Block VII (7.0-7.3: controllers NOX/POX/Ryu/ODL/ONOS/vendor) → VIII (8.0-8.3: Linux primer) → IX (9.0-9.14: OVS 15 files, biggest) → X (10.0-10.2: OVSDB) → XI (11.0-11.4: overlay + GRE/IPsec labs) → XII (12.0-12.2: DC topology) → XIII (13.0-13.6: OVN 7 files). Advanced XVII-XIX skip (already production). |
+| Phase B content progress (session 14 end) | **39/~66 file content-expanded**. Block 0-VI 20 file (sessions 12-13). **Session 14 added:** Block VII 4/4 (7.0-7.3, controllers), Block IX 15/15 (9.0-9.14, OVS internals + ops — lớn nhất). Tổng ~15.000 dòng content. Plan session 12-13: `.claude/plans/tender-scribbling-comet.md`. |
+| Phase B remaining (session 15+) | Block VIII (8.0-8.3: Linux primer) → X (10.0-10.2: OVSDB) → XI (11.0-11.4: overlay + GRE/IPsec labs) → XII (12.0-12.2: DC topology) → XIII (13.0-13.6: OVN 7 files). Advanced XVII-XIX skip (already production). |
+| Offline sources inventory (session 14) | `sdn-onboard/doc/compass_artifact_wf-*.md` (Anthropic OVS curriculum, 682 dòng) + `sdn-onboard/doc/ovs/` (USC/Crichigno NSF 1829698: OVS.pdf, OpenVSwitch.pdf, 7 lab PDF+TXT). Rule 12 codified exhaustive exploration. |
 | Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
-| Push state on next machine | Branch `docs/sdn-foundation-rev2` ahead origin bởi 6 commit (session 12 content expansion). Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` + `git push origin docs/sdn-foundation-rev2` nếu chưa push. |
+| Push state on next machine | Branch `docs/sdn-foundation-rev2` ahead origin bởi ~30+ commit (session 12+13+14). Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` + `git push origin docs/sdn-foundation-rev2` nếu chưa push. |
 
 ## Skill Quick Reference
 
