@@ -154,14 +154,16 @@ Khối này nhìn về tương lai với P4 programmable data plane và Flow Obj
 - Part 6.0, [P4 programmable data plane](6.0%20-%20p4-programmable-data-plane.md) *(skeleton, p4.org)*, P4_16 language, PSA, Tofino architecture, Intel EOL 2023.
 - Part 6.1, [Flow Objectives abstraction](6.1%20-%20flow-objectives-abstraction.md) *(skeleton)*, ONOS Flow Objective API, forwarding/filtering/next objectives.
 
-### Block VII, Controller ecosystem (Part 7, 4 file)
+### Block VII, Controller ecosystem (Part 7, 6 file)
 
-Khối này khảo sát toàn cảnh controller, từ thế hệ đầu (NOX, POX, Ryu, Faucet), đến enterprise-grade (OpenDaylight, ONOS), và vendor-specific (Cisco ACI, Juniper Contrail).
+Khối này khảo sát toàn cảnh controller, từ thế hệ đầu (NOX, POX, Ryu, Faucet), đến enterprise-grade (OpenDaylight, ONOS), và vendor-specific (Cisco ACI, Juniper Contrail). Part 7.4-7.5 đi sâu vào thực hành: Faucet pipeline + Gauge monitoring, và viết ứng dụng Ryu với REST API.
 
-- Part 7.0, [NOX, POX, Ryu, Faucet](7.0%20-%20nox-pox-ryu-faucet.md) *(skeleton)*, NOX C++ 2008, POX Python, Ryu NTT, Faucet hero.
-- Part 7.1, [OpenDaylight architecture](7.1%20-%20opendaylight-architecture.md) *(skeleton)*, MD-SAL, OSGi Karaf, YANG models, release cadence.
-- Part 7.2, [ONOS service provider scale](7.2%20-%20onos-service-provider-scale.md) *(skeleton)*, ONF ONOS 2014, distributed core, AT&T + NTT deployments.
-- Part 7.3, [Vendor controllers, ACI, Contrail](7.3%20-%20vendor-controllers-aci-contrail.md) *(skeleton)*, Cisco APIC + ACI fabric, Juniper Contrail, Nokia Nuage.
+- **Part 7.0**, [NOX, POX, Ryu, Faucet](7.0%20-%20nox-pox-ryu-faucet.md) *(content)*, NOX C++ 2008, POX Python dạy học, Ryu NTT full OpenFlow 1.5, Faucet REANNZ production YAML.
+- **Part 7.1**, [OpenDaylight architecture](7.1%20-%20opendaylight-architecture.md) *(content)*, MD-SAL, OSGi Karaf, YANG models, release cadence.
+- **Part 7.2**, [ONOS service provider scale](7.2%20-%20onos-service-provider-scale.md) *(content)*, ONF ONOS 2014, distributed core, AT&T + NTT deployments.
+- **Part 7.3**, [Vendor controllers, ACI, Contrail](7.3%20-%20vendor-controllers-aci-contrail.md) *(content)*, Cisco APIC + ACI fabric, Juniper Contrail, Nokia Nuage.
+- **Part 7.4**, [Faucet pipeline và vận hành](7.4%20-%20faucet-pipeline-and-operations.md) *(content)*, bốn bảng canonical (VLAN/ETH_SRC/ETH_DST/FLOOD), ACL stateless trong YAML, Gauge + Prometheus monitoring, PromQL alert rule.
+- **Part 7.5**, [Ryu: viết ứng dụng quản lý flow](7.5%20-%20ryu-flow-management.md) *(content)*, event system single-threaded, `OFPFlowMod` OFPFC_ADD/DELETE, table-miss entry, REST API với `WSGIApplication`, traffic statistics polling.
 
 ### Block VIII, Linux networking primer (Part 8, 4 file)
 
