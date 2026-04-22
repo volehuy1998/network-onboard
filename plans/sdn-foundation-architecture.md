@@ -1847,6 +1847,78 @@ Block-by-block status:
 - POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
 - Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
 
+### E.9 Session 17 (extension) — C8 Block X OVSDB expand bề sâu (2026-04-22)
+
+**User direction:** "tôi vẫn chưa có môi trường lab thực tế, hãy tiếp tục plan nhé. Nhớ cập nhật tiến độ"
+
+**Analysis — Block X OVSDB gap:**
+
+| Block | Files | Lines | Avg/file | Status |
+|-------|-------|-------|----------|--------|
+| IV — OpenFlow | 8 | 3007 | 376 | Đầy đủ |
+| IX — OVS | 15 | 3311 | 221 | Đầy đủ |
+| **X — OVSDB** | **3** | **626** | **209** | **Mỏng — cần bổ sung** |
+| XIII — OVN foundation | 13 | 2847 | 219 | Đầy đủ sau C7 |
+
+Block X chỉ có 3 file (RFC 7047 basics, Raft clustering, backup/RBAC). Thiếu dedicated coverage cho:
+- OVSDB transaction semantics + ACID properties deep
+- IDL client programming + monitor_cond conditional replication
+- Performance characteristics + benchmarking (OVN SB cluster lớn, snapshot strategy)
+- Security advanced (mTLS cert rotation, RBAC patterns production)
+
+**C8 plan — 4 file mới Block X:**
+
+| File | Topic | Target lines |
+|------|-------|-------------|
+| 10.3 | ovsdb-transaction-acid-semantics | ~400-500 |
+| 10.4 | ovsdb-idl-monitor-cond-client | ~400-500 |
+| 10.5 | ovsdb-performance-benchmarking | ~350-400 |
+| 10.6 | ovsdb-security-mtls-rbac-advanced | ~350-400 |
+| **Tổng** | | **~1500-2000 dòng** |
+
+**Workflow:** Batch 1 (10.3 + 10.4 fundamentals) → Batch 2 (10.5 + 10.6 operations) → README TOC update → commit incremental.
+
+### E.8 Session 17 (extension) — C7 OVN foundation bề rộng expand (2026-04-22)
+
+**User directive** (session 17 mid): "xin hãy nhớ tập trung vào OpenvSwitch, OpenFlow và OVN nhé. Mọi thứ liên quan đến chúng đều phải tập trung vào, cả bề rộng lẫn bề sâu."
+
+**Analysis — OVS/OpenFlow/OVN core scope gap:**
+
+| Block | Files | Lines | Avg/file | Status |
+|-------|-------|-------|----------|--------|
+| IV — OpenFlow | 8 | 3007 | 376 | Đầy đủ |
+| V — SDN APIs | 3 | 983 | 328 | Trung bình |
+| IX — OVS | 15 | 3311 | 221 | Bề rộng đủ |
+| X — OVSDB | 3 | 626 | 209 | Mỏng |
+| **XIII — OVN foundation** | **7** | **1241** | **177** | **Mỏng — mất cân đối** |
+| XVII-XIX — OVN advanced | 3 | 3045 | 1015 | Dày |
+
+Block XIII foundation (7 file 1241 dòng) mất cân đối so với advanced case studies XVII-XIX (3 file 3045 dòng). Thiếu coverage dedicated cho:
+- ovn-controller internals (algorithm SB→OpenFlow, IDL incremental)
+- ovn-northd translation (NB→SB compile pipeline)
+- OVN Load Balancer internals (hash, DSR, health check)
+- OVN DHCP/DNS native
+- OVN Gateway Router (DR vs GR, chassisredirect)
+- OVN IPAM (subnet+excludes, mac_binding)
+
+**C7 plan — 6 file mới Block XIII:**
+
+| File | Topic | Target lines |
+|------|-------|-------------|
+| 13.7 | ovn-controller-internals | ~500-700 |
+| 13.8 | ovn-northd-translation | ~500-700 |
+| 13.9 | ovn-load-balancer-internals | ~400-500 |
+| 13.10 | ovn-dhcp-dns-native | ~400-500 |
+| 13.11 | ovn-gateway-router-distributed | ~500-600 |
+| 13.12 | ovn-ipam-native-dynamic-static | ~400-500 |
+| **Tổng mong đợi** | | **~3000 dòng** |
+
+**Thực thi workflow:**
+1. Update `sdn-onboard/README.md` TOC Block XIII (hiện chỉ list 13.0-13.3 — stale sau session 15 đã thêm 13.4-13.6).
+2. Tạo 13.7-13.12 tuần tự với Rule 11 + Rule 12 + Rule 9 compliance.
+3. Mỗi file có header block, 5-6 section, 1-2 Guided Exercise, References.
+4. Commit incrementally (mỗi 2-3 file một batch).
+
 ### E.7 Session 17 — C5.4 Section Body Expansion (2026-04-22)
 
 **User direction:** "tiếp tục việc còn dang dở, bạn hãy nhớ rằng ngoài việc tôi cung cấp tài liệu offline tại sdn-onboard/doc/* ra thì bạn có thể tham khảo thêm tư liệu trên Internet" + "tôi đang thấy vi phạm rule 11 trong claude.md, bạn hãy rà soát lại".

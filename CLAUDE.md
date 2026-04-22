@@ -449,8 +449,8 @@ hay "không cần source", vẫn phải verify offline mapping trước khi kế
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` (session 17 — **C7 COMPLETE**, chờ push final batch + README update) |
-| Current phase (session 17 end) | **🎉 Phase C C7 COMPLETE** (2026-04-22). Block XIII foundation 7→13 file, 1241→2847 dòng (+1606). Cân bằng với XVII-XIX advanced. Session 17 tổng thêm 8 commit (C5.4 + C5.5 + C7 batch 1-3). |
+| Active branch | `docs/sdn-foundation-rev2` (session 17 — C7 DONE pushed; **C8 Block X OVSDB expand in-progress**) |
+| Current phase (session 17 late) | **🔄 Phase C C8 — Block X OVSDB expand bề sâu in-progress** (2026-04-22). Block X hiện 3 file 626 dòng — mỏng so với core blocks. Thêm 10.3 transaction semantics + 10.4 IDL/monitor_cond + 10.5 performance + 10.6 security advanced. |
 | Session 17 deltas (final) | **C5.4** (pushed): 9 file Block XIV/XV/XVI section body expanded 2523→2917 (+394). **C5.5** (pushed): 5 file Exercise Rule 11 retrofit. **C7** (committed 3 batches, ready push): 6 file mới 13.7-13.12 OVN ovn-controller/northd/LB/DHCP-DNS/GR/IPAM (+1606 dòng). |
 | Block XIII final state | 7 core (13.0-13.6) + 6 extended (13.7-13.12) = 13 file 2847 dòng. Scope OVS/OpenFlow/OVN core per user directive. README TOC updated. |
 | C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |
