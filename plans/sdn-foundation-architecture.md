@@ -1847,6 +1847,26 @@ Block-by-block status:
 - POE compliance: 10 files have explicit Predict; others are procedural (acceptable per professor-style 2.7)
 - Misconception callouts: 16 files (appropriate for conceptual content; procedural blocks like IX/X don't have them)
 
+### E.10 Session 17 (extension) — C9 Block IX OVS internals deep-dive (2026-04-22)
+
+**User direction (continuation):** "tiếp tục theo plan"
+
+**Gap phân tích Block IX:** Block IX hiện 15 file 3311 dòng rộng nhưng thiếu deep dive ba chủ đề quan trọng cho OVS internals:
+
+| File | Topic | Target lines |
+|------|-------|-------------|
+| 9.15 | ovs-ofproto classifier internals | ~400-500 |
+| 9.16 | ovs-vswitchd connection manager | ~400-500 |
+| 9.17 | OVS performance benchmark methodology | ~350-450 |
+| **Tổng** | | **~1200-1400 dòng** |
+
+**Rationale:**
+- 9.15: tuple space search + cls_rule + staged lookup là nền tảng tại sao OVS nhanh. Phải hiểu để tune flow table hiệu quả.
+- 9.16: master/slave/equal role election qua OpenFlow 1.3+ là cần thiết cho HA controller multi-chassis OVN.
+- 9.17: production deployment cần benchmark trước. Phương pháp đo đúng tránh sai số systemic.
+
+**Workflow:** Batch 1 (9.15+9.16) → Batch 2 (9.17) → README TOC update → commit incremental → push.
+
 ### E.9 Session 17 (extension) — C8 Block X OVSDB expand bề sâu (2026-04-22)
 
 **User direction:** "tôi vẫn chưa có môi trường lab thực tế, hãy tiếp tục plan nhé. Nhớ cập nhật tiến độ"
