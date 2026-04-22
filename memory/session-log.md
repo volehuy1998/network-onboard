@@ -7,6 +7,69 @@
 
 ## Session gần nhất
 
+**Ngày:** 2026-04-22 (session 15, Phase B COMPLETE — Block VIII/X/XI/XII/XIII end-to-end)
+**Branch:** `docs/sdn-foundation-rev2` @ handoff commit — đã push origin
+**Plans:** `.claude/plans/tender-scribbling-comet.md` (session 12-13 reference)
+
+### Bối cảnh session 15
+
+User continuation từ session 14 handoff: "tiếp tục đi" — auto mode on, complete remaining 22 file.
+
+Workflow session 15 (21 file content mới):
+
+1. **Block VIII continued** (3 file): 8.1 bridge/veth/macvlan, 8.2 VLAN/bonding/team deprecate, 8.3 tc qdisc + conntrack + OVS ct() integration.
+2. **Block X OVSDB** (3 file): 10.0 RFC 7047 + 10 operations + monitor_cond, 10.1 Raft clustering (OVS 2.9+), 10.2 backup/restore/compact + RBAC.
+3. **Block XI overlay** (5 file): 11.0 VXLAN/Geneve/STT, 11.1 MTU/PMTUD/offload, 11.2 BGP EVPN (5 route types), 11.3 GRE tunnel lab, 11.4 IPsec + ovs-monitor-ipsec.
+4. **Block XII DC** (3 file): 12.0 Clos/Leaf-Spine (Facebook F16 + Google Jupiter), 12.1 anycast gateway + BGP unnumbered, 12.2 micro-seg + NSH service chaining.
+5. **Block XIII OVN foundation** (7 file, capstone): 13.0 announcement 2015, 13.1 NBDB/SBDB, 13.2 LS/LR, 13.3 ACL/LB/NAT, 13.4 br-int + patch ports, 13.5 Port_Binding 7 types, 13.6 HA_Chassis_Group + BFD.
+
+### Commit session 15
+
+| Commit | Phạm vi | Files |
+|--------|---------|-------|
+| `6746ac2` | Handoff session 14 → 15 | CLAUDE.md + session-log |
+| `7f93125` | Block VIII tail + Block X | 6 file (8.1/8.2/8.3 + 10.0/10.1/10.2) |
+| `4396237` | Block XI | 5 file (11.0-11.4) |
+| `fc7547c` | Block XII | 3 file (12.0-12.2) |
+| `e749c25` | Block XIII (FINAL) | 7 file (13.0-13.6) |
+| `<handoff>` | Session 15 handoff | CLAUDE.md + session-log |
+
+### 🎉 Phase B COMPLETE
+
+- **Tổng 61 file foundation content** (Block 0-XIII) + 3 advanced production (XVII-XIX) = **64 file content đầy đủ**.
+- **~20.000 dòng content Phase B** qua 3 session (12, 13, 14, 15).
+- **Rule 11 (Vietnamese Prose Discipline) + Rule 12 (Exhaustive Offline Source)** applied xuyên suốt.
+- Nguồn offline khai thác: `compass_artifact_wf-*.md` (20 Chapter + Appendix) + `doc/ovs/` (USC NSF 1829698 lab series 11 PDF+TXT).
+
+### Lệnh local khi resume session 16
+
+```bash
+cd ~/network-onboard
+git fetch origin
+git checkout docs/sdn-foundation-rev2
+git pull --ff-only origin docs/sdn-foundation-rev2
+git log --oneline -15
+```
+
+### Quick-start session 16 — Phase C options
+
+Phase B DONE. Các hướng Phase C khả dĩ:
+
+**Option A — Capstone Lab review**: chạy toàn bộ exercises + labs end-to-end trên hardware lab (Ubuntu 22.04 VM setup), verify mọi command reproduce thành công.
+
+**Option B — Body deep revision**: Path B pending từ session 13 (paragraph-level Vietnamese prose cho 19 file Block II-VI còn chưa deep revision). Áp dụng Rule 11 triệt để.
+
+**Option C — Expert-level extension**: thêm advanced topic mới ngoài scope rev 3:
+- P4/Tofino programming lab (Block VI extension).
+- Service mesh integration (Istio + OVN-Kubernetes).
+- Kernel datapath performance tuning deep dive.
+
+**Option D — Publish/review**: pull request review, fact-checking tất cả commands + URLs, generate PDF/eBook output.
+
+---
+
+## Session 14 (archived)
+
 **Ngày:** 2026-04-22 (session 14, Phase B content expansion Block VII + IX + VIII start)
 **Branch:** `docs/sdn-foundation-rev2` @ commit handoff — đã push origin sau session 14
 **Plans:** `.claude/plans/tender-scribbling-comet.md` (session 12-13) — reference cho Rule 11
