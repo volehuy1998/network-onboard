@@ -174,16 +174,28 @@ Khối này khỏa lấp khoảng trống kiến thức nền mà Block IX (OVS)
 - Part 8.2, [VLAN, bonding, team](8.2%20-%20linux-vlan-bonding-team.md) *(skeleton)*, 802.1Q trunk, bonding mode 4 (LACP), teamd.
 - Part 8.3, [tc, qdisc, conntrack](8.3%20-%20tc-qdisc-and-conntrack.md) *(skeleton)*, tc/qdisc (fq_codel default kernel 3.12+), conntrack table, nf_conntrack tuning.
 
-### Block IX, OpenvSwitch internals (Part 9, 6 file)
+### Block IX, OpenvSwitch internals (Part 9, 19 file)
 
 Khối then chốt mở hộp đen OVS để thấy cơ chế bên trong: ba thành phần (`ovs-vswitchd`, `ovsdb-server`, `openvswitch.ko`), ba kiểu datapath (kernel, userspace DPDK, hardware offload qua OVS-DOCA). Đây là khối quyết định cho troubleshooting ở cấp thấp.
 
-- Part 9.0, [OVS history 2007-present](9.0%20-%20ovs-history-2007-present.md) *(skeleton, NSDI 2015)*, OVS birth 2007 Nicira, "Design and Implementation of OVS" Pfaff et al., Linux Foundation transfer 2016.
-- Part 9.1, [OVS three-component architecture](9.1%20-%20ovs-3-component-architecture.md) *(skeleton)*, ovs-vswitchd + ovsdb-server + openvswitch.ko, Netlink genl family upcall.
-- Part 9.2, [Kernel datapath và megaflow](9.2%20-%20ovs-kernel-datapath-megaflow.md) *(skeleton, NSDI 2015)*, microflow → megaflow → ukeys, handler/revalidator threads, NSDI 2015 numbers.
-- Part 9.3, [Userspace datapath, DPDK và AF_XDP](9.3%20-%20ovs-userspace-dpdk-afxdp.md) *(skeleton)*, DPDK PMD + hugepages + NUMA pinning, AF_XDP alternative, trade-off matrix.
-- Part 9.4, [OVS CLI tools và playbook 6 lớp](9.4%20-%20ovs-cli-tools-playbook.md) *(skeleton)*, `ovs-vsctl`/`ofctl`/`appctl`/`dpctl`, six-layer troubleshooting playbook, Capstone Block IX Lab 2.
-- Part 9.5, [Hardware offload, switchdev, ASAP², OVS-DOCA](9.5%20-%20hw-offload-switchdev-asap2-doca.md) *(skeleton, NVIDIA DOCA 2023)*, Linux switchdev, NVIDIA ASAP² eSwitch, ba DPIF flavors (Kernel/DPDK/DOCA), vDPA, BlueField DPU, megaflow scaling 200k-2M.
+**Core foundation (9.0-9.5):**
+- Part 9.0, [OVS history 2007-present](9.0%20-%20ovs-history-2007-present.md) *(content, NSDI 2015)*, OVS birth 2007 Nicira, "Design and Implementation of OVS" Pfaff et al., Linux Foundation transfer 2016.
+- Part 9.1, [OVS three-component architecture](9.1%20-%20ovs-3-component-architecture.md) *(content)*, ovs-vswitchd + ovsdb-server + openvswitch.ko, Netlink genl family upcall.
+- Part 9.2, [Kernel datapath và megaflow](9.2%20-%20ovs-kernel-datapath-megaflow.md) *(content, NSDI 2015)*, microflow → megaflow → ukeys, handler/revalidator threads, NSDI 2015 numbers.
+- Part 9.3, [Userspace datapath, DPDK và AF_XDP](9.3%20-%20ovs-userspace-dpdk-afxdp.md) *(content)*, DPDK PMD + hugepages + NUMA pinning, AF_XDP alternative, trade-off matrix.
+- Part 9.4, [OVS CLI tools và playbook 6 lớp](9.4%20-%20ovs-cli-tools-playbook.md) *(content)*, `ovs-vsctl`/`ofctl`/`appctl`/`dpctl`, six-layer troubleshooting playbook, Capstone Block IX Lab 2.
+- Part 9.5, [Hardware offload, switchdev, ASAP², OVS-DOCA](9.5%20-%20hw-offload-switchdev-asap2-doca.md) *(content, NVIDIA DOCA 2023)*, Linux switchdev, NVIDIA ASAP² eSwitch, ba DPIF flavors (Kernel/DPDK/DOCA), vDPA, BlueField DPU, megaflow scaling 200k-2M.
+
+**Operations playbook (9.6-9.14) — session 14:**
+- Part 9.6 bonding/LACP, 9.7 port-mirroring, 9.8 sFlow/NetFlow/IPFIX, 9.9 QoS policing/shaping/metering, 9.10 TLS PKI hardening, 9.11 ovs-appctl reference playbook, 9.12 upgrade/rolling-restart, 9.13 libvirt/Docker integration, 9.14 incident response decision tree.
+
+**Deep internals (9.15-9.17) — session 17 C9:**
+- Part 9.15, [ofproto classifier + tuple space search](9.15%20-%20ofproto-classifier-tuple-space-search.md) *(content)*, priority-based matching, TSS algorithm, tuple space indexing.
+- Part 9.16, [Connection manager + controller failover](9.16%20-%20ovs-connection-manager-controller-failover.md) *(content)*, master/slave, fail-mode, echo request timeouts.
+- Part 9.17, [Performance benchmark methodology](9.17%20-%20ovs-performance-benchmark-methodology.md) *(content)*, pktgen-dpdk, cbench, throughput metrics, capacity planning.
+
+**Applied technique (9.18) — session 19:**
+- Part 9.18, [OVS native L3 routing](9.18%20-%20ovs-native-l3-routing.md) *(content, Lab 7 Crichigno/USC)*, route giữa subnet bằng flow table thuần không cần OVN — `mod_dl_src/dst + dec_ttl + output`, chứng minh `ip_forward=0` vẫn route được, đối chiếu với OVN Logical Router.
 
 ### Block X, OVSDB management (Part 10, 7 file sau C8)
 
