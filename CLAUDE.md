@@ -435,6 +435,12 @@ PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là refe
 | traffic (prose) | lưu lượng | packet (prose) | gói tin |
 | forwarding (prose, verb nghĩa "chuyển tiếp") | chuyển tiếp | routing (prose, verb nghĩa "định tuyến") | định tuyến |
 | rule ordering | thứ tự rule | first-match wins | ai match trước thì thắng |
+| consumer (prose IT) | người tiêu thụ / consumer | buy-in | sự ủng hộ |
+| shepherd (verb) | dẫn dắt | worry (verb) | lo ngại / lo lắng |
+| favor (verb) | ưu ái | bent (verb) | bẻ cong |
+| workaround | biện pháp tạm thời | unusual | bất thường |
+| significant (adj prose) | đáng kể / có ý nghĩa lớn | industry dynamics | động lực ngành |
+| promote adoption | thúc đẩy sự chấp nhận | advocate for | vận động cho |
 
 #### 11.3. Cùng một từ, lúc dịch lúc không — minh hoạ
 
