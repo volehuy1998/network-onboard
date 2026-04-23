@@ -7,6 +7,61 @@
 
 ## Session gần nhất
 
+## Session 37c — Phase G.1.3+G.1.4 expand 13.7 run loop + 20.0 case study playback
+
+**Ngày:** 2026-04-23 post session 37b.
+**Branch:** `docs/sdn-foundation-rev2` @ pending commit.
+**Trạng thái:** **Phase G 3/12 sessions DONE (25%). G.1 TRUY VẾT area COMPLETE (4/4 deliverable).**
+
+### Session 37c deliverable
+
+**G.1.3 expand 13.7 ovn-controller internals:**
+- Thêm §13.7.7 "ovn-controller run loop — anatomy main_loop + engine graph" (~157 dòng).
+- Scope: main_loop 5-bước iteration (poll triggers, reload IDL, engine graph run, commit+notify, loop), engine DAG structure (en_sb_chassis → en_runtime_data → en_physical_flow_output + en_lflow_output → en_flow_output → ofctrl_run), events trigger matrix (Port_Binding change, Logical_Flow update, Chassis register, schema change), timing characteristics (steady 5-20ms, burst 500ms, full recompute 5-30s), diagnostic recipe sync lag 5-step workflow.
+- File size: 334 → 491 dòng (+157).
+- Ref #6 mới: OVN main_loop source controller/ovn-controller.c.
+
+**G.1.4 expand 20.0 systematic debugging:**
+- Thêm §20.7 "Case study playback — 3 kịch bản production" (~206 dòng).
+- Case 1: VM mới không có network sau boot (race orchestrator ↔ ovn-controller, empty external-ids fix immediate vs orchestrator hook fix long-term).
+- Case 2: Packet drop intermittent 5-10% sau upgrade OVN 22.03 → 22.09 (schema column `additional_chassis` unknown, chassis cũ ignore → stale view → drop).
+- Case 3: Thundering herd sau network partition recovery (chassis-42 full recompute + 499 peers concurrent recompute + 5000 ARP burst → 3 phút cluster CPU spike).
+- Mỗi case có timeline chi tiết + diagnostic commands + root cause + fix ngắn/dài hạn + lesson.
+- Takeaways chung 4 điểm (signature, forensic evidence, MTTR workflow, long-term vs short-term fix).
+- File size: 582 → 788 dòng (+206).
+
+### Quality gate session 37c
+
+| File | Null byte | Em-dash density | Rule 11 | Rule 14 |
+|------|-----------|-----------------|---------|---------|
+| 13.7 | 0 | 0.039/line | clean | n/a (behavior docs) |
+| 20.0 | 0 | 0.070/line | clean | n/a |
+
+Cả 2 file pass ngưỡng < 0.10 em-dash, 0 null byte, không fabricate source code citation.
+
+### Phase G progress — G.1 COMPLETE
+
+| Session | G area | File | Status |
+|---------|--------|------|--------|
+| 37a | G.1.1 | 9.25 expand +3 GE | ✅ DONE fad6631 |
+| 37b | G.1.2 | 9.27 NEW Debug playbook | ✅ DONE 2e139c8 |
+| 37c | G.1.3 | 13.7 expand §13.7.7 | ✅ DONE (pending commit) |
+| 37c | G.1.4 | 20.0 expand §20.7 | ✅ DONE (pending commit) |
+
+**G.1 Truy vết area: 4/4 deliverable COMPLETE.** Engineer sau Phase G.1 có framework systematic: Part 9.25 ofproto/trace fundamentals + advanced patterns (multi-bridge/register/recirc), Part 9.27 end-to-end debug playbook (3-tier view + TLV + MTU), Part 13.7 run loop deep-dive, Part 20.0 production case study playback.
+
+### Resume protocol session 37d — G.2 area start
+
+Sequence tiếp: G.2 Xử lý sự cố (Incident Response) area, 4 session (37d → 37g):
+1. **37d** G.2.1 expand 9.14 incident decision tree +10 scenario cụ thể (flow overflow, upcall storm, conntrack zone collision, bond flap, DPDK PMD hang, mac-learn poisoning, etc.)
+2. **37e** G.2.2 new 9.28 incident runbook compilation (~500-700 dòng, 20+ self-contained runbook symptoms→triage→verify→rollback)
+3. **37f** G.2.3 new 9.29 bond flap forensic (~400-500 dòng, forensic case study 9.26-style)
+4. **37g** G.2.4 new 9.30 conntrack zone collision forensic (~400-500 dòng)
+
+G.2 effort estimated ~14-18 giờ tổng (4 session).
+
+---
+
 ## Session 37b — Phase G.1.2 new Part 9.27 OVS+OVN Debug playbook
 
 **Ngày:** 2026-04-23 post session 37a.
