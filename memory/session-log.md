@@ -7,6 +7,59 @@
 
 ## Session gần nhất
 
+## Session 37b — Phase G.1.2 new Part 9.27 OVS+OVN Debug playbook
+
+**Ngày:** 2026-04-23 post session 37a.
+**Branch:** `docs/sdn-foundation-rev2` @ pending commit.
+**Trạng thái:** **Phase G 2/12 sessions DONE (17%)**. G.1.1 + G.1.2 complete.
+
+### Session 37b DONE — G.1.2
+
+File: `sdn-onboard/9.27 - ovs-ovn-packet-journey-end-to-end.md` (NEW, 659 dòng).
+
+**Scope decision:** Discovered existing `0.2 - end-to-end-packet-journey.md` (342 dòng, 12-stage descriptive tour). Để tránh duplicate, re-scope 9.27 từ "story tour" sang "operator debug playbook":
+
+- Focus: 3-tier parallel diagnostic framework thay vì tour 7-stage.
+- Focus: Geneve TLV deep-dive, MTU forensic, fault catalog thay vì narrative story.
+- 0.2 vẫn là prerequisite cho 9.27 (reader đã biết tour, cần debug skill).
+
+### 9.27 deliverable
+
+- **§9.27.1-2 Framework 3-tier**: logical `ovn-trace` (OVN intent) ↔ OpenFlow `ofproto/trace` (br-int translation) ↔ datapath `dpif/dump-flows` (kernel cache). Decision tree 3-level drill-down.
+- **§9.27.3 Geneve TLV deep-dive**: RFC 8926 format, class `0x0102` type `0x80/0x81` mang logical ingress/egress port. Total overhead 66 byte default OVN.
+- **§9.27.4 MTU forensic**: math cho overlay MTU (underlay 1500 → overlay max 1434), MSS clamping với iptables mangle.
+- **§9.27.5 Fault catalog**: 10 pattern cross-host (MTU mismatch, ovn-controller lag, datapath stale, bfd flap, firewall 6081, asymmetric routing, port binding missing, conntrack zone, tenant leak, slow-path upcall).
+- **Guided Exercise 1** — Fault-inject 5 bug + diagnose bằng 3-tier framework. POE "đoán mò vs framework".
+- **Guided Exercise 2** — Parse Geneve TLV từ `tcpdump -w` pcap bằng `tshark`. Cross-reference TLV value với `ovn-sbctl list port_binding.tunnel_key`.
+- **Capstone POE** — Benchmark stage-by-stage (same-host / cross-host Geneve / raw underlay) với iperf3. Predict trước, observe sau.
+- **§9.27.6 Điểm cốt lõi** 7 point.
+
+### Quality gate session 37b
+
+- Rule 9 null bytes: 0
+- Rule 13 em-dash density: 0.074/line (threshold < 0.10). Ban đầu 0.091, trim 11 prose em-dash (line 8, 47, 133, 302, 322, 326, 545, 547, 557, 631, 637) xuống 0.074.
+- Rule 11 Vietnamese prose: clean.
+- Rule 14 source code citation: n/a (behavior docs, không cite SHA/function).
+- README.md Block IX: count 26 → 27 file, TOC entry added sau 9.26.
+
+### Phase G progress
+
+| Session | Status |
+|---------|--------|
+| 37a G.1.1 expand 9.25 | ✅ DONE fad6631 |
+| 37b G.1.2 new 9.27 | ✅ DONE (pending commit) |
+| 37c G.1.3+G.1.4 expand 13.7+20.0 | ⏳ NEXT |
+| 37d-m | PENDING |
+
+### Resume protocol session 37c
+
+Sequence tiếp: G.1.3 + G.1.4 expand 13.7 `ovn-controller internals` + 20.0 `diagnostic-toolbox`:
+1. 13.7 deep-dive run loop main_loop → en_runtime_data_run → physical_run (3-4 giờ)
+2. 20.0 systematic debugging framework + 10 case study playback (3-4 giờ)
+3. Commit + push
+
+---
+
 ## Session 37a — Phase G kickoff G.1.1 expand 9.25 advanced trace exercises
 
 **Ngày:** 2026-04-23 post plan rev 3.0 approval (ExitPlanMode).
