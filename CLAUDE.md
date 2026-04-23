@@ -686,6 +686,158 @@ Part 9.22/9.23/9.24/9.25 giảm em-dash từ 361 → 155 (57% reduction) bằng 
 
 Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 
+### Rule 14: Source Code Citation Integrity (BẮT BUỘC)
+
+> Nguồn gốc: session 32+33a+33b, 2026-04-22. User flag `MAX_FDB_ENTRIES`
+> nằm trong `controller/mac-learn.c` cho OVN v22.03-v24.03 nhưng v24.09+
+> đã migrate sang `controller/pinctrl.c`. Audit sweep Phase E Scope D
+> phát hiện 32 issue qua 6 category trên 43 file: wrong commit SHA
+> (`ee20c48c2f5c` 404 mà Reference 27 cùng file có SHA đúng
+> `949b098626b7`), broken cross-ref (`./3.0` → `./19.0`, 4 instances),
+> function name fabricated (`reply_icmp_error_if_pkt_too_big` không
+> tồn tại — actual upstream có typo `reply_imcp_error_if_pkt_too_big`),
+> fabricated OVSDB table (`Chassis_features` — thực tế feature flags
+> ở `Chassis.other_config` map), wrong version attribution
+> (`MAC_Binding.timestamp` claim v22.03 — actual v22.09 qua commit
+> `1a947dd3`), wrong default (`mac_binding_age_threshold=600s` claim
+> — actual default 0 disabled), line numbers không annotation version,
+> verbatim quote có leak Vietnamese. Nguyên nhân gốc: Rule 1-13 không
+> có quy tắc bắt buộc verify source code reference qua upstream trước
+> khi cite.
+
+**Quy tắc:**
+
+Mọi reference tới mã nguồn upstream (OVS, OVN, Linux kernel, HAProxy,
+Nginx, OpenStack, DPDK, FRR, strongSwan, P4, Cilium, v.v.) PHẢI được
+verify qua MCP GitHub (hoặc tương đương) TRƯỚC khi được commit vào
+curriculum. Sáu loại reference và cách verify:
+
+**14.1. Commit SHA reference**
+
+- Verify existence: `mcp__github__get_commit(owner, repo, sha)`
+- Verify claims match: author + date + message + files changed
+- Inline cite dùng 8-12 ký tự (SHA prefix); Reference section dùng
+  40-ký tự đầy đủ
+- **Inline SHA và Reference section phải match** — grep pre-commit
+  để catch mismatch trong cùng file
+
+**14.2. Function name reference**
+
+- Verify existence: `mcp__github__search_code(query="function_name repo:owner/repo")`
+- **Lưu ý search_code false negative**: một số function có thật nhưng
+  search không index. Fallback mandatory: `mcp__github__get_file_contents`
+  đọc thực file rồi grep nội dung.
+- **Preserve exact source spelling** kể cả typo (ví dụ OVN source có
+  hàm `reply_imcp_error_if_pkt_too_big` với typo `imcp` — không sửa
+  thành `icmp` khi cite). Nếu typo gây nhầm, thêm note `(tên gốc
+  upstream có typo imcp)`.
+- Nếu function đã rename giữa versions, annotate: "(tên cũ `foo_bar`
+  trong v22.03, rename thành `bar_foo` từ v24.03 qua commit `abc1234`)"
+
+**14.3. File path reference**
+
+- Verify tồn tại tại version baseline: `mcp__github__get_file_contents(path, ref)`
+  với `ref` là tag curriculum baseline (vd `v22.03.8` cho OVN,
+  `v2.17.9` cho OVS, `v5.15` cho Linux kernel Ubuntu 22.04)
+- Nếu file di trú giữa versions: annotate per Rule 3
+  - Ví dụ: "`controller/mac-learn.c` (v22.03 → v24.03) hoặc
+    `controller/pinctrl.c` §MAX_FDB_ENTRIES (v24.09+, commit
+    `fb96ae3679` merge)"
+
+**14.4. Line number reference**
+
+- Line number LUÔN version-sensitive. Bắt buộc annotate:
+  - Option A — branch-specific: "`physical.c` dòng 1939-1968 (OVN
+    branch-24.03)"
+  - Option B — commit permalink: "`physical.c`
+    [link tới GitHub blob tại commit SHA](https://github.com/ovn-org/ovn/blob/SHA/controller/physical.c#L1939-L1968)"
+  - Option C — function name anchor: thay vì dòng, dùng function
+    name làm anchor stable (ví dụ "Trong function
+    `build_lswitch_arp_nd_responder_known_ips` ở `northd/northd.c`,
+    tìm `op->lsp_has_port_sec || !op->has_unknown` check")
+- **Line number drift phổ biến**: v22.03 → main thường shift 2000+
+  dòng. Option C (function name) là recommended best practice.
+
+**14.5. Verbatim quote commit body**
+
+- Copy-paste EXACT từ MCP API response, không dịch, không edit
+  spacing, không đổi bullet format
+- Block `> "Trích nguyên văn commit body từ GitHub API:"` phải 100%
+  English nếu commit body là English
+- Chỉ dịch sang Vietnamese nếu chọn format "paraphrase" explicit,
+  KHÔNG dùng label "nguyên văn" trên paraphrase
+- **Dash bullets (`-`) preserve exact** — không chuyển sang `(a)(b)(c)`
+
+**14.6. Database table + schema claims**
+
+- Verify schema existence via `mcp__github__get_file_contents` cho
+  `ovn-sb.ovsschema`, `ovn-nb.ovsschema`, `vswitchd/vswitch.ovsschema`
+- Parse JSON để liệt kê tables + columns actual
+- **Không fabricate table names** — nếu feature lưu ở `other_config`
+  map thay vì dedicated table, nói rõ
+- **Internal C struct ≠ database table** — phân biệt rõ (ví dụ
+  `struct chassis_features` in-memory khác với giả thiết bảng
+  `Chassis_features` trên OVSDB)
+
+**14.7. Audit pass TRƯỚC khi commit**
+
+- Grep mọi claim mới trong section: SHA, function, path, line number,
+  table name
+- Nếu > 3 references trong section, chạy MCP audit batch (verify
+  tất cả)
+- Ghi log evidence vào `memory/fact-check-audit-YYYY-MM-DD.md`
+- Commit chỉ khi 100% pass; bất kỳ ref nào fail → fix hoặc xóa claim
+
+**Phạm vi áp dụng:** Mọi onboard series (SDN, HAProxy, Linux, Network),
+mọi Part mới hoặc audit lại file cũ. Rule 14 áp dụng tiếp nối
+(prospectively) + retrofit (cho file đã viết khi phát hiện drift).
+
+**Dấu hiệu vi phạm Rule 14:**
+
+- Inline cite commit SHA nhưng không có matching entry trong References
+  section (hoặc SHA khác nhau giữa inline và References)
+- Function name không có trong upstream khi search MCP + không có
+  trong file khi grep direct
+- File path không tồn tại tại version baseline (404)
+- Line number không annotate version trong cùng sentence/paragraph
+- Block "Trích nguyên văn" có Vietnamese trong English quote
+- Database table claim mà không verify schema (vd claim "Chassis_features"
+  mà không kiểm ovn-sb.ovsschema)
+- Commit Session X chứa source code ref mới mà `memory/fact-check-audit`
+  không có entry ngày X
+
+**Quy trình khi viết Part mới (prospective enforcement):**
+
+1. Pre-write phase: research topic trên upstream, note mọi SHA +
+   function + file path + line number + table name định cite
+2. Batch verify qua MCP trước khi draft content
+3. Draft content chỉ dùng ref đã verify
+4. Post-write audit: re-grep section, verify lần 2 bằng MCP
+5. Commit chỉ khi Step 2 + Step 4 đều pass
+
+**Quy trình khi retrofit file cũ (reactive enforcement):**
+
+1. Grep file cho pattern trong §14.1-§14.6
+2. Batch verify MCP
+3. Fix từng issue theo category
+4. Log findings vào `memory/fact-check-audit-YYYY-MM-DD.md`
+5. Re-verify post-fix
+6. Commit với message "docs(...): Rule 14 retrofit — N issues fixed"
+
+**Bài học Phase E (session 32-33i):**
+
+- MCP `search_code` có false negative (ví dụ `build_lswitch_learn_fdb_op`
+  search return 0 dù function tồn tại ở `northd/northd.c` line 6299
+  v22.03.8). Fallback `get_file_contents` bắt buộc.
+- Source code có typo intentional (ví dụ `imcp` thay vì `icmp` trong
+  OVN `reply_imcp_error_if_pkt_too_big`). Preserve spelling.
+- Version attribution phổ biến bị lệch 1 LTS (vd v22.03 vs v22.09).
+  Luôn verify commit date + release tag gần nhất.
+- Foundation/conceptual blocks (Block I-VIII + X-XII + XIV-XVI + XX)
+  density source code ref thấp — ít fact-check risk. Forensic case
+  study blocks (XVII-XIX) + internals blocks (XIII OVN + IX OVS) là
+  nơi chứa phần lớn risk.
+
 ## Current State
 
 | Key | Value |
