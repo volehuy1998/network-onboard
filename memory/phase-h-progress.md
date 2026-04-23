@@ -90,6 +90,17 @@ Total: 500 dòng template library.
 | Rule 13 em-dash density | PASS | 0.046/line |
 | Scope cover | 8 section mới | §4.9.15 VLAN push/pop (0x8100 + 0x88a8 Q-in-Q) + §4.9.16 MPLS push/pop + PBB encap/decap + §4.9.17 set_field generic với mask + §4.9.18 mod_* legacy (11 action) + dec_ttl router function + copy_ttl MPLS stacking + §4.9.19 move/load register bit-range + §4.9.20 write_metadata + set_tunnel/64 + §4.9.21 set_queue + enqueue + meter OF 1.3+ + §4.9.22 bảng tổng hợp action tier 1+2 |
 | Upstream | ovs-actions(7) Category 2-4+7 + OpenFlow 1.3 §5.10 + OVS ofp-actions.h |
+
+## Session S44 deliverables (H.4.3 Actions tier 3)
+
+| Item | Status | Note |
+|---|---|---|
+| Part 4.9 tier 3 append | DONE | 1124 → 1544 dòng (+420). Full catalog final |
+| Rule 9 null byte | PASS | 0 |
+| Rule 13 em-dash density | PASS | 0.050/line |
+| Rule 11 §11.6 prose sweep | PASS | 0 new prose leak (tier 3 content clean) |
+| Scope cover | 8 section advanced | §4.9.23 ct() full with all options (commit/zone/nat/force/alg/exec/table) + ct_clear + typical stateful firewall pattern + §4.9.24 learn() MAC learning self-programming flow + fin_idle_timeout + §4.9.25 conjunction() cross-product compression với OVN Port_Group example + §4.9.26 multipath() ECMP với 4 hash algorithm (modulo_n/hash_threshold/hrw/iter_hash) + §4.9.27 bundle() + bundle_load() + §4.9.28 check_pkt_larger() PMTUD OVN lr_in_chk_pkt_len context + §4.9.29 bảng full catalog tier 1+2+3 + §4.9.30 Guided Exercise full-pipeline production pattern (rate limit + ACL + stateful + SNAT + output) |
+| Upstream | ovs-actions(7) Category 5+6 + OVS source `ofproto-dpif-xlate.c` xlate function + Part 9.24 conntrack context |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
@@ -99,7 +110,7 @@ Total: 500 dòng template library.
 - [x] **S41** — H.3 Match Fields DONE 2026-04-24. Tạo mới Part 4.8 `openflow-match-field-catalog.md` (926 dòng) với 12 nhóm field × Template B: Metadata (6 field) + Register (16+8+4 reg/xreg/xxreg) + L2 (9 field) + ARP (5) + IPv4 (6) + IPv6 (7) + L4 TCP/UDP/SCTP (8) + ICMP (4) + Tunnel (6) + Conntrack (9) + MPLS+ip_frag (5). Prerequisite chain table + lazy wildcarding thực nghiệm. README Block IV updated 8→9 file.
 - [x] **S42** — H.4.1 Actions output+control DONE 2026-04-24. Tạo mới Part 4.9 `openflow-action-catalog.md` (762 dòng, tier 1). Category 1 Output (9 action) + group (4 types) + control actions (resubmit, clone, note) + Action Set 12-priority execution order + action vs instruction foundation. Template C applied first time. Tier 2 + Tier 3 sẽ expand ở S43 + S44.
 - [ ] **S43** — H.4.2 Actions field+encap: set_field/dec_ttl/push_pop/mod_*, Template C.
-- [ ] **S44** — H.4.3 Actions advanced: ct/learn/note/conjunction/multipath/bundle/resubmit/group, Template C.
+- [x] **S44** — H.4.3 Actions tier 3 advanced DONE 2026-04-24. Append Part 4.9 tier 3: 1124 → 1544 dòng (+420). 8 section mới: §4.9.23 ct() full (commit/zone/nat/force/alg/exec/table + ct_clear) + §4.9.24 learn() MAC learning pattern + §4.9.25 conjunction() cross-product compression + §4.9.26 multipath() ECMP + §4.9.27 bundle() + bundle_load() + §4.9.28 check_pkt_larger() PMTUD + §4.9.29 bảng tổng hợp full catalog tier 1+2+3 + §4.9.30 Guided Exercise full-pipeline stateful ACL. Part 4.9 FINAL 1544 dòng, 40+ action cover 100% foundation.
 - [ ] **S45** — H.5 OVS internals: 9.1 + 9.15 + 9.16 classifier/subtable/staged/TSS/connmgr.
 - [ ] **S46** — H.6.1 OVN LS pipeline: 13.2 with ls_in_* 27 stage + ls_out_* 10 stage, Template D.
 - [ ] **S47** — H.6.2 OVN LR pipeline: 13.11 with lr_in_* 19 stage + lr_out_* 7 stage, Template D.

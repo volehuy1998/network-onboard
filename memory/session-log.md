@@ -7,6 +7,74 @@
 
 ## Session gần nhất
 
+## Session 44 — Phase H H.4.3: Actions Template C tier 3 advanced — Part 4.9 FINAL
+
+**Ngày:** 2026-04-24 post S43.
+**Branch:** `docs/sdn-foundation-rev2` @ post `9059241`.
+**Trạng thái:** Phase H 7/13 session DONE (54%). Curriculum 111 file.
+
+### S44 deliverable
+
+Append Part 4.9 tier 3 content. File 1124 → **1544 dòng** (+420). Part 4.9 **FINAL**.
+
+**8 section mới advanced:**
+
+- §4.9.23 `ct()` full — conntrack integration deep
+  - Options: commit, zone=N, nat (SNAT/DNAT/port range/persistent), force, exec(<actions>), alg=ftp/tftp/sip, table=N
+  - Typical stateful firewall pattern (dispatcher table 0 → ct(table=1) → ct_state policy table 1)
+  - ct_clear companion
+- §4.9.24 `learn()` — MAC learning self-programming
+  - OVS classic pattern: learn with reverse MAC match + load in_port → reg0
+  - fin_idle_timeout cho TCP graceful shutdown
+  - Risk: flow explosion nếu misconfig
+- §4.9.25 `conjunction()` — cross-product ACL compression
+  - N×M×K rule → N+M+K+1 rule
+  - OVN Port_Group pattern reference (Part 13.3)
+- §4.9.26 `multipath()` — ECMP hash-based path selection
+  - 4 hash algorithm: modulo_n / hash_threshold / hrw / iter_hash
+  - So sánh với group type=select
+- §4.9.27 `bundle()` + `bundle_load()` — grouped action submission
+- §4.9.28 `check_pkt_larger()` — PMTUD MTU enforcement
+  - OVN `lr_in_chk_pkt_len` stage context (Part 13.11)
+- §4.9.29 Full catalog summary tier 1+2+3 (40+ action 7 category)
+- §4.9.30 Guided Exercise full-pipeline production scenario
+  (rate limit meter → stateful CT → SNAT → output, 4 table chain)
+
+### Quality gate
+
+- Rule 9 null byte: 0 + 0 regression 111 file
+- Rule 13 em-dash: 0.050/line (PASS)
+- Rule 11 §11.6: 0 new prose leak (tier 3 content clean)
+- Rule 14 N/A
+- Code block: 50 blocks (+16 từ tier 2), median 5, mean 7.6, max 33
+
+### Upstream
+
+- man ovs-actions(7) Category 5 (Firewall/CT) + Category 6 (Control/Pipeline)
+- OVS source `ofproto/ofproto-dpif-xlate.c` xlate functions
+- Cross-ref Part 9.24 conntrack stateful firewall
+- Cross-ref Part 13.3 OVN ACL (conjunction usage)
+- Cross-ref Part 13.11 OVN gateway router (check_pkt_larger)
+
+### Tổng kết Part 4.9 (S42+S43+S44)
+
+Part 4.9 hoàn thành full action catalog foundation:
+- 762 dòng (S42 tier 1: 14 section output+control)
+- +362 dòng (S43 tier 2: 8 section encap+field+metadata+QoS)
+- +420 dòng (S44 tier 3: 8 section advanced ct+learn+conjunction+multipath+bundle+PMTUD)
+- **Final: 1544 dòng, 30 section, 40+ action, Template C 8-attribute anatomy**
+
+Coverage: 100% foundation action. Hoàn thành category-level deep dive.
+
+### Progress Phase H
+
+- 7/13 session DONE (54%)
+- S38-S44 DONE
+- Curriculum 111 file, ~43.500 dòng
+- Next: S45 — H.5 OVS internals: Part 9.1 + 9.15 + 9.16 expand (classifier/subtable/staged/TSS/connmgr/bridge-controller). Template A Anatomy block pattern.
+
+---
+
 ## Session 43 — Phase H H.4.2: Actions Template C tier 2 (field+encap+metadata+QoS)
 
 **Ngày:** 2026-04-24 post S42.
