@@ -172,6 +172,40 @@ Chỉ còn deferred cho bên ngoài audit scope:
 12. `d883751` — Session 29 handoff
 13. `02edad8` — Session 30 P2.5 context 2 files
 14. `22a8616` — Session 31 P2.5 context 6 residual
+15. `f868d8e` — Session 30+31 handoff log
+16. `c0a4ac2` — CLAUDE.md Current State refresh (session 31 close)
+
+### Session 31 — save context handoff (final)
+
+**Ngày:** 2026-04-23 end of day.
+**Branch:** `docs/sdn-foundation-rev2` @ `c0a4ac2` — synced origin.
+**Trạng thái:** Clean working tree. Ahead origin: 0 commit.
+
+**Save context deliverable:**
+- CLAUDE.md Current State refresh với session 24-31 entries đầy đủ (commit `c0a4ac2`).
+- Auto memory system populated tại `~/.claude/projects/C--Users-voleh-Documents-network-onboard/memory/`:
+  - `MEMORY.md` index
+  - `project_phase_d.md` — Phase D COMPLETE + audit FULL COMPLETE state
+  - `ref_url_protection.md` — markdown link regex pattern chống corruption (proven session 29-31)
+  - `ref_rule13_script.md` — 4-pass retrofit template em-dash
+  - `feedback_em_dash.md` — user rule < 0.10/line baseline
+  - `feedback_translation.md` — dịch đúng nơi đúng chỗ (named identifier vs prose)
+  - `user_profile.md` — VO LE profile + preferences observed
+
+**Resume checklist cho session 32+:**
+1. `git fetch origin && git pull --ff-only` để đồng bộ.
+2. Đọc CLAUDE.md Current State table (Phase D COMPLETE, audit FULL COMPLETE).
+3. Đọc memory/session-log.md từ "Session 24-28" trở xuống.
+4. Nếu user cung cấp lab host → execute C1b Lab Verification theo `memory/lab-verification-pending.md`.
+5. Sau C1b → execute C6b Final Publish qua `scripts/build-sdn-pdf.sh` → v2.0-Verified.
+
+**Tổng curriculum state:**
+- 93 file .md, ~40.5K dòng content OVS/OpenFlow/OVN.
+- Rule 9 null bytes: 0.
+- Rule 11 prose: 100% safe pattern + 11/11 Critical context-cleaned.
+- Rule 12 offline source: 100% cite explicit.
+- Rule 13 em-dash: 100% compliance (< 0.10/line).
+- CLAUDE.md: 13 rule + Rule 11 dictionary ~72 entries.
 
 ### Curriculum state end session 28
 
