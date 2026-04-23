@@ -7,6 +7,82 @@
 
 ## Session gần nhất
 
+## Session 40 — Phase H H.2.3: Part 9.2 kernel datapath deep-dive
+
+**Ngày:** 2026-04-24 post S39.
+**Branch:** `docs/sdn-foundation-rev2` @ post `a8b7f28`.
+**Trạng thái:** Phase H 3/13 session DONE (23%).
+
+### Bối cảnh
+
+Sau S39 (Part 9.11 ovs-appctl reference) tiếp tục S40 theo plan. Target: Part 9.2 kernel datapath + megaflow deep-dive với 5 section mới bao gồm EMC anatomy, SMC tier (OVS 2.15+), upcall Netlink wire format, ukey RCU lifecycle, 3-tier cache summary.
+
+### S40 deliverable
+
+Part 9.2 expansion 529 → 878 dòng (+349, vượt target +200 là 75%). Năm section mới append sau §9.2.7:
+
+**§9.2.8 EMC, Exact Match Cache (tier đầu):**
+- Cấu trúc EMC: 8K entry/PMD, per-thread, full 5-tuple exact-match, LRU eviction
+- Anatomy `pmd-stats-show` emc hits / smc hits / megaflow hits / miss counter
+- Khi nào disable EMC qua `other_config:emc-insert-inv-prob=0`
+
+**§9.2.9 SMC, Signature Match Cache (OVS 2.15+ intermediate tier):**
+- Cấu trúc SMC: 16K entry/PMD, signature-based hash, pointer về megaflow entry
+- Flow lookup path diagram: EMC (~50ns) → SMC (~150ns) → Megaflow TSS (~300-500ns) → Upcall (~50-200µs)
+- SMC tuning + disable
+
+**§9.2.10 Upcall Netlink protocol anatomy:**
+- nlmsghdr (16 byte) + genlmsghdr (4 byte) + OVS_PACKET_ATTR TLV list
+- OVS_PACKET_CMD_MISS message fields: PACKET + KEY + USERDATA + EGRESS_TUN_KEY + MRU
+- Debug wire format với vlog/set dpif:file:dbg (sample log line anatomy)
+- OVS_FLOW_CMD_NEW để cài megaflow về kernel (KEY + MASK + UFID + ACTIONS + STATS)
+
+**§9.2.11 Ukey lifecycle + revalidator RCU:**
+- State machine 6-state: CREATED → VISIBLE → OPERATIONAL → CHECKING → EVICTING → DELETED
+- Revalidator RCU read-side guarantee (read không block write)
+- `revalidator/wait` barrier anatomy
+- Pathology: udpif keys > rules → ukey leak (Part 9.26 reference)
+
+**§9.2.12 Tóm tắt 3-tier cache + checklist sức khỏe datapath:**
+- Bảng tổng hợp EMC/SMC/Megaflow/Upcall với capacity + lookup cost + hit rate expected + monitoring
+- Checklist 10-item production (EMC hit > 85%, tổng hit > 99%, dump duration < 500ms, v.v.)
+
+**Legacy cleanup:** rename §9.2.6 dup "Lab steps bổ sung" → §9.2.13 (trước đây hai section cùng số 9.2.6 — §9.2.6 Upcall rate limit + §9.2.6 Lab steps).
+
+### Quality gate
+
+- Rule 9 null byte: 0 (PASS)
+- Rule 13 em-dash density: 0.058/line (PASS, target < 0.10)
+- Rule 11 §11.6 prose sweep: 4 fix (overhead→chi phí phụ 2x, pattern→mẫu 2x)
+- Rule 14 N/A (kernel internals, NSDI paper cite đã có từ trước)
+- Code block statistics: 34 blocks, median 3 (prose-heavy content), mean 6.2, max 33. ≤5 blocks 61.8% chủ yếu là diagram ASCII ngắn + inline command reference.
+
+### Upstream lift
+
+- NSDI 2015 Pfaff et al. *Design and Implementation of Open vSwitch* (megaflow, TSS)
+- NSDI 2020 OVS mailing list thảo luận SMC motivation
+- OVS source `ofproto/ofproto-dpif-upcall.c` (ukey state machine + revalidator RCU)
+- Linux Generic Netlink man (genl message format)
+- USC Lab 9 `doc/ovs/Day 4-lab 9 - Open vSwitch Kernel Datapath.pdf` (slow path + fast path pedagogy)
+
+### Progress Phase H
+
+- 3/13 session DONE (23%)
+- Session 38 DONE (pilot + template)
+- Session 39 DONE (9.11 ovs-appctl reference)
+- Session 40 DONE (9.2 kernel datapath deep-dive)
+- Next: S41 — H.3 Match Fields: Part 4.1 + new 4.x expansion với IPv6/ARP/ICMP/MPLS/tun/conj_id/pkt_mark fields, áp dụng Template B
+
+### Commit + push
+
+Session S40 commit scope:
+- Modify: `sdn-onboard/9.2 - ovs-kernel-datapath-megaflow.md` (529 → 878 dòng)
+- Modify: `memory/phase-h-progress.md` (S40 section + rollout tick)
+- Modify: `memory/session-log.md` (S40 entry)
+- Modify: `CLAUDE.md` (S40 status row)
+
+---
+
 ## Session 39 — Phase H H.2.2: Part 9.11 ovs-appctl reference expansion
 
 **Ngày:** 2026-04-24 post S38.

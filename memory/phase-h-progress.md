@@ -41,12 +41,25 @@ Total: 500 dòng template library.
 | Code block statistics | PARTIAL | 50 blocks, median 5 (reference doc naturally short), mean 8.0, max 29. 58% ≤5 do nhiều short command reference. Key Anatomy blocks (coverage/show, upcall/show, bond/show, fdb/show, cluster/status, pmd-stats-show, tnl/neigh/show) đều ≥15 dòng |
 | Scope cover | 18 nhóm target | introspection (vlog+memory+coverage), bridge+FDB+mdb, bond+LACP, STP+RSTP, BFD+CFM, ofproto (list+bundle), dpctl+dpif, dpif-netdev, tunnel, upcall+revalidator, OVSDB cluster. Decision matrix 10-symptom + guided exercise coverage delta |
 | Upstream lift | ovs-appctl(8) + ovs-vswitchd(8) + ovsdb-server(1) + ovn-controller(8) + ovs-fields(7) + OVS Documentation/topics/tracing.rst + RFC 5880 BFD |
+
+## Session S40 deliverables (H.2.3)
+
+| Item | Status | Note |
+|---|---|---|
+| Part 9.2 expansion (+200 target) | DONE | Final 878 dòng (từ 529), +349 dòng (vượt target 75%) |
+| Rule 9 null byte | PASS | 0 null byte |
+| Rule 11 §11.6 prose sweep | PASS | 4 fix (overhead→chi phí phụ, pattern→mẫu) |
+| Rule 13 em-dash density | PASS | 0.058/line |
+| Rule 14 source code citation | N/A | Kernel internals documentation, no new SHA/function ref ngoài NSDI 2015 |
+| Scope cover | 5 section mới: EMC / SMC / Upcall Netlink / Ukey RCU / cheat-sheet | §9.2.8 EMC (8K entry, per-PMD hash exact-match) + §9.2.9 SMC (OVS 2.15+ tier 16K entry signature) + §9.2.10 Upcall genl wire format (nlmsghdr + genlmsghdr + TLV attr) + §9.2.11 Ukey state machine 6-state + RCU read-side guarantee + §9.2.12 3-tier cache summary + production health checklist 10-item |
+| Upstream lift | NSDI 2015 (megaflow) + NSDI 2020 (HXDP/SMC) + OVS source `ofproto/ofproto-dpif-upcall.c` + Linux Generic Netlink man + USC Lab 9 |
+| Legacy cleanup | Rename §9.2.6 dup "Lab steps" → §9.2.13 (hai section cùng số §9.2.6 trước đây) |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
 
 - [x] **S39** — H.2.2 Expand Part 9.11 ovs-appctl reference 215 → 1170 dòng (+955) DONE 2026-04-24. 18 nhóm target × Anatomy block (introspection/vlog/memory/coverage/bridge/FDB/mdb/bond/LACP/STP/RSTP/BFD/CFM/OpenFlow/datapath/DPDK/tunnel/upcall/revalidator/cluster) + decision matrix + guided exercise coverage delta.
-- [ ] **S40** — H.2.3 Part 9.2 kernel datapath deep-dive (+200 dòng SMC, EMC, upcall, revalidator, ukey).
+- [x] **S40** — H.2.3 Part 9.2 kernel datapath deep-dive DONE 2026-04-24. 529 → 878 dòng (+349, vượt target 75%). 5 section mới: §9.2.8 EMC anatomy, §9.2.9 SMC tier OVS 2.15+, §9.2.10 Upcall Netlink genl wire format, §9.2.11 Ukey state machine + revalidator RCU, §9.2.12 Tóm tắt 3-tier cache + checklist sức khỏe. Rename §9.2.6 dup → §9.2.13.
 - [ ] **S41** — H.3 Match Fields: 4.1 + expand với IPv6/ARP/ICMP/MPLS/tun/conj_id/pkt_mark, Template B.
 - [ ] **S42** — H.4.1 Actions output+control: output/drop/flood/all/controller/local/in_port/table/normal, Template C.
 - [ ] **S43** — H.4.2 Actions field+encap: set_field/dec_ttl/push_pop/mod_*, Template C.
