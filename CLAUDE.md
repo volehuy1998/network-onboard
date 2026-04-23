@@ -33,19 +33,52 @@ network-onboard/                    ← Repo root (GitHub: volehuy1998/network-o
 
 ### Rule 1: Skill Activation Sequence (BẮT BUỘC)
 
-Khi **viết, sửa, hoặc audit/review** file `.md` trong bất kỳ onboard series nào, PHẢI kích hoạt skills theo thứ tự:
+Repo onboard đã cài đặt **6 skill** tại `~/.claude/skills/`. Tất cả 6 skill đều phải được sử dụng — không skip bất kỳ skill nào khi điều kiện kích hoạt thoả mãn.
 
 > **Bài học từ lỗi thực tế (session 2026-03-30):** Audit Part 1 + cấu trúc series nhưng chỉ
 > kích hoạt 2/4 skills (professor-style, document-design), bỏ qua fact-checker và web-fetcher.
 > Kết quả: phát hiện lỗi cấu trúc nhưng bỏ sót lỗi factual và dead links.
 > Nguyên nhân: diễn giải sai "viết hoặc sửa" → coi audit là "chỉ đọc" → bỏ qua verification.
-> **Quy tắc: 4 skills LUÔN kích hoạt cho MỌI tương tác với file .md — không có ngoại lệ.**
+> **Quy tắc: 4 core skill LUÔN kích hoạt cho MỌI tương tác với file .md — không có ngoại lệ.**
+> **Bổ sung session 2026-04-22:** sau khi cài đặt thêm `deep-research` + `search-first`,
+> repo có đủ 6 skill. Hai skill bổ sung kích hoạt theo điều kiện (xem bảng 2) — không mặc định
+> LUÔN kích hoạt như 4 core, nhưng phải được cân nhắc trước khi bỏ qua.
+
+**Nhóm A — Core 4 skill (LUÔN kích hoạt cho MỌI tương tác với file .md):**
 
 ```
 1. professor-style    → Kiểm soát giọng văn, cấu trúc khái niệm (6 mục: 2.1-2.6)
 2. document-design    → Kiểm soát bố cục, heading, learning elements
 3. fact-checker       → Xác minh MỌI technical claim trước khi commit
 4. web-fetcher        → Xác minh MỌI URL trước khi đưa vào tài liệu
+```
+
+**Nhóm B — 2 skill bổ sung (kích hoạt theo điều kiện — PHẢI cân nhắc trước khi bỏ qua):**
+
+```
+5. search-first       → Trước khi viết code/script/utility mới. Tìm tool/library/MCP/skill
+                         đã tồn tại trước khi tự viết. Áp dụng cho mọi tác vụ coding trong
+                         repo (scripts/, lab tooling, Python audit script, SVG tooling).
+                         Nguyên tắc: "Adopt > Extend > Compose > Build" — chỉ build custom
+                         khi 3 lựa chọn trên đã loại trừ.
+
+6. deep-research      → Khi cần research multi-source có citation cho nội dung onboard
+                         (technology evaluation, protocol history, vendor comparison,
+                         market/adoption data). Dùng firecrawl + exa MCP để lấy 15-30 nguồn,
+                         synthesize thành cited report. BẮT BUỘC khi viết content Phase B
+                         mà topic vượt quá phạm vi offline sources (doc/*) + bản năng LLM.
+```
+
+**Quy trình áp dụng toàn bộ 6 skill:**
+
+```
+1. Mở file .md để viết/sửa/audit → kích hoạt Core 4 (Nhóm A) ngay lập tức
+2. Trước khi viết code/script hỗ trợ (bash/Python/SVG tooling) → kích hoạt search-first
+3. Trước khi viết content section cần multi-source research → kích hoạt deep-research
+4. Ghi rõ trong fact-forcing gate answer những skill nào đã kích hoạt cho task này
+5. Nếu bỏ qua skill nào trong Nhóm B → PHẢI giải thích lý do (vd: topic đã có đủ doc/*
+   offline source; hoặc script < 10 dòng một lần dùng; hoặc coding task chỉ là edit
+   nhẹ file có sẵn)
 ```
 
 **KHÔNG được viết content trước rồi review sau.** Phải đọc skill TRƯỚC → viết → self-audit.
@@ -714,12 +747,21 @@ Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 
 ## Skill Quick Reference
 
+**Skill đã cài đặt tại `~/.claude/skills/` (6 skill — tất cả phải được dùng):**
+
+| Nhóm | Skill | Khi nào dùng |
+|------|-------|-------------|
+| Core A | professor-style | MỌI nội dung giảng dạy, viết .md, giải thích kỹ thuật |
+| Core A | document-design | MỌI file .md trong onboard series |
+| Core A | fact-checker | MỌI technical claim, CLI command, config directive |
+| Core A | web-fetcher | MỌI URL cần fetch hoặc verify |
+| Extra B | search-first | Trước khi viết code/script/utility mới — tìm tool/library/MCP/skill đã tồn tại |
+| Extra B | deep-research | Research multi-source có citation (firecrawl + exa MCP) khi offline doc/* không đủ |
+
+**Skill tham chiếu nội bộ (ngoài registry global, trigger qua CLAUDE.md):**
+
 | Skill | Khi nào dùng |
 |-------|-------------|
-| professor-style | MỌI nội dung giảng dạy, viết .md, giải thích kỹ thuật |
-| document-design | MỌI file .md trong onboard series |
-| fact-checker | MỌI technical claim, CLI command, config directive |
-| web-fetcher | MỌI URL cần fetch hoặc verify |
 | git-workflow | MỌI thao tác git: commit, push, branch, PR |
 | flow-graph | Sequence diagram, protocol flow, handshake diagram |
 | quality-gate | MỌI thao tác viết/sửa/commit — pre-flight checklist (Rule 6 ở trên) |
