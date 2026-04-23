@@ -10,7 +10,7 @@
 ## Session 37c — Phase G.1.3+G.1.4 expand 13.7 run loop + 20.0 case study playback
 
 **Ngày:** 2026-04-23 post session 37b.
-**Branch:** `docs/sdn-foundation-rev2` @ pending commit.
+**Branch:** `docs/sdn-foundation-rev2` @ `3793139` (session 37c pushed).
 **Trạng thái:** **Phase G 3/12 sessions DONE (25%). G.1 TRUY VẾT area COMPLETE (4/4 deliverable).**
 
 ### Session 37c deliverable
@@ -45,8 +45,8 @@ Cả 2 file pass ngưỡng < 0.10 em-dash, 0 null byte, không fabricate source 
 |---------|--------|------|--------|
 | 37a | G.1.1 | 9.25 expand +3 GE | ✅ DONE fad6631 |
 | 37b | G.1.2 | 9.27 NEW Debug playbook | ✅ DONE 2e139c8 |
-| 37c | G.1.3 | 13.7 expand §13.7.7 | ✅ DONE (pending commit) |
-| 37c | G.1.4 | 20.0 expand §20.7 | ✅ DONE (pending commit) |
+| 37c | G.1.3 | 13.7 expand §13.7.7 | ✅ DONE 3793139 |
+| 37c | G.1.4 | 20.0 expand §20.7 | ✅ DONE 3793139 |
 
 **G.1 Truy vết area: 4/4 deliverable COMPLETE.** Engineer sau Phase G.1 có framework systematic: Part 9.25 ofproto/trace fundamentals + advanced patterns (multi-bridge/register/recirc), Part 9.27 end-to-end debug playbook (3-tier view + TLV + MTU), Part 13.7 run loop deep-dive, Part 20.0 production case study playback.
 
@@ -65,7 +65,7 @@ G.2 effort estimated ~14-18 giờ tổng (4 session).
 ## Session 37b — Phase G.1.2 new Part 9.27 OVS+OVN Debug playbook
 
 **Ngày:** 2026-04-23 post session 37a.
-**Branch:** `docs/sdn-foundation-rev2` @ pending commit.
+**Branch:** `docs/sdn-foundation-rev2` @ `2e139c8` (session 37b pushed).
 **Trạng thái:** **Phase G 2/12 sessions DONE (17%)**. G.1.1 + G.1.2 complete.
 
 ### Session 37b DONE — G.1.2
@@ -102,7 +102,7 @@ File: `sdn-onboard/9.27 - ovs-ovn-packet-journey-end-to-end.md` (NEW, 659 dòng)
 | Session | Status |
 |---------|--------|
 | 37a G.1.1 expand 9.25 | ✅ DONE fad6631 |
-| 37b G.1.2 new 9.27 | ✅ DONE (pending commit) |
+| 37b G.1.2 new 9.27 | ✅ DONE 2e139c8 |
 | 37c G.1.3+G.1.4 expand 13.7+20.0 | ⏳ NEXT |
 | 37d-m | PENDING |
 
