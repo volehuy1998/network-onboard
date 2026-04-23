@@ -7,6 +7,78 @@
 
 ## Session gần nhất
 
+## Session 37a — Phase G kickoff G.1.1 expand 9.25 advanced trace exercises
+
+**Ngày:** 2026-04-23 post plan rev 3.0 approval (ExitPlanMode).
+**Branch:** `docs/sdn-foundation-rev2` @ `fad6631` (session 37a pushed).
+**Trạng thái:** **Phase G 1/12 sessions DONE (8%)**. G.1.1 complete, next session 37b queued.
+
+### Plan rev 3.0 approved
+
+Plan file `.claude/plans/federated-inventing-planet.md` rev 3.0 — Phase F wrap-up + Phase G proposal (OVS/OVN Core Deepening). User approved via ExitPlanMode → execute Option C (stop Phase F 7/9, start Phase G immediately). 13 Phase G task (#49-61) tracked in TaskList.
+
+Phase G scope 5 areas:
+- G.1 Truy vết (HIGH) — 4 deliverable, 2 session estimated
+- G.2 Xử lý sự cố (HIGH) — 4 deliverable, 4 session estimated
+- G.3 Debug OVN (MEDIUM) — 3 deliverable, 2 session estimated
+- G.5 Thao tác công cụ (HIGH) — 4 deliverable, 2-3 session estimated
+- G.4 Lịch sử optional (LOW) — 2 deliverable, 1-2 session estimated
+
+Total ~40-55 giờ spread 12+1 session.
+
+### Session 37a DONE — G.1.1 expand 9.25
+
+File: `sdn-onboard/9.25 - ovs-flow-debugging-ofproto-trace.md`
+Size: 636 → 1046 dòng (+410 insertions).
+Commit: `fad6631` pushed origin.
+
+Delta content:
+
+- **Guided Exercise 2** — Trace gói tin qua hai bridge nối bằng patch port. Chain `ofproto/trace br-int` + `ofproto/trace br-ex` thủ công vì trace dừng tại `output:<patch_ofport>`, không follow cross-bridge. Journey `veth-tenant → br-int → patch → br-ex → veth-uplink`. Lesson: OVN-OpenStack gateway 3 bridge cần 3 trace liên tiếp.
+
+- **Guided Exercise 3** — Trace pipeline có register + metadata mang state. 3-table pipeline với `load:0x5->NXM_NX_REG0[]` ở table 0, policy match `reg0=0x5` ở table 1, forward ở table 2. Đọc `Final flow: reg0=0x5` cuối output. POE "match field đủ debug" bác bỏ bằng scenario table 1 drop không thấy rõ lý do nếu bỏ qua register.
+
+- **Guided Exercise 4** — Trace có recirculation qua `ct()` + tunnel decap. Stateful firewall 2-table với `ct(table=1,zone=1)` + `ct(commit)`. Demo flag `--ct-next "new,trk"` vs `"est,trk"` vs không flag (trace assume `ct_state=0` miss rule). Tunnel decap (`tnl_pop` sau VXLAN/Geneve) tạo recirc block tương tự.
+
+- **Mục tiêu bài học** +3 objective (Bloom Apply/Analyze/Apply) điểm 6-7-8.
+- **§9.25.10 Điểm cốt lõi** +3 key point (Tám/Chín/Mười) tương ứng 3 GE mới.
+
+### Quality gate session 37a
+
+- Rule 9 null bytes: 0
+- Rule 13 em-dash density: 0.047/line (threshold < 0.10)
+- Rule 11 Vietnamese prose: clean (name-expansion `(integration, ...)` và `(external, ...)` acceptable per §11.1 — OVN-OpenStack terminology standard).
+- Rule 14 source code citation: n/a (behavior-level docs, không cite SHA/function/file path upstream).
+
+### Phase G status
+
+| Session | Scope | File | Status |
+|---------|-------|------|--------|
+| 37a | G.1.1 expand 9.25 | `9.25` +3 GE | ✅ DONE (fad6631) |
+| 37b | G.1.2 new 9.27 packet journey | `9.27` NEW ~600-800 dòng | ⏳ PENDING |
+| 37c | G.1.3+G.1.4 | `13.7` + `20.0` | PENDING |
+| 37d | G.2.1 expand 9.14 | `9.14` +10 scenario | PENDING |
+| 37e | G.2.2 new 9.28 runbook | `9.28` NEW | PENDING |
+| 37f | G.2.3 new 9.29 bond flap | `9.29` NEW | PENDING |
+| 37g | G.2.4 new 9.30 conntrack | `9.30` NEW | PENDING |
+| 37h | G.3.1 new 13.14 OVN | `13.14` NEW | PENDING |
+| 37i | G.3.2+G.3.3 | `9.26` + `20.1` | PENDING |
+| 37j | G.5.1+G.5.2 | `9.4` + `9.11` | PENDING |
+| 37k | G.5.3 new 9.31 OVS playbook | `9.31` NEW | PENDING |
+| 37l | G.5.4 new 13.15 OVN playbook | `13.15` NEW | PENDING |
+| 37m | G.4 optional historical | `9.0` + `13.0` | PENDING (optional) |
+
+### Resume protocol session 37b
+
+User directive "cập nhật tiến độ và tiếp tục" → execute session 37b ngay:
+1. Create `sdn-onboard/9.27 - ovs-ovn-packet-journey-end-to-end.md` (NEW)
+2. Story complete: VM NIC → tap → OVS br-int → encap → underlay → remote br-int decap → remote VM NIC
+3. Parallel view: ovn-trace (logical) + ofproto/trace (OpenFlow) + dpif/dump-flows (datapath)
+4. ~600-800 dòng, 5-6 giờ effort estimated
+5. Commit + push
+
+---
+
 ## Session 36g + priority adjustment — K8S deprioritized, Phase F partial close
 
 **Ngày:** 2026-04-23 post session 36f commit + audit pass.
