@@ -3004,3 +3004,123 @@ Sau đó quay lại C1b Lab Verification khi lab host available → C6b Final Pu
 ---
 
 **Hết Phụ lục G Phase E plan.** Session 32 approved + in-progress (audit residual + Phụ lục G này). Session 33 standby chờ session 32 close.
+
+**Update 2026-04-23 end Phase E:** Phase E COMPLETE end-to-end (11 session 32 → 35). 7 commit pushed `076ef87` → `31104a6`. Curriculum v2.1-preVerified. User approve open Phase F session 2026-04-23 close.
+
+---
+
+## Phụ lục H — Phase F Block XIV-XVI Expert Content (rev 1 skeleton, 2026-04-23)
+
+> **Trạng thái:** Plan skeleton (chưa execute). User approve open 2026-04-23 end session 35.
+> **Branch:** `docs/sdn-foundation-rev2` @ `31104a6` (post Phase E).
+> **Gối lên:** Phase E (Scope D fact-check audit COMPLETE + Rule 14 codified).
+> **Driver directive:** User directive 2026-04-23 sau khi hỏi "đã xong hết phase chưa": "tôi chọn 3 mở Phase F nhưng hãy save context đi tôi cần khởi động lại máy tính rồi mới tiếp tục được". Option 3 = Phase F Block XIV-XVI content phase.
+
+### H.1 Bối cảnh
+
+Block XIV-XVI (Expert Extension) đã có **architecture + exercise skeleton** từ session 17 (C5.4 + C5.5). Section body (nội dung giảng dạy chi tiết) chưa viết — các file hiện chỉ có:
+
+- Header block 7-field
+- Learning objectives Bloom
+- Section heading (## X.Y.Z với tên đầy đủ)
+- 2-3 câu tóm tắt dưới mỗi heading
+- Exercise 2-3 với Mục đích/Chuẩn bị/Mô hình/Bước/Output/Bài học (đầy đủ)
+- References placeholder
+
+Phase F mục tiêu: **fill section body content** cho 9 file XIV-XVI (3 file/block × 3 block), mỗi file 800-1.200 dòng final. Tổng ~7.000-11.000 dòng content mới.
+
+### H.2 Scope 9 file Block XIV-XVI
+
+**Block XIV — P4 Programmable Data Plane (3 file):**
+- `14.0 - p4-language-fundamentals.md` — P4_16 spec syntax, parser/control/deparser, match-action table, header types, architecture target model
+- `14.1 - tofino-pisa-silicon.md` — Intel Tofino ASIC, PISA architecture, RMT (Reconfigurable Match Tables), programmable parser + match-action engine
+- `14.2 - p4runtime-gnmi-integration.md` — P4Runtime gRPC protocol, gNMI config management, integration với ONOS/Stratum
+
+**Block XV — Cloud Native Integration (3 file):**
+- `15.0 - service-mesh-integration.md` — Service mesh concepts (Istio/Linkerd), sidecar proxy, traffic policy, so sánh với OVN-native L4-L7
+- `15.1 - ovn-kubernetes-cni-deep-dive.md` — ovn-kubernetes CNI architecture, node-local control plane, Gateway mode, Network Policy translation
+- `15.2 - cilium-ebpf-internals.md` — Cilium architecture, eBPF kernel datapath, identity-based security, comparison với OVN
+
+**Block XVI — Kernel + DPDK + AF_XDP Performance (3 file):**
+- `16.0 - dpdk-afxdp-kernel-tuning.md` — Kernel network stack tuning (NAPI, GRO, RPS/RFS), DPDK overview, AF_XDP introduction
+- `16.1 - dpdk-advanced-pmd-memory.md` — DPDK PMD thread model, mempool + mbuf allocation, NUMA awareness, vector instructions
+- `16.2 - afxdp-xdp-programs.md` — XDP hook points, eBPF XDP programs, AF_XDP socket, libxdp helpers
+
+### H.3 Offline source inventory (content phase)
+
+Per Rule 12 + Rule 14, mỗi file phải cite offline + online source verified:
+
+**Block XIV P4:**
+- Offline: P4_16 spec PDF (p4.org), Tofino architecture whitepaper (Intel/Barefoot), ONOS P4-enabled tutorial
+- Online MCP verify: `p4lang/p4runtime` repo (proto + doc), `stratum-project/stratum` reference implementation
+
+**Block XV Cloud Native:**
+- Offline: `sdn-onboard/doc/compass_artifact_wf-*.md` if available
+- Online MCP verify: `ovn-kubernetes/ovn-kubernetes` repo, `cilium/cilium` repo, Istio docs, Linkerd docs
+
+**Block XVI Performance:**
+- Offline: Linux kernel Documentation/networking, DPDK programmer's guide PDF, AF_XDP reference (kernel doc)
+- Online MCP verify: `DPDK/dpdk` repo (v21.11 baseline), `torvalds/linux` (v5.15 baseline), libxdp repo
+
+### H.4 Quality gate (kế thừa Phụ lục F.6 + Rule 14)
+
+Per file:
+
+- [x] Header 7-field (blockquote) preserved từ skeleton
+- [x] Learning objectives 3-5 Bloom preserved
+- [x] Section body: mỗi ## X.Y.Z viết 100-300 dòng content chi tiết
+- [x] 2-3 misconception callout `> **Hiểu sai:**`
+- [x] POE ít nhất 1 chỗ với hypothesis bác bỏ
+- [x] Cross-ref OVN/OVS comparison (cuối file)
+- [x] References 6-10 items, all Rule 14 verified
+- [x] Rule 9 null bytes: 0
+- [x] Rule 11 prose: concept name English, vocabulary tư duy Việt
+- [x] Rule 13 em-dash density < 0.10/line
+- [x] Rule 14 Source Code Citation Integrity: mọi commit SHA + function + file path verified MCP
+
+### H.5 Sequencing — 9 session (36a-36i)
+
+| Session | File | Effort |
+|---------|------|--------|
+| 36a | 14.0 P4 language fundamentals | 6-8 giờ |
+| 36b | 14.1 Tofino PISA silicon | 5-7 giờ |
+| 36c | 14.2 P4Runtime + gNMI integration | 5-7 giờ |
+| 36d | 15.0 Service mesh integration | 5-7 giờ |
+| 36e | 15.1 OVN-Kubernetes CNI deep-dive | 7-9 giờ |
+| 36f | 15.2 Cilium eBPF internals | 6-8 giờ |
+| 36g | 16.0 DPDK/AF_XDP/kernel tuning | 6-8 giờ |
+| 36h | 16.1 DPDK advanced PMD + memory | 5-7 giờ |
+| 36i | 16.2 AF_XDP XDP programs | 6-8 giờ |
+
+**Total Phase F:** ~50-70 giờ spread 9 session. Option Y review protocol áp dụng: user review sau mỗi session close.
+
+### H.6 Dependencies + order
+
+Suggested order: 14 → 16 → 15 (theo complexity ramp + minimize context switch).
+
+- **14 trước** vì P4 hoàn toàn standalone, không phụ thuộc Block khác (học theoretical trước)
+- **16 giữa** vì kernel/DPDK tuning áp dụng cho OVS userspace (9.3 reference)
+- **15 cuối** vì service mesh + OVN-K8s + Cilium cần nền tảng OVS/OVN + kernel đã vững
+
+### H.7 Out-of-Scope Phase F
+
+1. **Lab verification** (C1b) — vẫn defer chờ lab host user
+2. **Publication build** (C6b) — defer sau khi Phase F content DONE
+3. **New forensic case studies** — không mở rộng forensic scope thêm ngoài 9.26 + 17/18/19 đã có
+4. **Re-audit Phase E fixes** — Phase E đã verified commit trail, không re-audit
+
+### H.8 Status
+
+**2026-04-23 end session 35:** Plan skeleton viết. User confirm "chọn 3 mở Phase F" + "save context đi tôi cần khởi động lại máy tính rồi mới tiếp tục được".
+
+**Resume protocol cho session 36a:**
+1. User khởi động máy, start Claude Code session mới
+2. Đọc CLAUDE.md (Current State table có Phase F row)
+3. Đọc `memory/session-log.md` entry "Session 32-35 COMPLETE + Phase F opened"
+4. Đọc `plans/sdn-foundation-architecture.md` Phụ lục H (plan này)
+5. User confirm priority order (14 → 16 → 15 hay khác)
+6. Start session 36a với 14.0 P4 language fundamentals
+
+---
+
+**Hết Phụ lục H.** Phase F saved context 2026-04-23 end session 35, chờ user restart máy + resume.

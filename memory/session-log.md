@@ -66,14 +66,40 @@ Commits: `076ef87` + `b243207`.
 - Audit trail: `memory/fact-check-audit-2026-04-22.md` với evidence MCP verify cho mọi fix.
 - Release ready: **v2.1-preVerified** (chờ C1b Lab Verification + C6b Final Publish).
 
-### Resume checklist cho session 36+
+### Resume checklist cho session 36+ (UPDATED 2026-04-23 end session 35)
 
-1. `git fetch && git pull --ff-only origin docs/sdn-foundation-rev2`
-2. Đọc CLAUDE.md Current State — Phase E COMPLETE + v2.1 state
-3. Đọc `memory/fact-check-audit-2026-04-22.md` cho context audit history
-4. Nếu user có lab host → execute C1b Lab Verification theo `memory/lab-verification-pending.md`
-5. Sau C1b → C6b Final Publish v2.1-Verified qua `scripts/build-sdn-pdf.sh`
-6. Nếu extend Phase E: deferred items session 33b (13.13 migration parity, 13.11 BGP/OSPF, 13.10 DNS upstream) + Block XIV-XVI content phase (Phase F plan new)
+**User decision end session 35:**
+- Phase E hoàn tất, user approve.
+- Lab host: **chưa có** — user confirm "khi nào có sẽ thông báo". C1b + C6b giữ trạng thái defer.
+- Option 3 chọn: **mở Phase F** (Block XIV-XVI content phase).
+- User cần restart máy tính trước khi continue. Save context complete.
+
+**Resume steps:**
+
+1. `git fetch origin && git pull --ff-only origin docs/sdn-foundation-rev2` (sync latest từ session 32-35 commits)
+2. Đọc `CLAUDE.md` Current State table (có Phase F row đã được add)
+3. Đọc `memory/session-log.md` entry "Session 32-35 Phase E COMPLETE + Phase F opened"
+4. Đọc `plans/sdn-foundation-architecture.md` **Phụ lục H** — Phase F Block XIV-XVI Expert Content plan skeleton đầy đủ:
+   - §H.2: 9 file XIV-XVI (P4 + Cloud Native + Performance)
+   - §H.3: Offline + Online source inventory
+   - §H.4: Quality gate Rule 14 compliance
+   - §H.5: Sequencing 9 session 36a-36i
+   - §H.6: Order suggested 14 → 16 → 15
+5. User confirm priority order (14 → 16 → 15 hay khác)
+6. Start session 36a: `sdn-onboard/14.0 - p4-language-fundamentals.md` content phase (6-8 giờ)
+7. Rule 14 pre-write enforcement: mọi P4/Tofino/P4Runtime claim verify qua MCP GitHub trước khi cite
+
+**Phase F effort total estimate:** ~50-70 giờ spread 9 session.
+
+**Deferred sau Phase F (nếu user muốn extend):**
+- Session 33b P4 low-priority nợ (13.13 parity, 13.11 BGP/OSPF, 13.10 DNS, 13.8 stage name)
+- C1b Lab Verification (chờ lab host)
+- C6b Final Publish v2.1-Verified → v2.2-Verified sau Phase F
+
+**Tools state:**
+- Node v24.15.0 LTS đã cài (winget install 2026-04-23). Hook stop error sẽ hết sau restart.
+- MCP GitHub full access confirmed hoạt động (trừ search_code false negative — pattern document trong Rule 14).
+
 
 
 

@@ -852,6 +852,9 @@ mọi Part mới hoặc audit lại file cũ. Rule 14 áp dụng tiếp nối
 | Session 33i status | **DONE** Rule 14 Source Code Citation Integrity codify vào CLAUDE.md (7 subsection 14.1-14.7) commit `7e5608b`. |
 | Session 34 status | **DONE** Part 9.26 OVS Revalidator Storm Forensic (464 dòng, 6 điểm cốt lõi, 2 Guided Exercise + 1 Capstone POE) với Rule 14 pre-write verify — commit `180ab2fd635e` + `464bc6f9` + `0d9dc8e9` all verified real. |
 | Session 35 status | **DONE** README TOC Block IX 27 file + memory/session-log.md + CLAUDE.md Current State sync. |
+| Phase F status | **🔵 OPENED (plan skeleton)** — User approve 2026-04-23 end session 35 "chọn 3 mở Phase F nhưng hãy save context đi tôi cần khởi động lại máy". Plan `plans/sdn-foundation-architecture.md` Phụ lục H viết. 9 file XIV-XVI Expert content (P4 + Cloud Native + Performance), ~50-70 giờ effort, 9 session 36a-36i. Standby chờ user restart máy + resume. |
+| Lab host status | **⏳ PENDING — chờ user** — 2026-04-23 user confirm "chưa có môi trường để thực hành, khi nào có sẽ thông báo". 57 exercise pending C1b (54 original + 3 từ Part 9.26 mới). |
+| Tools state | Node v24.15.0 LTS installed (winget, 2026-04-23). MCP GitHub full access confirmed working. Restart Claude Code to activate node for hooks. |
 | Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful. |
 | Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 + Part 9.21 + Rule 13 ra đời + Rule 11 retrofit session 22+23. |
 | Session 25 status | **DONE** Audit P0.1 (README TOC 14 orphans) + P0.2 (2 dead URL) + P1.4 (Rule 13 top 10, 508→156) + P3.8 (CLAUDE.md state) + Part 9.9 QoS expansion (+458 dòng). |

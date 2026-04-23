@@ -15,15 +15,21 @@
 
 ## Metadata
 
-- **Tracker status:** Populated 2026-04-22 (session 16, C1a first pass)
-- **Verified on real lab:** 0 / pending (chưa có host)
-- **Last audit pass:** C1a systemic Grep (2026-04-22) — 54 Exercise/Lab/Capstone headings identified across 70 files
+- **Tracker status:** Populated 2026-04-22 (session 16, C1a first pass); extended 2026-04-23 Phase E (+Part 9.26)
+- **Verified on real lab:** 0 / pending (chưa có host — user confirmed 2026-04-23 session 35 close: "chưa có môi trường để thực hành, khi nào có sẽ thông báo")
+- **Last audit pass:** Phase E Scope D fact-check audit (2026-04-22) — 108 file total curriculum
 - **Lab environment required:**
   - Ubuntu 22.04.3 LTS (kernel 5.15+)
   - OVS 2.17.9 (apt install openvswitch-switch)
   - OVN 22.03.8 (apt install ovn-central ovn-host)
   - Minimum 3 VM/container cho HA test
-  - Dedicated physical NIC cho hw-offload labs (Block IX.5)
+  - Dedicated physical NIC cho hw-offload labs (Block IX.5 + 9.26 revalidator storm reproducer)
+
+**Status update 2026-04-23 end Phase E:**
+- User đã confirm chưa có lab host. Save state, chờ user notify.
+- Total exercise inventory: 54 (original C1a) + 3 (9.26 new: upcall/show Exercise 1 + coverage/show Exercise 2 + Capstone POE "reducing flow-limit") = **57 exercise pending C1b verification**.
+- Priority HIGH additions: Part 9.26 Capstone POE — reproduce stale ukey leak scenario trên lab, verify `upcall/show` output, đo dump duration threshold.
+- Priority MEDIUM additions: Part 9.26 Exercise 1 + 2 — CLI output verification trên OVS 2.17.9 (expect baseline keys count = current flows).
 
 ## C1a Summary (Exercise Inventory)
 
