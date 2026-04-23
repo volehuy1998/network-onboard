@@ -7,6 +7,83 @@
 
 ## Session gần nhất
 
+## Session 38 — Phase H kickoff: template library + Part 9.4 expansion pilot
+
+**Ngày:** 2026-04-24.
+**Branch:** `docs/sdn-foundation-rev2` @ post `6ed81ec`.
+**Trạng thái:** Phase H approved + S38 pilot DONE.
+
+### Bối cảnh
+
+Audit pass 2 (max effort) 2026-04-24 phát hiện gap CRITICAL:
+- 71% code block ≤ 5 dòng (median 3), không xứng "chi tiết + tỉ mỉ" theo mandate user
+- 65/110 concept foundation shallow, 18 concept 0-mention (ovn_egress_table, lr_in_*/lr_out_*, ipv6_fields, smc_cache, action_controller, meter_band, nb_static_route, nb_copp, ovs-bugtool, ct_alg, ...)
+- Output interpretation chỉ 7/109 file có section "đọc hiểu output"
+- Part 9.4/9.11 "playbook" thực tế 9/10 section chỉ 2-5 dòng code, punt sang file khác
+
+User approved Phase H plan 12-session foundation depth pass tại `plans/phase-h-foundation-depth.md`. S38 kickoff pilot.
+
+### S38 deliverable
+
+**H.0 Template library** — tạo `sdn-onboard/_templates/` với 5 file:
+- `README.md` (40 dòng) — index + usage guide + quality checklist
+- `template-a-anatomy-block.md` (74) — Anatomy block cho output (OVS Advanced Tutorial pattern)
+- `template-b-per-field.md` (80) — Per-field 9-attribute anatomy (ovs-fields(7) pattern) + inventory 104 match field foundation
+- `template-c-per-action.md` (114) — Per-action 8-attribute anatomy (ovs-actions(7) pattern) + inventory ~40 action + 6 instruction
+- `template-d-per-table.md` (192) — Per-table pipeline stage (ovn-architecture(7) pattern) + inventory ~61 OVN stage (LS ingress 27 + LS egress 10 + LR ingress 19 + LR egress 7)
+- Total 500 dòng.
+
+**H.2.1 Pilot Part 9.4** — expand 267 → 1406 dòng (+1139):
+- §9.4.1 ovs-vsctl: grammar, atomicity, catalog 30+ subcommand, Anatomy `show` output, 3 scenario (bridge+internal port, QoS 2 queue, find+get script)
+- §9.4.2 ovs-ofctl: grammar, flow syntax, Anatomy `show` output, Anatomy `dump-flows` output (reproduce từ OVS Advanced Tutorial), scenario replace-flows/diff-flows hygiene, scenario monitor live event
+- §9.4.3 ovs-appctl: grammar, target discovery, Anatomy `ofproto/trace` 4 khối output, Anatomy `fdb/show`, Anatomy `upcall/show`, Anatomy `coverage/show`
+- §9.4.4 ovs-dpctl: grammar, Anatomy `show`, Anatomy `dump-flows -m`, Anatomy `dump-conntrack`
+- §9.4.5 ovsdb-client: grammar, dump+monitor scenario, backup/restore scenario
+- §9.4.6 6-layer troubleshooting playbook với guided exercise full walkthrough
+- §9.4.7 cheat-sheet với decision tree "khi nào dùng tool nào" + 25 command phải thuộc
+
+**Rule compliance:**
+- Rule 9 null byte 0 (PASS)
+- Rule 13 em-dash density 0.041/line (PASS, target < 0.10)
+- Rule 11 §11.6 prose sweep: 12 fix (pattern→mẫu, Engineer→Kỹ sư, Verify→Kiểm chứng, Monitor→Theo dõi)
+- Rule 14 N/A (tool documentation, no new source code ref)
+- Rule 6 Quality Gate Checklist B+C PASS
+- Template library: Rule 13 initial FAIL (B: 0.21, C: 0.18) → fix bằng bullet definition `: ` + `**Nhóm X,**`/`**Category X,**`/`**Tier X,**` comma replace → all PASS (0.013, 0.009)
+
+**Code block stats 9.4:**
+- 38 blocks, median 12 mean 15.4 max 36
+- ≤5 blocks: 13.2% (target < 40%, PASS)
+- ≥30 blocks: 5 (13.2%)
+- Phase H gate "median ≥ 15" FAIL hiện tại 12, gần target
+
+### Upstream reference lifted
+
+- man `ovs-vsctl(8)` — CONFIGURATION COOKBOOK + EXAMPLES + DATABASE COMMANDS → cookbook QoS 2 queue + 30+ subcommand catalog
+- man `ovs-ofctl(8)` — SWITCH COMMANDS + FLOW SYNTAX + OPTIONS → full command list + flow syntax table + OpenFlow version negotiation
+- man `ovs-dpctl(8)` — COMMANDS + OPTIONS → dpctl catalog (show, dump-flows, dump-conntrack, ct-stats-show)
+- openvswitch.org/support/dist-docs/ovs-appctl.8.html — COMMON COMMANDS (vlog/*, list-commands, version, memory/show)
+- Compass artifact Ch A/L/Q/R + Appendix A/C (ground truth cho 6-layer playbook)
+
+### Progress Phase H
+
+- 1/13 session DONE
+- Plan `plans/phase-h-foundation-depth.md`
+- Tracker `memory/phase-h-progress.md`
+- Next: S39 — Part 9.11 ovs-appctl reference (215 → ~800 dòng), 20+ appctl target × Anatomy block
+
+### Commit + push
+
+Sẽ commit session S38 với scope:
+- Add: `sdn-onboard/_templates/` (5 file)
+- Modify: `sdn-onboard/9.4 - ovs-cli-tools-playbook.md` (full rewrite)
+- Modify: `memory/sdn-onboard-audit-2026-04-24.md` (append §12 + §13 + §14)
+- Add: `plans/phase-h-foundation-depth.md`
+- Add: `memory/phase-h-progress.md`
+- Modify: `CLAUDE.md` (Phase H + S38 status rows)
+- Modify: `memory/session-log.md` (S38 entry)
+
+---
+
 ## Session 37c — Phase G.1.3+G.1.4 expand 13.7 run loop + 20.0 case study playback
 
 **Ngày:** 2026-04-23 post session 37b.
