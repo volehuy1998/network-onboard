@@ -85,6 +85,94 @@ Commit: `2f152f6`.
 - 7 file Critical còn lại (3.2/3.1/3.0/2.1/2.4/4.6/6.0) đã retrofit ở session 13. Prose hits còn lại là low-priority cosmetic refinements.
 - C1b Lab Verification + C6b Final Publish vẫn chờ lab host.
 
+### Session 30 — P2.5 context-review 2 Critical files (3.2 + 4.6)
+
+**Ngày:** 2026-04-23. **Branch:** @ `02edad8` — pushed.
+
+- **Part 3.2** ONF formation: 102 changes (79 pass 1 + 17 pass 2 P2.7 dict + 6 manual syntax fix).
+- **Part 4.6** OpenFlow limitations: 30 changes (29 + 1).
+
+URL protection mới (regex `\[([^\]]+)\]\((https?://[^\)]+)\)`) — 0 URL corruption. Manual cleanup 6 line syntax awkward ("do người vận hành dẫn dắt model" → "Mô hình do người vận hành dẫn dắt" + 5 câu tương tự).
+
+Commit: `02edad8`.
+
+### Session 31 — P2.5 context-review 6 residual Critical files
+
+**Ngày:** 2026-04-23. **Branch:** @ `22a8616` — pushed.
+
+6 file Phase B residual đã retrofit session 13 nhưng còn prose hits:
+
+- **Part 3.1** OpenFlow 1.0 spec: 42 replacements.
+- **Part 3.0** Stanford Clean Slate: 30 replacements.
+- **Part 2.1** Ipsilon + Active Networking: 32 replacements.
+- **Part 2.4** Ethane ancestor: 29 replacements.
+- **Part 5.0** SDN via APIs NETCONF/YANG: 21 replacements.
+- **Part 6.0** P4 data plane: 17 replacements.
+
+Total 171 prose replacements. Em-dash density 0.000/line cả 6 file. 0 URL corruption. 0 null bytes.
+
+Patterns extended: troubleshoot/subtle/pedagogical/motivation/criteria/flexibility/bidirectional/symmetric/asymmetric/experiment/tolerate/undefined thêm vào session 30 set.
+
+Commit: `22a8616`.
+
+**P2.5 Rule 11 audit — TOTAL 11 Critical files cleaned across session 29+30+31:**
+
+| File | Session | Replacements |
+|------|---------|--------------|
+| 19.0 | 29 | 87 |
+| 17.0 | 29 | 19 |
+| 18.0 | 29 | 17 |
+| 3.2 | 30 | 102 |
+| 4.6 | 30 | 30 |
+| 3.1 | 31 | 42 |
+| 3.0 | 31 | 30 |
+| 2.1 | 31 | 32 |
+| 2.4 | 31 | 29 |
+| 5.0 | 31 | 21 |
+| 6.0 | 31 | 17 |
+
+Total **426 replacements** across 11 Critical files.
+
+**Audit 2026-04-23 COMPLETE:**
+
+✅ P0.1 README TOC 14 orphan (session 25)
+✅ P0.2 Dead URL (session 25)
+✅ P1.4 Rule 13 top 10 (session 25)
+✅ P2.5 Rule 11 Critical 11/11 (session 29+30+31)
+✅ P2.6 Rule 13 remaining 20 (session 28)
+✅ P2.7 Dictionary expansion (session 28)
+✅ P3.8 CLAUDE.md Current State (session 25)
+✅ P3.9 session-log.md (cumulative qua các session)
+
+Chỉ còn deferred cho bên ngoài audit scope:
+- C1b Lab Verification — chờ lab host.
+- C6b Final Publish v2.0 — chờ C1b.
+
+### Curriculum state end session 31
+
+- **93 file, ~40.5K dòng** content OVS/OpenFlow/OVN.
+- Rule 9 null bytes: 0.
+- Rule 11 prose: 100% safe pattern + 11/11 Critical context-cleaned.
+- Rule 12 offline source: 100% cite.
+- Rule 13 em-dash density: 100% compliance (< 0.10/line toàn curriculum).
+
+### Tổng commits session 24-31 (13 commits pushed trên branch docs/sdn-foundation-rev2)
+
+1. `ce2c13b` — Rule 11 retrofit session 22+23 Parts
+2. `41f6533` — Part 9.25 + Rule 13
+3. `24bb66b` — Part 9.21 + Phase D new-Part COMPLETE
+4. `edbba24` — Session 25 audit P0+P1.4+P3.8
+5. `cab7ea5` — Part 9.9 QoS expansion
+6. `b225c1d` — Part 11.3 GRE expansion
+7. `b1200c9` — Part 11.4 IPsec + Part 9.2 kernel datapath (Phase D COMPLETE)
+8. `497d9e7` — Session 28 P2.6+P2.7
+9. `434890f` — Session 28 P2.5 safe
+10. `2a11a53` — Session 24-28 handoff
+11. `2f152f6` — Session 29 P2.5 context 3 files
+12. `d883751` — Session 29 handoff
+13. `02edad8` — Session 30 P2.5 context 2 files
+14. `22a8616` — Session 31 P2.5 context 6 residual
+
 ### Curriculum state end session 28
 
 - **93 file, ~40.5K dòng** content OVS/OpenFlow/OVN.
