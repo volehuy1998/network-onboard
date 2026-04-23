@@ -7,6 +7,50 @@
 
 ## Session gần nhất
 
+## Session 43 — Phase H H.4.2: Actions Template C tier 2 (field+encap+metadata+QoS)
+
+**Ngày:** 2026-04-24 post S42.
+**Branch:** `docs/sdn-foundation-rev2` @ post `bfe569e`.
+**Trạng thái:** Phase H 6/13 session DONE (46%). Curriculum 111 file (không đổi).
+
+### S43 deliverable
+
+Append Part 4.9 tier 2 content. File 762 → 1124 dòng (+362).
+
+**8 section mới:**
+- §4.9.15 Category 2 VLAN: push_vlan (0x8100, 0x88a8 Q-in-Q), pop_vlan/strip_vlan + ví dụ tagging workflow (access → trunk, Q-in-Q double tag)
+- §4.9.16 Category 2 MPLS: push_mpls/pop_mpls (0x8847 unicast, 0x8848 multicast) + ví dụ L3 VPN label push tại PE + push_pbb/pop_pbb (lightly, scope DC không dùng) + encap/decap generic OF 1.5
+- §4.9.17 Category 3 `set_field` generic: syntax + mask + ví dụ 4 use case (MAC, DNAT, OUI partial, DSCP) + so sánh với legacy mod_*
+- §4.9.18 Category 3 legacy `mod_*` family: bảng 11 mod_* → set_field mapping + dec_ttl router function + dec_mpls_ttl + copy_ttl_in/out MPLS stacking
+- §4.9.19 Category 3 move + load: bit-range manipulation + ví dụ ARP responder (7-action classic pattern) + OVN reg0 subfield split
+- §4.9.20 Category 4 metadata: write_metadata (strict instruction) + set_tunnel/set_tunnel64 + modern set_field:<vni>->tun_id replacement
+- §4.9.21 Category 7 QoS: set_queue + enqueue (legacy) + meter OF 1.3+ với band type (drop/dscp_remark) + ví dụ VoIP prioritization
+- §4.9.22 Bảng tổng hợp action tier 1+2 (coverage ~35/40 action, còn ~5 advanced cho S44)
+
+### Quality gate
+
+- Rule 9 null byte: 0 + 0 regression 111 file
+- Rule 13 em-dash: 0.046/line (PASS)
+- Rule 11 §11.6: 2 fix (monitor→theo dõi, verify→kiểm chứng)
+- Rule 14 N/A (action reference catalog)
+- Code block statistics: 34 blocks, median 5, mean 7.1
+
+### Upstream
+
+- man ovs-actions(7) Category 2-4+7
+- OpenFlow 1.3 spec §5.10
+- OpenFlow 1.5 spec generic encap/decap
+- OVS source `include/openvswitch/ofp-actions.h` (struct ofpact_push_vlan, ofpact_mod_field, etc.)
+
+### Progress Phase H
+
+- 6/13 session DONE (46%)
+- S38 + S39 + S40 + S41 + S42 + S43 DONE
+- Curriculum 111 file, ~43.000 dòng
+- Next: S44 — H.4.3 Actions tier 3 advanced: ct, learn, conjunction, multipath, bundle, clone deep. Append tier 3 vào Part 4.9 → 1500+ dòng target.
+
+---
+
 ## Session 42 — Phase H H.4.1: Actions Template C tier 1 (output+control)
 
 **Ngày:** 2026-04-24 post S41.

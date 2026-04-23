@@ -79,6 +79,17 @@ Total: 500 dòng template library.
 | Scope cover | 14 section tier 1 | §4.9.1 action vs instruction + §4.9.2-10 Category 1 Output (output, drop, normal, flood, all, controller, local, in_port, table, group) + §4.9.11-13 control actions (resubmit, clone, note) + §4.9.14 Action Set 12-priority order |
 | Upstream lift | ovs-actions(7) + OpenFlow 1.3/1.5 spec §5.10-5.11 + OVS `ofp-actions.h` + OVS `ofproto-dpif-xlate.c` |
 | Template C | Áp dụng thực tế lần đầu | 8-attribute anatomy (Syntax/Category/OF version/Prerequisites/Semantics/Parameters/Side effects/Conformance) |
+
+## Session S43 deliverables (H.4.2 Actions tier 2)
+
+| Item | Status | Note |
+|---|---|---|
+| Part 4.9 tier 2 append | DONE | 762 → 1124 dòng (+362) |
+| Rule 9 null byte | PASS | 0 null |
+| Rule 11 §11.6 prose sweep | PASS | 2 fix (monitor→theo dõi, verify→kiểm chứng) |
+| Rule 13 em-dash density | PASS | 0.046/line |
+| Scope cover | 8 section mới | §4.9.15 VLAN push/pop (0x8100 + 0x88a8 Q-in-Q) + §4.9.16 MPLS push/pop + PBB encap/decap + §4.9.17 set_field generic với mask + §4.9.18 mod_* legacy (11 action) + dec_ttl router function + copy_ttl MPLS stacking + §4.9.19 move/load register bit-range + §4.9.20 write_metadata + set_tunnel/64 + §4.9.21 set_queue + enqueue + meter OF 1.3+ + §4.9.22 bảng tổng hợp action tier 1+2 |
+| Upstream | ovs-actions(7) Category 2-4+7 + OpenFlow 1.3 §5.10 + OVS ofp-actions.h |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
