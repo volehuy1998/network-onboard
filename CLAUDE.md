@@ -842,7 +842,16 @@ mọi Part mới hoặc audit lại file cũ. Rule 14 áp dụng tiếp nối
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `f868d8e` (session 31 CLOSED — Phase D COMPLETE end-to-end + Audit 2026-04-23 FULL COMPLETE). Release-ready v2.0-preVerified. |
+| Active branch | `docs/sdn-foundation-rev2` @ `7e5608b` (session 34 post — Phase E Scope D audit full + Rule 14 codify + Part 9.26 OVS forensic). Release-ready v2.1-preVerified. |
+| Phase E status | **🎉 COMPLETE** — Scope A (audit rev2 residual cleanup, 14 fixes), Scope D (fact-check audit 101 file, 32 issues fixed), Scope B (Part 9.26 OVS forensic 464 dòng), Rule 14 codified. Session 32+33a-33i+34+35. |
+| Session 32 status | **DONE** Audit rev2 residual (Rule 11 + header backfill) + Phụ lục G + MAX_FDB_ENTRIES version drift fix (`076ef87`+`b243207`). |
+| Session 33a status | **DONE** Scope D.1 3 Advanced OVN fact-check (17.0/18.0/19.0, 26 issues 6 category) commit `acc58a2`. |
+| Session 33b status | **DONE** Scope D.2 Block XIII OVN foundation (5 issues Chassis_features fabricated + stage count + timestamp version) commit `e06bf63`. |
+| Session 33c status | **DONE** Scope D.3 Block IX OVS internals (1 date drift OVS 2.0) commit `93442cc`. |
+| Session 33d-h status | **DONE** Block 0-VIII+X-XII+XIV-XVI+XX (0 issues, low density) batch audit. |
+| Session 33i status | **DONE** Rule 14 Source Code Citation Integrity codify vào CLAUDE.md (7 subsection 14.1-14.7) commit `7e5608b`. |
+| Session 34 status | **DONE** Part 9.26 OVS Revalidator Storm Forensic (464 dòng, 6 điểm cốt lõi, 2 Guided Exercise + 1 Capstone POE) với Rule 14 pre-write verify — commit `180ab2fd635e` + `464bc6f9` + `0d9dc8e9` all verified real. |
+| Session 35 status | **DONE** README TOC Block IX 27 file + memory/session-log.md + CLAUDE.md Current State sync. |
 | Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful. |
 | Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 + Part 9.21 + Rule 13 ra đời + Rule 11 retrofit session 22+23. |
 | Session 25 status | **DONE** Audit P0.1 (README TOC 14 orphans) + P0.2 (2 dead URL) + P1.4 (Rule 13 top 10, 508→156) + P3.8 (CLAUDE.md state) + Part 9.9 QoS expansion (+458 dòng). |

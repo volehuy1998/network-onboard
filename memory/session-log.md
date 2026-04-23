@@ -7,6 +7,76 @@
 
 ## Session gần nhất
 
+## Session 32-35 — Phase E COMPLETE end-to-end
+
+**Ngày:** 2026-04-22 → 2026-04-23 (11 session liên tiếp).
+**Branch:** `docs/sdn-foundation-rev2` @ `7e5608b` + follow-up commits.
+**Trạng thái:** **Phase E 100% COMPLETE** — Scope A (audit rev2 residual), Scope D (source code fact-check audit 107 file), Scope B (Part 9.26 OVS forensic new), Rule 14 codified trong CLAUDE.md.
+
+### Scope A — Audit rev2 residual cleanup (Session 32)
+
+- Rule 11 retrofit 14 prose fix (19.0 3 + 17.0 3 + 3.1 2 + 3.2 2 + bonus 4 trong 19.0/17.0 flagged bởi re-grep)
+- Header block backfill 17.0 + 18.0 với 7-field blockquote template theo Part 9.22
+- Phụ lục G Phase E viết vào `plans/sdn-foundation-architecture.md` (~200 dòng)
+- Audit rev2 §6.2 debt rows đánh dấu CLEARED
+- Fact-check fix `MAX_FDB_ENTRIES` version drift (commit `b243207`)
+
+Commits: `076ef87` + `b243207`.
+
+### Scope D — Source code fact-check audit (Session 33a-33i)
+
+- **33a** 3 Advanced OVN (17.0/18.0/19.0): 26 issues, 6 category. Category 3 fabricated functions (`reply_imcp_error_if_pkt_too_big` — OVN source có typo intentional `imcp`). Category 1 wrong SHA `ee20c48c2f5c` → `949b098626b7`. Category 2 broken `./3.0` → `./19.0`. Commit `acc58a2`.
+- **33b** Block XIII (14 file): 5 issues critical. Category 3 fabricated `Chassis_features` table → explained real `Chassis.other_config` map + C struct `chassis_features`. Category 6 stage count breakdown + MAC_Binding.timestamp version fix (v22.03 → v22.09). Commit `e06bf63`.
+- **33c** Block IX (26 file): 1 date drift fix (OVS 2.0 01/2014 → 15/10/2013). Commit `93442cc`.
+- **33d-h** Block 0-VIII + X-XII + XIV-XVI + XX (~58 file): 0 issues (low density, confirming pattern).
+- **33i** Rule 14 Source Code Citation Integrity codified trong CLAUDE.md (7 subsection 14.1-14.7 với bài học Phase E). Commit `7e5608b`.
+
+**Tổng audit Phase E Scope D:** 101 file scanned, 32 issues fixed across 6 category.
+
+### Scope B — Part 9.26 OVS forensic (Session 34)
+
+- Part mới `sdn-onboard/9.26 - ovs-revalidator-storm-forensic.md` (464 dòng).
+- Case study: Stale ukey leak từ commit `180ab2fd635e` "ofproto-dpif-upcall: Avoid stale ukeys leaks" (Han Zhou + Roi Dayan + Eelco Chaudron, 2024-08-29).
+- 10 section + 2 Guided Exercise + 1 Capstone POE + 6 điểm cốt lõi + 8 References.
+- Pre-write verification qua MCP GitHub: commit `c1c5c7bf` (plan rev 2 original) 404 → thay bằng 3 commit thật verified.
+- Rule 14 pre-write rigor áp dụng từ đầu: mọi commit SHA + function name + file path verified MCP trước khi cite.
+- Rule 13 em-dash density 0.090/line (dưới 0.10 threshold sau 4 pass reduction).
+
+### Scope C — Memory + README sync (Session 35)
+
+- README.md Block IX: 26 → 27 file, thêm entry Part 9.26 với TOC.
+- `memory/fact-check-audit-2026-04-22.md` new audit log file (session 33a populate, 33b-c-i extend).
+- `memory/session-log.md` + `CLAUDE.md` Current State sync (entry này + session 32-35 rows).
+
+### Tổng commits Phase E
+
+1. `076ef87` — Session 32 Scope A audit rev2 residual + Phụ lục G
+2. `b243207` — MAX_FDB_ENTRIES version drift fix
+3. `acc58a2` — Session 33a Scope D.1 3 Advanced OVN fact-check
+4. `e06bf63` — Session 33b Scope D.2 Block XIII fact-check
+5. `93442cc` — Session 33c Scope D.3 Block IX fact-check
+6. `7e5608b` — Session 33i Rule 14 codify CLAUDE.md
+7. (pending) — Session 34+35 Part 9.26 + README+CLAUDE state sync
+
+### Curriculum state end Phase E
+
+- **108 file .md**, ~35K+ dòng content OVS/OpenFlow/OVN.
+- Block IX: 27 file (thêm 9.26 forensic case study).
+- Rule compliance: Rule 9 null bytes 0, Rule 11 prose 100% + 11/11 Critical cleaned, Rule 12 offline source 100%, Rule 13 em-dash < 0.10/line curriculum-wide, **Rule 14 Source Code Citation Integrity codified**.
+- Audit trail: `memory/fact-check-audit-2026-04-22.md` với evidence MCP verify cho mọi fix.
+- Release ready: **v2.1-preVerified** (chờ C1b Lab Verification + C6b Final Publish).
+
+### Resume checklist cho session 36+
+
+1. `git fetch && git pull --ff-only origin docs/sdn-foundation-rev2`
+2. Đọc CLAUDE.md Current State — Phase E COMPLETE + v2.1 state
+3. Đọc `memory/fact-check-audit-2026-04-22.md` cho context audit history
+4. Nếu user có lab host → execute C1b Lab Verification theo `memory/lab-verification-pending.md`
+5. Sau C1b → C6b Final Publish v2.1-Verified qua `scripts/build-sdn-pdf.sh`
+6. Nếu extend Phase E: deferred items session 33b (13.13 migration parity, 13.11 BGP/OSPF, 13.10 DNS upstream) + Block XIV-XVI content phase (Phase F plan new)
+
+
+
 ## Session 24-28 — Phase D COMPLETE + Audit retrofit
 
 **Ngày:** 2026-04-23 (5 session cùng ngày, execute end-to-end).
