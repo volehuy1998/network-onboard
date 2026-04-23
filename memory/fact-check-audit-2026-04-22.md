@@ -110,6 +110,23 @@ Spot checked version-specific claims via grep `OVN 2\d\.\d+ (giới thiệu|thê
 **Deferred (low-priority):** ~4-6 version claims in 13.13/13.11/13.10 không verify được trong MCP budget session này
 **Lessons reinforced:** MCP search_code false negative pattern tiếp tục — phải dùng get_file_contents direct cho mọi verify. Version claims phổ biến bị lệch 1 LTS (22.03 vs 22.09).
 
+## Session 33c — Block IX OVS internals audit
+
+Scan 26 file (9.0-9.25). Density source code ref THẤP hơn Block XIII — chủ yếu CLI commands + OVS 2.17.9 baseline references + RFC cites. Không có commit SHA hoặc function name fabricated.
+
+### Findings 33c
+
+- **9.0:99 date drift** — "OVS 2.0 (01/2014)" → actual per OVS NEWS: "v2.0.0 - 15 Oct 2013". Verified `mcp__github__get_file_contents(NEWS, openvswitch/ovs)`.
+- **9.22:23 "ovn-northd 50+ table"** — approximate valid.
+- **9.16:116 "OVS bundle từ OVS 2.4+"** — verified OVS NEWS v2.4.0.
+- **9.9:337-339 "OVS 2.17 2-color only"** — Lab 9 Crichigno doc cite.
+
+### Fixes 33c
+
+- `9.0`: Update OVS 2.0 date (01/2014 → 15/10/2013), add OVS 2.4 bundles entry with OVS NEWS evidence.
+
+**Session 33c total: 1 date drift fix. Block IX low-risk.**
+
 ---
 
 ## Session 33a — 3 Advanced OVN audit
