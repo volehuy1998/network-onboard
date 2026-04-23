@@ -66,6 +66,19 @@ Total: 500 dòng template library.
 | Rule 13 em-dash density | PASS | 0.045/line |
 | Scope cover | 12 nhóm × 60+ field | Metadata / Register / L2 / ARP / IPv4 / IPv6 / L4 / ICMP / Tunnel / Conntrack / MPLS / packet_type; prerequisite chain table; lazy wildcarding thực nghiệm scenario |
 | Upstream lift | ovs-fields(7) full catalog | + OpenFlow 1.3/1.5 spec §A.2.3 + OVS `meta-flow.h` + RFC 4861 ND + RFC 6437 Flow Label + RFC 7348 VXLAN + RFC 8926 Geneve |
+
+## Session S42 deliverables (H.4.1 Actions tier 1)
+
+| Item | Status | Note |
+|---|---|---|
+| New Part 4.9 tier 1 | DONE | 762 dòng, file được design 3-session (S42/S43/S44) |
+| Curriculum file count | 110 → 111 | Block IV 9 file → 10 file |
+| Rule 9 null byte | PASS | 0 null |
+| Rule 11 §11.6 prose sweep | PASS | 4 fix (Verify→Kiểm chứng, Pattern→Mẫu, Monitor→Theo dõi, behavior→hành vi) |
+| Rule 13 em-dash density | PASS | 0.051/line |
+| Scope cover | 14 section tier 1 | §4.9.1 action vs instruction + §4.9.2-10 Category 1 Output (output, drop, normal, flood, all, controller, local, in_port, table, group) + §4.9.11-13 control actions (resubmit, clone, note) + §4.9.14 Action Set 12-priority order |
+| Upstream lift | ovs-actions(7) + OpenFlow 1.3/1.5 spec §5.10-5.11 + OVS `ofp-actions.h` + OVS `ofproto-dpif-xlate.c` |
+| Template C | Áp dụng thực tế lần đầu | 8-attribute anatomy (Syntax/Category/OF version/Prerequisites/Semantics/Parameters/Side effects/Conformance) |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
@@ -73,7 +86,7 @@ Total: 500 dòng template library.
 - [x] **S39** — H.2.2 Expand Part 9.11 ovs-appctl reference 215 → 1170 dòng (+955) DONE 2026-04-24. 18 nhóm target × Anatomy block (introspection/vlog/memory/coverage/bridge/FDB/mdb/bond/LACP/STP/RSTP/BFD/CFM/OpenFlow/datapath/DPDK/tunnel/upcall/revalidator/cluster) + decision matrix + guided exercise coverage delta.
 - [x] **S40** — H.2.3 Part 9.2 kernel datapath deep-dive DONE 2026-04-24. 529 → 878 dòng (+349, vượt target 75%). 5 section mới: §9.2.8 EMC anatomy, §9.2.9 SMC tier OVS 2.15+, §9.2.10 Upcall Netlink genl wire format, §9.2.11 Ukey state machine + revalidator RCU, §9.2.12 Tóm tắt 3-tier cache + checklist sức khỏe. Rename §9.2.6 dup → §9.2.13.
 - [x] **S41** — H.3 Match Fields DONE 2026-04-24. Tạo mới Part 4.8 `openflow-match-field-catalog.md` (926 dòng) với 12 nhóm field × Template B: Metadata (6 field) + Register (16+8+4 reg/xreg/xxreg) + L2 (9 field) + ARP (5) + IPv4 (6) + IPv6 (7) + L4 TCP/UDP/SCTP (8) + ICMP (4) + Tunnel (6) + Conntrack (9) + MPLS+ip_frag (5). Prerequisite chain table + lazy wildcarding thực nghiệm. README Block IV updated 8→9 file.
-- [ ] **S42** — H.4.1 Actions output+control: output/drop/flood/all/controller/local/in_port/table/normal, Template C.
+- [x] **S42** — H.4.1 Actions output+control DONE 2026-04-24. Tạo mới Part 4.9 `openflow-action-catalog.md` (762 dòng, tier 1). Category 1 Output (9 action) + group (4 types) + control actions (resubmit, clone, note) + Action Set 12-priority execution order + action vs instruction foundation. Template C applied first time. Tier 2 + Tier 3 sẽ expand ở S43 + S44.
 - [ ] **S43** — H.4.2 Actions field+encap: set_field/dec_ttl/push_pop/mod_*, Template C.
 - [ ] **S44** — H.4.3 Actions advanced: ct/learn/note/conjunction/multipath/bundle/resubmit/group, Template C.
 - [ ] **S45** — H.5 OVS internals: 9.1 + 9.15 + 9.16 classifier/subtable/staged/TSS/connmgr.

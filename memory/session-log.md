@@ -7,6 +7,78 @@
 
 ## Session gần nhất
 
+## Session 42 — Phase H H.4.1: Actions Template C tier 1 (output+control)
+
+**Ngày:** 2026-04-24 post S41.
+**Branch:** `docs/sdn-foundation-rev2` @ post `8e0a759`.
+**Trạng thái:** Phase H 5/13 session DONE (38%). Curriculum 110 → 111 file.
+
+### Bối cảnh
+
+S42 khởi động category action roadmap (S42/S43/S44). Thay vì tạo 3 file riêng, quyết định tạo **một file dedicated** `4.9 - openflow-action-catalog.md` được build incrementally qua 3 session — tier 1 (S42), tier 2 (S43), tier 3 (S44).
+
+### S42 deliverable
+
+**New Part 4.9 tier 1 content** — 762 dòng. Template C 8-attribute anatomy applied lần đầu:
+
+- §4.9.1 Action vs Instruction foundation (6 instruction OpenFlow 1.1+: Apply-Actions/Clear-Actions/Write-Actions/Write-Metadata/Goto-Table/Meter)
+- §4.9.2 Action `output` với 8 reserved port enum (LOCAL/CONTROLLER/NORMAL/FLOOD/ALL/IN_PORT/ANY/TABLE)
+- §4.9.3 Action `drop` — explicit vs implicit, OVS 2.17+ dedicated kernel drop path
+- §4.9.4 Action `normal` — standard L2 learning switch, fail_mode interaction
+- §4.9.5 Action `flood` vs `all` — so sánh (include ingress / STP respect / VLAN filter)
+- §4.9.6 Action `controller` — packet_in, risk spam + rate limit best practice
+- §4.9.7 Action `local` — output to bridge LOCAL netdev
+- §4.9.8 Action `in_port` — ARP responder pattern OVN
+- §4.9.9 Action `table` — rarely used, PACKET_OUT context
+- §4.9.10 Action `group` với 4 types: all (multicast) / select (load-balance) / indirect / fast_failover (active-backup với watch_port BFD)
+- §4.9.11 Action `resubmit` — NXM extension, so sánh với goto_table, OVN translation usage
+- §4.9.12 Action `clone` — execute action không commit packet modification
+- §4.9.13 Action `note` — debug marker (no-op)
+- §4.9.14 Action Set execution order 12 priority level (L1 copy_ttl_in ... L11 output) vs Apply-Actions sequential
+
+### Quality gate
+
+- Rule 9 null byte: 0 + 0 regression trên 111 file
+- Rule 13 em-dash density: 0.051/line (PASS)
+- Rule 11 §11.6 prose sweep: 4 fix (Verify→Kiểm chứng, Pattern→Mẫu, Monitor→Theo dõi, behavior→hành vi)
+- Rule 14 N/A (action catalog reference)
+- Code block statistics: 24 blocks, median 5, mean 5.9 (catalog pattern)
+
+### Upstream lift
+
+- man `ovs-actions(7)` definitive reference ~40 action 8-attribute anatomy
+- OpenFlow 1.3 spec §5.10 "Actions"
+- OpenFlow 1.5 spec §5.10 + §5.11 "Instructions"
+- OVS source `include/openvswitch/ofp-actions.h` (struct ofpact_*)
+- OVS source `ofproto/ofproto-dpif-xlate.c` (xlate function map)
+
+### README update
+
+- Block IV 9 file → 10 file
+- Part 4.9 entry với note "(content tier 1, Phase H session S42; tier 2 S43 + tier 3 S44 sẽ expand)"
+
+### Progress Phase H
+
+- 5/13 session DONE (38%)
+- Session 38 DONE (pilot + template library)
+- Session 39 DONE (9.11 ovs-appctl reference)
+- Session 40 DONE (9.2 kernel datapath deep-dive)
+- Session 41 DONE (4.8 match field catalog Template B)
+- Session 42 DONE (4.9 action catalog tier 1 Template C)
+- Curriculum: 110 → 111 file, ~42.600 dòng
+- Next: S43 — H.4.2 Actions tier 2 (field+encap+metadata+QoS): set_field, mod_*, dec_ttl, push_pop VLAN/MPLS, set_queue, enqueue, meter. Sẽ append vào Part 4.9 existing file.
+
+### Commit + push
+
+Session S42 commit scope:
+- Add: `sdn-onboard/4.9 - openflow-action-catalog.md` (762 dòng tier 1)
+- Modify: `sdn-onboard/README.md` (Block IV 9→10 file)
+- Modify: `memory/phase-h-progress.md` (S42 section + rollout tick)
+- Modify: `memory/session-log.md` (S42 entry)
+- Modify: `CLAUDE.md` (S42 status row)
+
+---
+
 ## Session 41 — Phase H H.3: Match Fields Template B expansion
 
 **Ngày:** 2026-04-24 post S40.
