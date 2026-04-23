@@ -128,7 +128,7 @@ Khối này là câu chuyện cụ thể của Stanford Clean Slate Program 2006
 - Part 3.1, [OpenFlow 1.0 specification](3.1%20-%20openflow-1.0-specification.md) *(skeleton)*, OF 1.0 31/12/2009, 12-tuple match, secure channel, fail-open vs fail-closed.
 - Part 3.2, [ONF formation và governance](3.2%20-%20onf-formation-and-governance.md) *(skeleton)*, ONF 2011, board members, standardization process.
 
-### Block IV, OpenFlow evolution (Part 4, 8 file)
+### Block IV, OpenFlow evolution (Part 4, 9 file)
 
 Khối dài nhất của phần lịch sử, đi qua từng phiên bản OpenFlow từ 1.1 đến 1.5, Table Type Patterns (TTP), và lý do OpenFlow dần nhường chỗ cho OVSDB-centric control.
 
@@ -140,6 +140,7 @@ Khối dài nhất của phần lịch sử, đi qua từng phiên bản OpenFlo
 - Part 4.5, [TTP, Table Type Patterns](4.5%20-%20ttp-table-type-patterns.md) *(skeleton, ONF TS-017)*, Negotiable Data Plane Model, TTP JSON schema.
 - Part 4.6, [OpenFlow limitations và bài học](4.6%20-%20openflow-limitations-lessons.md) *(skeleton)*, vendor chipset fragmentation, rule explosion, operator complexity.
 - Part 4.7, [OpenFlow programming với ovs-ofctl](4.7%20-%20openflow-programming-with-ovs.md) *(content, cross-cutting OpenFlow → OVS)*, multi-table pipeline hands-on, conntrack integration, flow hygiene playbook, cầu nối Block IV lý thuyết sang Block IX thực hành.
+- Part 4.8, [OpenFlow + OVS match field catalog](4.8%20-%20openflow-match-field-catalog.md) *(content, Phase H session S41)*, reference 60+ match field theo 12 nhóm (Metadata, Register, Tunnel, L2, ARP, IPv4, IPv6, L4, ICMP, MPLS, Conntrack, packet_type) với Template B 9-attribute anatomy per field. Prerequisite chain table + lazy wildcarding thực nghiệm nối Part 9.2.
 
 ### Block V, Mô hình SDN thay thế (Part 5, 3 file)
 

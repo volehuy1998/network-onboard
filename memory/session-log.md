@@ -7,6 +7,78 @@
 
 ## Session gần nhất
 
+## Session 41 — Phase H H.3: Match Fields Template B expansion
+
+**Ngày:** 2026-04-24 post S40.
+**Branch:** `docs/sdn-foundation-rev2` @ post `74ff247`.
+**Trạng thái:** Phase H 4/13 session DONE (31%). Curriculum 109 → 110 file.
+
+### Bối cảnh
+
+S41 là session đầu tiên chuyển từ expand existing file (S38 9.4, S39 9.11, S40 9.2) sang **tạo file mới**. Lý do: Part 4.1 (OpenFlow 1.2 OXM TLV) đã là historical spec-focused; thêm 60+ field anatomy sẽ phá vỡ narrative lịch sử. Giải pháp: tạo file mới `4.8 - openflow-match-field-catalog.md` làm dedicated reference.
+
+### S41 deliverable
+
+**New Part 4.8** — 926 dòng content mới. 12 nhóm field được breakdown Template B:
+
+- §4.8.1 9-attribute anatomy template chung (Name/Width/Format/Masking/Prerequisites/Access/OpenFlow version/OXM-NXM/Semantics)
+- §4.8.2 Nhóm A Metadata (6 field): in_port (8 reserved port enum), metadata, pkt_mark, actset_output, skb_priority, tun_metadata[0-63]
+- §4.8.3 Nhóm B Register: reg0-15 (16), xreg0-7 (8), xxreg0-3 (4) + OVN register map cứng (reg13=datapath, reg14=ingress, reg15=egress)
+- §4.8.4 Nhóm D L2 (9 field): eth_src/dst (multicast bit match), eth_type (common EtherType table), vlan_tci/vid/pcp, conj_id + conjunction compression (N×M → N+M), packet_type
+- §4.8.5 Nhóm E ARP (5 field): arp_op/spa/tpa/sha/tha
+- §4.8.6 Nhóm F IPv4 (6 field): ipv4_src/dst (CIDR+bitwise), nw_proto (common value 1/6/17/58), nw_tos/ecn/ttl
+- §4.8.7 Nhóm G IPv6 (7 field): ipv6_src/dst (128-bit), ipv6_label (RFC 6437), ipv6_exthdr 9-bit bitmap, nd_target/sll/tll (RFC 4861)
+- §4.8.8 Nhóm H L4 TCP/UDP/SCTP: tcp_src/dst/flags (12-bit bitmap: FIN/SYN/RST/PSH/ACK/URG/ECE/CWR/NS), udp_src/dst, sctp_src/dst
+- §4.8.9 Nhóm I ICMP: icmp_type/code (IPv4) + icmpv6_type/code (IPv6, value 133/134/135/136 for ND)
+- §4.8.10 Nhóm C Tunnel (6 field): tun_id (VNI 24-bit), tun_src/dst (outer IP), tun_flags
+- §4.8.11 Nhóm J Conntrack (9 field): ct_state (8-flag bitmap new/est/rel/rpl/inv/trk/snat/dnat), ct_zone/mark/label, ct_nw_src/dst/proto + ct_tp_src/dst (original direction)
+- §4.8.12 Nhóm K MPLS (4 field) + ip_frag
+- §4.8.13 Prerequisite chain table (12 rows — muốn match field X cần set field Y)
+- §4.8.14 Lazy wildcarding thực nghiệm với ovs-appctl ofproto/trace nối Part 9.2 §9.2.2
+
+**README update:** Block IV 8 file → 9 file với Part 4.8 entry.
+
+### Quality gate
+
+- Rule 9 null byte: 0 + 0 regression trên 110 file
+- Rule 13 em-dash density: 0.045/line (PASS)
+- Rule 11 §11.6 prose sweep: 5 fix (engineer→kỹ sư 2x, behavior→hành vi, deployment→triển khai, error→lỗi)
+- Rule 14 N/A (reference field catalog, no new source code SHA)
+- Code block statistics: 24 blocks, median 3, mean 4.5 — field catalog inherently table-heavy, blocks là inline flow spec examples
+
+### Upstream lift
+
+- man ovs-fields(7) definitive reference (100+ field, 9-attribute anatomy)
+- OpenFlow 1.3 spec §7.2.3 Flow Match Structures
+- OpenFlow 1.5 spec §A.2.3 OXM TLV
+- man ovs-actions(7) companion action reference
+- RFC 4861 IPv6 Neighbor Discovery (nd_target/sll/tll prerequisite)
+- RFC 6437 IPv6 Flow Label
+- RFC 7348 VXLAN (VNI = tun_id semantics)
+- RFC 8926 Geneve (tun_metadata 64-slot TLV)
+- OVS source `include/openvswitch/meta-flow.h` (MFF_* enum)
+
+### Progress Phase H
+
+- 4/13 session DONE (31%)
+- Session 38 DONE (pilot + template library)
+- Session 39 DONE (9.11 ovs-appctl reference)
+- Session 40 DONE (9.2 kernel datapath deep-dive)
+- Session 41 DONE (4.8 match field catalog, Template B first application)
+- Curriculum: 109 → 110 file, ~41.800 dòng
+- Next: S42 — H.4.1 Actions output + control: Part 4.7 + 9.22 expansion với Template C cho output/drop/flood/all/controller/local/in_port/table/normal
+
+### Commit + push
+
+Session S41 commit scope:
+- Add: `sdn-onboard/4.8 - openflow-match-field-catalog.md` (927 dòng)
+- Modify: `sdn-onboard/README.md` (Block IV 8→9 file)
+- Modify: `memory/phase-h-progress.md` (S41 section + rollout tick)
+- Modify: `memory/session-log.md` (S41 entry)
+- Modify: `CLAUDE.md` (S41 status row)
+
+---
+
 ## Session 40 — Phase H H.2.3: Part 9.2 kernel datapath deep-dive
 
 **Ngày:** 2026-04-24 post S39.
