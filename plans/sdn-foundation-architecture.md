@@ -3124,3 +3124,105 @@ Suggested order: 14 → 16 → 15 (theo complexity ramp + minimize context switc
 ---
 
 **Hết Phụ lục H.** Phase F saved context 2026-04-23 end session 35, chờ user restart máy + resume.
+
+---
+
+## Phụ lục I — Phase F Priority Adjustment (rev 1, 2026-04-23 post-session 36g)
+
+> **Driver:** User directive 2026-04-23 sau session 36g commit `c777acf`: "hãy xếp độ ưu tiên của K8S xuống thấp, bởi vì trong chương trình đào tạo của chúng ta tập trung vào lịch sử, sự hiểu biết, kiến thức, thao tác công cụ thành thạo, kỹ năng truy vết, kỹ năng xử lý sự cố, kỹ năng debug với Openvswitch/Openflow/OVN."
+>
+> **Status:** Plan adjustment, chưa execute. User confirm trước khi continue 36h/36i.
+
+### I.1 Lý do điều chỉnh
+
+Chương trình đào tạo `sdn-onboard/*` core mission theo user directive ban đầu (2026-04-22):
+
+> "kỹ sư đã có CCNA và RHCSA đi qua trọn vẹn hành trình Software Defined Networking... bao gồm **kiến thức, lịch sử, kỹ năng debug, kỹ năng vận hành, kỹ năng xử lý sự cố, điều tra sự cố, hiểu thật sâu sắc về OpenvSwitch OpenFlow OVN, cách vận hành, kiến trúc, cách hoạt động**."
+
+Block XV Cloud Native (Istio + OVN-K8s + Cilium) ra khỏi core focus này:
+
+- **Istio/Linkerd service mesh** là K8s ecosystem tool, không phải OVS/OVN/OpenFlow core.
+- **OVN-Kubernetes CNI** CÓ liên quan OVN (là OVN deployment model trong K8s), nhưng skill focus là K8s CNI integration chứ không phải OVN internals deeper.
+- **Cilium eBPF** là K8s CNI alternative, hoàn toàn không dùng OVN/OVS/OpenFlow.
+
+Phase F plan original (Phụ lục H §H.2) coverage Block XV với tư cách "Expert Extension". Post 36g, user xác nhận Block XV thuộc priority thấp hơn mission core.
+
+### I.2 Priority matrix adjustment
+
+| Block | Priority | Status | Rationale |
+|-------|----------|--------|-----------|
+| XIV (P4) | **Medium** | ✅ COMPLETE (36a-36c) | P4 contrast với OpenFlow, hiểu data plane programmability — relevant foundation knowledge. Đã viết, không undo. |
+| XVI (Performance: DPDK/AF_XDP) | **HIGH** | ✅ COMPLETE (36d-36f) | DPDK/AF_XDP là core OVS performance tuning — Part 9.3 + 9.26 directly use. Essential skill OVS advanced operator. |
+| XV.0 (Service mesh) | **LOW** | ✅ COMPLETE (36g) | Istio/Linkerd/Cilium ecosystem — đã viết, giữ làm cross-reference context cho OVN-K8s interaction. |
+| **XV.1 (OVN-Kubernetes CNI)** | **MEDIUM** | ⏳ **DEFERRED** | OVN lens qua K8s triển khai. User có thể execute sau khi hoàn thành core OVS/OVN backlog. |
+| **XV.2 (Cilium eBPF internals)** | **LOW** | ⏳ **DEFERRED** | K8s CNI alternative, không dùng OVS/OVN/OpenFlow. Defer vô hạn định. |
+
+### I.3 Recalibrate Phase F scope
+
+**Original plan (Phụ lục H §H.5):** 9 session 36a-36i cho Block XIV + XVI + XV.
+
+**Revised plan (I.3):**
+- **Sessions 36a-36g DONE**: Block XIV + Block XVI + 15.0 = 7/9 sessions. Keep as-is.
+- **Session 36h (15.1 OVN-K8s)**: **DEFERRED**, move to Phase G backlog as "optional medium-priority".
+- **Session 36i (15.2 Cilium)**: **DEFERRED**, move to Phase G backlog as "optional low-priority, may never execute".
+
+**Phase F status:** **Declared COMPLETE với 7/9 sessions** (XIV + XVI + partial XV). User chấp nhận 15.1 + 15.2 defer.
+
+### I.4 Proposed next focus: Phase G OVS/OVN Core Deepening
+
+Per user mission, backlog core skills cần priority:
+
+**G.1 Skill truy vết (tracing/investigation):**
+- Extension Part 9.25 `ofproto/trace` với advanced patterns (multi-bridge trace, OVN-Kubernetes trace end-to-end)
+- Extension Part 20.0 systematic debugging với real case study từ production ops
+- New Part "OVS + OVN packet journey end-to-end" — từ VM NIC → OVS → tunnel → OVN pipeline → VM NIC remote host
+
+**G.2 Skill xử lý sự cố (incident response):**
+- Extension Part 9.14 incident decision tree với 10+ scenarios cụ thể
+- New Part "OVS/OVN incident runbook compilation" — pre-built commands + checklist cho common incidents
+- New Part 3-5 forensic case studies pure OVS (parallel với 9.26 style): bond flap + upcall storm + conntrack zone collision
+
+**G.3 Skill debug (deep debugging):**
+- Extension Part 9.26 forensic case study với 2-3 case studies thêm
+- Deep-dive Part 20.1 security hardening + audit trail
+- New Part "OVN troubleshooting deep-dive" — ovn-trace + ovn-detrace + Port_Binding forensic
+
+**G.4 Kỹ năng lịch sử + hiểu biết:**
+- Extension historical coverage (Block I-III) — có thể retrofit từ perspective "what lessons from 2007-2024 still apply today"
+- Part 9.0 OVS history có thể deep-expand với interviews + design decisions
+- Part 13.0 OVN announcement có thể expand với post-2015 evolution narrative
+
+**G.5 Thao tác công cụ thành thạo:**
+- Extension Part 9.4 + 9.11 với advanced `ovs-appctl` commands + decision-tree CLI
+- New Part "OVS daily operator playbook" — 50+ commands thao tác thường dùng
+- New Part "OVN daily operator playbook" — 30+ commands for ovn-nbctl + ovn-sbctl + ovn-trace
+
+### I.5 Recommended immediate action
+
+Option A — **Wrap Phase F + propose Phase G**:
+1. Update Phase F status = COMPLETE (7/9 delivered, 2/9 deferred per user priority adjustment)
+2. Draft Phase G plan (OVS/OVN core deepening 5 scope areas §I.4)
+3. User review Phase G scope + approve
+
+Option B — **Execute 15.1 before close Phase F**:
+- 15.1 OVN-K8s vẫn là OVN skill (OVN deployment lens) — có thể execute với hiểu biết "OVN in K8s context adds value to OVN operator".
+- Skip 15.2 Cilium definitively.
+- Phase F close với 8/9 sessions.
+
+Option C — **Stop Phase F immediately + go Phase G**:
+- Declare Phase F complete với 7/9 sessions.
+- Skip both 15.1 + 15.2.
+- Start Phase G core deepening right away.
+
+**Tôi recommend Option C** theo user directive "xếp độ ưu tiên của K8S xuống thấp":
+- 15.1 tuy là OVN-K8s nhưng primary focus skill is K8s CNI integration, không phải OVN internals deeper. OVN skills đã được cover extensively trong Block XIII (14 files).
+- 15.2 Cilium không liên quan OVN core.
+- Phase G sẽ focus thuần túy OVS/OVN skills như user mission.
+
+### I.6 Phụ lục I status
+
+**2026-04-23 post-session 36g:** Plan adjustment drafted. Chờ user confirm Option A/B/C + approve Phase G scope draft.
+
+---
+
+**Hết Phụ lục I.**

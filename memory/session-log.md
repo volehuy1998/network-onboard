@@ -7,6 +7,71 @@
 
 ## Session gần nhất
 
+## Session 36g + priority adjustment — K8S deprioritized, Phase F partial close
+
+**Ngày:** 2026-04-23 post session 36f commit + audit pass.
+**Branch:** `docs/sdn-foundation-rev2` @ post `c777acf` (36g 15.0 commit) + plan update pending.
+**Trạng thái:** **Phase F reprioritized 7/9 (partial complete)**. User directive: K8S priority LOW.
+
+### User directive 2026-04-23
+
+> "hãy xếp độ ưu tiên của K8S xuống thấp, bởi vì trong chương trình đào tạo của chúng ta tập trung vào **lịch sử, sự hiểu biết, kiến thức, thao tác công cụ thành thạo, kỹ năng truy vết, kỹ năng xử lý sự cố, kỹ năng debug với Openvswitch/Openflow/OVN**."
+
+Kết quả: Block XV (Cloud Native) chuyển priority thấp. 15.0 đã viết (session 36g DONE), giữ. 15.1 + 15.2 **DEFERRED**.
+
+### Session 36g DONE
+
+- `sdn-onboard/15.0 - service-mesh-integration.md` 328 → 474 dòng (+161 insertions, -14 deletions).
+- Commit `c777acf`.
+- Phase D style applied: drama + Bloom 6 objectives + 1 misconception + §15.0.6 Điểm cốt lõi + Capstone POE "Greenfield K8s 2026 service mesh".
+- Rule compliance: null 0, em-dash 0.055/line.
+
+### Phase F status sau reprioritize
+
+| Block | Priority | Status |
+|-------|----------|--------|
+| XIV (P4) | Medium | ✅ COMPLETE (14.0/14.1/14.2) |
+| XVI (Performance DPDK/AF_XDP) | HIGH | ✅ COMPLETE (16.0/16.1/16.2) |
+| XV.0 Service mesh | LOW | ✅ COMPLETE (36g) |
+| **XV.1 OVN-K8s CNI** | MEDIUM | ⏳ **DEFERRED** |
+| **XV.2 Cilium eBPF** | LOW | ⏳ **DEFERRED** |
+
+**Phase F: 7/9 sessions DONE (78%), 2/9 DEFERRED theo priority adjustment.**
+
+### Plan update: Phụ lục I
+
+`plans/sdn-foundation-architecture.md` appended Phụ lục I — Phase F Priority Adjustment:
+- §I.1 Lý do điều chỉnh (mission core = OVS/OpenFlow/OVN skills)
+- §I.2 Priority matrix (XIV medium + XVI high + XV low)
+- §I.3 Recalibrate Phase F scope (declare complete 7/9)
+- §I.4 Proposed Phase G scope 5 areas (G.1 truy vết + G.2 xử lý sự cố + G.3 debug + G.4 lịch sử + G.5 thao tác công cụ)
+- §I.5 Recommendation Option A/B/C — tôi recommend C (stop Phase F + go Phase G)
+- §I.6 Status: chờ user confirm
+
+### Phase G proposal (chờ user approve)
+
+5 scope areas cho OVS/OVN core deepening:
+
+**G.1 Skill truy vết:** Extension 9.25 + 20.0 + new "Packet journey end-to-end".
+**G.2 Skill xử lý sự cố:** Extension 9.14 + new "Incident runbook" + 3-5 forensic case studies.
+**G.3 Skill debug:** Extension 9.26 + 20.1 + new "OVN troubleshooting deep-dive".
+**G.4 Lịch sử + hiểu biết:** Retrofit Block I-III + deep-expand 9.0 + 13.0.
+**G.5 Thao tác công cụ:** Extension 9.4 + 9.11 + new "Daily operator playbook" OVS + OVN.
+
+### Commits này session
+
+- 36g: `c777acf` (15.0 service mesh)
+- Plan + memory update pending commit (Phụ lục I + CLAUDE.md + session-log.md này)
+
+### Resume protocol
+
+User confirm 1 trong 3 option:
+- **Option A**: Wrap Phase F + draft Phase G detail plan
+- **Option B**: Execute 15.1 (defer 15.2 only) + close Phase F với 8/9
+- **Option C** (recommended): Stop Phase F + start Phase G immediately
+
+---
+
 ## Session 36a-36f + audit — Phase F Block XIV + XVI COMPLETE (2/3 blocks)
 
 **Ngày:** 2026-04-23 (6 session liên tiếp + audit pass session).
