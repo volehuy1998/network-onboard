@@ -2823,3 +2823,184 @@ Rule compliance: Rule 9 (null bytes), Rule 11 (Vietnamese prose — technical An
 ---
 
 **Hết Phụ lục F Phase D plan.** Đang chờ user review §F.10 → execute session 21. F.11/F.12 cung cấp lab readiness detail; F.13 ghi nhận PDF visual findings; F.14 one-page recap minh bạch.
+
+---
+
+## Phụ lục G — Phase E OVS Forensic Case Study + Audit rev2 Residual Cleanup (rev 1, 2026-04-22)
+
+> **Trạng thái:** Approved by user, execute session 32 + 33 (2026-04-22 trở đi)
+> **Branch:** `docs/sdn-foundation-rev2` @ `56da8ec` (post Rule 1 6-skill expansion)
+> **Gối lên:** Phụ lục F (Phase D end-to-end COMPLETE session 24-27)
+> **Driver audit:** `memory/sdn-onboard-audit-2026-04-23-rev2.md` §6.2 (nợ còn lại P3 cosmetic)
+> **Driver directive:** User session post-2026-04-22: "chương trình đào tạo chất lượng... bao gồm kiến thức, lịch sử, kỹ năng debug, kỹ năng vận hành, kỹ năng xử lý sự cố, **điều tra sự cố**, hiểu thật sâu sắc về OVS OpenFlow OVN, cách vận hành, kiến trúc, cách hoạt động."
+> **Scope ràng buộc:** OVS + OpenFlow + OVN standalone. Không mở rộng sang OpenStack/Neutron/kolla-ansible; advanced case study giữ vai trò đối xứng OVN layer (17/18/19) với OVS layer (9.26 mới).
+
+### G.1 Bối cảnh và lý do tồn tại của Phase E
+
+Audit rev2 (2026-04-23) xác định curriculum ở **v2.0-preVerified state**: Rule 13 compliance 100%, Rule 11 Critical 11/11 DONE (426 replacement), dead link 0/106, URL audit 98.7% OK. Nợ còn lại sau audit: 2 hạng mục cosmetic (Rule 11 deep-retrofit 3 file Critical residual ~12-17 prose + header block backfill 17.0/18.0 legacy) + 1 capability gap thực mới identify (forensic OVS layer thiếu case study đối xứng).
+
+Match 6 mục tiêu user với curriculum hiện tại:
+
+| Mục tiêu | Coverage | Gap |
+|----------|----------|-----|
+| Kiến thức + Lịch sử | Block I-XIII + XIV-XVI Expert + 9.0 + 13.0 | Đủ |
+| Debug | Part 9.25 (OVS `ofproto/trace`) + Part 20.0 §20.4 (OVN `ovn-trace`/`ovn-detrace`) | Đủ (Explore agent xác nhận không trùng Part 20.0 §20.4) |
+| Vận hành | Part 9.4/9.11/9.12/9.13 + Block X OVSDB | Đủ |
+| Xử lý sự cố | Part 9.14 decision tree + Part 20.0 §20.5 (8 incident scenario) | Đủ |
+| **Điều tra sự cố (forensic)** | **3 Part OVN layer**: 17.0 FDB poisoning, 18.0 ARP flood, 19.0 multichassis PMTUD | **Thiếu layer OVS pure-datapath** — Part 9.14 là framework, không phải case study narrative |
+| Hiểu sâu vận hành | Block IX 26 file OVS internals + ops | Đủ nếu thêm forensic case study đối xứng với 17/18/19 |
+
+Phase E xử lý đồng thời 2 trục: (Scope A) finalize audit rev2 debt; (Scope B) thêm Part 9.26 lấp gap forensic OVS layer; (Scope C) integrate plan doc.
+
+### G.2 Scope A — Audit residual cleanup (~90-130 phút)
+
+**A.1 Rule 11 prose retrofit** — 11-12 sentence manual context-review (không bulk regex) per §11.3 "dịch đúng nơi đúng chỗ":
+
+| File | Lines | Prose violation | Effort |
+|------|-------|-----------------|--------|
+| `sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md` | 1.379 | 3 (line 348 `performance`, 362 `behavior`, 1282 "thay đổi behavior") — skip line 484 `bypass` OpenFlow action semantics | 15-20 phút |
+| `sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | 1.180 | 3 (line 9 `debug`, 121 `debug`, 449 `overhead`) — skip line 307 "L2 Destination Lookup" concept + 548 `overwrite` operation | 20-25 phút |
+| `sdn-onboard/3.1 - openflow-1.0-specification.md` | 371 | 2 (line 112 "default miss behavior", 236 "legacy behavior") — skip line 280 "implementation-defined behavior" OpenFlow spec terminology | 10-15 phút |
+| `sdn-onboard/3.2 - onf-formation-and-governance.md` | 384 | 2 (line 165 "retain right tham gia" grammar leak, 267 "Stanford shepherd" attribution) | 10 phút |
+
+Verification sau fix: grep `\b(performance|behavior|debug|overhead)\b` 4 file → mỗi occurrence còn lại phải là concept name hoặc code identifier.
+
+**A.2 Header block backfill** — 2 file legacy flat style → blockquote 7-field per template Part 9.22:
+
+| File | Current | Target |
+|------|---------|--------|
+| `sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` | Flat: title + "Môi trường thực hành:" inline prose line 3 | Blockquote 7-field (Môi trường + Khối + Phần + Plan + Prerequisites + Nguồn offline + Nguồn online) |
+| `sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md` | Flat: tương tự 17.0 | Như trên |
+
+Template reference: `sdn-onboard/9.22 - ovs-multi-table-pipeline.md` lines 1-12. 19.0 giữ nguyên HTML comment style (IEC/IEEE 82079-1) vì là format hợp lệ đã được dùng, không cần migrate.
+
+### G.3 Scope B — Part 9.26 OVS Pure-Datapath Forensic Case Study (new, ~5-7 giờ)
+
+**File mới:** `sdn-onboard/9.26 - ovs-revalidator-storm-forensic.md` — 900-1.200 dòng (compact hơn 19.0's 1.379 vì narrow scope).
+
+**Case study chọn:** "Megaflow revalidator storm — when datapath cache grows unbounded under microburst". Lý do:
+
+- **Đối xứng 17/18/19 format:** drama opening + timeline forensic + evidence collection + RCA + remediation + prevention runbook. 9.26 dùng datapath cache explosion drama — mechanism-deep + publicly documented incident, giống style 19.0.
+- **Kết nối trực tiếp Part 9.2** (kernel datapath megaflow). Reinforce megaflow cache mechanics đã dạy ở 9.2 bằng cách phân tích khi nào nó *phá vỡ* (failure mode teaching).
+- **Công khai có thật:** [OpenvSwitch commit c1c5c7bf](https://github.com/openvswitch/ovs/commit/c1c5c7bf) (Ben Pfaff 2015) revalidator scalability fix, [NSDI 2015 "Design and Implementation of Open vSwitch"](https://www.usenix.org/conference/nsdi15/technical-sessions/presentation/pfaff) §3.3 flow cache scalability, [OpenStack Launchpad bug 1856522](https://bugs.launchpad.net/neutron/+bug/1856522) Neutron OVS scalability.
+- **Kỹ năng cụ thể:** đọc `coverage/show`/`upcall/show`/`revalidator/show`, phân biệt dp_flows vs of_flows, diagnose slow-path overload, capacity planning.
+
+**Cấu trúc 10 section (theo quality template §F.6):**
+
+```
+§9.26.1 Drama opening — ISP châu Á 2019 OVS 2.11, microburst port scan
+       → dp_flows 250K entries / 4h → vswitchd CPU 100% → VM RTT 200ms → SEV-2
+§9.26.2 Background refresher (link 9.2): megaflow cache, upcall pipeline, revalidator
+§9.26.3 Timeline forensic (T+0 → T+4h → T+6h → recovery)
+§9.26.4 Evidence collection — verbatim log per Rule 7a: journalctl, ovs-vswitchd.log,
+       perf top, coverage/show, upcall/show
+§9.26.5 Root cause analysis 3 hypothesis → 1 confirmed (H3 megaflow wildcard
+       narrow do untracked header field)
+§9.26.6 Mechanism deep-dive: tuple space search (link 9.15), megaflow generation,
+       revalidator mark+sweep, dpif-netdev vs dpif-netlink
+§9.26.7 Remediation: immediate (del-flows flush) → short-term (flow-limit tune)
+       → medium-term (upgrade 2.11→2.17) → long-term (monitoring)
+§9.26.8 Prevention: Prometheus exporter, Grafana 4-panel dashboard, alert threshold,
+       runbook integration vào Part 9.14 decision tree
+§9.26.9 So sánh với OVN — logical flow translation có cùng vulnerability?
+§9.26.10 6 Điểm cốt lõi + 8 References
+
+Guided Exercise 1: Reproduce revalidator storm trên Mininet (hping3 random port)
+Guided Exercise 2: Đọc coverage/show output — phân loại 12 counter quan trọng
+Capstone POE: "10 OVS 2.11 datacenter, giảm flow-limit sẽ giúp?" → bác bỏ
+```
+
+**Nguồn:**
+
+- **Offline chính:** `sdn-onboard/doc/compass_artifact_wf-*.md` Part II Ch Q (Datapath introspection) + Part III Ch 10 (flow hygiene); `sdn-onboard/doc/ovs/OVS.pdf` Lab 11 cross-ref.
+- **Offline phụ:** `sdn-onboard/doc/ovs/Day 4-lab 9 - Open vSwitch Kernel Datapath.pdf`.
+- **Online chính** (web-fetcher verify trước khi cite): NSDI 2015 paper §3.3+§4, OVS commit c1c5c7bf + series, `docs.openvswitch.org/en/latest/topics/datapath/`, `man7.org/ovs-vswitchd.8.html` `other_config:flow-limit`, ovs-dev mailing list thread "Megaflow scalability" 2018.
+- **Forensic public reference** (không fabricated, không cite internal incident): OpenStack bug 1856522, Red Hat Bugzilla 1673278.
+
+**Quality gate (kế thừa §F.6):**
+
+| Checklist | Target |
+|-----------|--------|
+| Header 7-field | Blockquote style, align 9.22 template |
+| Learning objectives | 5 Bloom (Remember architecture → Analyze timeline → Apply CLI → Evaluate remediation → Create runbook) |
+| Prerequisites | 9.2 + 9.4 + 9.15 + 9.25 explicit |
+| Section structure | 10 section §9.26.1-§9.26.10 + 2 Guided Exercise + 1 Capstone POE |
+| OVN bridge | §9.26.9 explicit comparison |
+| Drama opening | ≤ 120 chữ, fact-checked public scenario |
+| Misconception | ≥ 3 callout (flow-limit aggressive, memory leak, rule count assumption) |
+| Rule 9 null bytes | 0 |
+| Rule 11 prose | Concept name OVS giữ English, vocabulary tư duy Việt |
+| Rule 12 offline source | Header block + References đầy đủ |
+| Rule 13 em-dash density | < 0.10/line |
+
+### G.4 Scope C — Plan doc + memory + README integration (~50 phút)
+
+- **C.1** Phụ lục G này (tài liệu đang đọc) — append trực tiếp vào plan doc.
+- **C.2** `memory/lab-verification-pending.md` — thêm Block IX Part 9.26 entry Priority=HIGH, Status=doc-plausible. 2 Guided Exercise + 1 Capstone có numeric output (dp_flows count, revalidator CPU%, VM RTT ms, megaflow mask hit ratio) → cần C1b verify.
+- **C.3** `sdn-onboard/README.md` TOC — Block IX: 26 → 27 file, thêm entry `9.26 - ovs-revalidator-storm-forensic.md` vào Tier 4 Advanced diagnostic (parallel với 9.25 flow debugging).
+- **C.4** `memory/file-dependency-map.md` — thêm Tầng 2m entry cho 9.26 (phụ thuộc 9.2/9.4/9.15/9.25; forward ref 9.14 runbook section; cross-ref 13.8 OVN comparison).
+- **C.5** `CLAUDE.md` Current State table — Session 32 entry + Session 33 entry + curriculum state 107 → 108 file.
+- **C.6** `memory/session-log.md` — Session 32 + 33 entry per Rule 5 handoff protocol.
+
+### G.5 Sequencing — Session 32 + 33
+
+| Session | Scope | Deliverable | Duration |
+|---------|-------|-------------|----------|
+| 32 | A.1 + A.2 + C.1 | 11-12 sentence fix + 2 header backfill + Phụ lục G (đang viết) | ~155 phút |
+| 33 | B + C.2-C.6 | Part 9.26 900-1.200 dòng + 5 memory/README update | ~6-8 giờ |
+
+**Tổng Phase E:** ~7.5-10.5 giờ, 2 session, 2 commit push.
+
+### G.6 Out-of-Scope Phase E — deferred to Phase F hoặc later
+
+1. **Block XIV-XVI content phase** (P4 Language + Service Mesh + Kernel/DPDK/AF_XDP Expert Extension) — hiện skeleton + exercise + arch, section body chưa content. Scope ~3.000-4.000 dòng. Defer Phase F khi v2.0-Verified stable.
+2. **C1b Lab Verification** — chờ user lab host (Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8, 3 VM tối thiểu). Session 33 chỉ mark 9.26 `doc-plausible`.
+3. **C6b Final Publish v2.0-Verified** — pipeline `scripts/build-sdn-pdf.sh` sẵn sàng, chờ C1b DONE.
+4. **Part 9.26 alternative case studies** — 2 scenarios khác: (a) LACP bond flap cascade → controller disconnect, (b) upcall storm + missaction fallback. Nếu user muốn 3 Part forensic OVS thay 1, scope Phase E mở rộng thành 3 session (33/34/35). Đã có Out-of-Scope #5 trong plan phê duyệt để user override.
+
+### G.7 Risk management
+
+| Rủi ro | Mitigation |
+|--------|------------|
+| Rule 11 retrofit accidentally break concept names | Manual context-review per sentence, không bulk regex; verify post-fix bằng Grep |
+| Header backfill overwrite inline citation URL | Đọc nguyên block cũ trước khi Edit; preserve URL vào Nguồn online chính field |
+| Part 9.26 drama fabrication | Chỉ cite public sources (commit c1c5c7bf, NSDI 2015 paper, Launchpad bug 1856522); scenario general "ISP châu Á" không kèm tên cụ thể |
+| Content quá dài vượt 1.200 dòng | Target 900-1.200, nếu > 1.200 cân nhắc tách §9.26.8 Prevention thành Part 9.27 runbook |
+| URL protection fail khi fix Rule 11 | Manual Edit, không dùng sed; grep `http.*]` post-fix verify |
+| Offline source Part 9.26 không đủ | compass_artifact Part II Ch Q + Part III Ch 10 cover mechanism; OVS.pdf Lab 11 cover kernel datapath. Nếu cần thêm: NSDI 2015 paper offline copy (chờ download nếu user cung cấp) |
+| Rule 13 em-dash density > 0.10/line | Sử dụng script `memory/em-dash-cleanup-v2.py` sau write; target < 0.05 (rất sạch) |
+
+### G.8 Pre-release checklist Phase E
+
+Sau session 32:
+- [ ] 4 file Rule 11 retrofit verified (grep re-scan clean)
+- [ ] 2 file header backfill verified (head -15 cho thấy blockquote 7-field)
+- [ ] Phụ lục G appended to plan doc
+- [ ] Audit rev2 §6.2 debt rows đánh dấu clear
+- [ ] 0 null byte, 0 URL corruption trên 6 modified file
+- [ ] Commit + push với conventional commit message
+
+Sau session 33:
+- [ ] Part 9.26 = 900-1.200 dòng, 10 section đầy đủ
+- [ ] Drama opening ≤ 120 chữ, 3 misconception callout, Capstone POE bác bỏ hypothesis
+- [ ] Rule 13 density < 0.10/line
+- [ ] README TOC Block IX 27 file entry
+- [ ] memory/lab-verification-pending.md Priority=HIGH entry
+- [ ] memory/file-dependency-map.md Tầng 2m entry
+- [ ] CLAUDE.md + session-log.md handoff
+- [ ] Commit + push
+
+Sau đó quay lại C1b Lab Verification khi lab host available → C6b Final Publish v2.0-Verified.
+
+### G.9 Câu hỏi còn mở cho user review Phase E
+
+Đã được giải quyết trong ExitPlanMode approval 2026-04-22:
+
+1. **Sequencing OK?** ✓ Session 32 audit residual trước, session 33 Part 9.26 mới — nhẹ trước, nặng sau.
+2. **Scope 1 Part forensic OVS (B1 megaflow revalidator) vs 3 Part (B1+B2 upcall+B3 bond flap)?** ✓ User approve 1 Part default; Out-of-Scope #4 giữ option mở rộng.
+3. **Case study topic OK?** ✓ User approve Megaflow revalidator storm (mechanism-deep, public-documented, kết nối 9.2/9.15).
+4. **Block XIV-XVI content phase bao giờ làm?** Defer Phase F (chưa lên plan), sau khi v2.0-Verified stable.
+
+---
+
+**Hết Phụ lục G Phase E plan.** Session 32 approved + in-progress (audit residual + Phụ lục G này). Session 33 standby chờ session 32 close.

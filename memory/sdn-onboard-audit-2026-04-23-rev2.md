@@ -179,14 +179,33 @@ Grep khớp entry cho 10/10 orphan file rev1 (0.2, 4.7, 9.6-9.14, 11.3, 11.4, 13
 - **P2 Rule 11 dictionary**: 12 entry mới bao phủ gaps rev1.
 - **P3 Memory**: CLAUDE + session-log + dep-map fresh.
 
-### 6.2. Nợ còn lại (non-blocker)
+### 6.2. Nợ còn lại (non-blocker) — Cập nhật sau session 32 (Phase E Scope A)
 
-| Mục | Debt | Ưu tiên | Effort |
-|-----|------|---------|--------|
-| Rule 11 deep retrofit | 3 file Critical `19.0/17.0/3.1` còn ~12-17 prose violation | P3 | 1-2 giờ |
-| Header block backfill | `17.0/18.0` flat style (legacy pre-existing) | P3 | 20 phút |
+| Mục | Debt | Ưu tiên | Effort | Trạng thái |
+|-----|------|---------|--------|-----------|
+| Rule 11 deep retrofit | 3 file Critical `19.0/17.0/3.1` + bonus `3.2` = 10 prose fix manual context-review | P3 | 1-2 giờ | ✅ **CLEARED session 32 Phase E** |
+| Header block backfill | `17.0/18.0` flat style (legacy pre-existing) → blockquote 7-field per 9.22 template | P3 | 20 phút | ✅ **CLEARED session 32 Phase E** |
 
-Tổng ~2-2.5 giờ effort để đạt "fully clean" status, nhưng curriculum đã production-ready cho v2.0-preVerified release.
+Session 32 (2026-04-22, Phase E Scope A) đã thực hiện:
+
+- **19.0** (3 prose fix): line 348 `performance` → `hiệu năng`; line 362 `behavior` → `hành vi`; line 1282 "thay đổi behavior" → "Cấu hình, thay đổi hành vi". Skip line 484 `bypass` (OpenFlow action semantics).
+- **17.0** (3 prose fix + header backfill): line 9 `use case debug` → `tình huống gỡ lỗi`; line 121 `debug bằng ovn-trace` → `gỡ lỗi bằng ovn-trace`; line 449 `giảm overhead` → `giảm chi phí xử lý`. Skip line 307 "L2 Destination Lookup" (concept name). Header flat → blockquote 7-field.
+- **3.1** (2 prose fix): line 112 "default miss behavior" → "hành vi mặc định khi không match"; line 236 "legacy behavior" → "hành vi kế thừa". Skip line 280 "implementation-defined behavior" (OpenFlow spec terminology).
+- **3.2** (2 prose fix): line 165 "retain right tham gia... (không exclusive)" → "giữ quyền tham gia... (không độc quyền)"; line 267 "Stanford shepherd" → "Stanford dẫn dắt".
+- **18.0** (header backfill): Flat → blockquote 7-field.
+
+Rule 11 raw hits sau retrofit (lưu ý: raw hits KHÔNG phân biệt concept name — nên giá trị tuyệt đối không giảm tỷ lệ với prose fix):
+
+| File | Rev2 hits | Post-session-32 prose fix | Status |
+|------|-----------|---------------------------|--------|
+| 19.0 | 126 | -3 prose | Concept name còn lại là code/OVN term legitimate |
+| 17.0 | 68 | -3 prose | Tương tự — concept preserved |
+| 3.1 | 62 | -2 prose | Concept preserved |
+| 3.2 | 28 | -2 prose | Attribution preserved (Stanford Anglicised context) |
+
+Curriculum nay ở **v2.0-preVerified-cleaned state** — audit rev2 debt FULL COMPLETE, chỉ còn 2 defer (C1b Lab + C6b Publish) ngoài audit scope.
+
+Tổng effort session 32 Scope A thực tế: ~60 phút (dưới estimate 1-2 giờ vì manual review per sentence nhanh hơn dự tính — Explore agent đã pre-classify line-by-line).
 
 ### 6.3. Đánh giá tổng quan
 
