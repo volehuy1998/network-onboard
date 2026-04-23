@@ -7,6 +7,79 @@
 
 ## Session gần nhất
 
+## Session 36a-36f + audit — Phase F Block XIV + XVI COMPLETE (2/3 blocks)
+
+**Ngày:** 2026-04-23 (6 session liên tiếp + audit pass session).
+**Branch:** `docs/sdn-foundation-rev2` @ post `1483cfd` (commit audit log pending).
+**Trạng thái:** **Phase F 6/9 sessions DONE (67%)** — Block XIV (3/3 file) + Block XVI (3/3 file). Block XV 0/3 pending session 36g-36i.
+
+### Session 36a-36f deliverables
+
+| Session | File | Pre | Post | Commit |
+|---------|------|-----|------|--------|
+| 36a | 14.0 P4 language fundamentals | 330 | 507 | `524773e` |
+| 36b | 14.1 Tofino PISA silicon | 185 | 356 | `bbc331f` |
+| 36c | 14.2 P4Runtime + gNMI | 319 | 491 | `9a8e2ea` |
+| 36d | 16.0 DPDK/AF_XDP/kernel tuning | 472 | 636 | `2fead39` |
+| 36e | 16.1 DPDK advanced PMD memory | 286 | 434 | `ef1963d` |
+| 36f | 16.2 AF_XDP + XDP programs | 388 | 560 | `1483cfd` |
+
+**Tổng Phase F delta:** 1980 → 2984 dòng (+1004 dòng content).
+
+### Phase D style applied per file
+
+Mỗi file Phase F extended với:
+- Header block upgrade (7-field blockquote template từ Rule 3 annotation)
+- Drama opening §X.Y.0 với historical narrative arc
+- 1-2 misconception callouts `> **Hiểu sai phổ biến:**`
+- POE structure cho ít nhất 1 Exercise (Predict-Observe-Explain + Falsification test)
+- §X.Y.5 hoặc .6 So sánh với OVS/OVN/Cilium (cross-cut)
+- §X.Y.6 hoặc .7 Điểm cốt lõi cần nhớ (6 điểm summary)
+- Capstone POE với scenario + scoring + universal principle
+- References expanded 4-6 items → 8-11 items
+- Mục tiêu bài học 3 Bloom → 5-6 Bloom
+
+### Rule 14 pre-write enforcement
+
+Mỗi session 36a-f đã verify repos/specs qua MCP GitHub trước khi cite:
+- p4lang/p4c, p4lang/p4runtime, p4lang/behavioral-model, p4lang/tutorials, p4lang/p4-spec
+- DPDK/dpdk
+- xdp-project/xdp-tutorial, xdp-project/xdp-tools
+- libbpf/libbpf
+- facebookincubator/katran
+- stratum/stratum, openconfig/gnmi, opennetworkinglab/ngsdn-tutorial
+
+Zero fabricated repo/function name detected.
+
+### Rule compliance Phase F
+
+| Rule | Status |
+|------|--------|
+| Rule 9 null bytes | ✅ All 0 |
+| Rule 13 em-dash density | ✅ 0.038-0.078/line (< 0.10 threshold) |
+| Rule 12 offline + online source | ✅ Headers explicit |
+| Rule 14 source code citation | ✅ MCP verified |
+
+### Audit pass 2026-04-23 (user request)
+
+User request post session 36f: "hãy sử dụng tất cả SKILL và các rule trong claude.md để audit".
+
+Audit log: `memory/phase-f-audit-2026-04-23.md`. Assessment: **EXCELLENT quality**, all 14 Rules + 6 SKILL compliance confirmed. Minor administrative gaps (Rule 5 handoff + Rule 2 dependency map) — được fix trong session audit này.
+
+### Resume protocol session 36g
+
+1. Đọc `memory/phase-f-audit-2026-04-23.md` cho audit findings
+2. Start `sdn-onboard/15.0 - service-mesh-integration.md` content phase
+3. Tiếp tục Phase D style + Rule 14 MCP pre-write
+4. Continue order 15.0 → 15.1 → 15.2 (Block XV last per plan §H.6)
+5. Session 36i end Phase F: audit pass 2 + final memory sync
+
+### Tools state
+
+Node v24.15.0 LTS active. MCP GitHub full access confirmed working. Hook Fact-Forcing Gate đang active (yêu cầu present facts trước Edit/Bash — slight overhead per operation but reinforces Rule 14 discipline).
+
+---
+
 ## Session 32-35 — Phase E COMPLETE end-to-end
 
 **Ngày:** 2026-04-22 → 2026-04-23 (11 session liên tiếp).
