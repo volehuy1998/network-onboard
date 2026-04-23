@@ -7,6 +7,88 @@
 
 ## Session gần nhất
 
+## Session 39 — Phase H H.2.2: Part 9.11 ovs-appctl reference expansion
+
+**Ngày:** 2026-04-24 post S38.
+**Branch:** `docs/sdn-foundation-rev2` @ post `8e36220`.
+**Trạng thái:** Phase H 2/13 session DONE.
+
+### Bối cảnh
+
+Sau S38 pilot (template library + Part 9.4) user approve tiếp tục S39. Target: Part 9.11 ovs-appctl reference playbook expansion 215 → ~800 dòng với 20+ appctl target × Anatomy block.
+
+### S39 deliverable
+
+Part 9.11 expansion 215 → 1170 dòng (+955, vượt target 46%). 18 nhóm target được cover với Anatomy block pattern:
+
+- §9.11.0 Grammar + target discovery + list-commands inventory
+- §9.11.1 Introspection (version + memory/show + coverage/show + coverage/read-counter + vlog/list + vlog/set + vlog/reopen)
+- §9.11.2 Bridge L2 (bridge/dump-flows + fdb/show + fdb/flush + mdb/show)
+- §9.11.3 Link aggregation (bond/show + lacp/show với LACP state bitfield 8 flag)
+- §9.11.4 Spanning-tree (stp/show + rstp/show)
+- §9.11.5 L2 monitoring (bfd/show + cfm/show)
+- §9.11.6 OpenFlow pipeline (ofproto/list + ofproto/trace -generate + bundle/show)
+- §9.11.7 Kernel datapath (dpctl/show + dpctl/dump-flows + dpctl/dump-conntrack + dpif/show-dp-features)
+- §9.11.8 DPDK datapath (dpif-netdev/pmd-stats-show — light touch, deep-dive ở Block XVI)
+- §9.11.9 Tunnel (tnl/neigh/show + tnl/ports/show)
+- §9.11.10 Upcall + revalidator (upcall/show + upcall/set-flow-limit + revalidator/purge + revalidator/wait)
+- §9.11.11 OVSDB cluster (cluster/status + cluster/kick + cluster/leave)
+- §9.11.12 Decision matrix 10-symptom (traffic sai port → fdb/show; bond issue → bond/show; tunnel rớt → tnl/neigh/show; CPU spike → coverage/show + upcall/show; flow limit → upcall/show; BFD flapping → bfd/show; STP slow → rstp/show; OVSDB slow → cluster/status; ovn-controller sync lag → inc-engine/show-stats; multicast issue → mdb/show)
+- Guided Exercise 12: Coverage delta analysis (baseline + trigger + delta + cleanup)
+
+### Key Anatomy blocks được cover
+
+- `memory/show` với 9 counter anatomy (cells, handlers, idl-cells, of-connections, ports, revalidators, rules, udpif keys)
+- `coverage/show` với 19-counter class breakdown (hit, miss, flow_extract, xlate_actions, upcall_flow_add/del, upcall_ukey_lookup_created/hit, revalidate, facet_revalidate/changed_rule, ofproto_flush, bridge_reconfigure, vconn_sent/received, util_xalloc, netlink_received/sent, rstp/stp_run, connmgr_wakeup)
+- `vlog/list` + set/reopen workflow
+- `fdb/show` + MAC flapping detection
+- `bond/show` balance-tcp với 11 field anatomy + slave-level analysis
+- `lacp/show` 8-flag state bitfield (activity/timeout/aggregation/synchronized/collecting/distributing/defaulted/expired)
+- `stp/show` + `rstp/show` STP state machine (FORWARDING/LEARNING/LISTENING/BLOCKING/DISABLED)
+- `bfd/show` RFC 5880 session state
+- `upcall/show` fast/slow path health + dump duration
+- `dpif/show-dp-features` kernel capability check
+- `tnl/neigh/show` tunnel ARP cache
+- `cluster/status` Raft consensus (term, role, leader, log index, match_index)
+
+### Quality gate
+
+- Rule 9 null byte: 0 (PASS) + 0 regression trên 109 file
+- Rule 13 em-dash density: 0.044/line (PASS, target < 0.10)
+- Rule 11 §11.6 prose sweep: 4 fix (Verify→Kiểm chứng 2x, behavior→hành vi, performance→hiệu năng)
+- Rule 14 N/A (tool documentation)
+- Rule 6 Quality Gate Checklist B+C: PASS
+- Code block statistics: 50 blocks, median 5 (reference doc naturally short per command), mean 8.0, max 29. 58% ≤5 do pattern single-command reference; key Anatomy output blocks đều ≥15 dòng.
+
+### Upstream lift
+
+- `ovs-appctl(8)` COMMON COMMANDS
+- `ovs-vswitchd(8)` RUNTIME MANAGEMENT COMMANDS (target lớn nhất)
+- `ovsdb-server(1)` cluster/* + schema/*
+- `ovn-controller(8)` inc-engine/*
+- `ovs-fields(7)` cho flow match spec
+- OVS Documentation/topics/tracing.rst
+- OVS Documentation/topics/dpdk/pmd.rst
+- RFC 5880 BFD
+- Compass artifact Ch L + Ch Q + Ch R + Appendix A
+
+### Progress Phase H
+
+- 2/13 session DONE (15%)
+- Session 38 DONE (pilot + template)
+- Session 39 DONE (9.11 reference playbook expansion)
+- Next: S40 — Part 9.2 kernel datapath deep-dive (+200 dòng SMC, EMC anatomy, upcall netlink, revalidator RCU, ukey lifecycle)
+
+### Commit + push
+
+Session S39 commit scope:
+- Modify: `sdn-onboard/9.11 - ovs-appctl-reference-playbook.md` (215 → 1170 dòng)
+- Modify: `memory/phase-h-progress.md` (S39 section)
+- Modify: `memory/session-log.md` (S39 entry)
+- Modify: `CLAUDE.md` (S39 status row)
+
+---
+
 ## Session 38 — Phase H kickoff: template library + Part 9.4 expansion pilot
 
 **Ngày:** 2026-04-24.

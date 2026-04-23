@@ -28,11 +28,24 @@ Total: 500 dòng template library.
 | Rule 13 em-dash density | PASS | 0.041/line (target < 0.10) |
 | Rule 14 source code citation | N/A | Part 9.4 tool documentation, no new source ref |
 | Code block statistics | PARTIAL | Median 12 dòng (target 15); mean 15.4; ≤5 blocks chỉ 13.2% (target < 40%, PASS). 38 blocks |
+
+## Session S39 deliverables (H.2.2)
+
+| Item | Status | Note |
+|---|---|---|
+| Part 9.11 expansion (215 → ~800) | DONE | Final 1170 dòng, +955 dòng, vượt target 46% |
+| Rule 9 null byte | PASS | 0 null byte |
+| Rule 11 §11.6 prose sweep | PASS | 4 fix (Verify→Kiểm chứng, behavior→hành vi, performance→hiệu năng) |
+| Rule 13 em-dash density | PASS | 0.044/line (target < 0.10) |
+| Rule 14 source code citation | N/A | Tool documentation |
+| Code block statistics | PARTIAL | 50 blocks, median 5 (reference doc naturally short), mean 8.0, max 29. 58% ≤5 do nhiều short command reference. Key Anatomy blocks (coverage/show, upcall/show, bond/show, fdb/show, cluster/status, pmd-stats-show, tnl/neigh/show) đều ≥15 dòng |
+| Scope cover | 18 nhóm target | introspection (vlog+memory+coverage), bridge+FDB+mdb, bond+LACP, STP+RSTP, BFD+CFM, ofproto (list+bundle), dpctl+dpif, dpif-netdev, tunnel, upcall+revalidator, OVSDB cluster. Decision matrix 10-symptom + guided exercise coverage delta |
+| Upstream lift | ovs-appctl(8) + ovs-vswitchd(8) + ovsdb-server(1) + ovn-controller(8) + ovs-fields(7) + OVS Documentation/topics/tracing.rst + RFC 5880 BFD |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
 
-- [ ] **S39** — H.2.2 Expand Part 9.11 ovs-appctl reference (215 → ~800). 20+ appctl target × Anatomy block.
+- [x] **S39** — H.2.2 Expand Part 9.11 ovs-appctl reference 215 → 1170 dòng (+955) DONE 2026-04-24. 18 nhóm target × Anatomy block (introspection/vlog/memory/coverage/bridge/FDB/mdb/bond/LACP/STP/RSTP/BFD/CFM/OpenFlow/datapath/DPDK/tunnel/upcall/revalidator/cluster) + decision matrix + guided exercise coverage delta.
 - [ ] **S40** — H.2.3 Part 9.2 kernel datapath deep-dive (+200 dòng SMC, EMC, upcall, revalidator, ukey).
 - [ ] **S41** — H.3 Match Fields: 4.1 + expand với IPv6/ARP/ICMP/MPLS/tun/conj_id/pkt_mark, Template B.
 - [ ] **S42** — H.4.1 Actions output+control: output/drop/flood/all/controller/local/in_port/table/normal, Template C.
