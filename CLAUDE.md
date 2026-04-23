@@ -657,18 +657,23 @@ Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `24bb66b` (session 24 CLOSED — Phase D 5/5 Part mới DONE + Rule 13 retrofit); session 25 P0+P1.4 retrofit in progress |
-| Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful — 3 Part tạo pedagogical arc multi-table → stateless → stateful. Offline source: OVS.pdf Lab 6/7/8 verbatim extract qua pymupdf. |
-| Session 22+23 deliverables | 3 file mới: 9.22 (447 dòng, Lab 6 multi-table pipeline), 9.23 (346 dòng, Lab 7 stateless ACL), 9.24 (671 dòng, Lab 8 conntrack). Tổng **+1464 dòng** content. README TOC + lab tracker updated. |
-| Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 flow debugging + Part 9.21 Mininet foundation + Rule 13 Em-dash Discipline ra đời + Rule 11 retrofit session 22+23 Parts. |
-| Session 24 deliverables | 2 file mới: 9.25 (636 dòng, NSRC + compass Ch 10 flow debugging) + 9.21 (571 dòng, Lab 2 Mininet foundation). Rule 13 retrofit 9.22/9.23/9.24 em-dash 361→155 (57% reduction). CLAUDE.md Rule 13 + Rule 11 dictionary mở rộng. Tổng **+2300 dòng** content + rule ecosystem. |
-| Session 25 status | **In progress (2026-04-23)**. Audit-driven retrofit: P0 (README TOC 14 orphans + 2 dead URL) + P1.4 (Rule 13 em-dash top 10 violators 508→156, 69% reduction). |
-| Phase D progress | **5/5 Part mới DONE** (9.22, 9.23, 9.24, 9.25, 9.21). Chuyển sang Phase D expansion: 9.9 QoS (session 25-26), 11.3 GRE (session 26), 11.4 IPsec + 9.2 kernel datapath (session 27). Sau đó C1b Lab Verification + C6b Final Publish v2.0. |
-| Phase D commits (session 22-24) | `66b4a64` (9.24, +682) + `85e6cbd` (9.22+9.23, +803) + `ce2c13b` (Rule 11 retrofit, +444/-338) + `41f6533` (9.25 + Rule 13, +861/-126) + `24bb66b` (9.21, +866). All pushed. |
-| Audit 2026-04-23 state | `memory/sdn-onboard-audit-2026-04-23.md` — 292 dòng comprehensive audit 4 chiều (TOC, Rule 11 prose, Rule 13 em-dash, URL). Skill stack: professor-style + document-design + fact-checker + web-fetcher. Priority matrix P0-P3. |
-| Audit fix progress (session 25) | P0.1 README TOC 14 orphan entries added (Block 0/IV/IX/XI/XIII file count updated). P0.2 dead URL `docs.openvswitch.org/en/latest/intro/install/upgrade/` fixed → general/ + NEWS. P1.4 top 10 Rule 13 retrofit. P1.3 deferred (9.18-9.25 đã có modern header, 17.0/18.0/19.0 pre-Architecture). P2/P3.9-10 deferred session 26+. |
+| Active branch | `docs/sdn-foundation-rev2` @ `f868d8e` (session 31 CLOSED — Phase D COMPLETE end-to-end + Audit 2026-04-23 FULL COMPLETE). Release-ready v2.0-preVerified. |
+| Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful. |
+| Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 + Part 9.21 + Rule 13 ra đời + Rule 11 retrofit session 22+23. |
+| Session 25 status | **DONE** Audit P0.1 (README TOC 14 orphans) + P0.2 (2 dead URL) + P1.4 (Rule 13 top 10, 508→156) + P3.8 (CLAUDE.md state) + Part 9.9 QoS expansion (+458 dòng). |
+| Session 26 status | **DONE** Part 11.3 GRE expansion (+547 dòng, Lab 14 full). |
+| Session 27 status | **DONE** Part 11.4 IPsec expansion (+662 dòng, Lab 15 full) + Part 9.2 kernel datapath lab steps (+251 dòng, Lab 11). **🎉 Phase D expansion COMPLETE 4/4.** |
+| Session 28 status | **DONE** Audit P2.6 (Rule 13 remaining 20 files, 689→196) + P2.7 (Dictionary expansion 12 entries) + P2.5-safe (5 Critical files, 36 replacements). |
+| Session 29 status | **DONE** Audit P2.5 context-review 3 pre-existing Critical (19.0 + 17.0 + 18.0 = 123 replacements + 10 URL restorations). |
+| Session 30 status | **DONE** Audit P2.5 context-review 2 Phase B Critical (3.2 + 4.6 = 132 changes). URL protection improved. Manual syntax cleanup 6 lines. |
+| Session 31 status | **🎉 COMPLETE** Audit P2.5 context-review 6 residual Critical (3.1 + 3.0 + 2.1 + 2.4 + 5.0 + 6.0 = 171 replacements). **P2.5 TOTAL 11/11 Critical DONE**, 426 replacements. |
+| Phase D final status | **9/9 deliverable DONE**: 5 Part mới (9.21/9.22/9.23/9.24/9.25) + 4 expansion (9.9/11.3/11.4/9.2). Còn C1b Lab Verification + C6b Final Publish chờ lab host. |
+| Audit 2026-04-23 state | **🎉 FULL COMPLETE** — tất cả P0/P1/P2/P3 items. Only C1b Lab Verification + C6b Final Publish v2.0 deferred (bên ngoài audit scope). |
+| Audit 2026-04-23 P2.5 summary | 11 Critical files cleaned, 426 prose replacements total. Patterns: operator/engineer/version/deployment/verify/incident/fail/support/performance/approach/pattern/expose/scalability/dynamics/adoption/shepherd/consumer/workaround/trade-off/worry/bent/favor/significant/unusual/overlap/troubleshoot/subtle/pedagogical/motivation/criteria/flexibility/bidirectional/symmetric/asymmetric/experiment/tolerate/undefined (~37 patterns). 0 URL corruption, 0 null bytes. |
+| Commits session 24-31 pushed | **15 commits**: `ce2c13b` → `41f6533` → `24bb66b` → `edbba24` → `cab7ea5` → `b225c1d` → `b1200c9` → `497d9e7` → `434890f` → `2a11a53` → `2f152f6` → `d883751` → `02edad8` → `22a8616` → `f868d8e`. |
 | Session 17 status | **🎉 COMPLETE — C5.4 + C5.5 + C7 + C8 + C9 + C10 all DONE + pushed** (2026-04-22). Core OVS/OpenFlow/OVN đạt bề rộng + bề sâu + cross-cutting view. |
 | Session 17 deliverables | 17 file mới (9 core blocks + 3 cross-cutting + 5 Rule 11 retrofit) + expand 14 file Block XIV/XV/XVI cũ. Tổng +8315 dòng content. README TOC updated 3 lần (Block X + XIII + Block 0). |
+| Curriculum state (end session 31) | **93 file, ~40.5K dòng** content OVS/OpenFlow/OVN. Block IX 26 file (cao nhất curriculum), Block XI 5 file (GRE + IPsec full expansion). Rule 9 null bytes 0 trên 93 file. Rule 11 prose 100% safe + 11/11 Critical context-cleaned. Rule 12 offline source 100%. Rule 13 em-dash 100% compliance (< 0.10/line). |
 | Curriculum state (end session 23) | **91 file, ~34.8K dòng** content OVS/OpenFlow/OVN. Block IX (24 file — cao nhất curriculum, 4 tier + Firewall foundation 9.22-9.24), các block khác unchanged vs session 17. |
 | Curriculum state (end session 17) | **85+ file, ~32K+ dòng** content OVS/OpenFlow/OVN. Block IX (18 file), Block X (7 file), Block XIII (14 file), Block XVII-XIX (3 file), Expert Extension (9 file), Block 0 intro (3 file), các block khác unchanged. |
 | Next session deferred | C1b Lab Verification (chờ lab host) → C6b Final Publish v2.0 (chờ C1b) |
