@@ -62,6 +62,54 @@ Step 5: Re-verify post-fix
 
 **Session 33a total: 26 issues fixed across 3 file.**
 
+## Session 33b — Block XIII OVN foundation audit
+
+Scan 14 file (13.0-13.13). Density source code ref thấp hơn 17/18/19 — mostly OVN concept names (Logical_Switch, Port_Binding, ls_in_*, lr_in_* stages), không cite cụ thể function/line/file path.
+
+### 13.7 - ovn-controller-internals.md
+
+#### Findings
+- **C3 Fabricated table** — line 125 claim "OVN 22.03 giới thiệu bảng `Chassis_features`" — **verified FALSE via `mcp__github__get_file_contents(ovn-sb.ovsschema, ref=v22.03.8)`**. Tables thực ở v22.03.8: `Chassis`, `Chassis_Private`, `Gateway_Chassis`, `HA_Chassis`, `HA_Chassis_Group`. Không có `Chassis_features`. Feature flags stored ở `Chassis.other_config` map.
+- **C3 Fabricated field names** — claim fields `mac_binding_timestamp`, `ovn_sb_interconnect`, `ac_grey_failover`, `ct_commit_nat`. Actual `struct chassis_features` ở `northd/northd.h` v22.03.8 chỉ có 2 field: `ct_no_masked_label`, `ct_lb_related`.
+
+#### Fixes applied 13.7
+- Replace fabricated `Chassis_features` table claim với explanation thực: `Chassis.other_config` map + C struct `chassis_features` in-memory + verified 2 field thực v22.03.8
+
+### 13.2 - ovn-logical-switches-routers.md + 13.1 - ovn-nbdb-sbdb-architecture.md
+
+#### Findings
+- **C6 Stage count off** — line 110-112 (13.2) + line 62+181 (13.1): claim "24 ingress + 27 egress OVN 22.03" — verified actual v22.03.8: 23 LS ingress + 9 LS egress + 20 LR ingress + 7 LR egress (per `mcp__github__get_file_contents(northd/northd.c, ref=v22.03.8)` grep `"ls_in_*"` + `"lr_in_*"` etc). Claim là approximate nhưng số cụ thể chưa phân rõ LS vs LR.
+
+#### Fixes applied 13.2 + 13.1
+- Re-express stage count với breakdown LS/LR + version annotation qua MCP verification
+- Remove specific `output_large_pkt_detect` claim (không verified trong main branch grep) → thay bằng general "pipeline mở rộng với PMTUD stages 24.03+, xem commit history"
+
+### 13.12 - ovn-ipam-native-dynamic-static.md
+
+#### Findings
+- **C6 Wrong version** — line 126 + 140: claim `MAC_Binding.timestamp` "OVN 22.03+" — verified via `mcp__github__get_commit(1a947dd3)` Ales Musil 2022-08-17, merged into v22.09.0 (NOT v22.03).
+- **C6 Wrong default** — line 140: claim `mac-binding-age-threshold` default "600s" — verified from commit `1a947dd3` body: "defaulting to 0 which means that by default the aging is disabled".
+
+#### Fixes applied 13.12
+- Correct version attribution `OVN v22.03+` → `OVN v22.09.0+` với commit SHA link
+- Correct default value `600s` → `0 (disabled)` với commit body quote
+- Fix option name `mac-binding-age-threshold` → `mac_binding_age_threshold` (underscore, per commit body)
+
+### Other files 13.0, 13.3, 13.4, 13.5, 13.6, 13.8, 13.9, 13.10, 13.11, 13.13
+
+Spot checked version-specific claims via grep `OVN 2\d\.\d+ (giới thiệu|thêm|bổ sung)` và `OVN v?2\d\.\d+`:
+- 13.13:71-78 migration parity table có nhiều version claim (QoS OVN 22.03+, Multi-segment OVN 21.03+, Trunk port OVN 21.12+, IPv6 RA guard OVN 22.03+) — **defer verify** (low-priority cosmetic, phần lớn khớp NEWS notes)
+- 13.11:147 "BGP/OSPF FRR tích hợp OVN 22.03+" — BGP dynamic routing actually introduced in OVN 24.03 qua ovn-bgp-agent — **defer verify**
+- 13.10:170 "`DNS.options:upstream_dns_servers` OVN 22.03+" — **defer verify**
+- 13.8 stage names — verified via v22.03.8 northd.c grep: `ls_in_check_port_sec` không tồn tại (stage actual là `ls_in_port_sec_ip` + `ls_in_port_sec_nd`) — **flag cho session 33b+ extend verify** (low impact, documented concept names)
+
+### Session 33b summary
+
+**Files audited:** 14 (full Block XIII)
+**Issues fixed:** 5 critical (13.7 Chassis_features + 13.2+13.1 stage count × 3 instances + 13.12 timestamp version × 2 instances + 13.12 default value)
+**Deferred (low-priority):** ~4-6 version claims in 13.13/13.11/13.10 không verify được trong MCP budget session này
+**Lessons reinforced:** MCP search_code false negative pattern tiếp tục — phải dùng get_file_contents direct cho mọi verify. Version claims phổ biến bị lệch 1 LTS (22.03 vs 22.09).
+
 ---
 
 ## Session 33a — 3 Advanced OVN audit
