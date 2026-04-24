@@ -7,6 +7,68 @@
 
 ## Session gần nhất
 
+## Session 45 — Phase H H.5: OVS internals expand (classifier + connmgr)
+
+**Ngày:** 2026-04-24 post S44.
+**Branch:** `docs/sdn-foundation-rev2` @ post `e56123e`.
+**Trạng thái:** Phase H 8/13 session DONE (62%). Curriculum 111 file.
+
+### S45 deliverable
+
+Expand 3 file OVS internals. Total +435 dòng (vượt target +350 là 24%).
+
+**9.1 - ovs-3-component-architecture.md** (341 → 430, +89)
+- §9.1.X.1 ofproto-dpif 5-layer architecture (bridge.c / ofproto.c / ofproto-dpif.c / ofproto-dpif-xlate.c / ofproto-dpif-upcall.c / connmgr.c / classifier.c / dpif.c)
+- §9.1.X.2 `dpif/show` output anatomy (ofport vs odp_port, geneve options)
+- §9.1.X.3 Connection manager responsibility
+- §9.1.X.4 Thread model (main + handler + revalidator + PMD + URCU)
+
+**9.15 - ofproto-classifier-tuple-space-search.md** (254 → 407, +153)
+- §9.15.7 Subtable internals: struct cls_subtable (cmap hash + minimask + max_priority), staged lookup stages, `dpctl/dump-flows` masked output anatomy
+- §9.15.8 Patricia trie prefix optimization cho IP classification (solve prefix vs exact mask gap)
+- §9.15.9 Performance pathology: subtable explosion (avg subtable lookups > 10) + priority sort churn
+
+**9.16 - ovs-connection-manager-controller-failover.md** (240 → 433, +193)
+- §9.16.7 Multi-controller 3-node setup + `ofproto/show-connection` output anatomy + role election timeline (T+0..T+500 scenario)
+- §9.16.8 OFPT_ROLE_REQUEST wire format (struct ofp_role_request 24 byte) + role values (0/1/2/3) + OFPT_SET_ASYNC customization
+- §9.16.9 Coverage counter connmgr (connmgr_wakeup/rconn_overflow/queued/sent/vconn_open/close)
+- §9.16.10 Troubleshooting matrix 6-symptom (is_connected false, OF version, missing MASTER, write reject SLAVE, TCP reconnect, bundle fail)
+
+### Quality gate
+
+- Rule 9 null byte: 0 + 0 regression 111 file
+- Rule 13 em-dash: 9.1 0.047, 9.15 0.039, 9.16 0.023 (all PASS)
+- Rule 11 §11.6: 0 new prose leak
+- Rule 14 N/A (internals deep dive, NSDI 2015 cite đã có)
+
+### Upstream
+
+- OVS source `lib/classifier.c` + `lib/classifier-private.h` (struct cls_subtable, cls_classifier)
+- OVS source `ofproto/connmgr.c` (connection manager)
+- OVS source `ofproto/ofproto-dpif.c` (layer abstraction)
+- OpenFlow 1.3 spec §7.3.9 Role Management + §7.5.4 Async Config
+- Srinivasan SIGCOMM 1999 TSS paper
+- NSDI 2015 Pfaff (already cited)
+
+### Progress Phase H
+
+- 8/13 session DONE (62%)
+- S38-S45 DONE
+- Curriculum 111 file, ~44.000 dòng
+- Next: S46 — H.6.1 OVN LS pipeline (Part 13.2 ls_in_* 27 stage + ls_out_* 10 stage exhaustive Template D). Critical gap foundation: ls_out_* egress pipeline currently 0-mention — đây là session quan trọng nhất của phase.
+
+### Commit + push
+
+Session S45 commit scope:
+- Modify: `sdn-onboard/9.1 - ovs-3-component-architecture.md` (+89)
+- Modify: `sdn-onboard/9.15 - ofproto-classifier-tuple-space-search.md` (+153)
+- Modify: `sdn-onboard/9.16 - ovs-connection-manager-controller-failover.md` (+193)
+- Modify: `memory/phase-h-progress.md` (S45 section)
+- Modify: `memory/session-log.md` (S45 entry)
+- Modify: `CLAUDE.md` (S45 status row)
+
+---
+
 ## Session 44 — Phase H H.4.3: Actions Template C tier 3 advanced — Part 4.9 FINAL
 
 **Ngày:** 2026-04-24 post S43.

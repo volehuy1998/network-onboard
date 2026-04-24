@@ -101,6 +101,18 @@ Total: 500 dòng template library.
 | Rule 11 §11.6 prose sweep | PASS | 0 new prose leak (tier 3 content clean) |
 | Scope cover | 8 section advanced | §4.9.23 ct() full with all options (commit/zone/nat/force/alg/exec/table) + ct_clear + typical stateful firewall pattern + §4.9.24 learn() MAC learning self-programming flow + fin_idle_timeout + §4.9.25 conjunction() cross-product compression với OVN Port_Group example + §4.9.26 multipath() ECMP với 4 hash algorithm (modulo_n/hash_threshold/hrw/iter_hash) + §4.9.27 bundle() + bundle_load() + §4.9.28 check_pkt_larger() PMTUD OVN lr_in_chk_pkt_len context + §4.9.29 bảng full catalog tier 1+2+3 + §4.9.30 Guided Exercise full-pipeline production pattern (rate limit + ACL + stateful + SNAT + output) |
 | Upstream | ovs-actions(7) Category 5+6 + OVS source `ofproto-dpif-xlate.c` xlate function + Part 9.24 conntrack context |
+
+## Session S45 deliverables (H.5 OVS internals)
+
+| Item | Status | Note |
+|---|---|---|
+| 9.1 + 9.15 + 9.16 expand | DONE | +435 dòng total (vượt target +350 là 24%) |
+| Rule 9 null byte | PASS | 0 null + 0 regression 111 file |
+| Rule 13 em-dash | PASS | 9.1 0.047, 9.15 0.039, 9.16 0.023 |
+| 9.1 expand | +89 dòng | §9.1.X ofproto-dpif 5-layer + dpif/show anatomy + thread model |
+| 9.15 expand | +153 dòng | §9.15.7 subtable internals, §9.15.8 Patricia trie, §9.15.9 performance pathology |
+| 9.16 expand | +193 dòng | §9.16.7 multi-controller + role timeline, §9.16.8 OFPT_ROLE_REQUEST wire, §9.16.9 coverage counter, §9.16.10 matrix |
+| Upstream | OVS source `lib/classifier.c`+`ofproto/connmgr.c`+OpenFlow 1.3 §7.3.9+§7.5.4 | |
 | Rule 6 Quality Gate Checklist C | PASS | fact-check, URL, file integrity, prose, em-dash all PASS |
 
 ## Rollout plan (S39 → S50)
@@ -111,7 +123,7 @@ Total: 500 dòng template library.
 - [x] **S42** — H.4.1 Actions output+control DONE 2026-04-24. Tạo mới Part 4.9 `openflow-action-catalog.md` (762 dòng, tier 1). Category 1 Output (9 action) + group (4 types) + control actions (resubmit, clone, note) + Action Set 12-priority execution order + action vs instruction foundation. Template C applied first time. Tier 2 + Tier 3 sẽ expand ở S43 + S44.
 - [ ] **S43** — H.4.2 Actions field+encap: set_field/dec_ttl/push_pop/mod_*, Template C.
 - [x] **S44** — H.4.3 Actions tier 3 advanced DONE 2026-04-24. Append Part 4.9 tier 3: 1124 → 1544 dòng (+420). 8 section mới: §4.9.23 ct() full (commit/zone/nat/force/alg/exec/table + ct_clear) + §4.9.24 learn() MAC learning pattern + §4.9.25 conjunction() cross-product compression + §4.9.26 multipath() ECMP + §4.9.27 bundle() + bundle_load() + §4.9.28 check_pkt_larger() PMTUD + §4.9.29 bảng tổng hợp full catalog tier 1+2+3 + §4.9.30 Guided Exercise full-pipeline stateful ACL. Part 4.9 FINAL 1544 dòng, 40+ action cover 100% foundation.
-- [ ] **S45** — H.5 OVS internals: 9.1 + 9.15 + 9.16 classifier/subtable/staged/TSS/connmgr.
+- [x] **S45** — H.5 OVS internals DONE 2026-04-24. Expand 3 file: 9.1 (341→430 +89), 9.15 (254→407 +153), 9.16 (240→433 +193). Total +435 dòng vượt target +350 là 24%. Added: 9.1 §9.1.X ofproto-dpif 5-layer architecture + dpif/show anatomy + thread model; 9.15 §9.15.7 subtable internals + cmap hash + staged lookup + masked output anatomy, §9.15.8 Patricia trie prefix optimization, §9.15.9 performance pathology; 9.16 §9.16.7 multi-controller setup + ofproto/show-connection anatomy + role election timeline, §9.16.8 OFPT_ROLE_REQUEST wire format + async config, §9.16.9 connmgr coverage counter, §9.16.10 troubleshooting matrix 6-symptom.
 - [ ] **S46** — H.6.1 OVN LS pipeline: 13.2 with ls_in_* 27 stage + ls_out_* 10 stage, Template D.
 - [ ] **S47** — H.6.2 OVN LR pipeline: 13.11 with lr_in_* 19 stage + lr_out_* 7 stage, Template D.
 - [ ] **S48** — H.6.3 OVN schema: 13.1 + 13.10 NB 13 table + SB 10 table deep dive.
