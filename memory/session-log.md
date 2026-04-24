@@ -7,6 +7,93 @@
 
 ## Session gần nhất
 
+## Session 53 — Phase G.5.1: new Part 20.3 OVN daily operator playbook
+
+**Ngày:** 2026-04-24 post Session S52.
+**Branch:** `docs/sdn-foundation-rev2` @ post `262f768`.
+**Trạng thái:** Phase G progress **6/12 session DONE (50%)** — G.1 Truy vết ✅ 3/3 + G.3 Debug sâu 🟢 2/3 + G.5 Thao tác công cụ 🟢 1/2.
+
+### Bối cảnh
+
+User directive "tiếp tục" sau Session S52 expand Part 9.26. Sau Phase G.3 đã cover 2/3 session (20.2 troubleshooting tools + 9.26 forensic case studies), mở rộng sang Phase G.5 "Thao tác công cụ thành thạo" — daily operator skill. Gap identified: `ovn-nbctl`/`ovn-sbctl` scattered across concept Parts 13.x (foundation) + 20.2 (troubleshooting) nhưng không có consolidated scenario-driven daily workflow. Part 20.3 fill gap này.
+
+### Deliverable — Part 20.3 new file 1554 dòng
+
+**18 section structure:**
+
+**Header + objectives 5 Bloom.**
+
+**§20.3.1-10 = 10 task category scenario-driven:**
+
+1. **Daily health check** (§20.3.1) — 5 lệnh < 10 giây: `ovn-nbctl show` full topology với Anatomy Template A (10 field: switch/port/addresses/type=router/router/port LRP mac/networks/gateway chassis/nat) + `ovn-sbctl show` chassis + Chassis_Private timestamp staleness check + northd/ovn-controller status + nb_cfg sync NB_Global vs SB_Global + lflow count sanity. Copy-paste ready `ovn-health-check.sh` script cuối.
+2. **Inventory listing** (§20.3.2) — 5 method: ls-list / lsp-list per LS / lr-list + lrp-list / acl-list / lb-list + NAT-list + dhcp-options-list. Consolidated one-liner script đếm tất cả.
+3. **Port lifecycle** (§20.3.3) — 6 scenario: add LSP MAC+IP / bind với OVS interface external_ids / remove / rename workaround / cross-chassis migrate manual 4-step / administrative disable `lsp-set-enabled false`.
+4. **ACL management** (§20.3.4) — 6 scenario: add 4 action (allow/drop/reject/allow-related) / list priority desc / delete by match/direction+priority/nuke all / test dry-run với ovn-trace / audit grep rule matching pattern / Port_Group consolidation 5-10x reduction.
+5. **Load_Balancer + NAT** (§20.3.5) — 6 scenario: create TCP LB / add-remove backend / Service_Monitor health check OVN 22.03+ / SNAT rule / DNAT+SNAT floating IP / remove NAT.
+6. **DHCP + DNS native** (§20.3.6) — 5 scenario: create DHCPv4 + options (server_id/lease_time/router/dns) / attach lsp-set-dhcpv4-options / DHCPv6 / DNS record via `create DNS records=...` / remove DHCP_Options.
+7. **Gateway + HA_Chassis** (§20.3.7) — 5 scenario: create LRP external / HA_Chassis_Group add + add-chassis với priority / check gateway active chassis qua Port_Binding type=chassisredirect / manual failover 2 cách (priority + stop ovn-controller) / BFD status check.
+8. **Conntrack** (§20.3.8) — 5 scenario: dump `dpctl/dump-conntrack` / count per zone awk/sort/uniq / flush `conntrack -D -w zone` / ct-zone-list per LSP / nf_conntrack_tcp_timeout_established tuning.
+9. **Performance** (§20.3.9) — 5 metric: northd stopwatch/show (ovn-northd-loop + build_lflows p95) / ovn-controller inc-engine/show-stats / lflow-cache hit rate / datapath flow count / Prometheus textfile collector export.
+10. **Backup + maintenance** (§20.3.10) — 5 scenario: ovsdb-client backup NBDB+SBDB / restore procedure / chassis cordon 7-step (inventory → cordon → drain → verify empty → stop → maintenance → restart → re-register) / rolling upgrade chassis-by-chassis script / config audit diff pre/post change.
+
+**§20.3.11-12 = 2 workflow end-to-end complete bash script:**
+
+- `new-tenant.sh tenant-42 10.10.42.0/24` — 7-step script tạo LR+LS+LRP+LSP×3+DHCP_Options+ACL default-deny+SNAT. 40 dòng bash.
+- `tenant-teardown.sh tenant-42` — 9-step script safe order: disable LSP → remove LB/DHCP ref → remove NAT → remove ACL → remove LSP → remove LRP → remove LS → GC DHCP → verify clean. 30 dòng bash.
+
+**§20.3.13-15 = 3 Guided Exercise:**
+
+- GE1 Daily health check walkthrough với POE "nb_cfg ≥ sb_cfg always" kiểm chứng bằng 10 sample.
+- GE2 New tenant provisioning end-to-end với ovn-trace kiểm chứng 3 scenario (same-LS, cross-subnet, cross-tenant isolation).
+- GE3 Planned chassis maintenance 9-step procedure với POE "zero traffic loss" kiểm chứng bằng `ping -i 0.5` liên tục.
+
+**§20.3.16 Capstone POE "Add 500 ACL safe for prod?"** — 4-dimension analysis (northd compile p95 / lflow-cache / br-int OpenFlow count / debug complexity) → refute "raw 500 ACL" → correct với Port_Group consolidation 5-10 group + priority block (100-199 allow / 200-299 stateful / 300-399 deny specific / 900+ default-deny) + stopwatch baseline measure.
+
+**§20.3.17-18 = 8 hiểu sai phổ biến + 8 điểm cốt lõi + 10 references.**
+
+### Quality gate Session S53
+
+| Rule | Kiểm tra | Kết quả |
+|------|----------|---------|
+| Rule 9 | Null byte scan | 0 PASS |
+| Rule 11 | §11.6 prose scan — đã apply "Kiểm chứng" thay vì "Verify" từ đầu khi viết | 0 prose leak PASS |
+| Rule 13 | Em-dash density | **0.0257/line** (rất thấp, tốt nhất trong 3 Part session G) PASS |
+| Rule 14 | Source code citation — không cite SHA mới, reference general qua man page | N/A PASS |
+
+### Phase G progress sau S53
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 COMPLETE |
+| G.2 Xử lý sự cố | — | ⏳ 0/3 pending |
+| G.3 Debug sâu | S51 (20.2), S52 (9.26) | 🟢 2/3 IN PROGRESS |
+| G.4 Lịch sử | — | ⏳ 0/1 pending (optional) |
+| G.5 Thao tác công cụ | S53 (20.3 new) | 🟢 1/2 IN PROGRESS |
+
+Phase G total **6/12 session DONE (50% milestone)**.
+
+### Files modified Session S53
+
+- **NEW:** `sdn-onboard/20.3 - ovn-daily-operator-playbook.md` (1554 dòng)
+- **UPDATED:** `sdn-onboard/README.md` (Block XX 3 → 4 file, TOC entry 20.3 add)
+- **UPDATED:** `memory/file-dependency-map.md` (Tầng 2l Block XX + row 20.3)
+- **UPDATED:** `CLAUDE.md` (Phase G 5/12 → 6/12 + Session S53 row)
+- **UPDATED:** `memory/session-log.md` (Session S53 entry this)
+
+### Curriculum state post-S53
+
+- **112 → 113 file** (Block XX 3 → 4).
+- **46.432 → 47.986 dòng** (+1554).
+- Block XX cumulative: 20.0 (788) + 20.1 (475) + 20.2 (1627) + 20.3 (1554) = **4.444 dòng operational excellence**.
+
+### Pending next session
+
+- **G.3.3** — optional đóng G.3 3/3 với case 4 Part 9.26 (upcall storm DDoS microburst) — low priority vì 2 case đã đủ cover class.
+- **G.5.2** — new Part "OVS daily operator playbook" tương tự 20.3 cho OVS pure.
+- **G.2.1** — expand Part 9.14 incident decision tree với 10+ scenario.
+
+---
+
 ## Session 52 — Phase G.3.2: expand Part 9.26 với 2 case study forensic mới
 
 **Ngày:** 2026-04-24 post Session S51.
