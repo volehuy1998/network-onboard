@@ -15,3 +15,6 @@ pr-body.txt
 # Claude Desktop session files
 .claude/
 tmp-pdf-pages/
+
+.gemini/
+gha-creds-*.json

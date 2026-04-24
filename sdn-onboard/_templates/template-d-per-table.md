@@ -1,7 +1,7 @@
-# Template D — Per-table pipeline stage block cho OVN / OVS pipeline
+# Template D — Per-table chuỗi xử lý (pipeline) stage block cho OVN / OVS chuỗi xử lý (pipeline)
 
-> **Mục đích:** định nghĩa một stage trong pipeline (ovn ingress ls_in_*, egress ls_out_*, router lr_in_*/lr_out_*, hoặc OpenFlow table cụ thể của OVS br-int).
-> **Upstream baseline:** man `ovn-architecture(7)` — 30+ logical flow table được itemize, mỗi table có match criteria + action + stage name.
+> **Mục đích:** định nghĩa một stage trong chuỗi xử lý (pipeline) (ovn ingress ls_in_*, egress ls_out_*, router lr_in_*/lr_out_*, hoặc OpenFlow table cụ thể của OVS br-int).
+> **Upstream baseline:** man `ovn-architecture(7)` — 30+ logical luồng table được itemize, mỗi table có match criteria + action + stage name.
 > **Tối thiểu:** 50 dòng per stage.
 
 ## Skeleton
@@ -83,7 +83,7 @@ ingress(dp="<dp>", inport="<in>")
 
 ## Inventory stage foundation OVN
 
-### Logical Switch Ingress Pipeline (25+ stage)
+### Logical Switch Ingress Chuỗi xử lý (Pipeline) (25+ stage)
 
 Per `northd.h` enum ovn_stage (OVN 22.03):
 
@@ -118,7 +118,7 @@ T24 ls_in_external_port         Bridging to external port
 T25 ls_in_l2_lkup               Destination MAC lookup
 ```
 
-### Logical Switch Egress Pipeline (8 stage)
+### Logical Switch Egress Chuỗi xử lý (Pipeline) (8 stage)
 
 ```
 T0 ls_out_pre_lb
@@ -133,7 +133,7 @@ T8 ls_out_port_sec_ip
 T9 ls_out_port_sec_l2
 ```
 
-### Logical Router Ingress Pipeline (20+ stage)
+### Logical Router Ingress Chuỗi xử lý (Pipeline) (20+ stage)
 
 ```
 T0  lr_in_admission                 MAC + L3 validation
@@ -157,7 +157,7 @@ T17 lr_in_gw_redirect               Gateway chassis redirect (distributed GR)
 T18 lr_in_arp_request               ARP request emission
 ```
 
-### Logical Router Egress Pipeline (8 stage)
+### Logical Router Egress Chuỗi xử lý (Pipeline) (8 stage)
 
 ```
 T0 lr_out_chk_dnat_local
@@ -173,7 +173,7 @@ Tổng: ~61 stage để cover theo pattern exhaustive per-table breakdown. Prior
 
 ## OVS physical table mapping (br-int)
 
-Khi translate logical flow → OpenFlow, `ovn-controller` assign physical OpenFlow table number khác logical. Xem `ovn-architecture(7)` §Physical Pipeline hoặc `ovn-controller` source `controller/physical.c` để map T logical → T physical.
+Khi translate logical luồng → OpenFlow, `ovn-controller` assign physical OpenFlow table number khác logical. Xem `ovn-architecture(7)` §Physical Chuỗi xử lý (Pipeline) hoặc `ovn-controller` source `controller/physical.c` để map T logical → T physical.
 
 Physical tables của br-int (OpenFlow numbering):
 
