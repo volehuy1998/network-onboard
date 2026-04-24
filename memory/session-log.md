@@ -7,6 +7,80 @@
 
 ## Session gần nhất
 
+## Session 54 — Phase G.2.1: expand Part 9.14 incident response decision tree
+
+**Ngày:** 2026-04-24 post Session S53.
+**Branch:** `docs/sdn-foundation-rev2` @ post `e6e4170`.
+**Trạng thái:** Phase G **7/12 session DONE (58%)** — G.1 Truy vết ✅ + G.3 Debug sâu 🟢 2/3 + G.5 Thao tác công cụ 🟢 1/2 + G.2 Xử lý sự cố 🟢 1/3.
+
+### Bối cảnh
+
+User directive "cập nhật tiến độ, tình hình và tiếp tục". Phase G.2 "Xử lý sự cố" hoàn toàn trống trước session này (0/3) — cần mở đầu với expand Part 9.14 (foundation incident response decision tree) từ framework sơ khởi (5-branch) lên operational-grade playbook với 10+ detailed scenario.
+
+### Deliverable — Part 9.14 expand 394 → 956 dòng (+562)
+
+**§9.14.6 appended: Ten detailed production incident scenario** (Scenario A-J):
+
+| Scenario | Tên | Key takeaway |
+|----------|-----|--------------|
+| A | OVSDB Raft cluster split-brain | cluster/change-election-timer tolerance + join-cluster heal procedure |
+| B | ovs-vswitchd OOM kill | memory/show anatomy + flow-limit cap + systemd MemoryLimit |
+| C | Handler thread saturation → upcall drop | Anatomy Template A `upcall/show` 6 field + `lost_upcalls` red flag + n-handler-threads tuning |
+| D | Megaflow cache thrashing | coverage delta analysis + wildcard pattern inspection |
+| E | Tunnel BFD flap cascade | bfd_interval/min_rx/min_tx tuning cho underlay jitter tolerance |
+| F | HW offload silent fallback | offload-cap-list exclude ct/nat + NIC firmware upgrade |
+| G | NIC ring buffer overflow | ethtool -G 4096 + IRQ affinity distribution |
+| H | Conntrack table full | nf_conntrack_max + TCP timeout giảm 5d → 1h + per-zone ct-set-limits |
+| I | OpenFlow controller disconnect fail-mode | fail-mode=secure vs standalone trade-off |
+| J | Bond slave microburst flap | bond-slave-updelay/downdelay hysteresis |
+
+**§9.14.7 Master 15-symptom decision matrix** consolidated: 5 original (§9.14.2) + 10 mới (§9.14.6 A-J).
+
+**§9.14.8 Guided Exercise** — Reproduce OVSDB Raft partition bằng iptables DROP giữa node-1 và node-2/3 + heal procedure 3-tier practice.
+
+**§9.14.9 Capstone POE Phase G** — "Tăng nf_conntrack_max từ 512K → 2M fix Scenario H hoàn toàn?" → refute với 3-tier correct approach: immediate cap + timeout tuning + root cause leak identify. Cross-reference Part 9.26 §9.26.7 pattern "tăng resource threshold KHÔNG fix leak".
+
+### Quality gate Session S54
+
+| Rule | Kiểm tra | Kết quả |
+|------|----------|---------|
+| Rule 9 | Null byte scan | 0 PASS |
+| Rule 11 | §11.6 prose scan | 0 leak PASS |
+| Rule 13 | Em-dash density | 0.0554/line PASS |
+| Rule 14 | Source code citation | no new SHA claim PASS |
+
+### Phase G progress sau S54
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 COMPLETE |
+| G.2 Xử lý sự cố | **S54 (9.14 +562)** | 🟢 **1/3 IN PROGRESS** |
+| G.3 Debug sâu | S51 + S52 | 🟢 2/3 IN PROGRESS |
+| G.4 Lịch sử | — | ⏳ 0/1 optional |
+| G.5 Thao tác công cụ | S53 | 🟢 1/2 IN PROGRESS |
+
+Phase G total **7/12 session DONE (58%)**.
+
+### Files modified Session S54
+
+- **UPDATED:** `sdn-onboard/9.14 - incident-response-decision-tree.md` (394 → 956 dòng, +562)
+- **UPDATED:** `CLAUDE.md` (Phase G 5/12 → 7/12 fix, Session S54 row)
+- **UPDATED:** `memory/session-log.md` (Session S54 entry this)
+
+### Curriculum state post-S54
+
+- **113 file** (không thay đổi file count, expand existing).
+- **47.986 → 48.548 dòng** (+562).
+- Part 9.14 trở thành tài liệu operational-grade với 15 symptom decision matrix, 10 scenario production detail, 2 GE reproduce-able, 1 Capstone POE thinking exercise.
+
+### Pending next session
+
+- **G.2.2** — new Part "OVN incident runbook compilation" với pre-built command playbook per incident class.
+- **G.3.3** — optional đóng G.3 3/3 với case 4 forensic.
+- **G.5.2** — new Part "OVS daily operator playbook" cho OVS pure (complement 20.3).
+
+---
+
 ## Session 53 — Phase G.5.1: new Part 20.3 OVN daily operator playbook
 
 **Ngày:** 2026-04-24 post Session S52.
