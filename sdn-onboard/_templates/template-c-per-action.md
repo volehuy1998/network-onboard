@@ -1,6 +1,6 @@
 # Template C — Per-action block cho OpenFlow / OVS extension action
 
-> **Mục đích:** định nghĩa một action (output, drop, ct, learn, resubmit, conjunction, multipath, v.v.) theo pattern chuẩn của `ovs-actions(7)`.
+> **Mục tiêu:** định nghĩa một action (output, drop, ct, learn, resubmit, conjunction, multipath, v.v.) theo pattern chuẩn của `ovs-actions(7)`.
 > **Upstream baseline:** man `ovs-actions(7)`, ~40 action, avg 40-60 dòng, core action (ct, learn, resubmit, output) 140-200 dòng.
 > **Tối thiểu:** 40 dòng per action (core action thì 80-150).
 
@@ -87,7 +87,7 @@ Datapath actions: <resulting datapath action>
 
 **Category 5, Firewall/CT actions (3 action):** `ct(commit,zone=N,nat,force,exec=...,alg=...)`, `ct_clear`, `check_pkt_larger`.
 
-**Category 6, Control/chuỗi xử lý (pipeline) actions (6 action):** `resubmit`, `learn`, `conjunction`, `multipath`, `bundle`, `note`, `clone`.
+**Category 6, Control/pipeline actions (6 action):** `resubmit`, `learn`, `conjunction`, `multipath`, `bundle`, `note`, `clone`.
 
 **Category 7, Misc/enqueue/meter (3 action):** `enqueue`, `set_queue`, `meter`.
 
@@ -101,14 +101,14 @@ Tổng ~40 action. Priority Phase H:
 
 ## Nhóm instruction (OpenFlow 1.1+)
 
-Khác action ở chỗ instruction là **chuỗi xử lý (pipeline) control** tại table level, còn action là **gói tin transformation** trong action_set hoặc apply_actions.
+Khác action ở chỗ instruction là **pipeline control** tại table level, còn action là **gói tin transformation** trong action_set hoặc apply_actions.
 
 Có 6 instruction:
-1. `Apply-Actions`: execute ngay, thay đổi gói tin + chuỗi xử lý (pipeline) state.
+1. `Apply-Actions`: execute ngay, thay đổi gói tin + pipeline state.
 2. `Clear-Actions`: clear action set hiện tại.
-3. `Write-Actions`: merge vào action set (execute khi gói tin exit chuỗi xử lý (pipeline)).
+3. `Write-Actions`: merge vào action set (execute khi gói tin exit pipeline).
 4. `Write-Metadata`: update metadata match field.
-5. `Goto-Table`: chuyển chuỗi xử lý (pipeline) sang table khác (table number phải lớn hơn current).
+5. `Goto-Table`: chuyển pipeline sang table khác (table number phải lớn hơn current).
 6. `Meter`: apply meter trước khi forward.
 
 Template C phải cover cả 6 instruction này (không chỉ action thường).

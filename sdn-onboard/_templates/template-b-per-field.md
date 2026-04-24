@@ -1,6 +1,6 @@
 # Template B — Per-field block cho OpenFlow / OVN match field
 
-> **Mục đích:** định nghĩa một match field (eth_src, nw_src, tun_id, ct_state, reg0, metadata, v.v.) theo pattern chuẩn của `ovs-fields(7)`.
+> **Mục tiêu:** định nghĩa một match field (eth_src, nw_src, tun_id, ct_state, reg0, metadata, v.v.) theo pattern chuẩn của `ovs-fields(7)`.
 > **Upstream baseline:** man `ovs-fields(7)`, 100+ field, mỗi field 15-25 dòng, 9-10 attribute anatomy.
 > **Tối thiểu:** 30 dòng per field.
 

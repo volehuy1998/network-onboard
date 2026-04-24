@@ -1,6 +1,6 @@
 # Phase H Template Library
 
-> **Mục đích:** đảm bảo mọi Phần trong Phase H (Foundation Depth Pass) viết content theo 4 template chuẩn thay vì ad-hoc.
+> **Mục tiêu:** đảm bảo mọi Phần trong Phase H (Foundation Depth Pass) viết content theo 4 template chuẩn thay vì ad-hoc.
 > **Áp dụng:** session S38 trở đi.
 > **Nguồn gốc:** `plans/phase-h-foundation-depth.md` §2.
 
@@ -8,10 +8,10 @@
 
 | ID | Tên | Khi nào dùng | Baseline upstream |
 |---|---|---|---|
-| A | [Anatomy block](template-a-anatomy-block.md) | Giải thích output của một command (dump-luồng, show, trace, stats) | OVS Advanced Tutorial field annotation |
+| A | [Anatomy block](template-a-anatomy-block.md) | Giải thích output của một command (dump-flow, show, trace, stats) | OVS Advanced Tutorial field annotation |
 | B | [Per-field block](template-b-per-field.md) | Định nghĩa match field OpenFlow hoặc OVN | `ovs-fields(7)` 9-attribute anatomy |
 | C | [Per-action block](template-c-per-action.md) | Định nghĩa OpenFlow action hoặc instruction | `ovs-actions(7)` 8-attribute anatomy |
-| D | [Per-table pipeline block](template-d-per-table.md) | Định nghĩa stage trong OVN ingress/egress chuỗi xử lý (pipeline) hoặc OpenFlow table của OVS | `ovn-architecture(7)` table map |
+| D | [Per-table pipeline block](template-d-per-table.md) | Định nghĩa stage trong OVN ingress/egress pipeline hoặc OpenFlow table của OVS | `ovn-architecture(7)` table map |
 
 ## Quy ước chung
 

@@ -1,6 +1,6 @@
 # Template A — Anatomy block cho output của command
 
-> **Mục đích:** giải thích output thực của một command OVS/OVN để kỹ sư đọc hiểu được từng field, từng counter, từng cột.
+> **Mục tiêu:** giải thích output thực của một command OVS/OVN để kỹ sư đọc hiểu được từng field, từng counter, từng cột.
 > **Upstream baseline:** OVS Advanced Tutorial field annotation pattern (github.com/openvswitch/ovs/Documentation/tutorials/ovs-advanced.rst).
 > **Tối thiểu:** 50 dòng.
 
@@ -20,7 +20,7 @@ $ <command đầy đủ bao gồm option và argument>
 <raw output 20-50 dòng, KHÔNG cắt bớt theo Rule 7a, copy verbatim từ terminal>
 \`\`\`
 
-**Anatomy từng field (bảng đọc hiểu):**
+**Anatomy từng field (table đọc hiểu):**
 
 | Cột / Field | Giá trị mẫu | Ý nghĩa kỹ thuật | Dấu hiệu bất thường |
 |---|---|---|---|
@@ -58,7 +58,7 @@ $ <command đầy đủ bao gồm option và argument>
 
 Synthetic chỉ được dùng khi output real quá phụ thuộc cấu hình cục bộ, và phải note rõ.
 
-**3. Anatomy table.** Minimum 3-5 cột (Cột / Giá trị mẫu / Ý nghĩa / Dấu hiệu bất thường). Mỗi field explain 2-3 dòng ý nghĩa kỹ thuật (không 1 dòng). Nếu output có > 10 field, chia thành nhiều bảng theo nhóm (ví dụ "nhóm counter", "nhóm timestamp", "nhóm config").
+**3. Anatomy table.** Minimum 3-5 cột (Cột / Giá trị mẫu / Ý nghĩa / Dấu hiệu bất thường). Mỗi field explain 2-3 dòng ý nghĩa kỹ thuật (không 1 dòng). Nếu output có > 10 field, chia thành nhiều table theo nhóm (ví dụ "nhóm counter", "nhóm timestamp", "nhóm config").
 
 **4. Kịch bản bẻ gãy.** Minimum 3 kịch bản. Format:
 - `Nếu <condition>` → `symptom` → `root cause` → `verify command` → `fix action`.
