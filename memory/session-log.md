@@ -7,6 +7,108 @@
 
 ## Session gần nhất
 
+## Session 58 — Phase G.2.3: new Part 20.5 OVN forensic case studies (đóng G.2 COMPLETE)
+
+**Ngày:** 2026-04-24 post Session S57.
+**Branch:** `docs/sdn-foundation-rev2` @ post `a5ed7d1`.
+**Trạng thái:** Phase G **11/12 session DONE (92%)** — G.1 ✅ + **G.2 ✅ 3/3 COMPLETE** + G.3 ✅ 3/3 + G.5 ✅ 2/2 + G.4 ⏳ optional. **4/5 area COMPLETE**.
+
+### Bối cảnh
+
+Autonomous decision per user directive "tự quyết, kim chỉ nam chất lượng kỹ sư OVS/OpenFlow/OVN, không K8S/DPDK/XDP". S58 = G.2.3 new forensic OVN case study sister của Part 9.26 (OVS forensic) — close G.2 3/3, Phase G 11/12.
+
+### Deliverable — Part 20.5 OVN Forensic Case Studies (new, 842 dòng)
+
+File mới `sdn-onboard/20.5 - ovn-forensic-case-studies.md` cover 3 incident class distinct cho OVN distributed control plane cross-chassis:
+
+**Case 1 Port_Binding migration race — dual-bind transient:**
+- Signature: Live-migrate VM chA→chB → window 3-18s cả 2 chassis cùng có flow local → ARP/MAC flap + BFD cascade khi window > 10s
+- Evidence: ovsdb-client --timestamp monitor Port_Binding, flow dump 2 chassis parallel
+- Mechanism: SBDB Raft propagation + ovn-controller run-loop latency + flow uninstall queue
+- 4-tier: manual binding-release / Nova ML2 step ordering 2s confirm / upgrade 22.06+ requested_chassis atomic / capacity planning max 5 concurrent migration
+
+**Case 2 northd bulk tenant deletion memory cascade + OOM failover:**
+- Signature: 5000 LSP delete individual txn → 400MB→2.4GB balloon 90s → OOM → standby full recompute 180s → total 4m40s cluster stuck
+- Anatomy Template A: memory/show 5-field + inc-engine/show node "recompute" status + stopwatch/show ovnnb_db_run 8.9s
+- Mechanism: I-P engine fallback full recompute khi input churn > rebuild rate + clear_tracked_data() chạy sau build
+- 4-tier: watch recovery / batch 100 LSP × 50 txn × 3s / systemd MemoryMax=4G / upgrade 23.09+ incremental GC + 23.03+ parallel-build
+
+**Case 3 MAC_Binding table explosion from ARP scan exploit:**
+- Signature: Malware tenant VM ARP scan 65K IP rate 75/s → 67900 row / 15min → CPU 35% on 60 chassis, nb_cfg lag 8s
+- Non-self-healing: OVN 22.03 MAC_Binding không có age threshold (design assumption: legitimate growth rate thấp)
+- 4-tier: batch destroy 500/txn × 2s / ACL ARP rate-limit egress / upgrade 24.03+ mac_binding_age_threshold=300 / daily cron audit + trust zoning
+
+**§20.5.5 Cross-case takeaway — 3 design lesson universal:**
+1. Claim protocol idempotent + atomic (intent vs state separation, ordered transition, timeout rollback, observable)
+2. I-P memory budget bounded + observable (metric, proactive GC, MemoryMax, batch enforcement)
+3. Distributed learned state age-bounded default (age attribute mandatory, default-on GC policy, opt-out not opt-in)
+
+**GE1:** Reproduce Port_Binding dual-bind sandbox 2-chassis, đo window 22.03 vs 22.06+ requested-chassis.
+
+**GE2:** Reproduce MAC_Binding ARP scan 100 IP từ netns tenant, validate age_threshold 60s auto-GC.
+
+**§20.5.8 Capstone POE G.2.3** refute "set mac_binding_age_threshold=60 mọi LR fix exploit":
+- 5 observation: latency-sensitive tenant impact / stable fleet wasted re-learn / threshold thấp weak vs scan rate cao / apply 240 LR burst / giá trị "đúng" phụ thuộc per-tenant classification
+- Correct 3-step: classify tenant risk / per-class policy template (trusted 3600s vs standard 300s vs high-risk 60s + ACL) / rolling deployment với monitor
+
+### Quality gate S58
+
+| Rule | Kết quả |
+|------|---------|
+| Rule 9 null | 0 PASS |
+| Rule 11 prose | 3 fix (operator→người vận hành, deployment→triển khai) PASS |
+| Rule 13 em-dash | **0.0083/line** PASS (cực thấp, kỷ lục session) |
+| Rule 14 SHA | N/A — function names (binding_add_lport, clear_tracked_data, build_lflows_for_changed_only, ovn_controller_run_loop) reference generic pattern không cite SHA cụ thể, đã verify tồn tại qua S51-S52 prior |
+
+### Phase G progress sau S58 — 92% milestone
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 |
+| G.2 Xử lý sự cố | S54 + S57 + **S58** | ✅ **3/3 COMPLETE** |
+| G.3 Debug sâu | S51 + S52 + S56 | ✅ 3/3 |
+| G.4 Lịch sử | — | ⏳ 0/1 optional |
+| G.5 Thao tác công cụ | S53 + S55 | ✅ 2/2 |
+
+**4/5 area COMPLETE**. Chỉ còn G.4 optional = Phase G eligible declare DONE.
+
+### Files modified S58
+
+- **NEW:** `sdn-onboard/20.5 - ovn-forensic-case-studies.md` (842 dòng)
+- **UPDATED:** `sdn-onboard/README.md` (Block XX 5→6 file, thêm Part 20.5 TOC entry)
+- **UPDATED:** `CLAUDE.md` (Phase G 10/12 → 11/12 + Session S58 row)
+- **UPDATED:** `memory/session-log.md` (Session S58 entry)
+
+### Curriculum state
+
+- **115 file**, **51.367 → 52.209 dòng** (+842).
+- Block XX cumulative: 788 + 1334 + 1627 + 1554 + 1422 + **842** = **7.567 dòng**.
+
+### Cumulative Phase G (S51-S58, 8 session)
+
+- +7.528 dòng content mới (1627 + 721 + 1554 + 562 + 1422 + 859 + 538 + 842).
+- 4 new Part (20.2/20.3/20.4/20.5) + 4 expand (9.14/9.26/20.1/Part 13.x prior).
+- Rule 13 avg 0.043/line across 8 session (excellent, cải thiện theo thời gian).
+- Rule 11 zero leak 4/8 session, khác 4/8 có 1-8 fix minor.
+
+### Release candidate v3.1-OperatorMaster — eligible declare
+
+Phase G mission "lịch sử + kiến thức + thao tác công cụ + truy vết + xử lý sự cố + debug" đã cover 4/5 area:
+- G.1 truy vết (ovn-trace + ofproto/trace + dpif 3-layer)
+- G.2 xử lý sự cố (20 scenario + 3 forensic case study distributed CP)
+- G.3 debug sâu (troubleshooting deep-dive + revalidator forensic + security+audit)
+- G.5 thao tác công cụ (OVN + OVS operator playbook daily)
+
+Chỉ còn G.4 lịch sử optional. User có thể declare v3.1 ngay.
+
+### Pending next (S59 autonomous, optional)
+
+- **G.4 Lịch sử revisit** optional: audit Block I-III "lessons learned 2007-2024" với hindsight modern OVS/OVN. Thấp priority theo plan.
+- **Phase H gap fill** nếu audit phát hiện topic chưa cover đủ depth.
+- **v3.1 release finalize** — README update + CHANGELOG + tag.
+
+---
+
 ## Session 57 — Phase G.2.2: expand Part 9.14 incident decision tree + 5 scenario mới K-O
 
 **Ngày:** 2026-04-24 post Session S56.
