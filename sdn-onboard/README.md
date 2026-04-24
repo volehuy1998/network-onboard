@@ -209,7 +209,7 @@ Khối then chốt mở hộp đen OVS để thấy cơ chế bên trong: ba th�
 **Applied technique (9.18-9.20) — session 19+20:**
 - Part 9.18, [OVS native L3 routing](9.18%20-%20ovs-native-l3-routing.md) *(content, Lab 7 Crichigno/USC)*, route giữa subnet bằng flow table thuần không cần OVN — `mod_dl_src/dst + dec_ttl + output`, chứng minh `ip_forward=0` vẫn route được, đối chiếu với OVN Logical Router.
 - Part 9.19, [OVS flow table granularity L1→L4 + priority](9.19%20-%20ovs-flow-table-granularity.md) *(content, Lab 4 Crichigno/USC)*, bốn cấp match field (port → MAC → IP → TCP), priority resolution với first-match tiebreaker, `idle_timeout`/`hard_timeout`/`cookie` lifecycle, chứng minh OVS không auto-learn MAC khi thiếu action `NORMAL`.
-- Part 9.20, [OVS VLAN access/trunk + 802.1Q frame](9.20%20-%20ovs-vlan-access-trunk.md) *(content, Lab 6 Crichigno/USC, IEEE 802.1Q-2018)*, access port (`tag=N`) vs trunk port (`trunks=N,M`), 802.1Q frame TPID/PCP/DEI/VID 12-bit, topology 4-host 2-switch, verify isolation + cross-switch same-VLAN, đối chiếu VLAN 4094 limit vs OVN tunnel_key 24-bit.
+- Part 9.20, [OVS VLAN access/trunk + 802.1Q frame](9.20%20-%20ovs-vlan-access-trunk.md) *(content, Lab 6 Crichigno/USC, IEEE 802.1Q-2018)*, access port (`tag=N`) vs trunk port (`trunks=N,M`), 802.1Q frame TPID/PCP/DEI/VID 12-bit, topology 4-host 2-switch, kiểm chứng isolation + cross-switch same-VLAN, đối chiếu VLAN 4094 limit vs OVN tunnel_key 24-bit.
 
 **Firewall foundation (9.22-9.24) — session 22+23 Phase D:**
 - Part 9.22, [OVS multi-table pipeline — `goto_table`, `resubmit`, action set](9.22%20-%20ovs-multi-table-pipeline.md) *(content, Lab 6 Crichigno/USC)*, lý do OpenFlow 1.1 thay single-table 14 tháng sau 1.0, 4 quy tắc cứng multi-table, `goto_table` (standard) vs `resubmit` (OVS extension), pipeline 3-table Lab 6 Classifier/L3/L2 topology 2 subnet, mở rộng 5-table production, metadata + register, đối chiếu OVN 50+ table tự sinh.
@@ -250,8 +250,8 @@ Khối chuyên sâu về encapsulation layer mà OVN dùng để nối các chas
 - Part 11.0, [VXLAN, Geneve, STT](11.0%20-%20vxlan-geneve-stt.md) *(skeleton, RFC 7348 + RFC 8926)*, VXLAN 24-bit VNI UDP 4789 overhead 50 byte, Geneve RFC 8926 TLV options overhead 58 byte, STT decline.
 - Part 11.1, [Overlay MTU, PMTUD, hardware offload](11.1%20-%20overlay-mtu-pmtud-offload.md) *(skeleton)*, MTU math, PMTUD failure modes, NIC hardware offload rx-csum/tx-csum/LRO/GRO/TSO với tunneling.
 - Part 11.2, [BGP EVPN, control plane overlay](11.2%20-%20bgp-evpn-control-plane-overlay.md) *(skeleton, RFC 7432)*, EVPN route types 1-5, Type 2 MAC/IP, Type 3 inclusive multicast.
-- Part 11.3, [GRE tunnel lab — OSPF underlay, Docker, Wireshark verify](11.3%20-%20gre-tunnel-lab.md) *(content + expansion session 26 Phase D, Lab 14 Crichigno/USC)*, drama ngân hàng Việt Nam 2024 GRE over IPsec legacy interop, header RFC 2784/2890 bytewise 24B, topology 3-FRR-router 2-Docker 4-Mininet-host, cấu hình OSPF area 0 + GRE port, Wireshark dissector chứng minh encap 3-tầng, POE *"GRE encrypt"* bác bỏ bằng HTTP plaintext, Guided Exercise 11 Lab 14 full walkthrough + Guided Exercise 12 Wireshark POE, pattern chuẩn site-to-site VPN GRE inside IPsec.
-- Part 11.4, [IPsec tunnel lab — IKE phase 1+2, ESP verify, OVS-monitor-ipsec](11.4%20-%20ipsec-tunnel-lab.md) *(content + expansion session 27 Phase D, Lab 15 Crichigno/USC)*, từ GRE plaintext đến IPsec encrypted, AH vs ESP (RFC 4302/4303) và lý do ESP thắng, IKE phase 1 Diffie-Hellman (DH14/19/20) + ISAKMP, phase 2 IPsec SA + ESP header (SPI/sequence/ICV), Lab 15 topology GRE over IPsec end-to-end, Wireshark dissector filter ISAKMP + ESP chứng minh ciphertext opaque, Guided Exercise 13 Lab 15 full verify + Guided Exercise 14 POE hiệu năng AES-NI 10-25% overhead, OVN cluster full-mesh IPsec qua `ovn-nbctl set NB_Global ipsec=true`.
+- Part 11.3, [GRE tunnel lab — OSPF underlay, Docker, Wireshark kiểm chứng](11.3%20-%20gre-tunnel-lab.md) *(content + expansion session 26 Phase D, Lab 14 Crichigno/USC)*, drama ngân hàng Việt Nam 2024 GRE over IPsec legacy interop, header RFC 2784/2890 bytewise 24B, topology 3-FRR-router 2-Docker 4-Mininet-host, cấu hình OSPF area 0 + GRE port, Wireshark dissector chứng minh encap 3-tầng, POE *"GRE encrypt"* bác bỏ bằng HTTP plaintext, Guided Exercise 11 Lab 14 full walkthrough + Guided Exercise 12 Wireshark POE, pattern chuẩn site-to-site VPN GRE inside IPsec.
+- Part 11.4, [IPsec tunnel lab — IKE phase 1+2, ESP kiểm chứng, OVS-monitor-ipsec](11.4%20-%20ipsec-tunnel-lab.md) *(content + expansion session 27 Phase D, Lab 15 Crichigno/USC)*, từ GRE plaintext đến IPsec encrypted, AH vs ESP (RFC 4302/4303) và lý do ESP thắng, IKE phase 1 Diffie-Hellman (DH14/19/20) + ISAKMP, phase 2 IPsec SA + ESP header (SPI/sequence/ICV), Lab 15 topology GRE over IPsec end-to-end, Wireshark dissector filter ISAKMP + ESP chứng minh ciphertext opaque, Guided Exercise 13 Lab 15 full verify + Guided Exercise 14 POE hiệu năng AES-NI 10-25% overhead, OVN cluster full-mesh IPsec qua `ovn-nbctl set NB_Global ipsec=true`.
 
 ### Block XII, SDN trong Data Center (Part 12, 3 file)
 
@@ -399,7 +399,7 @@ Quy ước: `NEW` là tính năng mới, `CHANGED` là hành vi mặc định th
 
 | Thay đổi | 2.13 (20.04) | 2.17 (22.04) | 3.3 (24.04) | Nguồn Part |
 |---|---|---|---|---|
-| OpenFlow 1.5 support | Có | Có | Có | Part 4.4 |
+| Hỗ trợ OpenFlow 1.5 | Có | Có | Có | Part 4.4 |
 | NXM/OXM learn action | Có | Có | Có | Part 9.4 |
 | `conjunction` action | Có | Có | IMPROVED (matching engine) | Part 9.4 |
 
