@@ -213,12 +213,17 @@
 
 # SDN — Software Defined Networking (OVN/OVS/OpenFlow)
 
-Chương trình đào tạo Software Defined Networking tập trung thuần vào **OpenvSwitch, OpenFlow, và OVN** như các nền tảng portable. Xây dựng từ lịch sử Stanford Clean Slate 2006 đến production forensic analysis OVN multichassis 2026. Xem chi tiết roadmap: [`sdn-onboard/README.md`](sdn-onboard/README.md).
+**Release:** `v3.1-OperatorMaster` (2026-04-24). 116 file, ~52.6K dòng. Phase G Operator Mastery 5/5 area COMPLETE. Xem [`CHANGELOG.md`](CHANGELOG.md) cho release notes đầy đủ.
 
-**Cấu trúc 19 Part (rev 4, 2026-04-22)**:
-- **Foundation (Block 0-XIII)**: 13 block với 63 file — từ "Why SDN" (Part 1) qua OpenFlow evolution (Part 3-4), alternative SDN paradigms (Part 5-6), controller ecosystem (Part 7), Linux primer (Part 8), OVS internals + ops (Part 9), OVSDB (Part 10), overlay + tunnel labs (Part 11), DC topology (Part 12), đến OVN foundation (Part 13).
-- **Expert Extension (Block XIV-XVI, optional)**: 3 block với 9 file — P4 programmable pipeline (Part 14), service mesh + Kubernetes CNI (Part 15), kernel+DPDK performance tuning (Part 16). Đầy đủ 18 exercises với lab specs (Mục đích/Chuẩn bị/Mô hình/Bước/Output/Bài học/Cleanup).
-- **Advanced case studies (Block XVII-XIX)**: 3 Part forensic analysis trên production OVN multichassis.
+Chương trình đào tạo Software Defined Networking tập trung thuần vào **OpenvSwitch, OpenFlow, và OVN** như các nền tảng portable. Xây dựng từ lịch sử Stanford Clean Slate 2006 đến production forensic analysis OVN multichassis 2026 + operator daily playbook. Xem chi tiết roadmap: [`sdn-onboard/README.md`](sdn-onboard/README.md).
+
+**5 trụ cột kỹ năng cần đạt được**: (1) nền tảng kiến thức OVS/OpenFlow/OVN vững chắc + chi tiết, (2) am hiểu tường tận tools OVS/OVN cung cấp, (3) hiểu sâu output của tools (anatomy từng field), (4) debug + troubleshoot skill, (5) kiến trúc + cơ chế hoạt động.
+
+**Cấu trúc 20 Block (rev 5, 2026-04-24)**:
+- **Foundation (Block 0-XIII)**: 14 block với 78 file — từ "Why SDN" (Part 1) qua OpenFlow evolution (Part 3-4 đầy đủ match+action catalog), alternative SDN paradigms (Part 5-6), controller ecosystem (Part 7), Linux primer (Part 8), OVS internals + ops (Part 9 tier 1 complete), OVSDB (Part 10), overlay + tunnel labs (Part 11), DC topology (Part 12), đến OVN foundation (Part 13 full LS/LR pipeline exhaustive).
+- **Expert Extension (Block XIV-XVI, optional, deprioritized)**: 3 block với 9 file — P4 programmable pipeline (Part 14), service mesh partial (Part 15.0), kernel+DPDK performance (Part 16). Block XV K8S/Service Mesh + Block XVI DPDK/XDP deprioritized theo user directive để focus OVS/OpenFlow/OVN core.
+- **Advanced case studies (Block XVII-XIX)**: 3 Part forensic analysis production OVN multichassis (FDB poisoning + ARP responder + PMTUD multichassis binding).
+- **Operations (Block XX, new Phase G)**: 7 Part daily operator workflow — systematic debugging (20.0), security hardening + audit trail (20.1), OVN troubleshooting deep-dive (20.2), OVN daily operator playbook (20.3), OVS daily operator playbook (20.4), OVN forensic case studies (20.5), retrospective 2007-2024 (20.6).
 
 Trọng tâm flagship:
 

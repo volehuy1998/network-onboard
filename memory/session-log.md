@@ -7,6 +7,108 @@
 
 ## Session gần nhất
 
+## Session 62 — 🎉 Release v3.1-OperatorMaster — tag + CHANGELOG + README refresh
+
+**Ngày:** 2026-04-24 post S61b.
+**Branch:** `docs/sdn-foundation-rev2` @ post `d15d701`.
+**Trạng thái:** 🎉 **Release v3.1-OperatorMaster tagged**. User chọn Option A: accept 110 residual Rule 11 leak, tag ngay với CHANGELOG ghi chú residual + fix v3.1.1 patch.
+
+### Deliverable
+
+1. **`CHANGELOG.md`** (new, root) — Keep-a-Changelog format. v3.1 highlights: Phase G 5/5 area + Phase H 13 session + Phase E fact-check + Phase F partial + Pre-release audit S60-S61. Statistics: 116 file, ~52.6K dòng, 60+ GE+Capstone, 4 decision matrix. Known residual + v3.1.1 plan. Links: repo + roadmap + audit log + session log + rules.
+2. **`README.md` parent** — SDN section refresh: release tag note + 5 trụ cột kỹ năng (user directive 2026-04-24 mở rộng) + Cấu trúc 20 Block rev 5 (thêm Block XX Operations).
+3. **`sdn-onboard/README.md`** — Release tag note sau H1 title + link ../CHANGELOG.md.
+4. **Git tag `v3.1-OperatorMaster`** — annotated tag trỏ tới S62 commit SHA.
+
+### Release scope v3.1-OperatorMaster
+
+| Component | Count |
+|-----------|-------|
+| Total file | 116 |
+| Total line | ~52.641 |
+| Block (0-XX) | 20 block |
+| Guided Exercise + Capstone POE | 60+ |
+| Anatomy Template A block | ~25 |
+| Decision matrix symptom-to-cause | 4 major |
+
+### Pre-release audit verdict
+
+- Rule 9 null byte: PASS 0/116
+- Rule 13 em-dash < 0.10: PASS 0/116
+- Rule 11 Vietnamese prose: 185/295 fixed (63% reduction). 110 residual (numbered step / table col / vendor sentence) accept-as-is, fix v3.1.1.
+- Rule 14 source code citation: spot-check PASS
+- Lab C1b: deferred (chờ user lab host)
+
+### 5 trụ cột codified (từ user directive 2026-04-24 mở rộng)
+
+1. Nền tảng kiến thức OVS/OpenFlow/OVN vững chắc + chi tiết
+2. Tools mastery — am hiểu tường tận MỌI công cụ OVS/OVN cung cấp
+3. Output interpretation — hiểu sâu output từng tool anatomy từng field
+4. Debug + troubleshoot skill
+5. Architecture + mechanism hoạt động
+
+### Files modified
+
+- `CHANGELOG.md` (new)
+- `README.md` (parent, SDN section refresh)
+- `sdn-onboard/README.md` (release tag note)
+- `memory/session-log.md` (S62 entry)
+- `CLAUDE.md` (Current State row S62 + release tag)
+
+### Commit ready + tag
+
+`docs(release): v3.1-OperatorMaster — CHANGELOG + README refresh`
+`git tag v3.1-OperatorMaster -a -m "..."`
+
+### Phase I plan next (S63+)
+
+Theo 5 trụ cột OVS/OpenFlow/OVN, **KHÔNG** sa đà K8S/DPDK/XDP:
+
+- S63-S65: Pillar 5 OVS Architecture tier 2 (ofproto-dpif xlate + classifier TSS internals + revalidator URCU + OVSDB Raft log compaction)
+- S66-S68: Pillar 5 OVN Architecture tier 2 (northd build_lflows step-by-step + ovn-controller physical.c binding + ACL logical-to-OF translation walkthrough)
+- S69-S70: Pillar 2+3 Tools mastery (ovn-nbctl + ovn-sbctl reference playbook sister 9.11 + ovsdb-client deep + Anatomy bổ sung ovs-pcap/ovs-tcpdump/ofproto/show-connection)
+- S71: Pillar 4 Advanced debug (packet flow tracing tutorial gradient basic → advanced)
+
+---
+
+## Session 61b — Rule 11 broader sweep (121 core prose leak fixed)
+
+**Ngày:** 2026-04-24 post S61a.
+**Branch:** `docs/sdn-foundation-rev2` @ `d15d701`.
+
+### Deliverable
+
+Global sed 3-pass trên 107 core file (exclude 14.x/15.x/16.x deprioritized):
+- Pass 1: safe pattern global (Verify bằng, để verify, identify, support prose)
+- Pass 2: field-specific (classifier inspect, bundle identify, SA verify)
+- Pass 3: heading-level + OF version support
+
+Result: 231 core leak → 110 remaining (52% reduction). 45 file changed.
+
+### Remaining 110 categorized
+
+- Numbered step Guided Exercise ("**3.** Verify connection")
+- Table column header ("OpenFlow 1.X support")
+- Vendor sentence ("HP ProCurve support 1.3")
+- Technical identifier usage
+
+Severity LOW. User chọn accept cho v3.1, fix v3.1.1 patch.
+
+---
+
+## Session 61a — Rule 11 Phase G sweep (64 prose leak fixed)
+
+**Ngày:** 2026-04-24 post S60.
+**Branch:** `docs/sdn-foundation-rev2` @ `9469359`.
+
+### Deliverable
+
+7 Phase G file (20.0/20.1/20.2/20.6/9.14/9.26/9.27) sed batch: verify → kiểm chứng (27), support → hỗ trợ (24), identify → nhận diện (13). Hot file 20.2: 31 → 0.
+
+Preservation: URL /support/dist-docs/ giữ, code block không đụng, identifier/CLI subcommand giữ.
+
+---
+
 ## Session 60 — Pre-release audit v3.1-OperatorMaster (Rule 9+13 PASS, Rule 11 64 leak fixable)
 
 **Ngày:** 2026-04-24 post S59.

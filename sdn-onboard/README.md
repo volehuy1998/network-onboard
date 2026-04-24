@@ -1,5 +1,7 @@
 # SDN Onboard, OVN / OpenvSwitch / OpenFlow từ nền tảng đến production
 
+**Release tag:** `v3.1-OperatorMaster` (2026-04-24). 116 file, ~52.6K dòng. Phase G Operator Mastery 5/5 area COMPLETE. Xem [`../CHANGELOG.md`](../CHANGELOG.md) cho release notes.
+
 Chuỗi tài liệu này dẫn dắt một kỹ sư mạng đã có CCNA và RHCSA đi qua trọn vẹn hành trình Software Defined Networking theo mô hình học thuật quốc tế, bắt đầu từ năm 2006 với Stanford Clean Slate Program, qua mốc OpenFlow 1.0 ngày 31/12/2009, Nicira thành lập 2007 và được VMware mua lại ngày 23/07/2012 với giá 1,26 tỷ USD, cho đến các production incident forensic trong môi trường OVN multichassis năm 2026. Lộ trình giảng dạy xây dựng trên baseline OpenvSwitch 2.17.9 và OVN 22.03.8 trên Ubuntu Server 22.04 LTS (Canonical official repository), phiên bản phổ biến trong sản xuất, đồng thời ghi nhận những thay đổi ở OVS 3.3 + OVN 24.03 trên Ubuntu 24.04 Noble cho lộ trình upgrade.
 
 > **Scope:** Curriculum thuần OVS + OpenFlow + OVN standalone. Không dạy OpenStack / Neutron / kolla-ansible. Các khái niệm OVN (Logical_Switch, Port_Binding, HA_Chassis_Group, Logical_Flow) được trình bày dưới góc nhìn upstream OVN portable, dùng được với bất kỳ orchestrator nào (OVN-Kubernetes, bare-metal OVN, OVN standalone, v.v.).
