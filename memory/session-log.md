@@ -7,6 +7,111 @@
 
 ## Session gần nhất
 
+## Session 56 — Phase G.3.3: expand Part 20.1 security + audit trail deep-dive (đóng G.3 COMPLETE)
+
+**Ngày:** 2026-04-24 post Session S55.
+**Branch:** `docs/sdn-foundation-rev2` @ post `c52f074`.
+**Trạng thái:** Phase G **9/12 session DONE (75%)** — G.1 ✅ + G.5 ✅ + **G.3 ✅ 3/3 COMPLETE** + G.2 🟢 1/3. **3/5 area COMPLETE**.
+
+### Bối cảnh
+
+User directive "cập nhật tình hình, tiến độ và tiếp tục" post-S55. Per plan Phụ lục I §I.4.G.3 third item "Deep-dive Part 20.1 security hardening + audit trail" — G.3.3 closure.
+
+### Deliverable — Part 20.1 expand 475 → 1334 dòng (+859)
+
+**Append 6 section mới + 2 GE + 1 Capstone POE** giữa existing "Điểm cốt lõi" và References:
+
+**§20.12 Audit trail 4-layer architecture** (who/what/when/where):
+- Layer 1 NBDB change audit qua `ovsdb-client monitor` JSON event schema
+- Retention policy: Generic 90d / PCI-DSS 1y / HIPAA 6y / SOX 7y
+- Log integrity: `chattr +a` append-only + hash manifest
+- Layer 2 SBDB translation audit + correlate nb_cfg_timestamp
+- Layer 3 OpenFlow rule audit với baseline diff detect manual bypass (`cookie=0x0`)
+- Layer 4 conntrack event log với GDPR Art.30 + PCI-DSS 10.2.2 mapping
+- 4-layer correlation runbook step-by-step
+
+**§20.13 Port_security forensic investigation:**
+- 2 detection signature + 5-step evidence collection
+- Attribution MAC → Port_Binding → chassis → LSP → tenant → user
+- Root cause classification 4 pattern
+
+**§20.14 RBAC OVSDB deep-dive:**
+- RBAC_Role + RBAC_Permission schema
+- Setup new role 3-step qua ovsdb-client transact
+- RBAC rejection log attribution
+
+**§20.15 mTLS + cert rotation zero-downtime:**
+- 4-class cert lifecycle
+- 6-step CA rotation với cross-sign + combined bundle
+- Daily cron + rollback procedure
+
+**§20.16 Security incident response 5-step playbook:**
+- Contain/preserve/eradicate/recover/postmortem
+- Mandatory postmortem template 6-section
+- Compliance reporting GDPR 72h + PCI immediate + HIPAA 60d
+
+**§20.17 Compliance logging framework:**
+- Aggregation architecture chassis → Loki/ES → S3 7y
+- Grafana 6-panel dashboard
+- 4 Alertmanager rule
+
+**GE2 (new):** ACL log parsing với awk + attribution 6-step.
+
+**GE3 (new):** Certificate rotation drill 7-step với POE zero-downtime connection-status.
+
+**§20.18 Capstone POE Phase G.3** — Compliance audit scenario PCI-DSS CDE isolation 9-artifact evidence.
+
+### Quality gate Session S56
+
+| Rule | Kết quả |
+|------|---------|
+| Rule 9 null | 0 PASS |
+| Rule 11 prose | 0 leak PASS |
+| Rule 13 em-dash | 0.0577/line PASS |
+| Rule 14 SHA | N/A PASS |
+
+### Phase G progress sau S56 — 75% milestone
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 |
+| G.2 Xử lý sự cố | S54 | 🟢 1/3 |
+| G.3 Debug sâu | S51 + S52 + **S56** | ✅ **3/3 COMPLETE** |
+| G.4 Lịch sử | — | ⏳ 0/1 optional |
+| G.5 Thao tác công cụ | S53 + S55 | ✅ 2/2 |
+
+Phase G **9/12 (75%)**. **3/5 area COMPLETE**.
+
+### Files modified S56
+
+- **UPDATED:** `sdn-onboard/20.1` (475 → 1334 dòng, +859)
+- **UPDATED:** `CLAUDE.md` (Phase G 8/12 → 9/12 + Session S56 row)
+- **UPDATED:** `memory/session-log.md` (Session S56 entry)
+
+### Curriculum state
+
+- **114 file**, **49.970 → 50.829 dòng** (+859). **Vượt ngưỡng 50K dòng**.
+- Block XX cumulative: 788 + **1334** + 1627 + 1554 + 1422 = **6.725 dòng**.
+
+### Cumulative Phase G (S51-S56, 6 session)
+
+- +6.148 dòng content mới (1627 + 721 + 1554 + 562 + 1422 + 859).
+- 3 new Part + 3 expand.
+- Rule 13 avg 0.051/line (excellent).
+- Rule 11 5/6 session zero-leak from-start.
+
+### Release candidate v3.1-OperatorMaster
+
+Mission core "kiến thức + debug + thao tác công cụ" cover đầy đủ với G.1 + G.3 + G.5 ✅ COMPLETE. User có thể declare release.
+
+### Pending next
+
+- **G.2.2** expand 9.14 scenario K-O hoặc new Part OVN runbook.
+- **G.2.3** new forensic case study.
+- **G.4** optional history revisit.
+
+---
+
 ## Session 55 — Phase G.5.2: new Part 20.4 OVS daily operator playbook (đóng G.5 COMPLETE)
 
 **Ngày:** 2026-04-24 post Session S54.
