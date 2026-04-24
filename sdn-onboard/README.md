@@ -20,7 +20,7 @@ Part 0.0 (how-to-read-this-series) và Part 0.1 (lab-environment-setup) được
 
 ## Sơ đồ phụ thuộc kiến thức (Knowledge Dependency Map)
 
-Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa các Part chính của series (Part 0 → Part 19, với Expert Extension Part 14-16 ở rev 4). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian. Block XIV-XVI (Expert Extension, styled dashed border) là optional track, không block foundation path 0-XIII → 17-19.
+Sơ đồ dưới đây thể hiện mối quan hệ phụ thuộc giữa các Part chính của series (Part 0 → Part 20, với Expert Extension Part 14-16 ở rev 4). Mũi tên `A → B` có nghĩa kiến thức Part A là tiên quyết trực tiếp cho Part B. Block VIII (Linux networking primer) không có mũi tên đến từ Block I-VII nên có thể đọc song song với nhánh OpenFlow nếu người đọc muốn tối ưu thời gian. Block XIV-XVI (Expert Extension, styled dashed border) là optional track, không block foundation path 0-XIII → 17-19. Block XX (Operations, styled thick border) là cross-cutting operations layer, build trên Block IX + XIII để deliver daily runbook + forensic + retrospective.
 
 ```mermaid
 graph TD
@@ -44,6 +44,7 @@ graph TD
   P17[Part 17: L2 FDB]
   P18[Part 18: ARP BUM]
   P19[Part 19: Multichassis PMTUD]
+  P20[Part 20: Ops Excellence + Forensic + Retrospective]:::ops
 
   P0 --> P1
   P1 --> P2
@@ -73,24 +74,30 @@ graph TD
   P9 -.-> P16
   P8 -.-> P16
 
+  %% Operations layer (Block XX, Phase G 2026-04): build on OVS foundation + OVN foundation
+  P9 ==> P20
+  P13 ==> P20
+
   classDef expert stroke-dasharray: 5 5,stroke:#7b1fa2
+  classDef ops stroke-width:3px,stroke:#2e7d32,fill:#e8f5e9
 ```
 
 ---
 
-## Reading paths, sáu con đường đọc
+## Reading paths, bảy con đường đọc
 
-Series này được kiến trúc để phục vụ sáu persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
+Series này được kiến trúc để phục vụ bảy persona khác nhau, không ép buộc mọi người phải đọc tuần tự từ đầu đến cuối. Mỗi Part self-contained qua prerequisites explicit ở header block, vì vậy người đọc có thể nhảy vào bất kỳ điểm nào sau khi xác nhận đã nắm prerequisites.
 
 1. **Linear foundation (sách giáo khoa đại học, 50-80 giờ đọc)**, 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 17 → 18 → 19. Phù hợp cho kỹ sư mới vào OVS/OVN cần nền tảng lịch sử và lý thuyết đầy đủ trước khi chạm production.
 2. **Historian (chỉ lịch sử + concept)**, 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7. Dừng ở controller landscape. Mục tiêu: hiểu tại sao SDN tồn tại và các nhánh evolution, không đi vào implementation chi tiết.
-3. **OVS-only (production engineer chỉ quan tâm OVS data plane)**, 0 → 1 (skim) → 4 → 8 → 9 → 10 → 11. Tập trung OVS như switch lập trình được + OpenFlow programming + OVSDB + overlay tunnel. Bỏ qua OVN hoàn toàn.
-4. **OVN-focused (đã vững OVS + networking, đang build OVN deployment)**, 0 → 3 (skim) → 5.1 → 9 (skim) → 11 → 13 → 17 → 18 → 19. Path chính cho kỹ sư triển khai OVN standalone.
-5. **Incident responder (advanced reader muốn đi thẳng case study)**, 0 → 13 (skim) → 17 → 18 → 19. Dành cho on-call engineer xử lý sự cố khẩn cấp, đã có nền OVN.
+3. **OVS-only (production engineer chỉ quan tâm OVS data plane)**, 0 → 1 (skim) → 4 → 8 → 9 → 10 → 11 → 20.4 (OVS daily operator playbook). Tập trung OVS như switch lập trình được + OpenFlow programming + OVSDB + overlay tunnel + daily ops. Bỏ qua OVN hoàn toàn.
+4. **OVN-focused (đã vững OVS + networking, đang build OVN deployment)**, 0 → 3 (skim) → 5.1 → 9 (skim) → 11 → 13 → 17 → 18 → 19 → 20.3 (OVN daily operator playbook). Path chính cho kỹ sư triển khai OVN standalone.
+5. **Incident responder (advanced reader muốn đi thẳng case study)**, 0 → 13 (skim) → 17 → 18 → 19 → 9.26 + 20.5 (forensic case study). Dành cho on-call engineer xử lý sự cố khẩn cấp, đã có nền OVN.
 6. **Expert Extension track (rev 4, optional)**, after hoàn thành foundation — three parallel tracks:
    - **P4 programmable silicon** (15-25 giờ): 6 (skim) → 14.0 → 14.1 → 14.2. Dành cho researcher hoặc kỹ sư Pensando/BlueField DPU.
    - **Service mesh + K8s CNI** (20-30 giờ): 13 → 15.0 → 15.1 → 15.2. Dành cho kỹ sư platform engineering, CKAD/CKS candidates.
    - **Performance tuning deep dive** (15-20 giờ): 8 → 9.2 → 9.3 → 16.0 → 16.1 → 16.2. Dành cho hyperscale operator, HPC/5G deployment. Yêu cầu hardware lab thật cho Capstone 16.0-Lab3 (40 Gbps tuning).
+7. **Operator daily runbook (rev 5, Phase G 2026-04, 30-50 giờ)**, 0 → 9 (skim 9.1 + 9.4) → 13 (skim 13.1-13.3) → **20.0** (systematic debugging) → **20.1** (security hardening + audit trail) → **20.2** (OVN troubleshooting deep-dive) → **20.3** (OVN daily playbook) → **20.4** (OVS daily playbook) → **9.14** (incident decision tree) → **9.25** (ofproto/trace) → **9.26** (revalidator storm forensic) → **9.27** (packet journey end-to-end) → **20.5** (OVN forensic case study) → **20.6** (retrospective 2007-2024). Dành cho on-call engineer + SRE cần thành thạo daily ops + incident response + forensic debug OVS/OVN production. Ưu tiên cho người đã có kiến trúc foundation nhưng muốn build muscle memory + playbook reflex.
 
 ---
 

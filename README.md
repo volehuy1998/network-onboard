@@ -260,6 +260,34 @@ Trọng tâm flagship:
 - Lab 2: Reproduce bug FDP-620 với `ping -s 6000`
 - Lab 3: Đo Geneve overhead trên wire bằng tcpdump + wireshark
 
+**Operations flagship (Block XX, Phase G 2026-04):**
+
+[Part 20.0 - OVS+OVN Systematic Debugging](sdn-onboard/20.0%20-%20ovs-ovn-systematic-debugging.md) — isolation-first philosophy + 5-layer model + 3 production case study (VM no network race, upgrade schema drift, partition thundering herd).
+
+[Part 20.1 - OVS+OVN Security Hardening + Audit Trail](sdn-onboard/20.1%20-%20ovs-ovn-security-hardening.md) — 4-layer defense-in-depth (control/management/data plane) + port_security + ACL default-deny + audit trail + cert rotation zero-downtime + 2 GE + Capstone POE.
+
+[Part 20.2 - OVN Troubleshooting Deep-dive](sdn-onboard/20.2%20-%20ovn-troubleshooting-deep-dive.md) — `ovn-trace` 11 option + `ovn-detrace` chain + Port_Binding 8 type forensic + ovn-appctl 21 command + 16-symptom diagnostic matrix + 3 GE + Capstone POE.
+
+[Part 20.3 - OVN Daily Operator Playbook](sdn-onboard/20.3%20-%20ovn-daily-operator-playbook.md) — 10 task category (health check + inventory + port lifecycle + ACL + LB+NAT + DHCP+DNS + gateway+HA + conntrack + performance + backup) + 2 workflow end-to-end (new-tenant + tenant-teardown script).
+
+[Part 20.4 - OVS Daily Operator Playbook](sdn-onboard/20.4%20-%20ovs-daily-operator-playbook.md) — sister của 20.3 nhưng OVS pure-datapath. 10 task category + 2 workflow (new-bridge.sh + bridge-decommission.sh) + 4 CLI layer distinguish (vsctl / ofctl / dpctl / appctl).
+
+[Part 20.5 - OVN Forensic Case Studies](sdn-onboard/20.5%20-%20ovn-forensic-case-studies.md) — 3 distributed control plane case study (Port_Binding migration race + northd bulk tenant deletion memory cascade + MAC_Binding ARP scan exploit) + 3 design lesson.
+
+[Part 20.6 - OVS/OpenFlow/OVN Retrospective 2007-2024](sdn-onboard/20.6%20-%20ovs-openflow-ovn-retrospective-2007-2024.md) — 5 thời kỳ (sơ khai / reality đối mặt / hypervisor overlays thắng / OVN era / production hardening) + 10 meta-lesson universal + 6 frontier 2024-2030.
+
+**OVS deep internals forensic (Block IX):**
+
+- [Part 9.25 - OVS flow debugging + ofproto/trace](sdn-onboard/9.25%20-%20ovs-flow-debugging-ofproto-trace.md) — 10 GE + 4 POE, `ofproto/trace` grammar end-to-end.
+- [Part 9.26 - OVS Revalidator Storm Forensic](sdn-onboard/9.26%20-%20ovs-revalidator-storm-forensic.md) — 3 case study (megaflow invalidation + LACP bond flap cascade + conntrack zone collision cross-chassis migration) + 4 GE + 1 Capstone POE.
+- [Part 9.27 - OVS+OVN Packet Journey End-to-end](sdn-onboard/9.27%20-%20ovs-ovn-packet-journey-end-to-end.md) — 3-tier parallel diagnostic framework + Geneve TLV deep-dive + MTU forensic + 10 fault catalog pattern.
+
+**Expert Extension (Block XIV-XVI, optional):**
+
+- [Part 14.0-14.2 - P4 Programmable Pipeline](sdn-onboard/14.0%20-%20p4-language-fundamentals.md) — P4_16 + PSA + PISA + Tofino silicon + P4Runtime gRPC + Stratum.
+- [Part 15.0 - Service Mesh Integration](sdn-onboard/15.0%20-%20service-mesh-integration.md) — Istio + Envoy + Linkerd + Cilium eBPF + OVN-Kubernetes CNI.
+- [Part 16.0-16.2 - Kernel + DPDK Performance](sdn-onboard/16.0%20-%20dpdk-afxdp-kernel-tuning.md) — DPDK EAL + AF_XDP zero-copy + hugepage + NUMA affinity + perf + bpftrace profiling.
+
 ---
 
 # HAProxy — Cân bằng tải chuyên sâu
