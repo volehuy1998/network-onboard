@@ -7,6 +7,82 @@
 
 ## Session gần nhất
 
+## Session 63 — Phase I.A1 Part 9.1 expand ofproto-dpif xlate tier 2
+
+**Ngày:** 2026-04-24 post S62 release.
+**Branch:** `docs/sdn-foundation-rev2` @ `fa82d81`.
+**Trạng thái:** Phase I kickoff DONE. 1/9 session Phase I hoàn thành.
+
+### Bối cảnh
+
+Sau khi tag v3.1-OperatorMaster (S62), user "cập nhật tiến độ, tình hình, kế hoạch và tiếp tục". Em draft Phụ lục J cho Phase I (9 session S63-S71, target v3.2-ArchitectMaster) rồi bắt đầu S63 ngay.
+
+### Deliverable
+
+**Part 9.1 expand** §9.1.Y (Phase I S63 append): 430 → 749 dòng (+319). 10 subsection deep walkthrough ofproto-dpif xlate engine:
+
+- Y.1 Khi nào xlate chạy (4 trigger: upcall / revalidator / ofproto-trace / flow-mod simulation)
+- Y.2 Entry point `xlate_actions()` + struct `xlate_in` / `xlate_out` fields anatomy
+- Y.3 Anatomy Template A: struct `xlate_ctx` (Life cycle + Scope + Depth MAX_RESUBMIT_RECURSION 64 + Resubmits 4096 + Flow snapshot + Action buffer + Exit flag + Conntrack + Freezing) + 3 kịch bản bẻ gãy (rule loop / rule explosion / conntrack recirc)
+- Y.4 Action translation walkthrough 1 packet qua 2-table pipeline với full call chain xlate_actions → rule_dpif_lookup_from_table → do_xlate_actions → OFPACT_*
+- Y.5 Megaflow mask build-up via `wc` tracking (lazy wildcarding mechanism)
+- Y.6 Trace output mapping: `ofproto/trace` output fields ↔ `ctx->` state
+- Y.7 Vai trò kernel vs userspace split (4 lợi ích phân lớp)
+- Y.8 Guided Exercise S63.1: quan sát xlate qua `ofproto/trace --verbose` + reproduce max resubmit
+- Y.9 Capstone POE S63: "Xlate có thể cache kết quả không?" refute với Pfaff NSDI 2015 §8
+- Y.10 Source code references (ofproto-dpif-xlate.c + .h + flow.h + ofp-actions.h)
+
+**Plan file expansion** — Phụ lục J added cho toàn Phase I (scope 9 session S63-S71 + tracker + success criteria + target release v3.2).
+
+### Quality gate S63
+
+| Rule | Kết quả |
+|------|---------|
+| Rule 9 null byte | 0 PASS |
+| Rule 11 prose | 0 leak (initial 1 leak "inspect state" fixed → "kiểm tra state") |
+| Rule 13 em-dash | 0.0267/line PASS (well < 0.10) |
+| Rule 14 SHA | stable anchor function name + file path (no version-sensitive line number) |
+
+### Phase I progress
+
+| Session | Area | File | Status |
+|---------|------|------|--------|
+| S63 | OVS tier 2 | 9.1 expand ofproto-dpif xlate | ✅ DONE |
+| S64 | OVS tier 2 | 9.15 expand classifier TSS | 📋 READY |
+| S65 | OVS tier 2 | 9.16 + 10.1 expand revalidator URCU + OVSDB Raft | 📋 READY |
+| S66 | OVN tier 2 | 13.8 expand northd build_lflows | 📋 READY |
+| S67 | OVN tier 2 | 13.7 expand ovn-controller physical.c binding | 📋 READY |
+| S68 | OVN tier 2 | 13.3 expand ACL logical-to-OF translation | 📋 READY |
+| S69 | Tools | 13.14 new ovn-nbctl/sbctl playbook | 📋 READY |
+| S70 | Tools | 10.7 new ovsdb-client deep + 9.7/9.16 Anatomy expand | 📋 READY |
+| S71 | Debug | 20.7 new packet tracing gradient | 📋 READY |
+
+**Phase I: 1/9 DONE (11%).** Target release v3.2-ArchitectMaster sau ~8 session tiếp.
+
+### Files modified
+
+- `sdn-onboard/9.1 - ovs-3-component-architecture.md` (+319 dòng §9.1.Y)
+- `plans/sdn-foundation-architecture.md` (+Phụ lục J full ~140 dòng)
+- `memory/session-log.md` (this file, S63 entry)
+- `CLAUDE.md` (Current State row S63)
+
+### Commit
+
+`fa82d81` docs(sdn): session S63 Phase I.A1 — Part 9.1 expand ofproto-dpif xlate tier 2 (+319 dòng) — pushed.
+
+### Next session plan S64
+
+Part 9.15 expand classifier TSS data structure tier 2. Scope:
+- `struct classifier` + `struct cls_subtable` + `minimask` bit-packing layout
+- Tuple Space Search algorithm (Srinivasan-Varghese 1999 SIGCOMM)
+- Prefix trie optimization cho IP fields (`struct cls_trie`)
+- `cmap` (concurrent hash map) RCU-safe read
+- Insert/remove/lookup complexity per subtable count + empirical benchmark
+- Guided Exercise: build classifier test harness, measure lookup time
+- Capstone POE: "Tại sao TSS + lazy wildcarding nhanh hơn decision tree?"
+
+---
+
 ## Session 62 — 🎉 Release v3.1-OperatorMaster — tag + CHANGELOG + README refresh
 
 **Ngày:** 2026-04-24 post S61b.
