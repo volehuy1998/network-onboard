@@ -692,8 +692,12 @@ Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
 > nằm trong `controller/mac-learn.c` cho OVN v22.03-v24.03 nhưng v24.09+
 > đã migrate sang `controller/pinctrl.c`. Audit sweep Phase E Scope D
 > phát hiện 32 issue qua 6 category trên 43 file: wrong commit SHA
-> (`ee20c48c2f5c` 404 mà Reference 27 cùng file có SHA đúng
-> `949b098626b7`), broken cross-ref (`./3.0` → `./19.0`, 4 instances),
+> (`ee20c48c2f5c` invalid trong context cited vào thời điểm Phase E audit —
+> re-verify 2026-04-25 cho thấy SHA này returns HTTP 200 ở ovn-org/ovn
+> khi check bằng `api.github.com/repos/ovn-org/ovn/commits/`, Reference 27
+> cùng file cite SHA đúng hơn `949b098626b7`. Finding phản ánh repo/branch
+> context mismatch tại thời điểm audit, không phải invalid permanently),
+> broken cross-ref (`./3.0` → `./19.0`, 4 instances),
 > function name fabricated (`reply_icmp_error_if_pkt_too_big` không
 > tồn tại — actual upstream có typo `reply_imcp_error_if_pkt_too_big`),
 > fabricated OVSDB table (`Chassis_features` — thực tế feature flags
