@@ -6,6 +6,109 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## v3.2-FullDepth (2026-04-25)
+
+**Release type:** Minor release — audit residual content depth expansion.
+**Branch:** `docs/sdn-foundation-rev2`
+**Base:** v3.1.1-OperatorMaster-patch + 5 deferred audit findings resolved.
+**Effort:** 1 working session (sequential P1→P5 priority execution).
+
+### Mục tiêu
+
+Đóng toàn bộ residual finding đã defer từ v3.1.1 patch — chuyển từ curriculum "operator mastery" sang "full depth mastery" với Block XIII Core đạt parity depth cùng Block IX + Block XX, tất cả CLI reference file có Anatomy Template A consistent, và narrative file Block II có Hiểu sai callout đạt professor-style 5/6 criteria.
+
+### Changes
+
+5 priority commits addressing all residual findings:
+
+1. **P1 Block XIII Core expand** (7 commits `e3109ea` → `737980f`, audit P4.B13.1 CRITICAL + P4.B13.4 + P4.B13.5):
+   - `13.0` OVN announcement 2015: 153 → 337 (+184) — author deep-dive Pfaff/Pettit/Shuhaa, 3 kỹ thuật + 2 thương mại motivation, 3-tier kiến trúc expanded, 4 alternative comparison, evolution timeline, GE 3-tier compilation.
+   - `13.1` NBDB/SBDB schema: 505 → 624 (+119) — Anatomy Template A `ovn-nbctl show` + `list Datapath_Binding`, 2 Hiểu sai + Key Topic, GE NBDB→SBDB timing propagation.
+   - `13.2` LS+LR pipeline: 399 → 546 (+147) — Anatomy `ls-list` + `lflow-list`, 2 Hiểu sai + Key Topic 27+10 stage, Capstone POE 3-tier ping trace.
+   - `13.3` ACL + Port_Group: 411 → 563 (+152) — Anatomy `ovn-nbctl acl-list` 9-attr, 2 Hiểu sai + Key Topic scale, Capstone POE 1000-VM segmentation.
+   - `13.4` br-int deep: 142 → 566 (+424) — CRITICAL expansion: 3-bridge pattern, patch port `ovs_vport_receive()` tail-call, 4 failure modes, 2 GE + Capstone POE TCAM utilization.
+   - `13.5` Port_Binding 8 types: 182 → 455 (+273) — claim mechanism Raft propagation, Anatomy `list Port_Binding`, GE claim workflow, 5-step debug diagnostic.
+   - `13.6` HA_Chassis + BFD: 184 → 469 (+285) — RFC 5880 packet format + state machine + timing math, Anatomy `ovs-appctl bfd/show` 11-attr, 13-step failover timeline, 4 failure modes, 11-step Capstone.
+   - **Block XIII Core total: 1,976 → 3,560 (+1,584, +80% growth)**
+
+2. **P2 Block IX Ops expand** (5 commits `5242de1` → `4cdb2ff`, audit P4.B9.2 MED):
+   - `9.6` bonding+LACP: 162 → 297 (+135) — Anatomy `bond/show` 10-attr, 2 Hiểu sai, 4 failure modes, performance table.
+   - `9.7` port mirroring: 154 → 275 (+121) — Anatomy `list Mirror` 9-attr, 2 Hiểu sai, 4 failure modes, retention planning table.
+   - `9.8` flow monitoring sFlow/IPFIX: 152 → 252 (+100) — Anatomy `list sFlow` 9-attr, 2 Hiểu sai, capacity planning.
+   - `9.10` TLS/PKI: 174 → 258 (+84) — Anatomy `list SSL` 9-attr, 2 Hiểu sai, 4 failure modes.
+   - `9.12` upgrade/rolling restart: 172 → 248 (+76) — Anatomy pre-upgrade checklist 9-attr, 2 Hiểu sai "golden 3 rules", 4 failure modes.
+   - **Block IX Ops total: 814 → 1,330 (+516, +63% growth)**
+
+3. **P3 Block IV hands-on GE** (1 commit `1d192ef`, audit P4.B4.1 HIGH):
+   - `4.0` multi-table pipeline GE (+59 dòng)
+   - `4.1` OXM TLV ARP + TCP flags GE (+43)
+   - `4.2` meter rate-limit GE (+42)
+   - `4.3` bundle atomic GE (+50)
+   - `4.4` egress simulation GE (+47)
+   - `4.5` TTP capability discovery GE (+38)
+   - **Block IV hands-on total: +279 dòng** (implement flow với OVS cho từng OF version feature).
+
+4. **P4 CLI Anatomy standardize** (1 commit `9978e2e`, audit P5.C1 MED):
+   - `20.0` §20.X `ovs-appctl coverage/show` debug entry 9-attr + 4 kịch bản (+27).
+   - `20.1` §20.X ACL audit + port_security multi-command 9-attr + 4 kịch bản (+48).
+   - `9.27` §9.27.7 `tnl/ports/show` + `bfd/show` cross-host tunnel 9-attr + 4 kịch bản (+38).
+   - **Anatomy Template A standardize total: +112 dòng** — curriculum-wide pattern consistent.
+
+5. **P5 Block II narrative enhance** (1 commit `0da3996`, audit P6.N1 MED):
+   - `2.0` DCAN/OPENSIG/GSMP: 2 Hiểu sai (OpenFlow phát minh mới 2008 + idea sai vs technology sai).
+   - `2.1` Ipsilon/Active Networking: 2 Hiểu sai (AN là tiền thân SDN + Ipsilon = GSMP lỗi).
+   - `2.2` NAC/Orchestration/Virtualization: 2 Hiểu sai (NAC = SDN + vDS = SDN đầu tiên).
+   - **Block II narrative total: +12 dòng** compact Hiểu sai callout. Đạt professor-style 5/6 criteria.
+
+### Finding status (v3.2 closure)
+
+| Severity | v3.1.1 deferred | v3.2 resolved | Residual |
+|----------|----------------|---------------|----------|
+| CRITICAL | 1 (P4.B13.1) | 1 | 0 |
+| HIGH | 2 (P4.B4.1 + P4.B13.2) | 2 | 0 |
+| MED | ~5 (P4.B9.2 + P5.C1 + P6.N1 + decision matrix) | 4 | 1 (stylistic, LOW-impact) |
+| LOW | ~4 | 2 | 2 (Part X.Y.Z terminology cosmetic) |
+
+**100% CRITICAL + HIGH closure.** Curriculum đạt verdict **A** post-audit (từ A- v3.1.1).
+
+### Statistics (v3.2 delta from v3.1.1)
+
+- **28 files modified** across 15 commits
+- **+3,373 insertions, -321 deletions** = +3,052 net
+- Block XIII Core: 7 file, 1,976 → 3,560 (+1,584, 80% growth)
+- Block IX Ops: 5 file, 814 → 1,330 (+516, 63% growth)
+- Block IV hands-on: 6 file +279 (GE sections)
+- Anatomy standardize: 3 file +112
+- Block II narrative: 3 file +12
+- Anatomy Template A (9-attribute + "red flag" + diagnostic hint) applied to: 10 new locations
+- Hiểu sai callout: 16 new (Block II 6 + Block XIII 10)
+- Guided Exercise: 11 new (Block IV 6 + Block XIII 3 + Block IX 2)
+- Capstone POE: 4 new (Block XIII 4)
+- Rule 9 null byte: 0 regressions
+- Rule 11 prose: maintained 99%+ compliance
+- Rule 13 em-dash density: 0/28 files in warn zone (>0.10)
+
+### Curriculum state post-v3.2
+
+- **116 file** sdn-onboard/*.md (unchanged count, depth expansion only)
+- **~55.7K dòng** (from ~52.6K baseline v3.1)
+- Block XIII Core: 13 file, parity depth với Block IX + Block XX
+- Anatomy Template A presence: Part 9.4/9.11/13.2/13.3/20.1/20.0/9.27 + all Block XIII Core (consistent pattern)
+- Professor-style 5/6 criteria: 100% narrative file (Block I + II + III) có Hiểu sai + Key Topic callout
+
+### Known residual (defer post-v3.2)
+
+- **P7.R1 LOW**: Part X.Y.Z terminology normalization across ~8 legacy file headers. Cosmetic, non-blocking.
+- **P4.B9.3 LOW**: 9.26 References section sub-heading format. Cosmetic.
+- **Lab verification (C1b)**: 63 exercise pending lab host availability. External dependency.
+
+### Links
+
+- Audit master report: [`memory/audit-2026-04-25-master-report.md`](memory/audit-2026-04-25-master-report.md)
+- v3.2 commits: `e3109ea` → `0da3996` (15 commits sequential)
+
+---
+
 ## v3.1.1-OperatorMaster-patch (2026-04-25)
 
 **Release type:** Patch release — audit compliance remediation.
