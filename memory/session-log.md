@@ -7,6 +7,124 @@
 
 ## Session gần nhất
 
+## Session 51 — Phase G.3.1: new Part 20.2 OVN troubleshooting deep-dive
+
+**Ngày:** 2026-04-24 post Phase H close.
+**Branch:** `docs/sdn-foundation-rev2` @ post `d34f7b8`.
+**Trạng thái:** Phase G progress **4/12 session DONE (33%)** — G.1 Truy vết COMPLETE (3/3) + G.3.1 first session (1/3 G.3 Debug sâu).
+
+### Bối cảnh
+
+User directive "tiếp tục đi" sau khi load lại context. User emphasis: "không quan trọng tốn bao nhiêu chi phí token hay file có bao nhiêu dòng, tôi chỉ quan tâm đến chất lượng độ chi tiết, mọi chi phí đều không quan trọng."
+
+Phase H đã đóng (13/13 session) với v3.0-FoundationDepth: 111 file, 44.084 dòng, template library A/B/C/D, Part 4.8 match field catalog (926 dòng), Part 4.9 action catalog (1544 dòng), OVN LS+LR pipeline exhaustive (13.2 399 / 13.11 516), NBDB+SBDB schema full (13.1 446 / 13.10 319), ACL+LB+NAT deep (13.3 454), tools + final QG (9.14 370).
+
+Phase G audit 2026-04-24 post-Phase H xác định gap: `ovn-trace`/`ovn-detrace` chỉ surface-level trong Part 20.0 §20.4 (70 dòng). Part 13.7 có 5 debug tool nhưng không Anatomy. Part 13.5 có Port_Binding 8 type taxonomy (182 dòng) nhưng không forensic angle. `ovn-appctl -t ovn-controller` + `ovn-appctl -t ovn-northd` scattered, không consolidated reference.
+
+Session S51 target: tạo mới Part 20.2 "OVN troubleshooting deep-dive" — deep-dive exhaustive 3 công cụ OVN-specific, với Template A Anatomy blocks cho 7 command key + Port_Binding 8-type failure mode + diagnostic matrix consolidated.
+
+### Deliverable
+
+**Part 20.2 — OVN troubleshooting deep-dive (new file, 1627 dòng)**
+
+Structure 14 section:
+
+1. **Header block** 7-field với version pinning OVS 2.17.9 + OVN 22.03.8, prerequisites 8 Part, offline + online source.
+2. **Mục tiêu bài học** 5 Bloom (Understand 3-layer / Apply 11 option ovn-trace / Analyze cookie chain / Evaluate 10 Port_Binding failure / Create playbook 21 command).
+3. **§20.2.1** Ba lớp debug OVN (NB intent A / SB Logical_Flow B / OpenFlow C). Nguyên tắc simulation trước capture; ba lớp phải khớp.
+4. **§20.2.2** `ovn-trace` deep-dive — 9 subsection:
+   - 20.2.2.1 Grammar + environment
+   - 20.2.2.2 Microflow 5 class (L2 unicast, broadcast, L3 cross-subnet, ARP, DHCP Discover)
+   - 20.2.2.3 Option catalog 11 option (bảng semantic + when-to-use)
+   - 20.2.2.4 Anatomy `--detailed` (full L3 trace 3 pipeline + 5 scenario bẻ gãy)
+   - 20.2.2.5 Anatomy `--summary` (pseudo-code indent)
+   - 20.2.2.6 Anatomy `--minimal` (regression test)
+   - 20.2.2.7 Anatomy `--ovs` (bridge logical → physical)
+   - 20.2.2.8 Option `--ct=trk,est,rpl` cho stateful reply simulation
+   - 20.2.2.9 Option `--lb-dst` cho LB backend forcing
+5. **§20.2.3** `ovn-detrace` chain — 4 subsection:
+   - 20.2.3.1 Workflow role (cookie → Logical_Flow → NB object)
+   - 20.2.3.2 Grammar + env `OVN_SB_DB` + `OVN_NB_DB`
+   - 20.2.3.3 Anatomy chain `ofproto/trace -m 3 | ovn-detrace` (3-block output)
+   - 20.2.3.4 Pattern diff cross-chassis (dump-flows chassis-42 vs healthy)
+6. **§20.2.4** Port_Binding forensic per-type — 11 subsection:
+   - 20.2.4.1 Anatomy schema 18 column (Template A, _uuid/chassis/datapath/encap/external_ids/gateway_chassis/ha_chassis_group/logical_port/mac/nat_addresses/options/parent_port/requested_chassis/tag/tunnel_key/type/up/virtual_parent)
+   - 20.2.4.2 VIF `""` — 4 failure mode (iface-id chưa set, iface-id trùng, port_security mismatch, addresses=unknown)
+   - 20.2.4.3 `patch` — 2 failure mode
+   - 20.2.4.4 `localnet` — 3 failure mode
+   - 20.2.4.5 `chassisredirect` cr-lrp — 4 failure mode (HA_Chassis empty, BFD down, priority collision, enable-chassis-as-gw thiếu)
+   - 20.2.4.6 `l3gateway` — 2 failure mode
+   - 20.2.4.7 `l2gateway` — 2 failure mode
+   - 20.2.4.8 `localport` — 2 failure mode
+   - 20.2.4.9 `virtual` — 2 failure mode
+   - 20.2.4.10 `remote` — 1 failure mode
+   - 20.2.4.11 Decision tree matrix 9-symptom
+7. **§20.2.5** `ovn-appctl -t ovn-controller` — catalog 11 command + Anatomy Template A cho 5 command key (inc-engine/show-stats, lflow-cache/show-stats, ct-zone-list, connection-status, recompute, inject-pkt).
+8. **§20.2.6** `ovn-appctl -t ovn-northd` — catalog 10 command + Anatomy cho status + inc-engine/show-stats + pause/resume + set-n-threads tuning.
+9. **§20.2.7** Stateful table triage — MAC_Binding + FDB + Service_Monitor.
+10. **§20.2.8** Matrix 16-symptom diagnostic consolidated.
+11. **§20.2.9** Guided Exercise 1 — ACL drop silent với `--ct` multi-scenario (forward NEW + reply default + reply `--ct=trk,est,rpl` + refactor allow → allow-related).
+12. **§20.2.10** Guided Exercise 2 — `ovn-detrace` chain missing ARP responder (5 step từ ovn-trace → ofproto/trace|ovn-detrace → verify NB → trigger inc-engine/recompute).
+13. **§20.2.11** Guided Exercise 3 — chassisredirect stuck (7 step HA_Chassis_Group + BFD + enable-chassis-as-gw diagnostic).
+14. **§20.2.12** Capstone POE — Refute "engine_recompute > 10%/min → must restart" (4-step analysis reveal chassis join event, not bug).
+15. **§20.2.13** 8 Hiểu sai phổ biến.
+16. **§20.2.14** 6 điểm cốt lõi.
+17. **References** 15 entries (8 man page + 2 tutorial + 1 paper + 1 compass + 1 USC lab + 1 Red Hat doc + 1 git repo source + 1 cross-ref curriculum).
+
+### Quality gate Session S51
+
+| Rule | Kiểm tra | Kết quả |
+|------|----------|---------|
+| Rule 6 Checklist B | skill activate Core-4 + search-first + deep-research; dependency map check; read related Part 20.0/20.1/13.7/13.8/13.5/9.25/9.27 + template A/D | PASS |
+| Rule 7/7a | Output lift từ upstream attributed `[reproduced from OVN tutorial sandbox, OVN 22.03.8]`; không fabricate system log | PASS |
+| Rule 9 | Null byte scan (`tr -d '\0'` size equal) | 0 null byte PASS |
+| Rule 11 | §11.6 prose scan; fix 8 prose leak (Engineer → Kỹ sư, Verify → Kiểm chứng) | PASS |
+| Rule 12 | Offline source inventory (compass + USC Day 4 Lab 3) + online source 7 man page + tutorial + paper | PASS |
+| Rule 13 | Em-dash density | 0.0535/line < 0.10 PASS |
+| Rule 14 | Source code citation integrity — không claim SHA mới; reference `controller/ovn-controller.c` + `northd/northd.c` ở general level (đã verified prior session 37c) | PASS |
+
+### Upstream source fetched (Rule 12)
+
+- `ovn-trace(8)` man page — grammar + 11 option + 5 microflow class BNF + 4 output format (detailed/summary/minimal/all).
+- `ovn-detrace(1)` man page — 7 option (ovnsb/ovnnb/ovs/ovsdb/no-leader-only/TLS triplet).
+- `ovn-controller(8)` man page — 11 command runtime management catalog verbatim.
+- `ovn-northd(8)` man page — 10 command runtime management catalog verbatim.
+- `ovn-architecture(7)` man page — Life Cycle of a VIF 15-step + Port_Binding type descriptions.
+
+### Phase G progress sau S51
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a (9.25 +410), S37b (9.27 new 659), S37c (13.7 +157 + 20.0 +206) | ✅ 3/3 COMPLETE |
+| G.2 Xử lý sự cố | — | ⏳ 0/3 pending |
+| G.3 Debug sâu | S51 (20.2 new 1627) | 🟢 1/3 IN PROGRESS |
+| G.4 Lịch sử | — | ⏳ 0/1 pending (optional) |
+| G.5 Thao tác công cụ | — | ⏳ 0/2 pending |
+
+Phase G total 4/12 session DONE (33%).
+
+### Files modified Session S51
+
+- **NEW:** `sdn-onboard/20.2 - ovn-troubleshooting-deep-dive.md` (1627 dòng)
+- **UPDATED:** `sdn-onboard/README.md` (Block XX 2 file → 3 file, TOC entry 20.2 add)
+- **UPDATED:** `memory/session-log.md` (Session S51 entry this)
+- **UPDATED:** `memory/file-dependency-map.md` (Tầng Block XX expand thêm 20.2)
+- **UPDATED:** `CLAUDE.md` (Current State Phase G 3/12 → 4/12, Session S51 row)
+
+### Curriculum state post-S51
+
+- **111 file → 112 file** (Block XX 2 → 3).
+- **44.084 dòng → 45.711 dòng** (+1627).
+- Block XX: 20.0 (788) + 20.1 (475) + 20.2 (1627) = **2890 dòng** operational excellence.
+
+### Pending next session
+
+- **G.3.2** — expand Part 9.26 với 2-3 forensic case study mới (bond flap cascade / upcall storm / conntrack zone collision), hoặc
+- **G.3.3** — new Part "OVN deep-dive source reading" (ovn-controller.c main_loop anatomy với real commit SHA citation via MCP)
+- **G.2.x** — Phase G.2 xử lý sự cố: expand Part 9.14 incident decision tree với 10+ scenarios
+
+---
+
 ## Session 46-50 — Phase H batch: OVN foundation + tools + Final QG
 
 **Ngày:** 2026-04-24 post S45.

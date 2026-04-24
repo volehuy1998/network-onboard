@@ -233,6 +233,18 @@ headings (Phần 1/2/3 → Phần 17/18/19; mục X.Y → tương ứng), update
 `git rm` trên local (sandbox không delete được do fuse lock). Không còn conflict tên —
 skeleton Block I/II/III (1.0/2.0/3.0) và advanced Part (17.0/18.0/19.0) ở hai dải số tách biệt.
 
+### Tầng 2l: SDN foundation Block XX — Operational Excellence (Part 20, 3 file)
+
+> **Scope:** Block XX Operational Excellence, cover kỹ năng vận hành chẩn đoán thực chiến. Dependency chain: Part 20.0 (systematic debugging philosophy + 5-layer) → Part 20.1 (security hardening + port_security/ACL/audit) → Part 20.2 (OVN troubleshooting deep-dive với ovn-trace/ovn-detrace/Port_Binding forensic).
+
+| File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |
+|------|---------------|---------------------------------------|
+| `sdn-onboard/20.0 - ovs-ovn-systematic-debugging.md` | Content 788 dòng (với §20.7 3-case-study playback Phase G.1.4): isolation-first philosophy + 5-layer model + 8 common scenarios + 3 production case study (VM no network race / upgrade schema drift / partition thundering herd) | `sdn-onboard/README.md` TOC Block XX, `sdn-onboard/9.14` (incident decision tree OVS-specific, đối xứng), `sdn-onboard/9.25` (`ofproto/trace` grammar), `sdn-onboard/0.2` (packet journey anchor), `sdn-onboard/13.7` (ovn-controller internals) |
+| `sdn-onboard/20.1 - ovs-ovn-security-hardening.md` | Content 475 dòng: 3-layer defense-in-depth (control/management/data plane) + port_security + ACL default-deny + audit logging + 10-point checklist | `sdn-onboard/README.md` TOC Block XX, `sdn-onboard/13.3` (ACL foundation), `sdn-onboard/9.10` (TLS hardening), `sdn-onboard/18.0` (ARP poisoning threat model) |
+| `sdn-onboard/20.2 - ovn-troubleshooting-deep-dive.md` | Content 1627 dòng (Session S51 Phase G.3.1): 3-layer OVN debug + `ovn-trace` 11 option 9 subsection + `ovn-detrace` chain + Port_Binding 8 type × 22 failure mode + ovn-appctl 21 command (7 Anatomy) + MAC_Binding/FDB/Service_Monitor triage + 16-symptom matrix + 3 GE + Capstone POE | `sdn-onboard/README.md` TOC Block XX, `sdn-onboard/13.1` (NBDB/SBDB schema prerequisite), `sdn-onboard/13.2` (LS pipeline 27+10 stage), `sdn-onboard/13.5` (Port_Binding 8 type taxonomy — 20.2 đi sâu forensic angle), `sdn-onboard/13.7` (ovn-controller main_loop + I-P engine — 20.2 reference cho inc-engine stats interpretation), `sdn-onboard/13.8` (ovn-northd compile NB→SB — 20.2 reference cho northd status/pause/resume), `sdn-onboard/13.11` (LR pipeline 19+7 stage), `sdn-onboard/9.25` (`ofproto/trace` grammar — 20.2 reference cho chain với ovn-detrace), `sdn-onboard/9.27` (3-tier parallel diagnostic — 20.2 complement OVN-specific angle), `sdn-onboard/20.0` (systematic debugging framework — 20.2 deep-dive cho OVN tool) |
+
+> **Quy tắc dependency Block XX:** Part 20.x các file bổ sung chiều sâu cho Block IX (OVS) + Block XIII (OVN). Khi sửa 20.0/20.1/20.2, KHÔNG được lặp lại nội dung foundation từ 13.x/9.x — chỉ reference section cross-link. Part 20.2 cụ thể prerequisite 8 Part, phải verify mọi forward-ref còn valid khi thêm section mới.
+
 ### Tầng 5: Image files (SVG → Markdown captions)
 
 | File | Nội dung chính | Related Files — PHẢI kiểm tra khi sửa |

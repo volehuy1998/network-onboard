@@ -317,12 +317,13 @@ Ba Part advanced là forensic analysis trên production OVN multichassis environ
 - **Part 18**, [OVN ARP Responder và BUM Suppression](18.0%20-%20ovn-arp-responder-and-bum-suppression.md) *(496 dòng)*, ARP Responder ingress table 26, port_security gate, bốn kiến trúc ARP suppression và arp_proxy.
 - **Part 19**, [OVN Multichassis Binding, PMTUD và activation-strategy](19.0%20-%20ovn-multichassis-binding-and-pmtud.md) *(1379 dòng)*, ba thời kỳ live migration OVN, multichassis port binding lifecycle, bug FDP-620 root cause, activation-strategy=rarp OVN 24.03.
 
-### Block XX, Operational Excellence (Part 20, 2 file)
+### Block XX, Operational Excellence (Part 20, 3 file)
 
 Block này tập trung kỹ năng vận hành và chẩn đoán thực chiến — bổ sung cho nền tảng kiến trúc của Block IX-XIII. Đọc sau khi hoàn thành Block IX, XIII và Part 0.2.
 
 - **Part 20.0**, [Phương pháp chẩn đoán hệ thống OVS/OVN](20.0%20-%20ovs-ovn-systematic-debugging.md) *(content)*, isolation-first methodology, mô hình 5 lớp kiểm tra, `ovn-trace`/`ofproto/trace`/`ovn-detrace` simulation tools, 8 kịch bản lỗi phổ biến với chuỗi lệnh chẩn đoán.
 - **Part 20.1**, [Bảo mật OVN: port_security, ACL và kiểm toán](20.1%20-%20ovs-ovn-security-hardening.md) *(content)*, ba lớp bảo mật defense-in-depth (control/management/data plane), `port_security` chống ARP poisoning và MAC spoofing, ACL default-deny với `allow-related` stateful conntrack, audit logging với `name=` field, 10-point security posture checklist.
+- **Part 20.2**, [OVN troubleshooting deep-dive](20.2%20-%20ovn-troubleshooting-deep-dive.md) *(content, Session S51 Phase G.3.1)*, 3 lớp debug OVN (NB intent → SB Logical_Flow → OpenFlow `br-int`), `ovn-trace` 11 option + 4 output mode (`--detailed`/`--summary`/`--minimal`/`--all` + `--ovs`/`--ct`/`--lb-dst`/`--select-id`/`--friendly-names`/`--db`) + 5 class microflow, chain `ofproto/trace | ovn-detrace` map cookie → Logical_Flow → NB object (ACL/LB/NAT), Port_Binding 8 type forensic (10 failure pattern với diagnostic chain), `ovn-appctl -t ovn-controller` 11 command + `ovn-appctl -t ovn-northd` 10 command (Anatomy Template A cho 7 command key), MAC_Binding + FDB + Service_Monitor stateful triage, 16-symptom diagnostic matrix, 3 Guided Exercise + 1 Capstone POE.
 
 ---
 
