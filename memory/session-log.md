@@ -7,6 +7,63 @@
 
 ## Session gần nhất
 
+## Session 60 — Pre-release audit v3.1-OperatorMaster (Rule 9+13 PASS, Rule 11 64 leak fixable)
+
+**Ngày:** 2026-04-24 post S59.
+**Branch:** `docs/sdn-foundation-rev2` @ post `8dcbeca`.
+**Trạng thái:** Phase G COMPLETE 12/12. S60 = pre-release audit cross-session để xác định drift trước khi tag v3.1.
+
+### Bối cảnh
+
+User /clear context → "tiếp tục" → confirm kim chỉ nam OVS/OpenFlow/OVN, không sa đà K8S/DPDK/XDP. Lab C1b chờ user thông báo. Decision tree S60+S61+S62: (1) audit pre-release, (2) fix findings, (3) tag + changelog. Chọn trình tự tuần tự thay vì single option.
+
+### Deliverable
+
+`memory/pre-release-audit-2026-04-24.md` (audit log đầy đủ).
+
+### Rule 9 sweep (PASS)
+
+Method: `tr -d '\000' | wc -c` size-diff (initial `grep -c $'\x00'` false positive 116/116 do bash null-terminator). Result 0/116 violators. Rule 9 enforced từ session 2026-04-04 vẫn giữ chặt.
+
+### Rule 13 sweep (PASS)
+
+Method: `grep -o '—' | wc -l` UTF-8-safe (initial `tr -cd '—' | wc -c / 3` cho số sai do tr không UTF-8 aware Git Bash). Result 0/116 violators threshold 0.10/line. Spot-verify Part 20.6 0.0046/line + Part 9.26 0.0819/line + Part 0.2 0.076/line khớp session log claim.
+
+### Rule 11 sweep (FIXABLE 64 leak)
+
+Method: awk exclude code block + grep prose term. Top 3 pattern: `verify` 27 hit + `support` 24 hit + `identify` 13 hit. Hot file 20.2 ovn-troubleshooting-deep-dive (31 leak). 3 file playbook (20.3/20.4/20.5) hoàn toàn 0 leak chứng tỏ quality gate hoạt động khi áp dụng đầy đủ ngay từ đầu. File forensic/incident dense leak vì pattern "Verify bằng X" lặp.
+
+Sample leak (20.2):
+- Line 273-275/377/404/515: "Verify bằng" → "Kiểm chứng bằng"
+- Line 267: "cần inspect tiếp" → "cần kiểm tra tiếp"
+- Line 802: "oncall engineer" → "kỹ sư oncall"
+- Line 986: "OVN 22.03+ support extend" → "hỗ trợ extend"
+
+Severity LOW-MEDIUM. Không phải release blocker, là polish sweep.
+
+### Rule 14 deferred
+
+Phase G mới ít source code citation. Risk surface: 20.5 function names + 20.6 Phụ lục timeline 40+ milestone + 20.2 northd.c:8127 line ref. 15-20 MCP call estimate. Defer S61.
+
+### Verdict + Plan
+
+Foundation solid (Rule 9+13). Rule 11 cần 1 sweep session. Đề xuất:
+- **S61:** Rule 11 fix sweep 64 leak + Rule 14 MCP spot-check
+- **S62:** Tag v3.1-OperatorMaster + CHANGELOG.md + README parent refresh
+- **S63+:** Phase I OVS tier 2 (ofproto-dpif xlate / classifier TSS / revalidator URCU / OVSDB Raft internals)
+
+### Files modified
+
+- `memory/pre-release-audit-2026-04-24.md` (new, ~140 dòng)
+- `memory/session-log.md` (this file, S60 entry)
+- `CLAUDE.md` (Current State row S60 + audit log pointer)
+
+### Commit ready
+
+`docs(sdn): session S60 pre-release audit — Rule 9+13 PASS, Rule 11 64 leak found`
+
+---
+
 ## Session 59 — Phase G.4: new Part 20.6 OVS/OpenFlow/OVN retrospective (🎉 đóng Phase G 12/12 COMPLETE)
 
 **Ngày:** 2026-04-24 post S58.

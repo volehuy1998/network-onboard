@@ -842,7 +842,8 @@ mọi Part mới hoặc audit lại file cũ. Rule 14 áp dụng tiếp nối
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `7e5608b` (session 34 post — Phase E Scope D audit full + Rule 14 codify + Part 9.26 OVS forensic). Release-ready v2.1-preVerified. |
+| Active branch | `docs/sdn-foundation-rev2` @ `8dcbeca` (S59 post — Phase G 100% COMPLETE + S60 pre-release audit pending commit). Release candidate v3.1-OperatorMaster (audit phase). |
+| Session 60 status | **DONE** (2026-04-24) Pre-release audit cross-session 116 file. Rule 9 null PASS 0/116. Rule 13 em-dash PASS 0/116 (threshold 0.10/line). Rule 11 64 prose leak found across 10 Phase G files (verify 27 + support 24 + identify 13), hot file 20.2 (31 leak), 3 file playbook 20.3/20.4/20.5 sạch hoàn toàn. Rule 14 deferred S61. Severity LOW-MEDIUM, không phải release blocker. Audit log `memory/pre-release-audit-2026-04-24.md`. Plan: S61 Rule 11 fix sweep + Rule 14 MCP spot-check → S62 tag v3.1 + CHANGELOG → S63+ Phase I OVS tier 2 internals. |
 | Phase E status | **🎉 COMPLETE** — Scope A (audit rev2 residual cleanup, 14 fixes), Scope D (fact-check audit 101 file, 32 issues fixed), Scope B (Part 9.26 OVS forensic 464 dòng), Rule 14 codified. Session 32+33a-33i+34+35. |
 | Session 32 status | **DONE** Audit rev2 residual (Rule 11 + header backfill) + Phụ lục G + MAX_FDB_ENTRIES version drift fix (`076ef87`+`b243207`). |
 | Session 33a status | **DONE** Scope D.1 3 Advanced OVN fact-check (17.0/18.0/19.0, 26 issues 6 category) commit `acc58a2`. |
