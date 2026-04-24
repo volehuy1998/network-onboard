@@ -3226,3 +3226,141 @@ Option C — **Stop Phase F immediately + go Phase G**:
 ---
 
 **Hết Phụ lục I.**
+
+---
+
+## Phụ lục J — Phase I OVS/OpenFlow/OVN Tier 2 Deep Internals (rev 1, 2026-04-24 post-S62 release)
+
+### J.1 Bối cảnh
+
+Sau khi tag `v3.1-OperatorMaster` ngày 2026-04-24 (commit `0fa0687`), user reaffirm kim chỉ nam mở rộng thành **5 trụ cột kỹ năng** cho kỹ sư:
+
+1. Nền tảng kiến thức OVS/OpenFlow/OVN vững chắc + chi tiết
+2. Tools mastery, am hiểu tường tận MỌI công cụ OVS/OVN
+3. Output interpretation, hiểu sâu output anatomy từng field
+4. Debug + troubleshoot skill
+5. Architecture + mechanism hoạt động
+
+Phase I chuyển curriculum từ Operator Master (v3.1) lên **Architecture Master** với target release `v3.2-ArchitectMaster`. Scope 100% OVS/OpenFlow/OVN, KHÔNG sa đà K8S/DPDK/XDP/Cilium (confirmed user directive 2026-04-24).
+
+### J.2 Scope Phase I
+
+3 scope area, 9 session S63-S71:
+
+**Area 1, OVS Architecture Tier 2 (S63-S65):**
+
+S63 ofproto-dpif xlate full walkthrough (append Part 9.1):
+- Entry point `xlate_actions()` trong `ofproto/ofproto-dpif-xlate.c`
+- Function call chain: `xlate_actions -> do_xlate_actions -> xlate_table_action -> rule_dpif_lookup`
+- Context struct `xlate_ctx` anatomy (state: stack depth, recursion limit, tables visited, flow, wc)
+- Action translation: output / resubmit / conntrack / learn / controller / group
+- Megaflow mask generation via `wc` (wildcards) tracking
+- Guided Exercise: trace 1 packet qua xlate với gdb breakpoint + printout
+- Capstone POE: tại sao xlate không tách khỏi upcall path
+
+S64 classifier TSS data structure + cls_subtable internals (append Part 9.15):
+- `struct classifier` + `struct cls_subtable` + `minimask` bit-packing
+- Tuple Space Search algorithm (Srinivasan-Varghese 1999)
+- Prefix trie optimization (ptrie) cho IP fields
+- Insert/remove/lookup complexity per subtable count
+- `cmap` (concurrent hash map) RCU-safe read
+- Guided Exercise: build custom classifier test harness, measure lookup time per subtable count
+
+S65 revalidator URCU lifecycle + OVSDB Raft log compaction (append Part 9.16 + 10.1):
+- Revalidator thread model (N handler + N revalidator threads)
+- `struct udpif` + `struct udpif_key` ukey
+- RCU read-side critical section trong megaflow revalidation
+- Ukey lifecycle 6 state
+- OVSDB Raft: log append, snapshot transfer, leader election edge case, log compaction threshold
+- Guided Exercise: trigger revalidator storm + observe recovery qua `upcall/show`
+- Capstone POE: tại sao revalidator không phải bottleneck trong hot path
+
+**Area 2, OVN Architecture Tier 2 (S66-S68):**
+
+S66 northd build_lflows step-by-step (append Part 13.8):
+- Entry `northd_run()` -> `build_lflows()` in `northd/northd.c`
+- I-P (Incremental Processing) engine node graph (12+ nodes)
+- `build_lswitch_and_lrouter_lflows()` 4000+ dòng, LS pipeline 27 stage + LR pipeline 23 stage
+- Lflow deduplication via hash + tracked change propagation
+- Guided Exercise: instrument northd với `stopwatch` verb + `inc-engine/show` để đo per-node compute time
+- Capstone POE: khi nào recompute full vs incremental
+
+S67 ovn-controller physical.c binding deep (append Part 13.7):
+- Entry `ovn-controller.c main loop` -> `physical_run()` in `controller/physical.c`
+- Port_Binding.chassis claim logic: sequence_number check, conditional monitor, BFD
+- OpenFlow flow install: `br-int` pipeline patch port, tunnel port egress
+- Geneve TLV encoding (class 0x0102): metadata (datapath + logical_inport + logical_outport)
+- Guided Exercise: reproduce port claim race 2-chassis, observe ovsdb-client timestamp
+- Capstone POE: tại sao Port_Binding dùng eager claim thay vì leader election
+
+S68 ACL logical-to-OpenFlow translation walkthrough (append Part 13.3):
+- NBDB ACL row -> SBDB Logical_Flow translation
+- `build_acls()` match expression parsing (ovn-sb expression grammar)
+- Port_Group consolidation (5-10x flow reduction)
+- Conntrack integration: allow-related vs allow-stateless
+- Guided Exercise: 1 ACL rule -> trace qua northd -> SBDB Logical_Flow -> OpenFlow trên chassis
+- Capstone POE: tại sao `allow-related` trong OVN 22.03 bỏ qua lệnh `ct()` cho match nào
+
+**Area 3, Tools Mastery + Output Anatomy (S69-S71):**
+
+S69 ovn-nbctl + ovn-sbctl reference playbook (new Part 13.14):
+- File mới: `sdn-onboard/13.14 - ovn-nbctl-sbctl-reference-playbook.md`
+- ovn-nbctl: 30+ command
+- ovn-sbctl: 20+ command
+- Anatomy Template A cho 10 output quan trọng
+- Decision matrix: tình huống "cần cấu hình/kiểm chứng X" -> command nào?
+
+S70 ovsdb-client deep + Anatomy expand (new Part 10.7 + append 9.7/9.16):
+- File mới: `sdn-onboard/10.7 - ovsdb-client-deep-playbook.md`
+- ovsdb-client: monitor / dump / transact / backup / list-tables / wait
+- Output anatomy: monitor event stream format, transact JSON response
+- Append existing file: 9.7 ovs-pcap/ovs-tcpdump Anatomy + 9.16 ofproto/show-connection role detail
+
+S71 Packet flow tracing tutorial gradient (new Part 20.7):
+- File mới: `sdn-onboard/20.7 - packet-flow-tracing-tutorial-gradient.md`
+- Gradient 5 level: L1 hello-world `ovn-trace` 1 packet -> L2 multi-table pipeline -> L3 cross-subnet với LR -> L4 multichassis với Geneve tunnel -> L5 production incident với ovn-detrace correlation
+- Each level: setup + command + anatomy + expected output + exercise
+- Capstone POE: student tự design trace scenario cho custom incident
+
+### J.3 Deliverables per session
+
+Mỗi session produce:
+- 1-2 file .md (new hoặc expand)
+- 1-3 Anatomy Template A block
+- 1-2 Guided Exercise
+- 1 Capstone POE
+- Rule 9/11/13/14 pre-commit compliance
+- Commit + push
+
+### J.4 Success criteria Phase I
+
+Phase I COMPLETE khi:
+- 9/9 session S63-S71 DONE
+- 3 file mới: 13.14 + 10.7 + 20.7
+- 6 file expand: OVS internals (9.1/9.15/9.16 tier 2 append) + OVN internals (13.7/13.8/13.3 tier 2 append) + OVSDB 10.1
+- Anatomy Template A block tổng số: ~25 -> ~40+
+- Rule 9+13 PASS, Rule 11+14 spot-check PASS
+
+Target release: `v3.2-ArchitectMaster` (2026-05-XX, ~7-10 ngày working).
+
+### J.5 Phase I tracker
+
+| Session | Area | File | Status |
+|---------|------|------|--------|
+| S63 | OVS tier 2 | 9.1 expand ofproto-dpif xlate | IN PROGRESS |
+| S64 | OVS tier 2 | 9.15 expand classifier TSS | READY |
+| S65 | OVS tier 2 | 9.16 + 10.1 expand revalidator URCU + OVSDB Raft | READY |
+| S66 | OVN tier 2 | 13.8 expand northd build_lflows | READY |
+| S67 | OVN tier 2 | 13.7 expand ovn-controller physical.c binding | READY |
+| S68 | OVN tier 2 | 13.3 expand ACL logical-to-OF translation | READY |
+| S69 | Tools | 13.14 new ovn-nbctl/sbctl playbook | READY |
+| S70 | Tools | 10.7 new ovsdb-client deep + 9.7/9.16 Anatomy expand | READY |
+| S71 | Debug | 20.7 new packet tracing gradient | READY |
+
+### J.6 Phụ lục J status
+
+**2026-04-24 post-S62 release:** Plan drafted. User "tiếp tục" -> bắt đầu S63 ngay.
+
+---
+
+**Hết Phụ lục J.**
