@@ -26,10 +26,10 @@ Open vSwitch (OVS) is a production-quality, multi-layer virtual switch designed 
 
 - **`ovs-vswitchd`** — the chuyển tiếp daemon. It owns the OpenFlow pipeline, the megaflow cache, the userspace datapath (`netdev`), and the bond/LACP/STP/RSTP state machines.
 - **`ovsdb-server`** — a lightweight JSON-RPC database server that serves the configuration schema for `ovs-vswitchd`. The on-disk file defaults to `/etc/openvswitch/conf.db`.
-- **`openvswitch.ko`** (Linux kernel datapath) — the in-kernel flow cache that actually forwards gói tin when the datapath type is `system`. It is increasingly supplanted by the userspace `netdev` datapath with DPDK or AF_XDP.
+- **`openvswitch.ko`** (Linux kernel datapath) — the in-kernel flow cache that actually forwards packet when the datapath type is `system`. It is increasingly supplanted by the userspace `netdev` datapath with DPDK or AF_XDP.
 - **Utilities** — `ovs-vsctl` (talks to `ovsdb-server`), `ovs-ofctl` (talks OpenFlow to a bridge), `ovs-appctl` (Unix-socket RPC to any OVS daemon), `ovs-dpctl` (raw datapath control, rarely needed), `ovsdb-tool` / `ovsdb-client` (DB maintenance).
 
-The mental model you should carry through this book is a **four-layer stack**: the OVSDB configuration layer (what should exist), the OpenFlow flow-table layer (how gói tin should be treated), the datapath cache layer (what the fast path has learned), and the wire layer (what actually leaves the NIC). A great deal of operational troubleshooting amounts to comparing these four layers and finding where they disagree.
+The mental model you should carry through this book is a **four-layer stack**: the OVSDB configuration layer (what should exist), the OpenFlow flow-table layer (how packet should be treated), the datapath cache layer (what the fast path has learned), and the wire layer (what actually leaves the NIC). A great deal of operational troubleshooting amounts to comparing these four layers and finding where they disagree.
 
 **Sources:** `https://docs.openvswitch.org/en/latest/intro/what-is-ovs/`, `https://docs.openvswitch.org/en/latest/intro/why-ovs/`.
 
@@ -72,7 +72,7 @@ sudo ovs-vsctl add-port br0 eth1
 sudo ovs-vsctl show
 ```
 
-The output of `show` will list the bridge `br0` with an implicit internal port of the same name, plus the newly added `eth1`. Already at this point the switch is chuyển tiếp in **NORMAL** mode, i.e. behaving like an unmanaged L2 switch with MAC learning. To prove this without moving a single gói tin, run the built-in simulator:
+The output of `show` will list the bridge `br0` with an implicit internal port of the same name, plus the newly added `eth1`. Already at this point the switch is chuyển tiếp in **NORMAL** mode, i.e. behaving like an unmanaged L2 switch with MAC learning. To prove this without moving a single packet, run the built-in simulator:
 
 ```bash
 sudo ovs-appctl ofproto/trace br0 "in_port=eth1,dl_src=aa:bb:cc:dd:ee:01,dl_dst=ff:ff:ff:ff:ff:ff"
@@ -90,7 +90,7 @@ OVSDB is an *ordered, transactional, schema-bound* JSON-RPC database. For `vswit
 
 # Phần II — OVS Day-to-Day Operations
 
-*This Phần is the heart of the rebuild. Each chapter opens with concept, then a hands-on lab with verified syntax, then verification and failure modes, then a self-check. Every command in this Phần is drawn from docs.openvswitch.org or the upstream man pages.*
+*This Phần is the heart of the rebuild. Each chapter opens with concept, then a thực hành lab with verified syntax, then verification and failure modes, then a self-check. Every command in this Phần is drawn from docs.openvswitch.org or the upstream man pages.*
 
 ## Chapter A — The ovs-vsctl language in depth
 
@@ -143,7 +143,7 @@ ovs-vsctl set-fail-mode br0 secure
 ovs-vsctl set bridge br0 protocols=OpenFlow13,OpenFlow14,OpenFlow15
 ```
 
-The `protocols` column is a `set<string>` that enables specific OpenFlow versions; if unset, only OpenFlow 1.0 is offered. Enable explicitly to match your controller.
+The `protocols` column is a `set<string>` that enables specific OpenFlow versions; if unset, only OpenFlow 1.0 is offered. Enable explicitly to khớp với your controller.
 
 Spanning Tree uses two orthogonal switches. Classic STP (802.1D): `ovs-vsctl set bridge br0 stp_enable=true`; verify with `ovs-appctl stp/show br0`. RSTP (802.1w): `ovs-vsctl set bridge br0 rstp_enable=true`, then `ovs-appctl rstp/show br0`. Never enable both on the same bridge. Multicast snooping is enabled by `ovs-vsctl set bridge br0 mcast_snooping_enable=true` and tuned via `other_config:mcast-snooping-disable-flood-unregistered`.
 
@@ -163,7 +163,7 @@ VLAN semantics live in the `Port` row's `tag`, `trunks`, and `vlan_mode` columns
 ovs-vsctl set port eth1 tag=100 vlan_mode=access
 ```
 
-**Patch ports** connect two OVS bridges in the same host at zero gói tin-cost: they are implemented as a pointer in the datapath, not by any send-and-receive path. Create them as a pair:
+**Patch ports** connect two OVS bridges in the same host at zero packet-cost: they are implemented as a pointer in the datapath, not by any send-and-receive path. Create them as a pair:
 
 ```bash
 ovs-vsctl add-port br-int patch-to-ex -- \
@@ -230,9 +230,9 @@ The canonical multi-bridge pattern in real deployments is three bridges per host
    └──────────┘
 ```
 
-The zero-copy claim is visible in the trace output: `ofproto/trace` shows the gói tin recirculating into the second bridge with no datapath hop, and `ovs-dpctl dump-flows` reveals that the kernel megaflow is a single entry spanning both bridges.
+The zero-copy claim is visible in the theo dõi output: `ofproto/trace` shows the packet recirculating into the second bridge with no datapath hop, and `ovs-dpctl dump-flows` reveals that the kernel megaflow is a single entry spanning both bridges.
 
-## Chapter G — Port mirroring (SPAN) and gói tin capture
+## Chapter G — Port mirroring (SPAN) and packet capture
 
 The `Mirror` table in OVSDB is referenced from `Bridge.mirrors`. A mirror has up to three source selectors (`select_src_port`, `select_dst_port`, `select_vlan`, or the wildcard `select_all`) and one destination, which is either `output_port` (local SPAN) or `output_vlan` (RSPAN). The canonical atomic idiom:
 
@@ -255,7 +255,7 @@ Cleanup is one line: `ovs-vsctl clear Bridge br0 mirrors`. Because the `Mirror` 
 
 ## Chapter H — sFlow, NetFlow, and IPFIX export
 
-Three separate protocols, three separate tables, one consistent idiom. sFlow samples a configurable fraction of gói tin (1-in-N) plus periodic counter polls; NetFlow emits flow records on timeout; IPFIX is NetFlow's standardized successor with template negotiation.
+Three separate protocols, three separate tables, one consistent idiom. sFlow samples a configurable fraction of packet (1-in-N) plus periodic counter polls; NetFlow emits flow records on timeout; IPFIX is NetFlow's standardized successor with template negotiation.
 
 sFlow:
 
@@ -282,7 +282,7 @@ ovs-vsctl -- set Bridge br0 ipfix=@i \
                               cache_active_timeout=60 cache_max_flows=13
 ```
 
-Verify the agent is sending with `tcpdump -ni ethX udp port 6343` on the collector host. Rotate collectors by `ovs-vsctl set sFlow <uuid> target='"new:6343"'`; the change is atomic and no gói tin are lost during rotation. Clear with `ovs-vsctl clear Bridge br0 sflow` (or `netflow`, or `ipfix`).
+Verify the agent is sending with `tcpdump -ni ethX udp port 6343` on the collector host. Rotate collectors by `ovs-vsctl set sFlow <uuid> target='"new:6343"'`; the change is atomic and no packet are lost during rotation. Clear with `ovs-vsctl clear Bridge br0 sflow` (or `netflow`, or `ipfix`).
 
 **Sources:** `https://docs.openvswitch.org/en/latest/howto/sflow/`.
 
@@ -317,7 +317,7 @@ ovs-ofctl add-flow br0 in_port=5,actions=set_queue:123,normal
 ovs-ofctl add-flow br0 in_port=6,actions=set_queue:234,normal
 ```
 
-The queue numbers (123, 234) are arbitrary OpenFlow queue IDs that `set_queue:` in the flow-table references. Without the OpenFlow rules, gói tin go to the default queue and nothing is shaped — this is the single most common QoS misconfiguration in the field.
+The queue numbers (123, 234) are arbitrary OpenFlow queue IDs that `set_queue:` in the flow-table references. Without the OpenFlow rules, packet go to the default queue and nothing is shaped — this is the single most common QoS misconfiguration in the field.
 
 `type=linux-hfsc` is the alternative for hierarchical fair service; `type=egress-policer` (DPDK) enforces a flat rate. Verify with `ovs-appctl qos/show eth0` and cross-check with `tc qdisc show dev eth0` and `tc class show dev eth0`. Clean up thoroughly, because unreferenced `QoS` and `Queue` rows are not garbage-collected:
 
@@ -373,7 +373,7 @@ ovs-appctl vlog/set dpdk:file:dbg
 ovs-appctl vlog/set vconn:file:dbg       # OpenFlow wire trace
 ```
 
-Log rotation is handled by `ovs-appctl vlog/reopen` after moving the file. `ovs-appctl coverage/show` dumps every named counter in `ovs-vswitchd` with per-second, per-minute, and per-hour rates — start here when investigating unexpected behavior, because every allocation, netlink round-trip, upcall, and flow install is counted. `ovs-appctl memory/show` breaks down memory by component.
+Log rotation is handled by `ovs-appctl vlog/reopen` after moving the file. `ovs-appctl coverage/show` dumps every named counter in `ovs-vswitchd` with per-second, per-minute, and per-hour rates — start here when investigating unexpected behavior, because every allocation, netlink round-trip, upcall, and flow cài đặt is counted. `ovs-appctl memory/show` breaks down memory by component.
 
 **Sources:** `https://man7.org/linux/man-pages/man8/ovs-appctl.8.html`.
 
@@ -428,7 +428,7 @@ Upgrading OVS without data-plane interruption is a five-step dance. First, insta
 
 ## Chapter Q — Datapath introspection
 
-`ovs-dpctl show` lists every datapath on the host with its port count and lookup hit/miss/lost counters. `ovs-dpctl dump-flows -m` dumps the current microflow and megaflow cache, including masked-out wildcards. `ovs-appctl upcall/show` reports the number of in-flight flow installs, the average, the maximum, and the configured limit (default 200,000). Too many upcall relative to gói tin rate means flow are being evicted too fast; raise with `ovs-appctl upcall/set-flow-limit 500000`. Tune handler and revalidator thread counts via `other_config:n-handler-threads` and `other_config:n-revalidator-threads`.
+`ovs-dpctl show` lists every datapath on the host with its port count and lookup hit/miss/lost counters. `ovs-dpctl dump-flows -m` dumps the current microflow and megaflow cache, including masked-out wildcards. `ovs-appctl upcall/show` reports the number of in-flight flow installs, the average, the maximum, and the configured limit (default 200,000). Too many upcall relative to packet rate means flow are being evicted too fast; raise with `ovs-appctl upcall/set-flow-limit 500000`. Tune handler and revalidator thread counts via `other_config:n-handler-threads` and `other_config:n-revalidator-threads`.
 
 ## Chapter R — ovs-appctl reference tour
 
@@ -440,7 +440,7 @@ A one-line recipe per target:
 - `stp/show`, `rstp/show` — spanning-tree state.
 - `fdb/show br0`, `fdb/flush br0` — MAC table and forced relearn.
 - `mdb/show br0` — multicast snooping table.
-- `ofproto/trace br0 "<flow>"` — simulate a gói tin through the pipeline.
+- `ofproto/trace br0 "<flow>"` — simulate a packet through the pipeline.
 - `dpctl/show`, `dpctl/dump-flows` — datapath equivalents of `ovs-dpctl`.
 - `dpif/show`, `dpif/show-dp-features` — datapath feature flags.
 - `dpif-netdev/pmd-stats-show`, `pmd-rxq-show`, `pmd-rxq-rebalance` — DPDK PMD telemetry.
@@ -469,7 +469,7 @@ A one-line recipe per target:
 
 ## Chapter 5 — Flow syntax grammar
 
-Every `ovs-ofctl add-flow` takes a flow spec: a comma-separated list of match fields, a literal `actions=`, and a comma-separated action list. Selectors that apply to the flow itself live alongside the matches: `table=N`, `priority=N` (0–65535, default 32768), `cookie=HEX`, `idle_timeout=N`, `hard_timeout=N`, `importance=N`, `send_flow_rem`, `check_overlap`. Always pass `-O OpenFlow13` (or higher) when you use multi-table pipeline, groups, or meters, because OVS defaults to OpenFlow 1.0.
+Every `ovs-ofctl add-flow` takes a flow spec: a comma-separated list of khớp với fields, a literal `actions=`, and a comma-separated action list. Selectors that apply to the flow itself live alongside the matches: `table=N`, `priority=N` (0–65535, default 32768), `cookie=HEX`, `idle_timeout=N`, `hard_timeout=N`, `importance=N`, `send_flow_rem`, `check_overlap`. Always pass `-O OpenFlow13` (or higher) when you use multi-table pipeline, groups, or meters, because OVS defaults to OpenFlow 1.0.
 
 ```bash
 ovs-ofctl -O OpenFlow13 add-flow br0 \
@@ -480,7 +480,7 @@ ovs-ofctl -O OpenFlow13 add-flow br0 \
 
 Layer 2: `in_port`, `dl_src`, `dl_dst`, `dl_type`, `dl_vlan`, `dl_vlan_pcp`. Layer 3 IPv4: `nw_src`, `nw_dst`, `nw_proto`, `nw_tos`, `nw_ttl`. Layer 4: `tp_src`, `tp_dst`, `tcp_flags`, `icmp_type`, `icmp_code`. IPv6: `ipv6_src`, `ipv6_dst`. Tunnel metadata: `tun_id`, `tun_src`, `tun_dst`, `tun_flags`. Conntrack: `ct_state`, `ct_zone`, `ct_mark`, `ct_label`, `ct_nw_src`, `ct_nw_dst`, `ct_tp_src`, `ct_tp_dst`. Registers: `reg0`..`reg15`, `xreg0`..`xreg7`, `xxreg0`..`xxreg3`, plus the OpenFlow-standard `metadata`. Masked matches use CIDR or `/mask` for IPs and slash-mask for MACs: `nw_src=10.0.0.0/8`, `dl_src=00:11:22:00:00:00/ff:ff:ff:00:00:00`.
 
-`ct_state` is a bitfield: `+trk` (tracked), `+new` (gói tin đầu tiên of a new conn), `+est` (established), `+rel` (related, e.g. ICMP error), `+inv` (invalid), `+rpl` (reply direction), `+snat`, `+dnat`. Combine with `+` and `-`: `ct_state=+trk+new-inv`.
+`ct_state` is a bitfield: `+trk` (tracked), `+new` (packet đầu tiên of a new conn), `+est` (established), `+rel` (related, e.g. ICMP error), `+inv` (invalid), `+rpl` (reply direction), `+snat`, `+dnat`. Combine with `+` and `-`: `ct_state=+trk+new-inv`.
 
 ## Chapter 7 — Actions
 
@@ -512,7 +512,7 @@ This is the single most pedagogically valuable exercise in the entire OVS curric
 
 ## Chapter 9 — Connection tracking
 
-`ct()` sends a gói tin into the Linux (or userspace) conntrack module and optionally reinjects it. Without `commit` it is a read; with `commit` it writes an entry that outlives the gói tin. The five-flow canonical stateful firewall — verbatim from the tutorial — allows new outbound TCP from `veth_l0` and admits only established traffic back:
+`ct()` sends a packet into the Linux (or userspace) conntrack module and optionally reinjects it. Without `commit` it is a read; with `commit` it writes an entry that outlives the packet. The five-flow canonical stateful firewall — verbatim from the tutorial — allows new outbound TCP from `veth_l0` and admits only established traffic back:
 
 ```
 ovs-ofctl add-flow br0 "table=0,priority=50,ct_state=-trk,tcp,in_port=veth_l0,actions=ct(table=0)"
@@ -576,7 +576,7 @@ Tune with `other_config:dpdk-socket-mem=1024,1024`, `dpdk-lcore-mask=0x2`, `pmd-
 
 ## Chapter 16 — Hardware offload via tc-flower
 
-`ovs-vsctl set Open_vSwitch . other_config:hw-offload=true` (then restart) directs OVS to install megaflows into the NIC's tc-flower chain. Verify with `tc -s filter show dev ethX ingress` and `ovs-appctl dpctl/dump-flows -m type=offloaded`. Mellanox ConnectX-5/6 and the Netronome Agilio are the canonical offload-capable NICs. The `dpctl/offload-stats-show` target reports enqueued, inserted, and in-flight offload counts plus per-insertion độ trễ histograms.
+`ovs-vsctl set Open_vSwitch . other_config:hw-offload=true` (then restart) directs OVS to cài đặt megaflows into the NIC's tc-flower chain. Verify with `tc -s filter show dev ethX ingress` and `ovs-appctl dpctl/dump-flows -m type=offloaded`. Mellanox ConnectX-5/6 and the Netronome Agilio are the canonical offload-capable NICs. The `dpctl/offload-stats-show` target reports enqueued, inserted, and in-flight offload counts plus per-insertion độ trễ histograms.
 
 ---
 
@@ -594,7 +594,7 @@ Essential `ovn-nbctl` subcommands: `ls-add`, `lsp-add`, `lsp-set-addresses`, `ls
 
 ## Chapter 18 — Observability stack
 
-Feed sFlow into goflow2 or ntopng for traffic analytics; scrape `ovs_exporter` for Prometheus metrics on interface stats, flow counts, and PMD utilization; run `ovs-appctl coverage/show` on a cron and log deltas to detect abnormal upcall or netlink rates.
+Feed sFlow into goflow2 or ntopng for traffic analytics; scrape `ovs_exporter` for Prometheus metrics on interface stats, flow counts, and PMD utilization; run `ovs-appctl coverage/show` on a cron and log deltas to phát hiện abnormal upcall or netlink rates.
 
 ## Chapter 19 — Upgrade choreography
 
@@ -602,7 +602,7 @@ Revisited from Chapter P. Three golden rules: schema first (convert DB before st
 
 ## Chapter 20 — Incident response decision tree
 
-1. Gói tin loss → `ovs-dpctl show` → check `lost` counter → `upcall/show` → raise flow limit or n-handler-threads.
+1. Packet loss → `ovs-dpctl show` → check `lost` counter → `upcall/show` → raise flow limit or n-handler-threads.
 2. Unexpected drops → `ovs-appctl ofproto/trace` with the offending flow → identify which table is dropping.
 3. Tunnel down → `tnl/neigh/show` → underlay connectivity → MTU.
 4. Bond flap → `bond/show` + `lacp/show` → physical switch LACP config.
@@ -640,7 +640,7 @@ ovsdb-client list-dbs | get-schema | dump | transact | monitor | backup | restor
 
 ## Appendix C — Troubleshooting decision tree
 
-Compressed form: *Are gói tin arriving? → tcpdump on physical NIC. Are they entering OVS? → `dpctl/dump-flows -m` hit counters. Are the right flow matching? → `ofproto/trace`. Is the action correct? → read the Datapath actions line. Does the datapath agree? → `dpctl/dump-flows` on the actual kernel/netdev. Does the wire agree? → tcpdump on egress NIC. When all four agree and gói tin still drop → upstream switch.*
+Compressed form: *Are packet arriving? → tcpdump on physical NIC. Are they entering OVS? → `dpctl/dump-flows -m` hit counters. Are the right flow matching? → `ofproto/trace`. Is the action correct? → read the Datapath actions line. Does the datapath agree? → `dpctl/dump-flows` on the actual kernel/netdev. Does the wire agree? → tcpdump on egress NIC. When all four agree and packet still drop → upstream switch.*
 
 ## Appendix D — Bibliography and verified source URLs
 

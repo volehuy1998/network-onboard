@@ -1,7 +1,7 @@
 # Template D — Per-table pipeline stage block cho OVN / OVS pipeline
 
 > **Mục tiêu:** định nghĩa một stage trong pipeline (ovn ingress ls_in_*, egress ls_out_*, router lr_in_*/lr_out_*, hoặc OpenFlow table cụ thể của OVS br-int).
-> **Upstream baseline:** man `ovn-architecture(7)` — 30+ logical flow table được itemize, mỗi table có match criteria + action + stage name.
+> **Upstream baseline:** man `ovn-architecture(7)` — 30+ logical flow table được itemize, mỗi table có khớp với criteria + action + stage name.
 > **Tối thiểu:** 50 dòng per stage.
 
 ## Skeleton

@@ -101,13 +101,13 @@ Tổng ~40 action. Priority Phase H:
 
 ## Nhóm instruction (OpenFlow 1.1+)
 
-Khác action ở chỗ instruction là **pipeline control** tại table level, còn action là **gói tin transformation** trong action_set hoặc apply_actions.
+Khác action ở chỗ instruction là **pipeline control** tại table level, còn action là **packet transformation** trong action_set hoặc apply_actions.
 
 Có 6 instruction:
-1. `Apply-Actions`: execute ngay, thay đổi gói tin + pipeline state.
+1. `Apply-Actions`: execute ngay, thay đổi packet + pipeline state.
 2. `Clear-Actions`: clear action set hiện tại.
-3. `Write-Actions`: merge vào action set (execute khi gói tin exit pipeline).
-4. `Write-Metadata`: update metadata match field.
+3. `Write-Actions`: merge vào action set (execute khi packet exit pipeline).
+4. `Write-Metadata`: update metadata khớp với field.
 5. `Goto-Table`: chuyển pipeline sang table khác (table number phải lớn hơn current).
 6. `Meter`: apply meter trước khi forward.
 

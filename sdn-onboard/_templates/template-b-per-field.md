@@ -1,6 +1,6 @@
-# Template B — Per-field block cho OpenFlow / OVN match field
+# Template B — Per-field block cho OpenFlow / OVN khớp với field
 
-> **Mục tiêu:** định nghĩa một match field (eth_src, nw_src, tun_id, ct_state, reg0, metadata, v.v.) theo pattern chuẩn của `ovs-fields(7)`.
+> **Mục tiêu:** định nghĩa một khớp với field (eth_src, nw_src, tun_id, ct_state, reg0, metadata, v.v.) theo pattern chuẩn của `ovs-fields(7)`.
 > **Upstream baseline:** man `ovs-fields(7)`, 100+ field, mỗi field 15-25 dòng, 9-10 attribute anatomy.
 > **Tối thiểu:** 30 dòng per field.
 
@@ -51,7 +51,7 @@ priority=100,<field>=<value>/<mask>,actions=<...>    # nếu support mask
 - RFC nếu là wire field: ví dụ RFC 791 §3.1 cho IPv4 header
 ```
 
-## Nhóm match field foundation cần cover
+## Nhóm khớp với field foundation cần cover
 
 OpenFlow 1.5 + OVS extensions gồm **~100 field**. Cần cover theo nhóm (xem ovs-fields(7) structure):
 
