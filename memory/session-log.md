@@ -7,6 +7,101 @@
 
 ## Session gần nhất
 
+## Session 55 — Phase G.5.2: new Part 20.4 OVS daily operator playbook (đóng G.5 COMPLETE)
+
+**Ngày:** 2026-04-24 post Session S54.
+**Branch:** `docs/sdn-foundation-rev2` @ post `4646157`.
+**Trạng thái:** Phase G **8/12 session DONE (67%)** — G.1 ✅ + **G.5 ✅ 2/2 COMPLETE** + G.3 🟢 2/3 + G.2 🟢 1/3.
+
+### Bối cảnh
+
+User "confirm" Session S55 tạo Part 20.4 sister playbook cho 20.3, đóng G.5 Thao tác công cụ 2/2. G.5 là area quan trọng nhất theo mission core "thao tác công cụ thành thạo với OVS/OpenFlow/OVN".
+
+### Deliverable — Part 20.4 new file 1422 dòng
+
+**18 section structure** (parallel với 20.3 nhưng OVS pure-datapath scope):
+
+**§20.4.1-10 = 10 task category:**
+
+1. Health check 5 lệnh với Anatomy Template A `ovs-vsctl show` 8-field + `ovs-dpctl show` lookups/masks/port + `upcall/show` + flow count + memory/show.
+2. Inventory listing bridges/ports/Controller/Manager/QoS/Mirror với `--columns`+`find` flexible query.
+3. Bridge + port lifecycle 6 scenario với 8 port type: internal / patch / geneve / vxlan / gre / dpdk / dpdkvhostuser / physical.
+4. OpenFlow flow management 6 scenario: add-flow / dump-flows filter / del-flows / mod-flows / **replace-flows atomic** (diff+install+remove) / monitor+snoop.
+5. Tunnel management 5 scenario: Geneve (recommended OVN) / VXLAN (legacy interop) / GRE (lab) / `tnl/neigh` ARP + `tnl/ports` + packet trace.
+6. QoS + mirror 5 scenario: ingress policing (per-Interface rate) / egress HTB shaping (Port.qos + Queue 3-component) / OpenFlow `set_queue` action / mirror SPAN (select-all) / mirror RSPAN VLAN.
+7. Conntrack 5 scenario: enable via `ct()` OpenFlow action / dpctl dump / flush / monitor events / per-zone limit OVS 2.17+.
+8. Performance 6 metric: dpif/show + coverage/show (flow_add/rconn_overflow/upcall_ukey_contention) + memory/show + revalidator/purge + DPDK pmd-stats-show + bond/LACP.
+9. OVSDB operations 5 scenario: list-dbs/list-tables/dump / compact online+offline / backup+restore (ovsdb-client backup) / cluster/status Raft / monitor real-time.
+10. Backup + maintenance 5 scenario: pre-maintenance snapshot script / rolling upgrade chassis-by-chassis / bridge cross-datapath migration (kernel → DPDK parallel) / emergency reset (emer-reset nuclear) / daily cron audit.
+
+**§20.4.11-12 = 2 workflow end-to-end complete bash script:**
+
+- `new-bridge.sh br-lab 10.0.0.12 "" 1000000000` — 9-step: create bridge + set fail-mode + add physical port + add internal port với IP + Geneve tunnel + HTB QoS + (optional) controller + verify + ARP check. ~30 lines bash.
+- `bridge-decommission.sh br-lab` — 9-step: confirm no VM tap / drain tunnel / flush OpenFlow / clear QoS binding / del-controller / del-port / del-br / **orphan QoS GC** (OVS không auto-GC) / verify clean. ~25 lines bash.
+
+**§20.4.13-15 = 3 Guided Exercise:**
+
+- GE1 Daily health check walkthrough 5 lệnh với POE "hit/missed ratio > 99% steady-state".
+- GE2 New bridge provisioning end-to-end với ofproto/trace verify + POE "standalone fail-mode cho phép traffic flow kể cả không có OpenFlow rule (fall back hub)".
+- GE3 OpenFlow rule hot-reload với **replace-flows atomic** + POE "ping liên tục trong lúc replace: 0 packet miss nếu atomic".
+
+**§20.4.16 Capstone POE** "Migrate br-int kernel → DPDK trên chassis LIVE: safe?" → **refute** với 4-dimension analysis (hugepage requirement + tap vs vhost-user incompat + flow copy ofport mismatch + datapath_type không hot-switchable). **Correct approach**: **Option A parallel bridge** (zero-downtime VM) hoặc **Option B maintenance window** (full downtime simpler). Never hot-switch.
+
+**§20.4.17-18 = 8 hiểu sai + 10 điểm cốt lõi + 12 references.**
+
+**Key điểm phân biệt:** 4 CLI layer tách biệt — `ovs-vsctl` (OVSDB config, Bridge/Port/QoS/Mirror CRUD) / `ovs-ofctl` (OpenFlow rule, flow install + dump-flows) / `ovs-dpctl` (kernel datapath, megaflow dump) / `ovs-appctl` (runtime RPC, upcall/coverage/tnl/bond/lacp). Knowing which layer for which task = competent operator.
+
+### Quality gate Session S55
+
+| Rule | Kiểm tra | Kết quả |
+|------|----------|---------|
+| Rule 9 | Null byte scan | 0 PASS |
+| Rule 11 | §11.6 prose scan — đã apply "Kiểm chứng" từ đầu khi viết (consistent với 20.3) | 0 leak PASS |
+| Rule 13 | Em-dash density | **0.0387/line** (cực thấp) PASS |
+| Rule 14 | Source code citation | N/A no new SHA PASS |
+
+### Phase G progress sau S55 — milestone 67%
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 COMPLETE |
+| G.2 Xử lý sự cố | S54 | 🟢 1/3 IN PROGRESS |
+| G.3 Debug sâu | S51 + S52 | 🟢 2/3 IN PROGRESS |
+| G.4 Lịch sử | — | ⏳ 0/1 optional |
+| G.5 Thao tác công cụ | S53 + **S55** | **✅ 2/2 COMPLETE** |
+
+Phase G total **8/12 session DONE (67% milestone)**. 2 trong 5 area ✅ COMPLETE (G.1 + G.5).
+
+### Files modified Session S55
+
+- **NEW:** `sdn-onboard/20.4 - ovs-daily-operator-playbook.md` (1422 dòng)
+- **UPDATED:** `sdn-onboard/README.md` (Block XX 4 → 5 file, TOC 20.4 entry)
+- **UPDATED:** `memory/file-dependency-map.md` (Tầng 2l row 20.4)
+- **UPDATED:** `CLAUDE.md` (Phase G 7/12 → 8/12 + Session S55 row)
+- **UPDATED:** `memory/session-log.md` (Session S55 entry)
+
+### Curriculum state post-S55
+
+- **113 → 114 file** (Block XX 4 → 5).
+- **48.548 → 49.970 dòng** (+1422).
+- Block XX cumulative: 788 + 475 + 1627 + 1554 + 1422 = **5.866 dòng operational excellence**. Block XX trở thành block lớn thứ 2 curriculum sau Block IX.
+
+### Cumulative Phase G stats (S51-S55, 5 session)
+
+- **+5.289 dòng content** (1627 + 721 + 1554 + 562 + 1422).
+- **5 major deliverable**: 3 new Part (20.2 troubleshoot, 20.3 OVN daily, 20.4 OVS daily) + 2 expand (9.26 forensic +721, 9.14 incident +562).
+- **Quality trend:** Rule 13 em-dash density trung bình 0.050/line (rất thấp — 20.3=0.0257, 20.4=0.0387 là 2 Part tốt nhất).
+- **Rule 11 prose leak:** 0 total qua 5 session.
+
+### Pending next session
+
+- **G.3.3** — optional đóng G.3 3/3.
+- **G.2.2** — new Part "OVN incident runbook" hoặc expand 9.14 thêm scenario.
+- **G.4** — optional history revisit.
+- Release candidate **v3.1-OperatorMaster** có thể declared khi G.1+G.5 complete (hiện tại đã đạt).
+
+---
+
 ## Session 54 — Phase G.2.1: expand Part 9.14 incident response decision tree
 
 **Ngày:** 2026-04-24 post Session S53.
