@@ -7,6 +7,79 @@
 
 ## Session gần nhất
 
+## Session 57 — Phase G.2.2: expand Part 9.14 incident decision tree + 5 scenario mới K-O
+
+**Ngày:** 2026-04-24 post Session S56.
+**Branch:** `docs/sdn-foundation-rev2` @ post `46ad757`.
+**Trạng thái:** Phase G **10/12 session DONE (83%)** — G.1 ✅ + G.3 ✅ 3/3 + G.5 ✅ 2/2 + **G.2 🟢 2/3** + G.4 ⏳ 0/1 optional.
+
+### Bối cảnh
+
+User directive "okie a" confirm G.2.2. Follow-up "tự quyết" + kim chỉ nam chất lượng OVS/OpenFlow/OVN, không sa đà K8S/DPDK/XDP.
+
+### Deliverable — Part 9.14 expand 956 → 1494 dòng (+538)
+
+Append 5 scenario K-O Template A + matrix 15→20 + GE4 + Capstone POE G.2.2.
+
+**Scenario K BFD thundering herd ToR reboot:** N=60 chassis init BFD đồng loạt → control plane O(N²). RCA `bfd_configure()` < 24.03 thiếu staggered startup. 3-tier: BFD interval tăng tạm / rolling stagger 10 chassis × 30s / upgrade 24.03 + QoS ingress_policing.
+
+**Scenario L northd compile stuck bulk NBDB:** 500 LSP 1-txn → nb_cfg lag 30-180s. Anatomy stopwatch/show 5 field (ovnnb_db_run/build_lflows/ovnsb_db_run/clear_tracked_data/ratio). 3-tier: batch 50 LSP × 10 / parallel-build/enable 23.03+ / Port_Group consolidation.
+
+**Scenario M chassis ghost claim crash:** Port_Binding.chassis stuck sau hard power off. Chassis_Private.nb_cfg_timestamp indicator. 3-tier: `ovn-sbctl chassis-del` manual / stale-binding-timeout-ms 22.06+ / HA_Chassis_Group auto.
+
+**Scenario N ovn-controller recompute loop:** CPU 100%, lflow-cache hit 0%, inc-engine node stuck "recompute". RCA external_ids churn / BFD cascade / version bug. 3-tier: recompute + lflow-cache/flush / ovsdb-client monitor / upgrade + idempotent tool.
+
+**Scenario O cert expiry cluster-wide:** T=expiry → SSL_ERROR_ZERO_RETURN all chassis. Flow cũ forward nhưng update stop. 3-tier: ovs-pki req-sign + ansible deploy emergency / verify connection-status / cross-sign 60d tham chiếu Part 20.1 §20.15.
+
+**§9.14.7 matrix 20 symptom + layer grouping** (datapath/CP-OVS/CP-OVN/underlay/kernel).
+
+**§9.14.10 GE G.2.2 reproduce Scenario L:** sandbox 1-chassis, 7 bước bulk vs batched stopwatch so sánh + POE.
+
+**§9.14.11 Capstone POE G.2.2 refute "rolling restart fix mọi sự cố":** Phân tích N/M/O: restart clear in-memory không clear persistent state. Correct: classify → Tier 1 scenario-specific → Tier 3 structural.
+
+### Quality gate S57
+
+| Rule | Kết quả |
+|------|---------|
+| Rule 9 null | 0 PASS |
+| Rule 11 prose | 5 fix (Junior→kỹ sư mới vào nghề, operator→người vận hành) PASS |
+| Rule 13 em-dash | 0.0395/line PASS |
+| Rule 14 SHA | N/A (function names `bfd_configure()` + `release_all_ports()` đã verify trong S51-S52) |
+
+### Phase G progress sau S57 — 83% milestone
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a+b+c | ✅ 3/3 |
+| G.2 Xử lý sự cố | S54 + **S57** | 🟢 **2/3** |
+| G.3 Debug sâu | S51 + S52 + S56 | ✅ 3/3 |
+| G.4 Lịch sử | — | ⏳ 0/1 optional |
+| G.5 Thao tác công cụ | S53 + S55 | ✅ 2/2 |
+
+**3/5 area COMPLETE**.
+
+### Files modified S57
+
+- `sdn-onboard/9.14` (956 → 1494 dòng, +538)
+- `CLAUDE.md` (Phase G 9/12 → 10/12 + Session S57 row)
+- `memory/session-log.md` (Session S57 entry)
+
+### Curriculum state
+
+- **114 file**, **50.829 → 51.367 dòng** (+538).
+
+### Cumulative Phase G (S51-S57, 7 session)
+
+- +6.686 dòng content mới.
+- 3 new Part + 4 expand.
+- Rule 13 avg 0.048/line (excellent).
+
+### Pending next (S58, autonomous)
+
+Theo user directive "tự quyết": **G.2.3 new forensic OVN case study** — close G.2 3/3, Phase G 11/12 (92%). Topic ứng viên: Port_Binding migration race (LSP chuyển chassis sai thứ tự → dual-bind transient) hoặc northd bulk schema migration memory leak.
+
+---
+
 ## Session 56 — Phase G.3.3: expand Part 20.1 security + audit trail deep-dive (đóng G.3 COMPLETE)
 
 **Ngày:** 2026-04-24 post Session S55.
