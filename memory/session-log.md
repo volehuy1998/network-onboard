@@ -7,6 +7,84 @@
 
 ## Session gần nhất
 
+## Session 52 — Phase G.3.2: expand Part 9.26 với 2 case study forensic mới
+
+**Ngày:** 2026-04-24 post Session S51.
+**Branch:** `docs/sdn-foundation-rev2` @ post `bd2ae48`.
+**Trạng thái:** Phase G progress **5/12 session DONE (42%)** — G.1 Truy vết ✅ 3/3 + G.3 Debug sâu 🟢 2/3.
+
+### Bối cảnh
+
+User directive "tiếp tục đi". Sau Session S51 tạo Part 20.2 (1627 dòng) chuyên OVN troubleshooting tool, tiếp tục mở rộng forensic coverage với OVS pure-datapath case study. Part 9.26 (464 dòng) hiện chỉ có 1 case (megaflow revalidator storm) — Phase G.3 plan yêu cầu 2-3 case để cover đủ incident class.
+
+### Deliverable — Part 9.26 expand 464 → 1185 dòng (+721)
+
+**Append 3 section + 2 Guided Exercise:**
+
+**§9.26.11 Case Study 2 — LACP bond flap cascade megaflow invalidation storm:**
+- Drama: ToR firmware upgrade thứ Ba 14:32 UTC, 200 chassis production, `bond_mode=balance-tcp` LACP 8-slave. LACPDU timeout 12s > `lacp-time=fast` threshold 3s → 200 chassis đồng loạt mark 4 slave DOWN → megaflow mask invalidation cluster-wide 960K flow → upcall rate burst 50 pps → 250K pps → VM P99 latency 0.8ms → 180ms → SEV-2.
+- Evidence 4 command: `bond/show` 10 field Anatomy (bond_mode/recirculation/lacp_status/hash buckets/active slave), `lacp/show` state bits (actor state activity/aggregation/synchronized/collecting/distributing + partner match), `ofproto/trace dump-ports drop counter`, `coverage/show bond_reconfigure + lacp_pdu_drop`.
+- RCA 3 hypothesis: STP reconvergence (bác bỏ) / bond hash bug (bác bỏ) / LACPDU timeout (confirmed).
+- Mechanism: `bond_update_post_recirc_rules()` invalidate megaflow với recirc_id=bond_recirc. O(N_flow) cost.
+- Remediation 4 tier: immediate wait revalidator catch up / short `lacp-time=slow` (90s) / medium upgrade 3.1+ single-slave optimization / long Prometheus alert `bond_reconfigure` rate + `upcall_rate` burst.
+- OVN compare: overlay tunnel abstract slave → OVN logical flow unaffected; underlay flow vẫn affected.
+
+**§9.26.12 Case Study 3 — Conntrack zone collision cross-chassis migration:**
+- Drama: Cluster OVN 22.03 50 hypervisor, chassis-B host tenant T1 zone 1000-1049. Ops migrate tenant T2 từ chassis-A → chassis-B. Race: `vm_t2_01` binding claim chassis-B trước khi ovn-controller refresh bitmap → `alloc_ct_zone()` assign zone 1012 (đã used by T1 `vm_t1_13`). Collision active: T2 traffic lookup zone 1012 thấy T1 state ESTABLISHED different 5-tuple → INVALID → drop. T1 cũng bị corrupt state lookup. Dual-tenant impact → compliance flag.
+- Evidence 4 command: `ct-zone-list` sort+uniq -d detect duplicate / `dpctl/dump-conntrack zone=1012` thấy mixed tenant 5-tuple / ovn-controller journalctl binding event timing / Port_Binding SB DB timeline.
+- Mechanism: `alloc_ct_zone()` bitmap build từ iterate Port_Binding table. Concurrent engine recompute không refresh bitmap trong 1 iteration → zone "free" detected incorrectly.
+- Remediation: immediate restart ovn-controller force re-assign + `conntrack -D -w 1012` flush / short sequential migration không parallel / medium upgrade OVN 24.03+ transactional zone alloc / long daily audit cron script.
+- OVS compare: pure OVS với manual `ct(zone=<explicit>)` phụ thuộc controller quality, không auto-collision.
+
+**§9.26.13 Cross-case takeaways:**
+- 3 case đều thuộc class "eventually consistent distributed cache" (ukey/bitmap/state entry lưu nhiều chỗ, sync asynchronous, failure = diverge không converge).
+- 4 design lesson: (a) Convergence test adversarial (churn > reclaim rate) / (b) Observability per-cycle metric (dump duration, engine_recompute, bond_reconfigure) không per-state / (c) Symptom cascade vượt module bound / (d) Symptom latency ≠ root cause latency (ukey leak 4h build vs zone collision instant).
+
+**Guided Exercise 3** — Reproduce bond_reconfigure spike với 2 veth slave + balance-slb sandbox + 5x flap cycle. POE confirm ≥ 2 reconfigure events per flap. Falsification: active-backup mode backup slave flap KHÔNG trigger (không active).
+
+**Guided Exercise 4** — Zone audit script: OVN sandbox 2 LSP + ACL allow-related + `ct-zone-list` dump + detection via `awk | sort -n | uniq -d`. POE benchmark 10K entry < 0.1s với `time awk | sort | uniq`.
+
+### Quality gate Session S52
+
+| Rule | Kiểm tra | Kết quả |
+|------|----------|---------|
+| Rule 9 | Null byte scan `tr -d '\0'` size equal | 0 PASS |
+| Rule 11 | §11.6 prose scan; fix 1 leak Takeaway "Verify mọi source code claim" → "Kiểm chứng mọi source code claim" + 1 line 806 "Verify binding" → "Kiểm chứng binding" | PASS |
+| Rule 13 | Em-dash density | 0.0802/line < 0.10 PASS (cao hơn S51 0.0535 do case study drama style nhiều em-dash attribution) |
+| Rule 14 | Source code citation — reference `lib/bond.c bond_update_post_recirc_rules()` + `controller/physical.c alloc_ct_zone()` ở general level, không cite SHA cụ thể | PASS |
+
+### Phase G progress sau S52
+
+| Area | Session | Status |
+|------|---------|--------|
+| G.1 Truy vết | S37a (9.25 +410), S37b (9.27 new 659), S37c (13.7 +157 + 20.0 +206) | ✅ 3/3 COMPLETE |
+| G.2 Xử lý sự cố | — | ⏳ 0/3 pending |
+| G.3 Debug sâu | S51 (20.2 new 1627), S52 (9.26 +721) | 🟢 2/3 IN PROGRESS |
+| G.4 Lịch sử | — | ⏳ 0/1 pending (optional) |
+| G.5 Thao tác công cụ | — | ⏳ 0/2 pending |
+
+Phase G total 5/12 session DONE (42%).
+
+### Files modified Session S52
+
+- **UPDATED:** `sdn-onboard/9.26 - ovs-revalidator-storm-forensic.md` (464 → 1185 dòng, +721)
+- **UPDATED:** `CLAUDE.md` (Current State Phase G 4/12 → 5/12, Session S52 row)
+- **UPDATED:** `memory/session-log.md` (Session S52 entry this)
+
+### Curriculum state post-S52
+
+- **112 file** (không thay đổi file count, expand existing).
+- **45.711 → 46.432 dòng** (+721).
+- Block IX: Part 9.26 là file lớn thứ 2 sau 4.9 action catalog (1544 dòng) trong Block IX.
+
+### Pending next session
+
+- **G.3.3** — optional thêm case 4 (upcall storm DDoS microburst) để hoàn thành G.3 3/3, hoặc skip để chuyển sang G.2/G.5.
+- **G.5.1** — new Part "OVN daily operator playbook" — 30+ command cheat-sheet cho ovn-nbctl/ovn-sbctl/ovn-appctl với scenario đi kèm.
+- **G.2.1** — expand Part 9.14 incident decision tree từ current 370 dòng lên ~800 dòng với 10+ detailed scenario.
+
+---
+
 ## Session 51 — Phase G.3.1: new Part 20.2 OVN troubleshooting deep-dive
 
 **Ngày:** 2026-04-24 post Phase H close.
