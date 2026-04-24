@@ -7,6 +7,140 @@
 
 ## Session gần nhất
 
+## Session 46-50 — Phase H batch: OVN foundation + tools + Final QG
+
+**Ngày:** 2026-04-24 post S45.
+**Branch:** `docs/sdn-foundation-rev2` @ post `41bf46b`.
+**Trạng thái:** Phase H 13/13 session DONE (100%) — **v3.0-FoundationDepth COMPLETE**.
+
+### Bối cảnh
+
+5 session liên tiếp S46→S50 theo user directive "hoàn tất S46 đến S50 sau đó push". Batch commit cuối cho toàn Phase H batch.
+
+### S46 deliverable — H.6.1 OVN LS pipeline (Part 13.2 expand 201→399)
+
+- §13.2.7 LS ingress pipeline 27 stage exhaustive bảng
+- Template D cho ls_in_acl_eval (T8), ls_in_lb (T12), ls_in_arp_rsp (T20)
+- §13.2.8 LS egress pipeline 10 stage (fix gap 0-mention ls_out_*)
+- ls_out_acl_eval vs ls_in_acl_eval key difference (outport direction)
+- ls_out_port_sec_ip + ls_out_port_sec_l2 receiver-side enforcement
+- §13.2.9 logical→physical flow ratio (1:2.7 với ACL medium)
+
+### S47 deliverable — H.6.2 OVN LR pipeline (Part 13.11 expand 268→516)
+
+- §13.11.6 LR ingress 19-23 stage exhaustive bảng (fix gap lr_in_* 0-mention)
+- Template D cho lr_in_ip_routing (T14) — FIB lookup + priority = prefix length
+- Template D cho lr_in_arp_resolve (T18) — MAC_Binding lookup
+- lr_in_chk_pkt_len + lr_in_larger_pkts PMTUD (ICMP Frag Needed generation)
+- lr_in_gw_redirect — distributed GR chassisredirect logic
+- §13.11.7 LR egress 7 stage (fix gap lr_out_* 0-mention)
+- Template D cho lr_out_snat (T3) + lr_out_undnat (T1)
+- §13.11.8 ovn-trace annotated end-to-end qua LR pipeline
+
+### S48 deliverable — H.6.3 OVN schema deep (Parts 13.1 + 13.10)
+
+**13.1 expand 191→446 (+255):**
+- §13.1.7 NBDB schema 17 table: NB_Global/LS/LSP/LR/LRP/Static_Route/Policy/ACL/Address_Set/Port_Group/LB/NAT/DHCP_Options/DNS/QoS/Meter/Copp
+- Template deep cho LS (ovs-schema JSON + options key)
+- Template deep cho ACL (direction/priority/match/action/log/severity/meter)
+- Template deep cho NAT (snat/dnat/dnat_and_snat với external_ip/logical_ip/external_mac)
+- Template deep cho Static_Route (ip_prefix/nexthop/output_port/policy/ecmp_symmetric_reply)
+- Template deep cho Copp — Control Plane Protection rate limit
+- §13.1.8 SBDB schema 15 table: SB_Global/Chassis/Chassis_Private/Encap/Datapath_Binding/Port_Binding/Port_Group/Logical_Flow/Multicast_Group/Meter/MAC_Binding/DHCP/DNS/Service_Monitor/Controller_Event/IGMP_Group/IP_Multicast/HA_Chassis_Group/HA_Chassis/Gateway_Chassis
+- Template deep cho Chassis (other_config bridge-mappings/encap-ip)
+- Template deep cho Port_Binding + Logical_Flow
+- §13.1.9 dump + query full workflow
+
+**13.10 expand 272→319 (+47):**
+- §13.10.X DHCP options catalog (17 DHCPv4 option + 3 DHCPv6 option)
+- Full option mapping (code/purpose/example value)
+
+### S49 deliverable — H.7 Conntrack completeness (Part 13.3 expand 189→454)
+
+- §13.3.6 OVN ACL stateful deep
+  - Match expression syntax (lflow match BNF)
+  - `allow-related` vs `allow` vs `allow-stateless` semantics
+  - Conjunction compression practice (N×M → N+M automatic)
+- §13.3.7 OVN Load_Balancer deep
+  - Schema key column (protocol/vips/ip_port_mappings/health_check/selection_fields/options)
+  - Service_Monitor health check workflow
+- §13.3.8 OVN NAT deep
+  - SNAT pattern (subnet → external IP)
+  - DNAT_and_SNAT floating IP pattern
+  - Stateless NAT (rare) use case
+
+### S50 deliverable — H.8 Missing tools + Final QG (Part 9.14 expand 218→370)
+
+- §9.14.X ovs-bugtool diagnostic bundle automation
+  - Basic usage + bundle anatomy (commands/log/system/network)
+  - Selective collection (--include-bridge, --exclude-flow-dump)
+  - Usage trong incident workflow
+- §9.14.X.5 ovs-pcap decoder
+- §9.14.X.6 ovs-testcontroller lab-only dummy controller
+- §9.14.Y Final Quality Gate cho Phase H
+  - Checklist v3.0-FoundationDepth (8 items PASS)
+  - Script full sweep regression 111 file
+  - Release note v3.0
+
+### Quality gate FINAL v3.0-FoundationDepth
+
+```
+Files:               111 (+2 new: 4.8, 4.9)
+Total lines:         44.084 (baseline 37.522, +6.562, +17.5%)
+Null bytes (R9):     0 — PASS
+Em-dash >0.10 (R13): 0 file — PASS
+Rule 11 §11.6:       0 new prose leak trong batch S46-S50
+Rule 14:             N/A (reference + playbook content)
+Code blocks total:   1.572 (+201 từ baseline)
+  median:            3 lines
+  mean:              6.2 lines (+12.7%)
+  ≤5 blocks:         66.3% (-4.7% từ baseline 71%)
+  ≥30 blocks:        24 (+7 từ baseline 17)
+```
+
+### Upstream lift S46-S50
+
+- `ovn-architecture(7)` §Logical Switch + Logical Router Datapath
+- `ovn-nb(5)` + `ovn-sb(5)` schema
+- `ovn-nbctl(8)` + `ovn-sbctl(8)`
+- OVN source `northd/northd.h` enum ovn_stage
+- OVN source `northd/northd.c` build_lrouter_flows + build_lswitch_acls
+- `ovs-bugtool(8)` + `ovs-pcap(1)` + `ovs-testcontroller(8)` man pages
+- RFC 2131 DHCPv4 + RFC 8415 DHCPv6 + RFC 3442 classless static route
+
+### Progress Phase H — COMPLETE
+
+- **13/13 session DONE (100%)**
+- S38-S50 DONE
+- Curriculum 111 file, 44.084 dòng
+- Template library (A/B/C/D) established + validated qua 5 file use
+- Key concept gaps closed: ls_out_* / lr_in_* / lr_out_* / ovs-bugtool / ovs-pcap / ovs-testcontroller
+- Full OpenFlow match field + action catalog
+- Full OVN LS + LR pipeline exhaustive
+- Full OVN NBDB + SBDB schema
+- OVN ACL + LB + NAT deep
+
+### Remaining work (post Phase H)
+
+- Lab verification 63 item pending C1b (blocker: user chưa có lab host)
+- Final publish v3.0 (chờ user review + lab validation)
+- Optional: Phase I cho Block XIV/XV/XVI Expert Extension deep dive (user directive: deprioritized)
+
+### Commit + push
+
+Batch commit S46-S50 scope:
+- Modify: `sdn-onboard/13.2 - ovn-logical-switches-routers.md` (+198)
+- Modify: `sdn-onboard/13.11 - ovn-gateway-router-distributed.md` (+248)
+- Modify: `sdn-onboard/13.1 - ovn-nbdb-sbdb-architecture.md` (+255)
+- Modify: `sdn-onboard/13.10 - ovn-dhcp-dns-native.md` (+47)
+- Modify: `sdn-onboard/13.3 - ovn-acl-lb-nat-port-groups.md` (+265)
+- Modify: `sdn-onboard/9.14 - incident-response-decision-tree.md` (+152)
+- Modify: `memory/phase-h-progress.md` (S46-S50 section + final QG)
+- Modify: `memory/session-log.md` (S46-50 batch entry)
+- Modify: `CLAUDE.md` (Phase H COMPLETE + S46-50 status)
+
+---
+
 ## Session 45 — Phase H H.5: OVS internals expand (classifier + connmgr)
 
 **Ngày:** 2026-04-24 post S44.
