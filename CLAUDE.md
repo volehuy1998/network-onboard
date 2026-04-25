@@ -543,26 +543,89 @@ Curriculum SDN không được tag bất kỳ release version nào (v3.x, v4.x, 
 
 (Origin: 2026-04-26 reckoning. V3.6-ContentDepth tagged sau 1 session với "Tier A MISSING ≤ 50" acceptance gate measure breadth không depth. User check 13-tiêu-chí expose tag misleading. Plan v3.7 codify governance để prevent recurrence. See [governance-principles.md](memory/sdn/governance-principles.md) for full GP-1 text + 4 sister principles.)
 
+### Rule 16: Internal-vs-Reader-Facing Language Separation (MANDATORY)
+
+> **Mirror governance principle GP-11.** Full text trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md) Section 16. CLAUDE.md tóm tắt enforcement.
+
+Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onboard/*.md`, `network-onboard/*.md` là reader-facing cho engineer học SDN) MUST KHÔNG chứa internal terminology của plan/rubric/governance.
+
+**Forbidden patterns trong curriculum file:**
+
+- `**Axis N <category>.**` (rubric label) → dùng natural VN heading: `**Khái niệm.**`, `**Cơ chế hoạt động.**`, `**Tầm quan trọng.**`, etc.
+- `Axis 1` đến `Axis 20` (numbered reference) → category name VN
+- `cohort C7`, `cohort M5`, `cohort P21` (triage label) → skip hoặc "nhóm <description>"
+- `Phase G batch N`, `Phase R2/R3/R4` (plan reference) → skip hoặc "expansion 2026-04"
+- `DEEP-20`, `DEEP-15`, `PARTIAL-10`, `REFERENCE-5`, `PLACEHOLDER` (tier label) → skip hoặc prose "đầy đủ", "khá đầy đủ"
+- `rubric 20-axis`, `rubric 13-tiêu-chí` (meta term) → skip
+- `anti-gaming`, `gaming pattern`, `cosmetic stamp`, `cohort stamp` (governance) → skip
+- `GP-1` đến `GP-11` (governance reference) → skip
+- `Form A per GP-6`, `Form B per GP-6` (commit pattern reference) → skip
+
+**Replacement table cho 20-axis treatment** dùng natural VN heading:
+
+| Internal axis label | Reader-facing VN heading |
+|---------------------|-------------------------|
+| Axis 1 Concept | Khái niệm |
+| Axis 2 History | Lịch sử + bối cảnh |
+| Axis 3 Placement | Vị trí trong kiến trúc |
+| Axis 4 Role | Vai trò |
+| Axis 5 Motivation | Vì sao sinh ra |
+| Axis 6 Problem | Vấn đề giải quyết |
+| Axis 7 Importance | Tầm quan trọng |
+| Axis 8 Mechanism | Cơ chế hoạt động |
+| Axis 9 Engineer-op | Cách kỹ sư vận hành thành thạo |
+| Axis 10 Taxonomy | Phân loại |
+| Axis 11 Workflow | Quy trình sử dụng |
+| Axis 12 Troubleshoot | Khi xảy ra sự cố |
+| Axis 13 Coupling | Liên quan mật thiết |
+| Axis 14 Version drift | Khác biệt giữa các phiên bản |
+| Axis 15 Verification | Cách quan sát + xác minh |
+| Axis 16 Source code | Source code tham chiếu |
+| Axis 17 Incident | Trường hợp sự cố thực tế |
+| Axis 18 Lab | Bài tập synthetic |
+| Axis 19 Failure mode | Lỗi thường gặp + tín hiệu chẩn đoán |
+| Axis 20 Cross-domain | So sánh với hệ khác |
+
+**Allowed exceptions:**
+
+- `memory/*`, `plans/*` (working/meta audience)
+- `CLAUDE.md`, `CHANGELOG.md` "Reckoning" sections (meta history)
+- `0.3 - master-keyword-index.md` MAY use status code `DEEP/BREADTH/SHALLOW/MISSING/PLACEHOLDER` per existing convention
+- Commit messages (internal audit log audience)
+
+**Enforcement:**
+
+- Pre-commit hook `scripts/rubric_leak_check.py` reject violation
+- Phase R0.7 curriculum cleanup pass: replace existing leak (~25 file from Phase G v3.7)
+- Self-check before each curriculum edit: read replacement table above
+
+(Origin: 2026-04-26 user audit catch agent team chèn `**Axis N**` labels vào curriculum content gây confuse engineer reader. Plan v3.8-Remediation Section 11 amendment + GP-11 codify.)
+
 ---
 
 ## Current State
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). |
-| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.6K lines**, 20 blocks. Coverage breadth strict 80%, **honest depth ~35-40% per 20-axis rubric estimate** (verified Phase D audit pending). |
-| Active phase | **v3.7-Reckoning Phase A in progress** (governance reset + tag rename). Plan target v4.0-MasteryComplete. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). **No newer tag.** v3.7 Phase G claim "COMPLETE" was self-deception, not honored. |
+| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~70K lines**, 20 blocks. **Honest depth ~22% reach tier target per 20-axis rubric** (manual audit 75 keyword sample 2026-04-26). Cornerstone 14/50 (28%) DEEP-20, medium ~27/112 (24%) DEEP-15, peripheral ~46/228 (20%) PARTIAL-10. Phase G v3.7 claim 100% inflate 4.5x. |
+| Active phase | **v3.8-Remediation Phase R0/R1 in progress** (anti-gaming infrastructure + reckoning correction). Phase R2-R4 (~301 keyword real per-keyword work) + Phase R5 (user audit + sign-off) + Phase R6 (tag v4.0) thuộc multi-month effort. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
-| Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md). |
+| Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md), [memory/sdn/phase-g-progress-tracker.md](memory/sdn/phase-g-progress-tracker.md) (annotated PARTIAL post-honest-audit). |
 | Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
 | Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
-| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md), 5 GP binding cho v3.7 + future plans. Mirror trong Rule 15. |
-| **Active plan** | [plans/sdn/v3.7-reckoning-and-mastery.md](plans/sdn/v3.7-reckoning-and-mastery.md), APPROVED 2026-04-26, 8 phase A→H, target tag v4.0-MasteryComplete sau Phase H. |
-| Past plan v3.5 | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md), Closed (placement framework, không phải mastery). |
+| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md) v1.1, **11 GP** (GP-1 đến GP-5 v3.7 + GP-6 đến GP-11 v3.8). Mirror trong CLAUDE.md Rule 15 (no self-tag) + Rule 16 (internal-vs-reader language separation). |
+| **Active plan** | [plans/sdn/v3.8-remediation.md](plans/sdn/v3.8-remediation.md), APPROVED 2026-04-26, 7 phase R0→R6, target tag v4.0-MasteryComplete sau R6 (post-R5 user sign-off). Realistic effort 350-600 giờ multi-month. |
+| Past plan v3.7 | [plans/sdn/v3.7-reckoning-and-mastery.md](plans/sdn/v3.7-reckoning-and-mastery.md), Phase A-F done, **Phase G PARTIAL ~22% (gaming detected)**, Phase H blocked. Superseded by v3.8-Remediation. |
 | Past plan v3.6 | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md), Closed (audit tooling + 6 keyword closure, tag renamed). |
-| Audit script v3 | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix breadth audit. Phase D sẽ build per_keyword_rubric_audit.py riêng cho depth. |
-| Gap tracker | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), v3.6 Phase 1+2 deliverable. Superseded by Phase D scorecard. |
+| Past plan v3.5 | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md), Closed (placement framework, không phải mastery). |
+| **Anti-gaming script** | [scripts/anti_gaming_check.py](scripts/anti_gaming_check.py) GP-6 đến GP-10 enforcement. Pre-commit hook installed. Detect cohort tier-stamp + cosmetic stamp + min-lines violation. |
+| **Rubric leak check** | [scripts/rubric_leak_check.py](scripts/rubric_leak_check.py) GP-11 / Rule 16 enforcement. Pre-commit hook. Phase R0.7 cleanup ~25 file pending. |
+| Pre-commit hook | [scripts/pre-commit-install.sh](scripts/pre-commit-install.sh) installs `.git/hooks/pre-commit` running both check scripts on staged .md. |
+| Honest audit | [memory/sdn/per-keyword-honest-audit.md](memory/sdn/per-keyword-honest-audit.md) manual 75-keyword stratified audit 2026-04-26 reveal v3.7 Phase G 4.5x inflate. |
+| Audit script v3 | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix breadth audit (legacy). Phase R5 sẽ build per_keyword_strict_audit.py cho depth verification. |
+| Gap tracker | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), v3.6 Phase 1+2 deliverable. Superseded by Phase R5 strict audit. |
 | REF source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md), REF 2617 dòng English authoritative, 320+ keyword in-scope. |
 | Master index 0.3 | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md), Vietnamese lookup spine 1153 dòng, 320+ keyword 5-axis 1-line. **Note:** placement map, không phải mastery map. |
 | Plans index | [plans/README.md](plans/README.md) (per-series structure) |
