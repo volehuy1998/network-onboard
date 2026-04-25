@@ -11,7 +11,7 @@ Plain grep on the full descriptive name returns 0 hits even when the
 core concept (ct, UFID, vlan_mode) is well-covered. This second-pass
 extracts short-name candidates and re-greps.
 
-Output: memory/keyword-coverage-matrix.md (overwrite with refined data)
+Output: memory/sdn/keyword-coverage-matrix.md (overwrite with refined data)
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from collections import defaultdict
 REPO = Path(r"C:\Users\voleh\Documents\network-onboard")
 REF = REPO / "sdn-onboard" / "doc" / "ovs-openflow-ovn-keyword-reference.md"
 CURRICULUM_DIR = REPO / "sdn-onboard"
-OUT = REPO / "memory" / "keyword-coverage-matrix.md"
+OUT = REPO / "memory" / "sdn" / "keyword-coverage-matrix.md"
 
 
 # Reuse parser

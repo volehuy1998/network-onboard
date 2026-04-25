@@ -155,7 +155,7 @@ The repo has 6 skills installed at `~/.claude/skills/`. All 6 must be used; do n
 
 ### Rule 2: Cross-File Sync (MANDATORY)
 
-Before commit, consult `memory/file-dependency-map.md` to identify dependent files.
+Before commit, consult `memory/shared/file-dependency-map.md` to identify dependent files.
 
 **Process:** identify file being edited, look up dependency map, check related files, update ALL related files in the SAME commit.
 
@@ -176,15 +176,15 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 
 **On session END (or when user says "stop", "pause", "end"):**
 
-1. Update `memory/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
-2. Update `memory/sdn-series-state.md` if any Part status changed.
+1. Update `memory/shared/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
+2. Update `memory/sdn/series-state.md` if any Part status changed.
 3. Commit memory changes.
 
 **On session START:**
 
 1. Read CLAUDE.md (this file).
-2. Read `memory/session-log.md` (last session context).
-3. Read `memory/sdn-series-state.md` (curriculum status).
+2. Read `memory/shared/session-log.md` (last session context).
+3. Read `memory/sdn/series-state.md` (curriculum status).
 4. Run `git status`, `git branch`, `git log`.
 5. Tell the user: "I have read context. Last session [summary]. Pending: [list]."
 
@@ -195,7 +195,7 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 1. Activate `professor-style` skill (6 criteria 2.1 to 2.6).
 2. Activate `document-design` skill (chapter template, heading rules, Rule 8).
 3. Identify the file being edited.
-4. Look up `memory/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
+4. Look up `memory/shared/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
 5. Read related files for current content.
 6. If editing SVG: grep all `.md` referencing the SVG, read current captions, note entities.
 7. START writing/editing (NOT before steps 1 to 6).
@@ -222,8 +222,8 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 2. Create file with naming convention `X.0 - <name>.md`.
 3. Header block + learning objectives per `document-design`.
 4. Update `README.md` (TOC, dependency graph).
-5. Update `memory/sdn-series-state.md`.
-6. Update `memory/file-dependency-map.md`.
+5. Update `memory/sdn/series-state.md`.
+6. Update `memory/shared/file-dependency-map.md`.
 7. Run Checklist C.
 
 Principle: this is pre-flight, not bureaucracy. 2 to 3 minutes overhead; cost of a sync bug is much higher.
@@ -319,9 +319,9 @@ This is a training program for Vietnamese readers. Prefer natural Vietnamese; ke
 
 #### 11.2. TRANSLATE to Vietnamese when the word appears in prose
 
-Full dictionary (~60 entries) is in [`memory/rule-11-dictionary.md`](memory/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
+Full dictionary (~60 entries) is in [`memory/shared/rule-11-dictionary.md`](memory/shared/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
 
-When you encounter a word not in the dictionary: ADD it to `memory/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
+When you encounter a word not in the dictionary: ADD it to `memory/shared/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
 
 #### 11.3. Same word, sometimes English sometimes Vietnamese
 
@@ -359,7 +359,7 @@ Can keep English when label is a concept/stage name: `## 9.24.3 Action ct(), ful
 
 #### 11.6. Pre-commit scan checklist (MANDATORY)
 
-Run `grep -niE` for the dictionary regex (see `memory/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
+Run `grep -niE` for the dictionary regex (see `memory/shared/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
 
 1. Inside URL/code block/CLI sample, skip.
 2. OVS/OVN/OpenFlow product/concept name, skip.
@@ -369,7 +369,7 @@ When uncertain: §11.3 self-classification question.
 
 #### 11.7. Adding new dictionary entries
 
-When you discover a new prose word not in `memory/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
+When you discover a new prose word not in `memory/shared/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
 
 (Origin: session 13 (2026-04-21) initial codification; sessions 22-23 broadened.)
 
@@ -524,14 +524,17 @@ Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is b
 | Active phase | v3.5-KeywordBackbone RELEASED (14/14 phase done). PR #51 chờ merge (51 commits). v3.1 → v3.5 all released. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
-| Trackers | [memory/sdn-series-state.md](memory/sdn-series-state.md), [memory/audit-index.md](memory/audit-index.md), [memory/session-log.md](memory/session-log.md). |
-| Dependency map | [memory/file-dependency-map.md](memory/file-dependency-map.md) (Rule 2). |
-| Lab pending | [memory/lab-verification-pending.md](memory/lab-verification-pending.md). |
-| v3.5 plan | [plans/keyword-backbone-v3.5-plan.md](plans/keyword-backbone-v3.5-plan.md) — LIVE Progress Tracker 14/14 done. |
+| Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md). |
+| Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
+| Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
+| v3.5 plan | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md) — LIVE Progress Tracker 14/14 done. |
+| v3.6 plan | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md) — DRAFT, chờ user confirm. |
 | v3.5 source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md) — REF 2617 dòng English authoritative. |
 | v3.5 master index | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md) — Vietnamese DEEP adaptation lookup spine, 320+ keyword 5-axis. |
+| Plans index | [plans/README.md](plans/README.md) (per-series structure) |
+| Memory index | [memory/README.md](memory/README.md) (per-series + shared structure) |
 
-Session-by-session history (S1 to S63+) is in `memory/session-log.md`. Audit history is in `memory/audit-index.md`. `git log` is the source of truth for commit detail.
+Session-by-session history (S1 to S63+) is in `memory/shared/session-log.md`. Audit history is in `memory/shared/audit-index.md`. `git log` is the source of truth for commit detail.
 
 ---
 

@@ -6,7 +6,7 @@ For each Tier A (MISSING) + Tier B (SHALLOW) keyword, suggest:
   - priority_level: CRITICAL / HIGH / MEDIUM / LOW
   - phase: J.3 / J.4 / J.5 / J.6 (per plan)
 
-Output: memory/keyword-gap-priority.md
+Output: memory/sdn/keyword-gap-priority.md
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from collections import defaultdict
 REPO = Path(r"C:\Users\voleh\Documents\network-onboard")
 REF = REPO / "sdn-onboard" / "doc" / "ovs-openflow-ovn-keyword-reference.md"
 CURRICULUM_DIR = REPO / "sdn-onboard"
-OUT = REPO / "memory" / "keyword-gap-priority.md"
+OUT = REPO / "memory" / "sdn" / "keyword-gap-priority.md"
 
 
 # Reuse parser

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """J.1 Step 1: Parse REF (doc/ovs-openflow-ovn-keyword-reference.md) into structured inventory.
 
-Output: memory/keyword-inventory.md flat list with schema:
+Output: memory/sdn/keyword-inventory.md flat list with schema:
   { name, ref_section, bucket, status (placeholder), source_url }
 
 Entry patterns identified in REF:
@@ -17,7 +17,7 @@ from pathlib import Path
 
 REPO = Path(r"C:\Users\voleh\Documents\network-onboard")
 REF = REPO / "sdn-onboard" / "doc" / "ovs-openflow-ovn-keyword-reference.md"
-OUT = REPO / "memory" / "keyword-inventory.md"
+OUT = REPO / "memory" / "sdn" / "keyword-inventory.md"
 
 # BANNED keyword detection (DPDK/PMD/SMC/EMC/mempool family)
 BAN_PATTERNS = [

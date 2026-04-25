@@ -35,13 +35,13 @@ Best (most-files) match wins. `matched_via` column shows which alias matched.
 | Tier | Count | % | Action |
 |------|-------|---|--------|
 | A | 165 | 43.1% | Build 5-axis from scratch (J.3-J.5) |
-| B | 56 | 14.6% | Upgrade existing to 5-axis (J.3-J.5) |
+| B | 55 | 14.4% | Upgrade existing to 5-axis (J.3-J.5) |
 | C-OK | 71 | 18.5% | Verify 5-axis; add if missing |
-| C-DEEP | 91 | 23.8% | Spot-check J.7 |
+| C-DEEP | 92 | 24.0% | Spot-check J.7 |
 | D | 12 | 3.0% | Skip (PERMANENT BAN) |
 
 **Total in-scope:** 383
-**Build/upgrade work (Tier A + B):** 221 keyword
+**Build/upgrade work (Tier A + B):** 220 keyword
 
 ---
 
@@ -78,7 +78,7 @@ _Tier breakdown: A=0, B=2, C-OK=9, C-DEEP=9, D=5_
 | `ct_state` | 19 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 13.16 - ovn-logical-pipeline-table-id-map.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+16) |
 | `ct_zone` | 16 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 13.16 - ovn-logical-pipeline-table-id-map.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+13) |
 | `ct_mark` | 11 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+8) |
-| `ct_label` | 13 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.16 - ovn-logical-pipeline-table-id-map.md, ... (+10) |
+| `ct_label` | 14 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.16 - ovn-logical-pipeline-table-id-map.md, ... (+11) |
 | `ALG (FTP/TFTP/SIP)` | 9 | BREADTH | C-OK | FTP | 0.3 - master-keyword-index.md, 13.10 - ovn-dhcp-dns-native.md, 13.11 - ovn-gateway-router-distributed.md, ... (+6) |
 | `NAT` | 49 | WIDE | C-DEEP | (direct) | 0.1 - lab-environment-setup.md, 0.3 - master-keyword-index.md, 1.2 - five-drivers-why-sdn.md, ... (+46) |
 | `learn action` | 3 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 4.7 - openflow-programming-with-ovs.md, 9.4 - ovs-cli-tools-playbook.md |
@@ -135,7 +135,7 @@ _Tier breakdown: A=8, B=0, C-OK=2, C-DEEP=7, D=0_
 | `Other utilities` | 0 | MISSING | A | (direct) |  |
 | `ovs-pki` | 13 | WIDE | C-DEEP | (direct) | 0.3 - master-keyword-index.md, 10.6 - ovsdb-security-mtls-rbac-advanced.md, 11.4 - ipsec-tunnel-lab.md, ... (+10) |
 | `ovs-testcontroller` | 4 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 3.3 - openflow-protocol-messages-state-machine.md, 9.13 - libvirt-docker-integration.md, ... (+1) |
-| `vtep-ctl` | 5 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 9.28 - ovs-pcap-tcpundump-utility.md, 9.29 - vtep-ctl-vtep-schema.md, ... (+2) |
+| `vtep-ctl` | 6 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 9.28 - ovs-pcap-tcpundump-utility.md, 9.29 - vtep-ctl-vtep-schema.md, ... (+3) |
 
 ## REF Section 1.1.5 — Observability & troubleshooting (17 entries)
 
@@ -217,7 +217,7 @@ _Tier breakdown: A=21, B=15, C-OK=30, C-DEEP=17, D=0_
 | `ct_state (32 bits, OVS 2.5+)` | 19 | WIDE | C-DEEP | ct_state | 0.3 - master-keyword-index.md, 13.16 - ovn-logical-pipeline-table-id-map.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+16) |
 | `ct_zone (16 bits, OVS 2.5+)` | 16 | WIDE | C-DEEP | ct_zone | 0.3 - master-keyword-index.md, 13.16 - ovn-logical-pipeline-table-id-map.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+13) |
 | `ct_mark (32 bits, OVS 2.5+)` | 11 | WIDE | C-DEEP | ct_mark | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.17 - ovn-register-conventions-regbit-mlf.md, ... (+8) |
-| `ct_label (128 bits, OVS 2.5+)` | 13 | WIDE | C-DEEP | ct_label | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.16 - ovn-logical-pipeline-table-id-map.md, ... (+10) |
+| `ct_label (128 bits, OVS 2.5+)` | 14 | WIDE | C-DEEP | ct_label | 0.3 - master-keyword-index.md, 13.11 - ovn-gateway-router-distributed.md, 13.16 - ovn-logical-pipeline-table-id-map.md, ... (+11) |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 1 | SHALLOW | B | ct_nw_proto | 4.8 - openflow-match-field-catalog.md |
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 3 | BREADTH | C-OK | ct_tp_src | 0.3 - master-keyword-index.md, 4.8 - openflow-match-field-catalog.md, 9.24 - ovs-conntrack-stateful-firewall.md |
 | `conj_id (32 bits, OVS 2.4+)` | 5 | BREADTH | C-OK | conj_id | 0.3 - master-keyword-index.md, 13.3 - ovn-acl-lb-nat-port-groups.md, 13.7 - ovn-controller-internals.md, ... (+2) |
@@ -271,7 +271,7 @@ _Tier breakdown: A=21, B=15, C-OK=30, C-DEEP=17, D=0_
 
 ## REF Section 2.2.3 — Messages & state machine (23 entries)
 
-_Tier breakdown: A=5, B=7, C-OK=11, C-DEEP=0, D=0_
+_Tier breakdown: A=5, B=7, C-OK=10, C-DEEP=1, D=0_
 
 | Keyword | Files | Depth | Tier | Matched via | First 3 files |
 |---------|-------|-------|------|-------------|---------------|
@@ -293,7 +293,7 @@ _Tier breakdown: A=5, B=7, C-OK=11, C-DEEP=0, D=0_
 | `OFPT_BUNDLE_OPEN / OFPT_BUNDLE_COMMIT / OFPT_BUNDLE_ADD_MESSAGE (Types 34/35/36, OpenFlow 1.4+)` | 0 | MISSING | A | (direct) |  |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 2 | SHALLOW | B | OFPT_REQUESTFORWARD | 0.3 - master-keyword-index.md, 3.3 - openflow-protocol-messages-state-machine.md |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 2 | SHALLOW | B | OFPT_TABLE_STATUS | 0.3 - master-keyword-index.md, 3.3 - openflow-protocol-messages-state-machine.md |
-| `Connection State Machine: HELLO` | 9 | BREADTH | C-OK | HELLO | 0.3 - master-keyword-index.md, 2.4 - ethane-the-direct-ancestor.md, 3.1 - openflow-1.0-specification.md, ... (+6) |
+| `Connection State Machine: HELLO` | 10 | WIDE | C-DEEP | HELLO | 0.3 - master-keyword-index.md, 2.4 - ethane-the-direct-ancestor.md, 3.1 - openflow-1.0-specification.md, ... (+7) |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 3 | BREADTH | C-OK | FEATURES_REQUEST/REPLY | 0.3 - master-keyword-index.md, 3.3 - openflow-protocol-messages-state-machine.md, 4.4 - openflow-1.5-egress-l4l7.md |
 | `Connection State Machine: Steady State (ECHO keep-alive)` | 0 | MISSING | A | (direct) |  |
 | `Auxiliary Connections (OpenFlow 1.3+)` | 0 | MISSING | A | (direct) |  |
@@ -311,13 +311,13 @@ _Tier breakdown: A=5, B=1, C-OK=3, C-DEEP=0, D=0_
 | `Meters (OF 1.3+)` | 3 | BREADTH | C-OK | Meters | 0.3 - master-keyword-index.md, 3.4 - openflow-version-differences-1.0-1.3-1.5.md, 4.7 - openflow-programming-with-ovs.md |
 | `Bundles (OF 1.4+)` | 5 | BREADTH | C-OK | Bundles | 0.3 - master-keyword-index.md, 3.4 - openflow-version-differences-1.0-1.3-1.5.md, 4.3 - openflow-1.4-bundles-eviction.md, ... (+2) |
 | `Egress Tables (OF 1.5+)` | 0 | MISSING | A | (direct) |  |
-| `copy_field (OF 1.5+)` | 3 | BREADTH | C-OK | copy_field | 0.3 - master-keyword-index.md, 3.4 - openflow-version-differences-1.0-1.3-1.5.md, 4.9 - openflow-action-catalog.md |
+| `copy_field (OF 1.5+)` | 4 | BREADTH | C-OK | copy_field | 0.3 - master-keyword-index.md, 3.4 - openflow-version-differences-1.0-1.3-1.5.md, 4.9 - openflow-action-catalog.md, ... (+1) |
 | `Packet Type Aware Pipeline (OF 1.5+)` | 0 | MISSING | A | (direct) |  |
 | `Version Support Summary` | 0 | MISSING | A | (direct) |  |
 
 ## REF Section 3.3.1 — Architecture & daemons (16 entries)
 
-_Tier breakdown: A=10, B=1, C-OK=2, C-DEEP=3, D=0_
+_Tier breakdown: A=10, B=0, C-OK=3, C-DEEP=3, D=0_
 
 | Keyword | Files | Depth | Tier | Matched via | First 3 files |
 |---------|-------|-------|------|-------------|---------------|
@@ -328,8 +328,8 @@ _Tier breakdown: A=10, B=1, C-OK=2, C-DEEP=3, D=0_
 | `Chassis Configuration` | 0 | MISSING | A | (direct) |  |
 | `Integration Bridge` | 0 | MISSING | A | (direct) |  |
 | `Daemon: ovn-controller-vtep` | 3 | BREADTH | C-OK | ovn-controller-vtep | 0.3 - master-keyword-index.md, 9.11 - ovs-appctl-reference-playbook.md, 9.29 - vtep-ctl-vtep-schema.md |
-| `Daemon: ovn-ic` | 6 | BREADTH | C-OK | ovn-ic | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, 13.5 - port-binding-types-ovn-native.md, ... (+3) |
-| `Daemon: ovn-ic-northd` | 2 | SHALLOW | B | ovn-ic-northd | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md |
+| `Daemon: ovn-ic` | 7 | BREADTH | C-OK | ovn-ic | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, 13.5 - port-binding-types-ovn-native.md, ... (+4) |
+| `Daemon: ovn-ic-northd` | 3 | BREADTH | C-OK | ovn-ic-northd | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, README.md |
 | `OVSDB Server Roles` | 0 | MISSING | A | (direct) |  |
 | `RAFT Clustering` | 0 | MISSING | A | (direct) |  |
 | `Relay Mode (ovsdb-server)` | 32 | WIDE | C-DEEP | ovsdb-server | 0.1 - lab-environment-setup.md, 0.3 - master-keyword-index.md, 10.0 - ovsdb-rfc7047-schema-transactions.md, ... (+29) |
