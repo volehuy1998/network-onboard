@@ -18,10 +18,10 @@ Builds on v1 with 5 additional alias rules:
 
 | Tier | Count | % | Action |
 |------|-------|---|--------|
-| A | 21 | 5.5% | TRUE gap candidate, manual classify |
-| B | 65 | 17.0% | Upgrade to 5-axis if topic relevant |
-| C-OK | 122 | 31.9% | Verify 5-axis exists; add if missing |
-| C-DEEP | 175 | 45.7% | Spot-check coverage |
+| A | 17 | 4.4% | TRUE gap candidate, manual classify |
+| B | 69 | 18.0% | Upgrade to 5-axis if topic relevant |
+| C-OK | 120 | 31.3% | Verify 5-axis exists; add if missing |
+| C-DEEP | 177 | 46.2% | Spot-check coverage |
 | D | 12 | 3.0% | Skip (PERMANENT BAN) |
 
 **Total in-scope:** 383
@@ -165,7 +165,7 @@ _Tier breakdown: A=0, B=1, C-OK=2, C-DEEP=8, D=0_
 
 ## REF Section 2.2.2 — Match fields, instructions, actions (83 entries)
 
-_Tier breakdown: A=4, B=15, C-OK=35, C-DEEP=29, D=0_
+_Tier breakdown: A=1, B=18, C-OK=35, C-DEEP=29, D=0_
 
 | Keyword | Files | Depth | Tier | Matched via | First 3 files |
 |---------|-------|-------|------|-------------|---------------|
@@ -206,7 +206,7 @@ _Tier breakdown: A=4, B=15, C-OK=35, C-DEEP=29, D=0_
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 3 | BREADTH | C-OK | ct_tp_src | 0.3 - master-keyword-index.md, 4.8 - openflow-match-field-catalog.md, 9.24 - ovs-conntrack-stateful-firewall.md |
 | `conj_id (32 bits, OVS 2.4+)` | 5 | BREADTH | C-OK | conj_id | 0.3 - master-keyword-index.md, 13.3 - ovn-acl-lb-nat-port-groups.md, 13.7 - ovn-controller-internals.md, ... (+2) |
 | `pkt_mark (32 bits, OVS 2.0+)` | 2 | SHALLOW | B | pkt_mark | 11.0 - vxlan-geneve-stt.md, 4.8 - openflow-match-field-catalog.md |
-| `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 8 | BREADTH | C-OK | tcp_flags | 0.3 - master-keyword-index.md, 20.2 - ovn-troubleshooting-deep-dive.md, 4.1 - openflow-1.2-oxm-tlv-match.md, ... (+5) |
+| `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 9 | BREADTH | C-OK | tcp_flags | 0.3 - master-keyword-index.md, 20.2 - ovn-troubleshooting-deep-dive.md, 4.1 - openflow-1.2-oxm-tlv-match.md, ... (+6) |
 | `dp_hash (32 bits, OVS 2.2+ / NXM_NX_DP_HASH)` | 4 | BREADTH | C-OK | dp_hash | 13.9 - ovn-load-balancer-internals.md, 9.11 - ovs-appctl-reference-playbook.md, 9.26 - ovs-revalidator-storm-forensic.md, ... (+1) |
 | `actset_output (32 bits, OVS 2.4+ / OF 1.5+)` | 1 | SHALLOW | B | actset_output | 4.8 - openflow-match-field-catalog.md |
 | `NSH fields (OVS 2.8+ / Network Service Header — RFC 8300)` | 1 | SHALLOW | B | NSH fields | 4.8 - openflow-match-field-catalog.md |
@@ -247,11 +247,11 @@ _Tier breakdown: A=4, B=15, C-OK=35, C-DEEP=29, D=0_
 | `Action: exit (Nicira extension)` | 54 | WIDE | C-DEEP | exit | 0.3 - master-keyword-index.md, 1.0 - networking-industry-before-sdn.md, 1.1 - data-center-pain-points.md, ... (+51) |
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 7 | BREADTH | C-OK | multipath | 0.3 - master-keyword-index.md, 11.3 - gre-tunnel-lab.md, 20.2 - ovn-troubleshooting-deep-dive.md, ... (+4) |
 | `Action: bundle / bundle_load (Nicira extension, OVS 1.11+)` | 26 | WIDE | C-DEEP | bundle | 0.3 - master-keyword-index.md, 1.2 - five-drivers-why-sdn.md, 10.6 - ovsdb-security-mtls-rbac-advanced.md, ... (+23) |
-| `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 0 | MISSING | A | (direct) |  |
+| `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 1 | SHALLOW | B | fin_timeout | 4.9 - openflow-action-catalog.md |
 | `Action: move (Nicira extension)` | 56 | WIDE | C-DEEP | move | 0.2 - end-to-end-packet-journey.md, 0.3 - master-keyword-index.md, 10.0 - ovsdb-rfc7047-schema-transactions.md, ... (+53) |
 | `Action: output:NXM (dynamic port)` | 2 | SHALLOW | B | output:NXM | 4.7 - openflow-programming-with-ovs.md, 4.9 - openflow-action-catalog.md |
-| `Action: push:src (Nicira extension)` | 0 | MISSING | A | (direct) |  |
-| `Action: pop:dst (Nicira extension)` | 0 | MISSING | A | (direct) |  |
+| `Action: push:src (Nicira extension)` | 1 | SHALLOW | B | push:src | 4.9 - openflow-action-catalog.md |
+| `Action: pop:dst (Nicira extension)` | 1 | SHALLOW | B | pop:dst | 4.9 - openflow-action-catalog.md |
 
 ## REF Section 2.2.3 — Messages & state machine (23 entries)
 
@@ -405,14 +405,14 @@ _Tier breakdown: A=0, B=2, C-OK=11, C-DEEP=6, D=0_
 
 ## REF Section 3.3.4 — CLI tools & every option (66 entries)
 
-_Tier breakdown: A=3, B=12, C-OK=26, C-DEEP=25, D=0_
+_Tier breakdown: A=2, B=13, C-OK=25, C-DEEP=26, D=0_
 
 | Keyword | Files | Depth | Tier | Matched via | First 3 files |
 |---------|-------|-------|------|-------------|---------------|
 | `ovn-nbctl: Northbound DB CLI` | 52 | WIDE | C-DEEP | ovn-nbctl | 0.1 - lab-environment-setup.md, 0.2 - end-to-end-packet-journey.md, 0.3 - master-keyword-index.md, ... (+49) |
 | `ovn-nbctl --db` | 13 | WIDE | C-DEEP | --db | 0.3 - master-keyword-index.md, 10.1 - ovsdb-raft-clustering.md, 10.6 - ovsdb-security-mtls-rbac-advanced.md, ... (+10) |
 | `ovn-nbctl --wait / --no-wait` | 6 | BREADTH | C-OK | --wait | 13.1 - ovn-nbdb-sbdb-architecture.md, 13.14 - ovn-nbctl-sbctl-reference-playbook.md, 13.15 - ovn-interconnect-multi-region.md, ... (+3) |
-| `ovn-nbctl --print-wait-time` | 0 | MISSING | A | (direct) |  |
+| `ovn-nbctl --print-wait-time` | 1 | SHALLOW | B | --print-wait-time | 13.14 - ovn-nbctl-sbctl-reference-playbook.md |
 | `ovn-nbctl --leader-only / --no-leader-only` | 3 | BREADTH | C-OK | --no-leader-only | 13.14 - ovn-nbctl-sbctl-reference-playbook.md, 13.15 - ovn-interconnect-multi-region.md, 20.2 - ovn-troubleshooting-deep-dive.md |
 | `ovn-nbctl --shuffle-remotes / --no-shuffle-remotes` | 1 | SHALLOW | B | --shuffle-remotes | 13.14 - ovn-nbctl-sbctl-reference-playbook.md |
 | `ovn-nbctl --bare` | 11 | WIDE | C-DEEP | --bare | 13.14 - ovn-nbctl-sbctl-reference-playbook.md, 13.15 - ovn-interconnect-multi-region.md, 13.9 - ovn-load-balancer-internals.md, ... (+8) |
@@ -469,7 +469,7 @@ _Tier breakdown: A=3, B=12, C-OK=26, C-DEEP=25, D=0_
 | `ovn-appctl connection-status` | 10 | WIDE | C-DEEP | connection-status | 10.6 - ovsdb-security-mtls-rbac-advanced.md, 13.4 - br-int-architecture-and-patch-ports.md, 13.5 - port-binding-types-ovn-native.md, ... (+7) |
 | `ovn-appctl recompute` | 18 | WIDE | C-DEEP | recompute | 0.3 - master-keyword-index.md, 10.7 - ovsdb-client-deep-playbook.md, 13.0 - ovn-announcement-2015-rationale.md, ... (+15) |
 | `ovn-appctl lflow-cache/flush` | 14 | WIDE | C-DEEP | flush | 10.0 - ovsdb-rfc7047-schema-transactions.md, 11.1 - overlay-mtu-pmtud-offload.md, 13.14 - ovn-nbctl-sbctl-reference-playbook.md, ... (+11) |
-| `ovn-appctl lflow-cache/show-stats` | 9 | BREADTH | C-OK | lflow-cache | 0.3 - master-keyword-index.md, 13.0 - ovn-announcement-2015-rationale.md, 13.4 - br-int-architecture-and-patch-ports.md, ... (+6) |
+| `ovn-appctl lflow-cache/show-stats` | 10 | WIDE | C-DEEP | lflow-cache | 0.3 - master-keyword-index.md, 13.0 - ovn-announcement-2015-rationale.md, 13.14 - ovn-nbctl-sbctl-reference-playbook.md, ... (+7) |
 | `ovn-ic-nbctl` | 3 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, 13.5 - port-binding-types-ovn-native.md |
 | `ovn-ic-nbctl` | 3 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, 13.5 - port-binding-types-ovn-native.md |
 | `ovn-ic-sbctl` | 3 | BREADTH | C-OK | (direct) | 0.3 - master-keyword-index.md, 13.15 - ovn-interconnect-multi-region.md, 20.2 - ovn-troubleshooting-deep-dive.md |
@@ -478,7 +478,7 @@ _Tier breakdown: A=3, B=12, C-OK=26, C-DEEP=25, D=0_
 
 ## REF Section 3.3.5 — Observability & troubleshooting (25 entries)
 
-_Tier breakdown: A=0, B=3, C-OK=7, C-DEEP=15, D=0_
+_Tier breakdown: A=0, B=3, C-OK=6, C-DEEP=16, D=0_
 
 | Keyword | Files | Depth | Tier | Matched via | First 3 files |
 |---------|-------|-------|------|-------------|---------------|
@@ -490,7 +490,7 @@ _Tier breakdown: A=0, B=3, C-OK=7, C-DEEP=15, D=0_
 | `SB Cluster State Monitoring` | 10 | WIDE | C-DEEP | cluster/status | 10.1 - ovsdb-raft-clustering.md, 10.5 - ovsdb-performance-benchmarking.md, 10.7 - ovsdb-client-deep-playbook.md, ... (+7) |
 | `OVN Bug Tools` | 18 | WIDE | C-DEEP | recompute | 0.3 - master-keyword-index.md, 10.7 - ovsdb-client-deep-playbook.md, 13.0 - ovn-announcement-2015-rationale.md, ... (+15) |
 | `ovn-controller Flow Installation Metrics` | 14 | WIDE | C-DEEP | engine/ | 0.3 - master-keyword-index.md, 10.7 - ovsdb-client-deep-playbook.md, 13.14 - ovn-nbctl-sbctl-reference-playbook.md, ... (+11) |
-| `OVN Logical Flow Cache` | 9 | BREADTH | C-OK | lflow-cache | 0.3 - master-keyword-index.md, 13.0 - ovn-announcement-2015-rationale.md, 13.4 - br-int-architecture-and-patch-ports.md, ... (+6) |
+| `OVN Logical Flow Cache` | 10 | WIDE | C-DEEP | lflow-cache | 0.3 - master-keyword-index.md, 13.0 - ovn-announcement-2015-rationale.md, 13.14 - ovn-nbctl-sbctl-reference-playbook.md, ... (+7) |
 | `Lflow Cache Size Limits` | 3 | BREADTH | C-OK | lflow-cache/show-stats | 0.3 - master-keyword-index.md, 20.2 - ovn-troubleshooting-deep-dive.md, 20.3 - ovn-daily-operator-playbook.md |
 | `OVN Database Monitoring` | 9 | BREADTH | C-OK | monitor_cond | 10.0 - ovsdb-rfc7047-schema-transactions.md, 10.4 - ovsdb-idl-monitor-cond-client.md, 10.5 - ovsdb-performance-benchmarking.md, ... (+6) |
 | `Southbound Connection State` | 1 | SHALLOW | B | SB DB connection | 20.0 - ovs-ovn-systematic-debugging.md |
