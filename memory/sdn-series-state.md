@@ -50,13 +50,15 @@
 | 2.3 | ForCES + 4D Project | 219 | DONE | 4D paper analysis + Ethane lineage |
 | 2.4 | Ethane (direct ancestor) | 322 | DONE | Casado PhD 2007 + NOX + Nicira + Ethane to OpenFlow lineage |
 
-## Block III, OpenFlow birth (3 files, 973 lines)
+## Block III, OpenFlow birth (5 files, 1952 lines, v3.5 J.4.c added 3.3 + 3.4)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 3.0 | Stanford Clean Slate Program | 218 | DONE | NSF FIND + DARPA + McKeown/Shenker/Casado/Parulkar + Nicira 08/2007 |
 | 3.1 | OpenFlow 1.0 spec (31/12/2009) | 371 | DONE | 12-tuple match + 8 actions + spec evolution 0.8 to 1.0.1 |
 | 3.2 | ONF formation and governance | 384 | DONE | ONF press release 21/03/2011 + 6 founding operators + 2018 ON.Lab merger |
+| 3.3 | OpenFlow protocol messages + state machine | 553 | DONE (Phase J.4.c) | NEW. 16 OFPT_* messages chia 4 nhóm + state machine 4-stage + auxiliary connection. Verify ONF spec 1.3.5 + 1.4 + 1.5.1 + IANA port 6653. Bundle atomic vs sequential FLOW_MOD POE. Cross-link 3.1/4.0-4.5/9.16/9.30. |
+| 3.4 | OpenFlow version differences 1.0/1.3/1.5 | 426 | DONE (Phase J.4.c) | NEW. 8 version diff (single→multi-table, NXM→OXM, group, meter, bundle, egress, copy_field, packet_type). Migration matrix OF 1.0 → 1.3 → 1.5. Decision tree chọn version. Cross-link 4.0-4.5 + OVS NEWS. |
 
 ## Block IV, OpenFlow evolution (10 files, ~5756 lines)
 
