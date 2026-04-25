@@ -166,13 +166,13 @@
 | 10.6 | OVSDB security mTLS + RBAC advanced | 365 | DONE | Cert rotation zero-downtime + multi-tenant RBAC + audit log |
 | 10.7 | ovsdb-client deep playbook | 589 | DONE (Phase I.B2 S68') | 7 nhóm chức năng (schema/dump/transact/monitor/wait+lock/backup/convert), 5 Anatomy + GE Port_Binding race + Capstone POE chọn tool đúng |
 
-## Block XI, Overlay encapsulation (5 files, 2196 lines)
+## Block XI, Overlay encapsulation (5 files, ~3088 lines, Block XI tier 2 expand 2026-04-25)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 11.0 | VXLAN + Geneve + STT | 213 | DONE | RFC 7348 + RFC 8926 + 3-protocol comparison |
-| 11.1 | Overlay MTU + PMTUD + offload | 213 | DONE | RFC 1191 PMTUD + tunnel MTU math + NIC offload |
-| 11.2 | BGP EVPN control plane overlay | 157 | DONE | RFC 7432 + 5 EVPN route types + leaf-spine DC |
+| 11.0 | VXLAN + Geneve + STT | 551 | DONE (Block XI.B1) | Tier 2: Geneve packet format byte-by-byte + IANA TLV class 0x0102 + put_encapsulation source + header math + Anatomy + Capstone VXLAN vs Geneve cho OVN |
+| 11.1 | Overlay MTU + PMTUD + offload | 517 | DONE (Block XI.B2) | Tier 2: PMTUD packet flow + black hole + TCP MSS clamp + OVN check_pkt_larger source + NIC offload tunnel-aware + Anatomy + Capstone shrink tenant vs bump underlay |
+| 11.2 | BGP EVPN control plane overlay | 408 | DONE (Block XI.B3) | Tier 2: Type 2 NLRI byte-by-byte + Type 3/4/5 deep + Symmetric vs Asymmetric IRB + OVN+BGP-EVPN integration use cases + Anatomy + Capstone BGP EVPN cho OVN intra-cluster |
 | 11.3 | GRE tunnel lab | 742 | DONE (Phase D S26) | Lab 14 USC + 3-node OSPF + Wireshark dissector |
 | 11.4 | IPsec tunnel lab | 871 | DONE (Phase D S27) | Lab 15 USC + strongSwan + GRE over IPsec |
 
@@ -263,10 +263,10 @@
 
 ---
 
-## Total statistics (post-v3.3)
+## Total statistics (post-Block XI tier 2 + 0.2 fix)
 
 - **Total files:** 119 (+3 from Phase I: 13.14, 10.7, 20.7)
-- **Total lines:** ~57,800 (+~2,100 from Phase I expand 3 files + new 3 files)
+- **Total lines:** ~59,500 (Phase I +2,100 + 0.2 truncation fix +404 + Block XI tier 2 +1,263)
 - **Total Blocks:** 20 (0 to XX)
 - **DONE:** ~110/119 (92%)
 - **PARTIAL:** 0/119
@@ -282,6 +282,7 @@
 | v3.1.1-OperatorMaster-patch | RELEASED 2026-04-25 | Dead URL + Rule 11 prose + dependency map + memory tracker. 7 commits |
 | v3.2-FullDepth | RELEASED 2026-04-25 | Block XIII Core +1584 + Block IX Ops +516 + Block IV GE +279 + CLI Anatomy +112 + Block II narrative +12 |
 | v3.3-ArchitectMaster | RELEASED 2026-04-25 | Phase I 6 sessions: Sequence A (3 expand) 13.8 northd source +205 + 13.7 physical.c +166 + 10.1 raft.c +213; Sequence B (3 NEW) 13.14 ovn-nbctl/sbctl 660 + 10.7 ovsdb-client 589 + 20.7 tracing gradient 691. Tier 2 source-code internals + tools mastery + debug pedagogical gradient. |
+| v3.3.1-OverlayMaster | UNRELEASED 2026-04-25 | 0.2 truncation fix (+404) + Block XI Overlay tier 2 (11.0/11.1/11.2 +1263). Foundation anchor 12-stage tour fully implemented + Geneve packet format byte-by-byte + PMTUD black hole + EVPN Type 2 NLRI deep + IRB modes + OVN integration use cases. |
 | v4.0 | Long-term | New Parts based on user feedback + production lab verify |
 
 ## Closed gaps (audit 2026-04-25)
