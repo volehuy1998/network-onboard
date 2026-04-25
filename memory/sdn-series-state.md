@@ -72,8 +72,8 @@
 | 4.5 | TTP (Table Type Patterns) | 290 | DONE (v3.2 P3) | TTP capability discovery GE (+38) |
 | 4.6 | OpenFlow limitations + lessons | 416 | DONE | Google B4 SIGCOMM 2013 + P4 lineage + 2 Capstone POE |
 | 4.7 | OpenFlow programming with OVS | 764 | DONE | 2 GE + 1 Capstone POE + 8 actions + multi-table 3-stage |
-| 4.8 | OpenFlow match field catalog | 926 | DONE (Phase H S41) | Template B 9-attribute anatomy, 60+ match fields, 12 groups |
-| 4.9 | OpenFlow action catalog | 1544 | DONE (Phase H S42-S44) | Template C 8-attribute anatomy, 40+ actions across 3 tiers |
+| 4.8 | OpenFlow match field catalog | 1221 | DONE (Phase H S41 + J.4.a v3.5) | Template B 9-attribute anatomy, 60+ match fields, 12 groups + section 4.8.15-17 backfill 12 missing field (in_phy_port, ipv6_flabel, ipv6_exthdr, pbb_isid, mpls_tc/bos, sctp_src/dst, tunnel_id, xreg0-7, xxreg0-3, NSH spi/si/c1-c4, packet_type) |
+| 4.9 | OpenFlow action catalog | 1775 | DONE (Phase H S42-S44 + J.4.b v3.5) | Template C 8-attribute anatomy, 40+ actions across 3 tiers + section 4.9.29-30 backfill 12 missing action (copy_field, push/pop_pbb, set_mpls_ttl, dec_mpls_ttl, copy_ttl_in/out, set_nw_ttl, decap/encap NSH, controller userdata, note, sample, conjunction full) |
 
 ## Block V, Alternative SDN models (3 files, 983 lines)
 
