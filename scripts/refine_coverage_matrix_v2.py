@@ -283,6 +283,23 @@ def extract_short_names(name: str) -> list[str]:
                 if p and p not in candidates and len(p) >= 3:
                     candidates.append(p)
 
+    no_table_suffix = re.sub(r"\s+table$", "", no_paren, flags=re.IGNORECASE).strip()
+    if no_table_suffix != no_paren and no_table_suffix and no_table_suffix not in candidates:
+        candidates.append(no_table_suffix)
+
+    upper_to_proper = {
+        "RAFT": "Raft",
+        "OVN": "OVN",
+        "OVS": "OVS",
+        "JSON-RPC": "JSON-RPC",
+    }
+    for token, proper in upper_to_proper.items():
+        if token in name and proper not in candidates and proper != token:
+            for cand in list(candidates):
+                replaced = cand.replace(token, proper)
+                if replaced != cand and replaced not in candidates:
+                    candidates.append(replaced)
+
     for src in (name, stripped, no_paren):
         if "/" in src and "(" not in src:
             for part in src.split("/"):
@@ -370,6 +387,9 @@ def extract_short_names(name: str) -> list[str]:
     return filtered if filtered else [name]
 
 
+LOOKUP_SPINE_FILES = {"0.3 - master-keyword-index.md"}
+
+
 def grep_keyword(keyword: str, files: list[Path]) -> tuple[int, list[str]]:
     matched: list[str] = []
     for f in files:
@@ -380,6 +400,11 @@ def grep_keyword(keyword: str, files: list[Path]) -> tuple[int, list[str]]:
         except Exception:
             continue
     return len(matched), matched
+
+
+def substantive_count(matched: list[str]) -> int:
+    """Count matched files excluding lookup spine (0.3 master index)."""
+    return sum(1 for m in matched if m not in LOOKUP_SPINE_FILES)
 
 
 def grep_keyword_with_alternatives(
@@ -428,14 +453,20 @@ def main() -> None:
     matrix: list[dict] = []
     for i, e in enumerate(entries):
         count, matched, alias, trace = grep_keyword_with_alternatives(e["name"], files)
+        sub_count = substantive_count(matched)
         depth = classify_depth(count)
+        sub_depth = classify_depth(sub_count)
         tier = classify_tier(e, depth)
+        sub_tier = classify_tier(e, sub_depth)
         matrix.append({
             **e,
             "file_count": count,
+            "sub_count": sub_count,
             "files": matched,
             "depth": depth,
+            "sub_depth": sub_depth,
             "tier": tier,
+            "sub_tier": sub_tier,
             "matched_via": alias,
             "trace": trace,
         })
@@ -443,12 +474,14 @@ def main() -> None:
             print(f"  Processed {i + 1}/{len(entries)}")
 
     stats: dict[str, int] = defaultdict(int)
+    sub_stats_g: dict[str, int] = defaultdict(int)
     for m in matrix:
         stats[m["tier"]] += 1
-    print(f"  Tier A (MISSING in-scope): {stats['A']}")
-    print(f"  Tier B (SHALLOW in-scope): {stats['B']}")
-    print(f"  Tier C-OK (BREADTH 3-9 files): {stats['C-OK']}")
-    print(f"  Tier C-DEEP (WIDE 10+ files): {stats['C-DEEP']}")
+        sub_stats_g[m["sub_tier"]] += 1
+    print(f"  Tier A (MISSING in-scope): {stats['A']} | substantive: {sub_stats_g['A']}")
+    print(f"  Tier B (SHALLOW in-scope): {stats['B']} | substantive: {sub_stats_g['B']}")
+    print(f"  Tier C-OK (BREADTH 3-9 files): {stats['C-OK']} | substantive: {sub_stats_g['C-OK']}")
+    print(f"  Tier C-DEEP (WIDE 10+ files): {stats['C-DEEP']} | substantive: {sub_stats_g['C-DEEP']}")
     print(f"  Tier D (BANNED): {stats['D']}")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -521,8 +554,8 @@ def main() -> None:
             f"C-OK={sub_stats['C-OK']}, C-DEEP={sub_stats['C-DEEP']}, D={sub_stats['D']}_"
         )
         out.append("")
-        out.append("| Keyword | Files | Depth | Tier | Matched via | First 3 files |")
-        out.append("|---------|-------|-------|------|-------------|---------------|")
+        out.append("| Keyword | Files | Sub | Depth | SubDepth | Tier | SubTier | Matched via | First 3 files |")
+        out.append("|---------|-------|-----|-------|----------|------|---------|-------------|---------------|")
         for e in sec_entries:
             name_safe = e["name"].replace("|", "\\|").replace("`", "")
             via_safe = e["matched_via"].replace("|", "\\|").replace("`", "")
@@ -531,7 +564,7 @@ def main() -> None:
                 files_brief += f", ... (+{len(e['files']) - 3})"
             via_show = via_safe if via_safe != name_safe else "(direct)"
             out.append(
-                f"| `{name_safe}` | {e['file_count']} | {e['depth']} | {e['tier']} | {via_show} | {files_brief} |"
+                f"| `{name_safe}` | {e['file_count']} | {e['sub_count']} | {e['depth']} | {e['sub_depth']} | {e['tier']} | {e['sub_tier']} | {via_show} | {files_brief} |"
             )
         out.append("")
 
