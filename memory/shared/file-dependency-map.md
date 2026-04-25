@@ -196,6 +196,17 @@ For brevity, the following blocks have full per-file dependency entries in exten
 | `sdn-onboard/13.9 - ovn-load-balancer-internals.md` (EXPAND) | EXPAND J.5.b v3.5 (+176 dòng = 627). Section 13.9.X: selection_fields consistent hashing 6 field, hairpin_snat_ip rewrite, Load_Balancer_Group aggregation, Load_Balancer_Health_Check 4 options + Service_Monitor. | (existing dependencies) + `13.16 §13.16.4` (LS_IN_LB stage 12 + hairpin stage 13-15) |
 | `sdn-onboard/20.0 - ovs-ovn-systematic-debugging.md` (EXPAND) | EXPAND J.6 v3.5 (+75 dòng = 890). Section 20.0.X: master cross-link table mapping 14 REF Section 4 production scenarios → existing curriculum file:section. Audit-driven (no duplicate, all 14 đã coverage). | (existing dependencies) + REF Section 4 (offline source) |
 
+### Tier 2o: v3.6-ContentDepth (Phase 1 → Phase 4, 3 EXPAND + 3 NEW memory/script)
+
+| File | Main content | Related Files |
+|------|--------------|---------------|
+| `sdn-onboard/4.9 - openflow-action-catalog.md` (EXPAND v3.6) | EXPAND Phase 2 v3.6 (+77 dòng = 1852). Section 4.9.31 backfill 3 NXM Nicira action 8-attribute Anatomy: fin_timeout (TCP FIN/RST timeout shrink), push:FIELD (NXAST_STACK_PUSH), pop:FIELD (NXAST_STACK_POP). Cross-link 9.24 conntrack timeout, 4.7 learn template, 9.25 ofproto/trace stack debug. | (existing dependencies) + `9.24` (ct() timeout alternative), `4.7` (learn template), `9.25` (ofproto/trace) |
+| `sdn-onboard/13.14 - ovn-nbctl-sbctl-reference-playbook.md` (EXPAND v3.6) | EXPAND Phase 2 v3.6 (+7 dòng = 1003). Section 13.14.9.1 thêm 2 ovn-nbctl flag missing: --print-wait-time (transaction wait latency tracking) + -u <path> (daemon socket separation cho multi-tenant). Verify ovn-nbctl(8) man page qua WebFetch. | (existing dependencies) + `20.2 §lflow-cache` (convergence latency tuning) |
+| `sdn-onboard/9.7 - port-mirroring-and-packet-capture.md` (EXPAND v3.6) | EXPAND Phase 3 v3.6 (+39 dòng = 313). Section 9.7.9 ovs-tcpdump shortcut wrapper Anatomy: tự động Mirror table tạm + tcpdump + cleanup atomic. Anti-pattern long-running capture (Mirror lock cost). | (existing dependencies) + `9.4` (ovs-vsctl Mirror), `9.28` (ovs-pcap đọc lại) |
+| `scripts/refine_coverage_matrix_v2.py` | NEW Phase 1 v3.6 (501 dòng). Audit script v2 + v3 với 9 alias rule (Action/Instruction/Match field prefix strip, version paren strip, slash split, range expand, bilingual concept dict 80+, tool prefix strip, table suffix strip, case-aware uppercase-to-proper, lookup spine separate). Output dual-tier matrix (strict + substantive count). | sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md (REF input), sdn-onboard/*.md (curriculum), memory/sdn/keyword-coverage-matrix-v2.md (output) |
+| `memory/sdn/keyword-coverage-matrix-v2.md` | NEW Phase 1 v3.6 (1100+ dòng). Refined coverage matrix dual-tier (Strict count + Substantive count loại 0.3). 383 entry total, well-covered strict 80% + substantive 72%. | scripts/refine_coverage_matrix_v2.py (generator), memory/sdn/keyword-true-gap-final.md (manual classify) |
+| `memory/sdn/keyword-true-gap-final.md` | NEW Phase 1+2 v3.6 (200+ dòng). Manual classify 21 strict Tier A → 7 candidate gap → 5 TRUE gap (đã đóng) + 14-16 false-positive (đã có content qua slash form / Anatomy template / cross-link). Decision log Phase 2+3 skip rationale. | scripts/refine_coverage_matrix_v2.py (input), CHANGELOG.md (Release reference), plans/sdn/v3.6-content-depth.md (acceptance gate evidence) |
+
 ### Tier 5: Image files (SVG to Markdown captions)
 
 | File | Main content | Related Files |

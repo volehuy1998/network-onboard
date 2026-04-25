@@ -519,16 +519,18 @@ Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is b
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.5-KeywordBackbone` (2026-04-25). |
-| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.5K lines**, 20 blocks. Audit verdict: A. |
-| Active phase | v3.5-KeywordBackbone RELEASED (14/14 phase done). PR #51 chờ merge (51 commits). v3.1 → v3.5 all released. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-ContentDepth` (2026-04-26). |
+| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.6K lines**, 20 blocks. Coverage strict 80%, substantive 72%. Audit verdict: A. |
+| Active phase | v3.6-ContentDepth RELEASED (4/4 phase done, 7 commit). v3.1 → v3.6 all released. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md). |
 | Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
 | Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
-| v3.5 plan | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md) — LIVE Progress Tracker 14/14 done. |
-| v3.6 plan | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md) — DRAFT, chờ user confirm. |
+| v3.5 plan | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md) — RELEASED 14/14 phase done. |
+| v3.6 plan | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md) — RELEASED 4/4 phase done 2026-04-26. |
+| v3.6 audit script | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix audit với 9 alias rule (v2 + v3 substantive). |
+| v3.6 gap-final | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), Phase 1 + Phase 2 deliverable, decision log. |
 | v3.5 source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md) — REF 2617 dòng English authoritative. |
 | v3.5 master index | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md) — Vietnamese DEEP adaptation lookup spine, 320+ keyword 5-axis. |
 | Plans index | [plans/README.md](plans/README.md) (per-series structure) |

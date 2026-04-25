@@ -6,6 +6,119 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## v3.6-ContentDepth (2026-04-26)
+
+**Release type:** Content depth pass over v3.5-KeywordBackbone framework. Khung sườn (128 file, 20 Block) đã xong ở v3.5; v3.6 tập trung audit alias-detection bias trong coverage matrix + đóng các TRUE gap còn lại + đào sâu 1 thin coverage.
+
+**Branch:** `docs/sdn-foundation-rev2`
+**Base:** v3.5-KeywordBackbone + 7 commit (Phase 1 → Phase 4).
+**Effort:** 1 working session.
+
+### Mục tiêu
+
+User confirm plan v3.6 2026-04-26: đóng TRUE gap còn lại sau khung sườn v3.5, đào sâu content nơi cần thiết, refine audit script để giảm false-positive alias-detection. Giữ Quality > Speed mandate; không bundling.
+
+### Phase execution (4 phase per `plans/sdn/v3.6-content-depth.md`)
+
+| Phase | Output | Lines | Commit |
+|-------|--------|-------|--------|
+| 1 Setup + audit refinement | scripts/refine_coverage_matrix_v2.py (462 dòng, 6 alias rule mới) + memory/sdn/keyword-coverage-matrix-v2.md (553 dòng) + memory/sdn/keyword-true-gap-final.md (Phase 1 deliverable) | +1236 | `31f3709` |
+| 2 batch 1 — 4.9 NXM Nicira action | 4.9 §4.9.31 +77 (3 action: fin_timeout, push:src, pop:dst) | +77 | `f07730f` |
+| 2 batch 4 — 13.14 ovn-nbctl flag | 13.14 §13.14.9 +7 (--print-wait-time + -u daemon socket) | +7 | `6065845` |
+| 2 closure tracker | gap-final +48 dòng + matrix re-audit | +62 | `14ee8a1` |
+| 3 substantive audit + ovs-tcpdump | scripts v3 alias rule 3 (lookup spine separate, table suffix strip, case-aware) + 9.7 §9.7.9 ovs-tcpdump Anatomy | +515 | `29feb99` |
+| 4 Release | CHANGELOG + plan tracker + dependency map + tag | (this) | (this commit) |
+
+### Phase 1 — Audit refinement (alias rule v2)
+
+Script v2 thêm 6 alias rule mới so với v1:
+
+1. Strip `Action: ` / `Instruction: ` / `Match field: ` / `Field: ` prefix
+2. Strip trailing parenthetical version notes `(OpenFlow 1.5+)`, `(Nicira extension, OVS 2.4+)`
+3. Slash-split compound message names: `OFPT_ROLE_REQUEST / OFPT_ROLE_REPLY` → match each
+4. Range expand `xreg0-xreg7` → `xreg0..xreg7`
+5. Bilingual concept dictionary 80+ entry: `Pipeline Architecture` → `multi-table pipeline`
+6. Strip tool prefix: `ovn-nbctl --foo` → `--foo`, `ovn-appctl bar` → `bar`
+
+**Effect:** Tier A MISSING strict count 165 → 21 (-87%) qua refinement, không cần viết content.
+
+### Phase 2 — TRUE gap fill
+
+5 TRUE gap đã đóng:
+
+- **`fin_timeout` (NXAST_FIN_TIMEOUT, OVS 1.11+)** — 4.9 §4.9.31.1, TCP FIN/RST aware idle/hard timeout shrink, alternative cho conntrack-based cleanup.
+- **`push:FIELD` (NXAST_STACK_PUSH, OVS 1.11+)** — 4.9 §4.9.31.2, NXM stack semantics, pattern save-modify-restore.
+- **`pop:FIELD` (NXAST_STACK_POP, OVS 1.11+)** — 4.9 §4.9.31.3, paired với push, mismatched = stack underflow.
+- **`ovn-nbctl --print-wait-time`** — 13.14 §13.14.9.1 Transaction behavior table, automation tracking p95 wait latency.
+- **`ovn-nbctl -u <path>`** — 13.14 §13.14.9.1 Daemon mode table, multi-tenant container daemon socket separation.
+
+2 batch dự kiến (`OFPT_MULTIPART_REPLY`, `SSL table`) skip sau verify deep phát hiện FALSE POSITIVE — content đã có ở 3.3:255 (slash form `OFPT_MULTIPART_REQUEST/REPLY`) và 9.10:157 (Anatomy `list SSL` 9-attribute).
+
+### Phase 3 — Substantive audit + thin upgrade
+
+Script v3 thêm 3 alias rule:
+
+1. `LOOKUP_SPINE_FILES = {"0.3 - master-keyword-index.md"}` cho substantive count separate khỏi strict count
+2. Strip trailing ` table` suffix (Bridge table → Bridge)
+3. Case-aware uppercase-to-proper expansion (RAFT → Raft, JSON-RPC giữ nguyên)
+
+12 entries "0.3-only" verified manual: 11/12 FALSE POSITIVE alias-detection, 1/12 thật sự thin (`ovs-tcpdump`). Đóng bằng §9.7.9 Anatomy 5-axis substantive trong file native (port-mirroring-and-packet-capture).
+
+### Files
+
+**3 EXPAND** existing files:
+
+- `4.9 - openflow-action-catalog.md` 1775 → 1852 (+77)
+- `13.14 - ovn-nbctl-sbctl-reference-playbook.md` 996 → 1003 (+7)
+- `9.7 - port-mirroring-and-packet-capture.md` 274 → 313 (+39)
+
+**3 NEW** memory + script artifacts:
+
+- `scripts/refine_coverage_matrix_v2.py` (501 dòng) — audit script với alias rule v2 + v3
+- `memory/sdn/keyword-coverage-matrix-v2.md` (1100+ dòng) — refined matrix output dual-tier (strict + substantive)
+- `memory/sdn/keyword-true-gap-final.md` (200+ dòng) — Phase 1 + Phase 2 deliverable + decision log
+
+### Coverage metrics
+
+| Tier | Pre-v3.6 (post v3.5) | Post-v3.6 strict | Post-v3.6 substantive |
+|------|---------------------|------------------|----------------------|
+| A MISSING | 165 | **15** (all alias false-positive, 0 real) | 21 (1 closed, 20 alias miss) |
+| B SHALLOW | 55 | 63 (mostly 0.3 + 1 file = legitimate BREADTH) | 87 (substantive bias) |
+| C-OK BREADTH | 71 | 126 | 103 |
+| C-DEEP WIDE | 92 | 179 | 172 |
+| Well-covered (C-OK + C-DEEP) | 162 / 383 (42%) | **305 / 383 (80%)** strict | 275 / 383 (72%) substantive |
+| TRUE gap closed | — | 6 / 6 | 100% |
+
+**Target acceptance gate:**
+
+- Strict ≥ 65% well-covered: ✅ 80% achieved (vượt 15 percentage point)
+- Substantive ≥ 65% well-covered: ✅ 72% achieved
+- 0 TRUE gap remaining: ✅ all 6 closed
+
+### Quality gates
+
+- Rule 9 null bytes: 0 across all modified files
+- Rule 11 Vietnamese prose: maintained, bold labels là concept names (Bucket/Syntax/Effect) acceptable
+- Rule 13 em-dash density: 4.9 0.045/line, 13.14 0.005/line, 9.7 0.089/line — tất cả < 0.10/line target
+- Rule 14 source verification: man page `ovn-nbctl(8)` qua WebFetch, OVS source `lib/ofp-actions.c` v2.17.9 (no fabricated type code)
+
+### Decision log
+
+| Decision | Rationale |
+|----------|-----------|
+| Skip 3.3 OFPT_MULTIPART_REPLY batch | Verify deep phát hiện đã có dạng compound `REQUEST/REPLY`; alias miss không phải gap |
+| Skip 9.10 SSL table batch | Anatomy `list SSL` 9-attribute đã exhaustive ở §9.10.X từ trước |
+| Phase 3 minimum-touch | 11/12 substantive-MISSING là alias false-positive; chỉ 1 thật sự thin (ovs-tcpdump). Quality > Speed → không cosmetic-fix bừa, focus 1 real gap |
+| Tier B 30 strict miss | Strict count bias bởi 0.3-only mention; substantive view honest hơn nhưng cũng đa số false-positive. Không vi phạm acceptance vì well-covered đã vượt target rất xa |
+
+### Next steps (out of scope v3.6)
+
+- v3.7 nếu cần: thêm alias dictionary entry cho Flow_Table table → Flow_Table, OFPT_MULTIPART_REPLY → OFPT_MULTIPART_REQUEST/REPLY, whitelist `-X` short flag bypass < 3-char filter
+- Lab verification (63 exercise): vẫn pending lab host từ user
+- HAProxy series expand: deferred series, separate plan track
+
+---
+
 ## v3.5-KeywordBackbone (2026-04-25)
 
 **Release type:** Foundation backbone qua keyword reference. Mỗi keyword in-scope của REF (`sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md`) có 5-axis classification (Bucket | Context | Purpose | Activity | Mechanism), cross-link qua master index 0.3.

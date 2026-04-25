@@ -2,7 +2,9 @@
 
 > Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
 
-**Current release:** `v3.4-DeepFoundation` (tag 2026-04-25, Sequence H+O CLOSE). Verdict A. Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S.
+**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80% well-covered (305/383), substantive 72% (275/383). Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S. Audit script v2 + v3 với 9 alias rule giảm false-positive 87%.
+
+**Previous releases:** `v3.5-KeywordBackbone` (2026-04-25, framework + master index 0.3 + 9 NEW + 4 EXPAND), `v3.4-DeepFoundation` (Sequence H+O CLOSE).
 
 **Baseline:** Ubuntu 22.04 LTS + OVS 2.17.9 (jammy-updates) + OVN 22.03.8 (LTS) + kernel 5.15 + Mininet 2.3.0. Upgrade path: Ubuntu 24.04 + OVS 3.3 + OVN 24.03.
 
