@@ -225,7 +225,7 @@
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 13.13 | OVS to OVN migration guide | 403 | DONE | NB schema mapping + phase rollout + rollback |
-| 13.14 | ovn-nbctl + ovn-sbctl reference playbook | 660 | DONE (Phase I.B1 S67') | Sister cho 9.11. 97 lệnh ovn-nbctl 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, 10 Anatomy, decision matrix 11 row, GE multi-tier tenant, Capstone POE Rule 5 trụ cột |
+| 13.14 | ovn-nbctl + ovn-sbctl reference playbook | 997 | DONE (Phase I.B1 S67' + J.5.d v3.5) | Sister cho 9.11. 97 lệnh ovn-nbctl 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, 10 Anatomy, decision matrix 11 row, GE multi-tier tenant, Capstone POE Rule 5 trụ cột. + section 13.14.9 backfill J.5.d: exhaustive 30+ options chia 8 nhóm (DB connection, wait=sb/hv, idempotency guard, format, daemon mode), ovn-trace microflow expression syntax (24 field), ovn-detrace cookie→Logical_Flow mapping, 5-step debug workflow Anatomy combine ovn-trace + dump-flows + ovn-detrace |
 
 ### Foundation depth (13.15 + 13.16 + 13.17, Phase J.5.a/c v3.5-KeywordBackbone)
 
