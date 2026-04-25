@@ -31,6 +31,7 @@
 - Service mesh (Istio, Linkerd, Cilium control plane).
 - Pure cloud-native abstractions (CRD, operator pattern), except where directly relevant to OVN logical model.
 - Block XV (Cloud Native) was officially deprioritized by user on 2026-04-23. 15.1 + 15.2 are deferred indefinitely.
+- **BGP-related content (LOWEST priority since 2026-04-25 directive):** BGP EVPN, regular BGP routing, FRR BGP integration, OVN-BGP-Agent. Existing Part 11.2 (BGP EVPN tier 2) stays as-is. Do NOT propose BGP expansion in "next direction" options. If a Part touches BGP (e.g., 13.11 LR external), keep mention high-level and cross-link to 11.2 instead of deep-diving. Override only if user explicitly requests BGP work.
 
 **Self-check before writing a new Part or expanding a section:**
 
