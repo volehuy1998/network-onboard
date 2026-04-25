@@ -23,36 +23,40 @@
 - Tools mastery: `ovs-vsctl`, `ovs-ofctl`, `ovs-dpctl`, `ovs-appctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-trace`, `ofproto/trace`, `ovn-detrace`.
 - Debug + troubleshoot + forensic + daily operator playbook (incident decision tree, anatomy template, POE).
 
-**Out-of-scope (DO NOT DRIFT, all LOWEST priority since 2026-04-25 consolidated directive):**
+**PERMANENTLY BANNED FROM PLAN (since 2026-04-25 final consolidated directive):**
 
-User directive (verbatim, 2026-04-25): *"eBPF, XDP, DPDK, K8S ... đều là những thứ nâng cao và tôi muốn hạ thấp độ ưu tiên của nó xuống cuối cùng."*
+User directive (verbatim, 2026-04-25 FINAL): *"hãy ghi nhớ vĩnh viễn rằng những thứ liên quan đến công nghệ nâng cao như DPDK, BPF, XDP, BGP, K8S không bao giờ nằm trong kế hoạch trừ khi tôi thay đổi quyết định."*
 
-- **eBPF** (datapath alternatives, XDP programs, libxdp, Cilium internals).
-- **XDP / AF_XDP** (eXpress Data Plane, kernel bypass alternative to OVS datapath).
+This is **NOT a low-priority topic** classification. It is a **permanent ban from active planning**. The following topics are EXCLUDED from "next direction" options, sprint plans, audit upgrade priorities, and "future work" suggestions:
+
 - **DPDK** (PMD threads, mempool, hugepage, NUMA tuning, fast-path internals).
-- **Kubernetes networking depth** (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
-- **Service mesh** (Istio, Linkerd, Cilium control plane).
-- **BGP-related content** (BGP EVPN, regular BGP routing, FRR BGP integration, OVN-BGP-Agent).
-- **Pure cloud-native abstractions** (CRD, operator pattern), except where directly relevant to OVN logical model.
+- **BPF / eBPF** (datapath alternatives, classifier programs, libxdp, Cilium internals).
+- **XDP / AF_XDP** (eXpress Data Plane, kernel bypass alternative to OVS datapath).
+- **BGP-related content** (BGP EVPN, regular BGP routing, FRR BGP, OVN-BGP-Agent).
+- **K8S** (kube-proxy, OVN-Kubernetes specific, CNI plugin chain, service mesh control plane).
 
-**Existing content stays as-is** (no revert): 9.3 DPDK+AF_XDP, 9.5 hardware offload, 11.2 BGP EVPN tier 2, 14.x P4, 15.0 service mesh, 16.x DPDK/AF_XDP, 17.0/18.0/19.0 OVN advanced.
+**Existing content stays as-is** (no revert): 9.3 DPDK+AF_XDP, 9.5 hardware offload, 11.2 BGP EVPN tier 2, 14.x P4 (less impacted), 15.x service mesh+K8S, 16.x DPDK/AF_XDP, 17.0/18.0/19.0 OVN advanced. These were written before the ban and remain readable; not subject to further expansion.
 
 **Rules for ongoing work:**
 
-1. Do NOT propose expansion of these topics in "next direction" options unless user explicitly requests.
-2. If a Part touches these topics, keep mention high-level + cross-link to existing deep-dive Part. Do not deep-dive further.
-3. When auditing residual SHALLOW files, exclude these from upgrade priority.
-4. Override only if user explicitly requests work in these areas.
+1. **NEVER propose** these topics in "next direction" options. Even if technically in-scope per topic taxonomy, they are out per user directive.
+2. **DO NOT plan** sessions, sprints, or phases targeting these topics.
+3. **DO NOT mention** them as "candidates" or "future work" or "deferred" in proposals — just exclude entirely.
+4. If a Part touches these topics tangentially (ví dụ: 13.11 LR mentions FRR BGP), keep mention 1-2 sentence high-level + cross-link existing Part. Do not deep-dive further.
+5. When auditing SHALLOW files for upgrade priority, EXCLUDE these from candidate list (9.3 DPDK+AF_XDP, 15.x deferred files, 11.2 partial sections, etc.).
 
-**5-tier priority hierarchy (for "next direction" decisions):**
+**Override condition:** ONLY if user explicitly says "hãy thêm DPDK..." or equivalent explicit reversal. Anything weaker = ban remains.
 
-1. **HIGHEST** = OVS/OpenFlow/OVN core internals (datapath, classifier, conntrack, ofproto, OVN northd/controller, NBDB/SBDB, Geneve as OVN tunnel).
-2. **HIGH** = Tools mastery + debug pedagogy (CLI playbook, Anatomy Template A, troubleshooting).
-3. **MEDIUM** = Foundation prerequisites (Linux primer netns/bridge/veth/tc/conntrack).
+**Active plan hierarchy (4 tiers, advanced topics not represented):**
+
+1. **HIGHEST** = OVS/OpenFlow/OVN core internals (datapath, classifier, conntrack, ofproto, OVN northd/controller/binding, NBDB/SBDB, Geneve as OVN tunnel).
+2. **HIGH** = Tools mastery + debug pedagogy (CLI playbook, Anatomy Template A, troubleshooting decision tree).
+3. **MEDIUM** = Foundation prerequisites (Linux netns/bridge/veth/tc/conntrack), OVSDB foundation.
 4. **LOW** = History/narrative (Block II/III), DC applied (Block XII).
-5. **LOWEST** = Advanced adjacents (eBPF, XDP, DPDK, K8S, BGP, P4, service mesh).
 
-Block XV (Cloud Native) was officially deprioritized 2026-04-23. 15.1 + 15.2 deferred indefinitely.
+Block XV (Cloud Native) was officially deprioritized 2026-04-23 + reaffirmed by 2026-04-25 ban. 15.1 + 15.2 deferred indefinitely. P4 + service mesh remain in existing files but not subject to expansion.
+
+Memory pointer: [`memory/feedback_advanced_topics_permanent_ban.md`](memory) auto-loaded each session.
 
 **Self-check before writing a new Part or expanding a section:**
 
