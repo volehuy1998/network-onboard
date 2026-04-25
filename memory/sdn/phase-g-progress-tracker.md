@@ -26,7 +26,9 @@
 | 15 | P6+P7+P8 OF protocol peripheral | P6+P7+P8 | 25 | 3.5 | +61 |
 | 16 | C5+M12 Port_Binding 8 types | C5+M12 | 8 | 13.5b | +116 |
 | 17 | M1 OVS internals secondary | M1 | 8 | 9.2 | +34 |
-| **Total** | | | **~203 keyword** | **~13 file** | **~3335 dòng** |
+| 18 | M2 + M15 (verified upstream WebFetch) | M2+M15 | 17 | 9.25 + 13.5 | +203 |
+| 19 | P24 14 production scenarios full | P24 | 14 | 20.8 | +215 |
+| **Total** | | | **~234 keyword** | **~14 file** | **~3753 dòng** |
 
 ---
 
@@ -50,7 +52,7 @@
 | Cohort | Keyword | Status |
 |--------|---------|--------|
 | M1 OVS internals secondary | 8 | ✅ Done batch 17 |
-| M2 OVS observability | 7 | ⏳ Pending (much already in 9.4 + 9.11 + 9.25) |
+| M2 OVS observability | 7 | ✅ Done batch 18 (verified upstream WebFetch ofproto-dpif-trace.c v2.17.9) |
 | M3 ovs-vsctl medium | 10 | ✅ Done batch 11 |
 | M4 ovs-ofctl medium | 7 | ✅ Done batch 11 |
 | M5 ovs-appctl medium | 7 | ✅ Done batch 9 |
@@ -63,10 +65,10 @@
 | M12 OVN NB schema port | 4 | ✅ Done batch 13 + 16 |
 | M13 OVN NB schema policy | 4 | ✅ Done batch 13 |
 | M14 OVN NB schema services | 7 | ✅ Done batch 13 |
-| M15 OVN SB schema runtime | 10 | ⏳ Pending |
+| M15 OVN SB schema runtime | 10 | ✅ Done batch 18 (verified upstream WebFetch ovn-sb.ovsschema branch-22.03) |
 | M16 LS pipeline secondary | 10 | ✅ Done batch 14 |
 | M17 LR pipeline secondary | 5 | ✅ Done batch 14 |
-| **Medium total** | **~112** | **✅ ~95% (95/100 done)** |
+| **Medium total** | **~112** | **✅ 100% (112/112 done)** |
 
 ### Peripheral (170 keyword target, 25 cohort)
 
@@ -95,22 +97,22 @@
 | P21 LS pipeline peripheral | 12 | ✅ Done batch 14 |
 | P22 LR pipeline peripheral | 11 | ✅ Done batch 14 |
 | P23 MLF flag family | 8 | ✅ Done batch 14 |
-| P24 production scenarios | 14 | ⏳ Cross-link table 20.0 J.6 (cosmetic backfill cần expand 20.8 catalog) |
+| P24 production scenarios | 14 | ✅ Done batch 19 (full 14 scenarios DEEP-10 trong 20.8) |
 | P25 misc REF entries | ~5 | ⏳ Catch-all |
 | **Peripheral total** | **~228** | **✅ Substantially covered (cohort with native Phần coverage); ~80 keyword need formal §axis-fill backfill** |
 
 ---
 
-## Aggregate metrics post-Batch 17
+## Aggregate metrics post-Batch 19
 
 **Substantive coverage by tier (manual estimate based on content depth):**
 
 | Tier | Count | DEEP-20+ | DEEP-15+ | PARTIAL-10+ |
 |------|-------|---------|----------|-------------|
 | Cornerstone (50) | 50 | 50 (100%) | 50 (100%) | 50 (100%) |
-| Medium (~112) | ~112 | ~30 (27%) | ~95 (85%) | ~110 (98%) |
-| Peripheral (~228) | ~228 | ~10 (4%) | ~50 (22%) | ~180 (79%) |
-| **Total in-scope (~390)** | **~390** | **~90 (23%)** | **~195 (50%)** | **~340 (87%)** |
+| Medium (~112) | ~112 | ~35 (31%) | ~112 (100%) | ~112 (100%) |
+| Peripheral (~228) | ~228 | ~10 (4%) | ~70 (31%) | ~190 (83%) |
+| **Total in-scope (~390)** | **~390** | **~95 (24%)** | **~232 (60%)** | **~352 (90%)** |
 
 **Audit script regex auto-detect (conservative):**
 
@@ -130,26 +132,30 @@
 
 | Gate | Target | Current | Status |
 |------|--------|---------|--------|
-| Cornerstone DEEP-20 | 100% | 100% (manual) | ✅ Substantively met (need user spot-check verify) |
-| Medium DEEP-15 | 95% | ~85% (manual) | 🔄 Close, M2 + M15 remaining |
-| Peripheral PARTIAL-10 | 90% | ~79% (manual) | 🔄 Most cohort substantively covered, ~80 keyword need formal axis-fill |
+| Cornerstone DEEP-20 | 100% | 100% (50/50, manual) | ✅ Substantively met |
+| Medium DEEP-15 | 95% | 100% (112/112, manual) | ✅ Substantively met |
+| Peripheral PARTIAL-10 | 90% | ~83% (~190/228, manual) | 🔄 ~38 keyword formal axis-fill cosmetic remaining |
 | Quality gates Rule 9/11/13/14 | All pass | All pass per batch verify | ✅ |
 | Cross-link integrity | 0 broken | 0 broken | ✅ |
-| Source code citation Rule 14 | Verified | Verified per batch | ✅ |
+| Source code citation Rule 14 | Verified | Verified per batch (WebFetch upstream batch 18) | ✅ |
 
 ---
 
 ## Remaining work to reach Phase H tag v4.0-MasteryComplete
 
-1. **M2 OVS observability:** add compact backfill 9.4 + 9.11 + 9.25 (~1 batch)
-2. **M15 OVN SB schema runtime:** backfill 13.5 + scattered (~1 batch)
-3. **P1-P5 OVS peripheral:** mostly cosmetic backfill (~2 batches)
-4. **P9-P17 OF match field/action minor:** 4.8 §4.8.15 + 4.9 §4.9.29 đã có; cosmetic backfill (~2 batches)
-5. **P18-P20 OVN CLI peripheral:** 13.14 + 13.15 đã có; cosmetic backfill (~1 batch)
-6. **P24 production scenarios:** 20.8 catalog expand (~1 batch)
-7. **P25 misc:** catch-all (~1 batch)
+✅ M2 OVS observability — Done batch 18
+✅ M15 OVN SB schema runtime — Done batch 18
+✅ P24 production scenarios — Done batch 19
 
-**Estimate remaining: 8-10 batch, 30-50 hours.**
+Remaining peripheral cosmetic:
+
+1. **P1 OVS daemon helpers (8 keyword):** native Phần 9.28-9.31 + 9.7 đã substantive; cần stamp axis-fill marker compact (~1 batch)
+2. **P2-P5 OVS CLI options + schema rows minor (~30 keyword):** 9.4 + 10.0 + 10.7 đã substantive; cosmetic stamp (~1 batch)
+3. **P9-P17 OF match field/action minor (~75 keyword):** 4.8 §4.8.15-17 + 4.9 §4.9.29 + 4.9.31 đã có 24+ keyword backfill từ v3.5/v3.6 + Phase G; cosmetic stamp remaining (~1 batch)
+4. **P18-P20 OVN CLI peripheral (~40 keyword):** 13.14 §13.14.9 + 13.15 + 20.2 đã substantive; cosmetic stamp (~1 batch)
+5. **P25 misc catch-all (~5 keyword):** catch-all (~1 batch)
+
+**Estimate remaining: 5 batch cosmetic stamp ~10-15 hours.**
 
 After remaining batches, Phase H gate user spot-check 30+ random keyword + written sign-off, then tag `v4.0-MasteryComplete`.
 
