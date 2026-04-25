@@ -99,14 +99,14 @@
 | 7.4 | Faucet pipeline + operations | 272 | DONE | 4 core tables + Prometheus via Gauge |
 | 7.5 | Ryu flow management | 419 | DONE | Event system + OFPFlowMod + REST API + traffic stats |
 
-## Block VIII, Linux networking primer (4 files, 837 lines)
+## Block VIII, Linux networking primer (4 files, ~1713 lines, Block VIII tier 2 expand 2026-04-25)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 8.0 | Linux namespaces + cgroups | 194 | DONE | 7 namespace types + ip netns + cgroup v1 vs v2 |
-| 8.1 | Linux bridge + veth + macvlan | 254 | DONE | brctl vs ip link + macvlan 4 modes + ipvlan L2/L3 + br-int pattern |
-| 8.2 | Linux VLAN + bonding + team | 182 | DONE | 802.1Q + bonding 7 modes + LACP + team deprecate RHEL 9 |
-| 8.3 | tc qdisc + conntrack | 207 | DONE | tc qdisc taxonomy + HTB/HFSC/fq_codel + conntrack + OVS ct() |
+| 8.0 | Linux namespaces + cgroups | 382 | DONE (Block VIII.1) | Tier 2: clone/unshare/setns syscall internals + lifecycle ref counting + OVS daemon namespace pattern + Anatomy lsns + Capstone POE refute per-container ovs-vswitchd |
+| 8.1 | Linux bridge + veth + macvlan | 430 | DONE (Block VIII.2) | Tier 2: drivers/net/veth.c veth_xmit + veth_xdp_xmit + bridge forwarding + so sánh OVS internal port + Anatomy bridge fdb + Capstone POE 1000 container scale |
+| 8.2 | Linux VLAN + bonding + team | 426 | DONE (Block VIII.3) | Tier 2: bonding driver bond_xmit_hash + LACP 4-substate state machine + xmit_hash_policy encap3+4 + so sánh OVS bond + Anatomy /proc/net/bonding + Capstone POE balance-rr vs LACP overlay |
+| 8.3 | tc qdisc + conntrack | 475 | DONE (Block VIII.4) | Tier 2: kernel queueing path sch_* modules + HTB token bucket source + nf_conntrack hash table + zone implementation + Anatomy tc -s + conntrack -S + Capstone POE nf_conntrack_max sizing |
 
 ## Block IX, Open vSwitch internals (28 files, ~15500 lines, strongest cluster)
 
@@ -283,6 +283,7 @@
 | v3.2-FullDepth | RELEASED 2026-04-25 | Block XIII Core +1584 + Block IX Ops +516 + Block IV GE +279 + CLI Anatomy +112 + Block II narrative +12 |
 | v3.3-ArchitectMaster | RELEASED 2026-04-25 | Phase I 6 sessions: Sequence A (3 expand) 13.8 northd source +205 + 13.7 physical.c +166 + 10.1 raft.c +213; Sequence B (3 NEW) 13.14 ovn-nbctl/sbctl 660 + 10.7 ovsdb-client 589 + 20.7 tracing gradient 691. Tier 2 source-code internals + tools mastery + debug pedagogical gradient. |
 | v3.3.1-OverlayMaster | UNRELEASED 2026-04-25 | 0.2 truncation fix (+404) + Block XI Overlay tier 2 (11.0/11.1/11.2 +1263). Foundation anchor 12-stage tour fully implemented + Geneve packet format byte-by-byte + PMTUD black hole + EVPN Type 2 NLRI deep + IRB modes + OVN integration use cases. |
+| v3.3.2-LinuxPrimer | UNRELEASED 2026-04-25 | Block VIII Linux primer tier 2 (8.0/8.1/8.2/8.3 +876). Kernel source-code level: clone/unshare/setns syscall + veth driver + bonding LACP state machine + nf_conntrack zones + 4 Anatomy + 4 Capstone POE. |
 | v4.0 | Long-term | New Parts based on user feedback + production lab verify |
 
 ## Closed gaps (audit 2026-04-25)
