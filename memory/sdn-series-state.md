@@ -2,7 +2,7 @@
 
 > Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
 
-**Current release:** `v3.2-FullDepth` (tag 2026-04-25). Verdict A. All CRITICAL + HIGH audit findings closed.
+**Current release:** `v3.3-ArchitectMaster` (tag 2026-04-25, Phase I CLOSE). Verdict A. All CRITICAL + HIGH audit findings closed; OVS/OVN/OVSDB tier 2 source-code internals + tools mastery added.
 
 **Baseline:** Ubuntu 22.04 LTS + OVS 2.17.9 (jammy-updates) + OVN 22.03.8 (LTS) + kernel 5.15 + Mininet 2.3.0. Upgrade path: Ubuntu 24.04 + OVS 3.3 + OVN 24.03.
 
@@ -153,17 +153,18 @@
 | 9.26 | OVS revalidator storm forensic | 1185 | DONE (Phase E.B + G.3.2) | 2 Anatomy + 3 case study + 4 GE + 1 Capstone + 5 POE |
 | 9.27 | OVS+OVN packet journey end-to-end | 696 | DONE (v3.2 P4) | 2 GE + 1 Capstone + Anatomy `tnl/ports/show` + `bfd/show` |
 
-## Block X, OVSDB management (7 files, 1995 lines)
+## Block X, OVSDB management (8 files, ~2584 lines, Phase I.B2 added 10.7)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 10.0 | OVSDB RFC 7047 schema + transactions | 196 | DONE | 10 operations + monitor_cond |
-| 10.1 | OVSDB Raft clustering | 199 | DONE | 3-node bootstrap + cluster lifecycle |
+| 10.1 | OVSDB Raft clustering | 412 | DONE (Phase I.A3 S66') | Tier 2 raft.c source-code internals: raft_run + raft_become_leader/follower + raft_handle_append_request + log compaction + snapshot RPC + edge case bầu leader + Anatomy cluster/status 10-attribute |
 | 10.2 | OVSDB backup + restore + compact + RBAC | 231 | DONE | Compact + RBAC Manager.role |
 | 10.3 | OVSDB transaction ACID semantics | 321 | DONE | wait/assert/nb_cfg prerequisites + mutate conflict |
 | 10.4 | OVSDB IDL + monitor_cond client | 386 | DONE | Conditional replication + reconnect + performance |
 | 10.5 | OVSDB performance benchmarking | 297 | DONE | 5 sections + bottleneck detection |
 | 10.6 | OVSDB security mTLS + RBAC advanced | 365 | DONE | Cert rotation zero-downtime + multi-tenant RBAC + audit log |
+| 10.7 | ovsdb-client deep playbook | 589 | DONE (Phase I.B2 S68') | 7 nhóm chức năng (schema/dump/transact/monitor/wait+lock/backup/convert), 5 Anatomy + GE Port_Binding race + Capstone POE chọn tool đúng |
 
 ## Block XI, Overlay encapsulation (5 files, 2196 lines)
 
@@ -183,7 +184,7 @@
 | 12.1 | DC overlay integration (VXLAN + EVPN) | 178 | SHALLOW | |
 | 12.2 | Micro-segmentation + service chaining | 162 | SHALLOW | |
 
-## Block XIII, OVN foundation (14 files, ~6028 lines, v3.2 closed CRITICAL gap)
+## Block XIII, OVN foundation (15 files, ~6688 lines, v3.2 closed CRITICAL + Phase I.B1 added 13.14)
 
 ### Core (13.0-13.6, all v3.2 P1 expanded)
 
@@ -201,8 +202,8 @@
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 13.7 | ovn-controller internals | 491 | DONE (Phase H) | 2 Anatomy + 2 GE + main_loop + I-P engine |
-| 13.8 | ovn-northd translation | 260 | DONE | build_lflows step-by-step |
+| 13.7 | ovn-controller internals | 657 | DONE (Phase H + Phase I.A2 S65') | Tier 2 §13.7.8 controller/physical.c source: physical_run + consider_port_binding + put_encapsulation Geneve TLV class 0x0102 + Port_Binding claim race + Anatomy debug/dump-local-bindings + GE Geneve TLV trace 2-chassis |
+| 13.8 | ovn-northd translation | 465 | DONE (Phase I.A1 S64') | Tier 2 §13.8.5-8 source: northd.c + ovnnb_db_run + build_lflows + I-P engine 2-node + Anatomy inc-engine/show + parallel build_lflows_thread + Capstone POE n-threads |
 | 13.9 | OVN Load_Balancer internals | 218 | DONE | ct_lb + VIP + Service_Monitor |
 | 13.10 | OVN DHCP + DNS native | 327 | DONE | DHCP options catalog |
 | 13.11 | OVN gateway router (distributed) | 516 | DONE (Phase H) | 1 Anatomy + 19-23 stages Template D |
@@ -213,6 +214,7 @@
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 13.13 | OVS to OVN migration guide | 403 | DONE | NB schema mapping + phase rollout + rollback |
+| 13.14 | ovn-nbctl + ovn-sbctl reference playbook | 660 | DONE (Phase I.B1 S67') | Sister cho 9.11. 97 lệnh ovn-nbctl 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, 10 Anatomy, decision matrix 11 row, GE multi-tier tenant, Capstone POE Rule 5 trụ cột |
 
 ## Block XIV, P4 Programmable (Expert, 3 files, 1354 lines)
 
@@ -246,7 +248,7 @@
 | 18.0 | OVN ARP responder + BUM suppression | 499 | DONE | ARP responder + BUM suppress mechanism |
 | 19.0 | OVN multichassis binding + PMTUD | 1389 | DONE (production forensic) | FDP-620 root cause + RARP activation-strategy + 3 Labs |
 
-## Block XX, Operational Excellence (7 files, 7999 lines, Phase G)
+## Block XX, Operational Excellence (8 files, ~8690 lines, Phase G + Phase I.B3 added 20.7)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
@@ -257,19 +259,20 @@
 | 20.4 | OVS daily operator playbook | 1422 | DONE (Phase G.5.2) | Sister to 20.3 OVS pure + 4 CLI layer distinction |
 | 20.5 | OVN forensic case studies | 842 | DONE (Phase G.2.3) | 3 distributed control plane cases + 3 design lessons + Capstone POE |
 | 20.6 | OVS/OpenFlow/OVN retrospective 2007-2024 | 432 | DONE (Phase G.4) | 5 eras + 10 meta-lessons + 6 frontier trends |
+| 20.7 | Packet flow tracing tutorial gradient L1-L5 | 691 | DONE (Phase I.B3 S69') | Sư phạm gradient L1 hello-world to L5 production forensic. 5 level cross-link 9.25/9.27/13.7.8/13.8.5/20.2. ASCII decision tree workflow chọn level. Capstone POE sinh viên tự design trace scenario. |
 
 ---
 
-## Total statistics (post-v3.2)
+## Total statistics (post-v3.3)
 
-- **Total files:** 116
-- **Total lines:** ~55,700
+- **Total files:** 119 (+3 from Phase I: 13.14, 10.7, 20.7)
+- **Total lines:** ~57,800 (+~2,100 from Phase I expand 3 files + new 3 files)
 - **Total Blocks:** 20 (0 to XX)
-- **DONE:** ~107/116 (92%)
-- **PARTIAL:** 0/116 (all closed by v3.2)
-- **SHALLOW:** 5/116 (4%, Block XII 3 files + 2 minor)
-- **CRITICAL (audit flag):** 0/116 (Block XIII Core all closed)
-- **DEFERRED:** 2/116 (Block XV 15.1 + 15.2, K8S deprioritized)
+- **DONE:** ~110/119 (92%)
+- **PARTIAL:** 0/119
+- **SHALLOW:** 3/119 (2%, only Block XII)
+- **CRITICAL (audit flag):** 0/119
+- **DEFERRED:** 2/119 (Block XV 15.1 + 15.2, K8S deprioritized)
 
 ## Release roadmap
 
@@ -278,6 +281,7 @@
 | v3.1-OperatorMaster | RELEASED 2026-04-24 | Full Phase A to H + audit baseline. 116 files, 52.6K lines |
 | v3.1.1-OperatorMaster-patch | RELEASED 2026-04-25 | Dead URL + Rule 11 prose + dependency map + memory tracker. 7 commits |
 | v3.2-FullDepth | RELEASED 2026-04-25 | Block XIII Core +1584 + Block IX Ops +516 + Block IV GE +279 + CLI Anatomy +112 + Block II narrative +12 |
+| v3.3-ArchitectMaster | RELEASED 2026-04-25 | Phase I 6 sessions: Sequence A (3 expand) 13.8 northd source +205 + 13.7 physical.c +166 + 10.1 raft.c +213; Sequence B (3 NEW) 13.14 ovn-nbctl/sbctl 660 + 10.7 ovsdb-client 589 + 20.7 tracing gradient 691. Tier 2 source-code internals + tools mastery + debug pedagogical gradient. |
 | v4.0 | Long-term | New Parts based on user feedback + production lab verify |
 
 ## Closed gaps (audit 2026-04-25)

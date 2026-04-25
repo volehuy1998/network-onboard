@@ -6,6 +6,137 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## v3.3-ArchitectMaster (2026-04-25)
+
+**Release type:** Minor release, Architecture Master tier 2 source-code internals + tools mastery + debug pedagogical gradient.
+**Branch:** `docs/sdn-foundation-rev2`
+**Base:** v3.2-FullDepth + Phase I 6-session execution (Sequence A 3 expand + Sequence B 3 NEW).
+**Effort:** 1 working session (after audit-first recalibration, original 8 sessions reduced to 6).
+
+### Mục tiêu
+
+Đưa curriculum từ "Operator Master" + "Full Depth" tiến sang **Architect Master** với tier 2 = source-code level depth của OVN/OVS/OVSDB. Đầu tiên audit Phase I plan original (8 session) phát hiện 2 session redundant với Phase H/G work đã có; recalibrate xuống 6 session focused. Sau đó execute từng session với Rule 14 source-code citation verified upstream qua `gh api` cho mỗi function name + line number.
+
+### Audit-first recalibration
+
+| Original plan (Phụ lục J) | Audit verdict | Action |
+|--------------------------|---------------|--------|
+| S64 9.15 classifier expand | SKIP (đã tier 2 từ Phase H S45: cls_subtable + cmap + minimask + Patricia trie) | Loại |
+| S65a 9.16 + revalidator URCU | SKIP (plan misaligned: revalidator nằm ở 9.2; 9.16 đã 433 dòng đủ) | Loại |
+| S65b 10.1 OVSDB Raft expand | EXECUTE HIGH | Giữ (rename S66' Phase I.A3) |
+| S66 13.8 northd build_lflows | EXECUTE HIGHEST | Giữ (S64' Phase I.A1) |
+| S67 13.7 physical.c + Geneve TLV | EXECUTE HIGH | Giữ (S65' Phase I.A2) |
+| S68 13.3 build_acls walkthrough | OPTIONAL minor | Defer (562 dòng đã dense) |
+| S69 13.14 NEW ovn-nbctl/sbctl | EXECUTE HIGH | Giữ (S67' Phase I.B1) |
+| S70 10.7 NEW ovsdb-client deep | EXECUTE HIGH | Giữ (S68' Phase I.B2) |
+| S71 20.7 NEW tracing gradient | EXECUTE MEDIUM | Giữ (S69' Phase I.B3) |
+
+Effort: 8 sessions → 6 sessions (25% reduction từ 2 SKIP với rationale).
+
+### Changes
+
+**Sequence A: OVN core source-code internals (3 commits, expand existing files)**
+
+1. **S64' Part 13.8 ovn-northd build_lflows tier 2** (`05372ab`): 260 → 465 dòng (+205).
+   - §13.8.5 source code: `main()` → `inc_proc_northd_run()` → `en_northd_run()` → `ovnnb_db_run()` → `build_lflows()` walkthrough.
+   - §13.8.6 I-P engine cho northd (22.06+): DAG 2 node `en_northd` + `en_lflow`. Anatomy `inc-engine/show` 7-attribute.
+   - §13.8.7 Parallel build internals: `build_lflows_thread()` worker, dp-groups merge.
+   - §13.8.8 Capstone POE: `--n-threads=8` không luôn cải thiện latency.
+   - Source verified `branch-22.03`: `northd/ovn-northd.c` (1022 dòng), `northd/inc-proc-northd.c` (296 dòng), `northd/northd.c` (15947 dòng).
+
+2. **S65' Part 13.7 ovn-controller physical.c tier 2** (`16e2cdd`): 491 → 657 dòng (+166).
+   - §13.7.8 source `controller/physical.c`: `physical_run()` → `consider_port_binding()` per type → `consider_mc_group()` + `put_encapsulation()` Geneve TLV class 0x0102.
+   - Logic claim Port_Binding với race condition cross-chassis (eager claim 22.03 vs atomic `requested_chassis` 22.06+).
+   - Geneve TLV encoding: `MFF_TUN_ID` 24-bit tunnel_key + `mff_ovn_geneve` 32-bit outport + 15-bit inport.
+   - Anatomy `debug/dump-local-bindings` 7-attribute + 3 kịch bản bẻ gãy.
+   - GE Geneve TLV trace 2-chassis với tcpdump + decode byte-by-byte.
+
+3. **S66' Part 10.1 OVSDB Raft tier 2** (`69e4ad3`): 199 → 412 dòng (+213).
+   - §10.6.1 Public API: lifecycle / state queries / write API / 3 role transitions.
+   - §10.6.2 AppendEntries + heartbeat + election: `raft_send_append_request()`, `raft_handle_append_request()`, election timeout random hoá.
+   - §10.6.3 Log compaction + snapshot: threshold tự động + `raft_save_snapshot()` + install snapshot RPC.
+   - §10.6.4 Edge case bầu leader: split vote / network partition / asymmetric partition.
+   - §10.6.5 Anatomy `cluster/status` 10-attribute.
+   - Capstone POE: tăng `election_timer` không luôn cải thiện stability.
+   - Source verified OVS `v2.17.9`: `ovsdb/raft.c` (5041 dòng), `ovsdb/raft.h` public API.
+
+**Sequence B: Tools mastery + debug pedagogy (3 commits, new files)**
+
+4. **S67' Part 13.14 NEW ovn-nbctl/sbctl reference playbook** (`6abf663`): 660 dòng.
+   - Sister cho 9.11 `ovs-appctl` (1170 dòng).
+   - 97 lệnh ovn-nbctl chia 12 nhóm: Generic / LS+LSP (28) / LR+LRP (28) / ACL / PG / LB / DHCP / QoS+Meter / HA Chassis / CoPP / Connection / SSL / OVSDB primitives.
+   - 15 lệnh ovn-sbctl: chassis lifecycle / lsp-bind / lflow-list / connection.
+   - 10 Anatomy Template A: show / list Chassis / Port_Binding / lflow-list / lr-route-list / acl-list / lb-list / ha-chassis-group-list / nb_cfg / find Port_Binding.
+   - Decision matrix 11 row scenario → command.
+   - GE multi-tier tenant T1 (web+db) + Capstone POE Rule 5 trụ cột (anti-pattern `ovsdb-client transact` cho ý đồ logical).
+   - Source verified `branch-22.03`: `utilities/ovn-nbctl.c` (7244 dòng, 97 cmd), `utilities/ovn-sbctl.c` (1528 dòng, 15 cmd).
+
+5. **S68' Part 10.7 NEW ovsdb-client deep playbook** (`6c175cf`): 589 dòng.
+   - Companion cho 13.14, focus low-level RFC 7047 JSON-RPC tool.
+   - 7 nhóm chức năng: schema introspection / query+dump / transaction / monitoring (3 variant) / coordination (wait+lock) / backup+restore / schema convert.
+   - 5 Anatomy: monitor event stream với `--timestamp` / dump table / list-dbs / get-schema JSON / transact JSON-RPC response.
+   - Decision matrix 9-row: ovsdb-client vs ovn-nbctl vs ovn-sbctl vs ovs-vsctl. Anti-pattern list.
+   - GE forensic Port_Binding migration race với `monitor --timestamp` (cross-link Phase G.2.3 case study).
+   - Capstone POE: `transact` không nhanh hơn `ovn-sbctl` cho 1 thao tác.
+   - Source verified `v2.17.9`: `ovsdb/ovsdb-client.c` (2534 dòng).
+
+6. **S69' Part 20.7 NEW packet flow tracing tutorial gradient L1-L5** (`a2cf3e1`): 691 dòng.
+   - Sư phạm gradient từ hello-world tới production forensic.
+   - L1 hello-world `ovn-trace` 1 LS đơn / L2 `--detailed` ACL stateful interplay ct_next 2-pass / L3 cross-subnet xuyên 3 datapath với routing+ARP / L4 multichassis Geneve combine `ovn-trace` + `ofproto/trace` / L5 production incident `ovn-detrace` chain với NBDB row UUID.
+   - 5 Anatomy + 5 Exercise + 1 Capstone POE Phase I.B3.
+   - ASCII decision tree workflow chọn level (3 câu hỏi).
+   - Cross-link 9.25 / 9.27 / 13.7.8 / 13.8.5-8 / 20.0 / 20.2 / 20.3 / 20.5.
+
+### Quality gates
+
+| Rule | Result |
+|------|--------|
+| Rule 9 null bytes | 0/6 file |
+| Rule 11 prose | 22 fix tổng (operator/Operator/engineer/Production engineer/verify/Verify/Inspect/inspect → người vận hành/kỹ sư/kiểm chứng/kiểm tra) |
+| Rule 13 em-dash density | 0.0014-0.0320/line, all 6 files well below 0.10 target |
+| Rule 14 source code citation | All function names + line numbers verified upstream via `gh api` at `branch-22.03` (OVN) + `v2.17.9` (OVS) |
+
+**Source-code anchor density** (vs baseline 0):
+- 13.8: 41 mention (`northd.c`, `build_lflows`, `inc-engine`, `ENGINE_NODE`, `ovnnb_db_run`)
+- 13.7: 27 mention (`physical.c`, `physical_run`, `consider_port_binding`, `put_encapsulation`, `GENEVE`, `TLV`, `0x0102`)
+- 10.1: 21 mention (`raft.c`, `raft_run`, `raft_become_*`, `raft_handle_*`, `raft_send_*`, `raft_install_*`, `raft_command_*`)
+- 13.14: 105 mention (Anatomy / ovn-nbctl / ovn-sbctl / Port_Binding / Logical_Switch / Capstone)
+
+### Statistics (v3.3 delta from v3.2)
+
+- **6 files modified/created** (3 expand + 3 new)
+- **+584 lines expand + +1940 lines new = +2524 net** (excluding minor doc/CHANGELOG/tracker updates)
+- Block X: 7 → 8 files (added 10.7)
+- Block XIII: 14 → 15 files (added 13.14)
+- Block XX: 7 → 8 files (added 20.7)
+- Curriculum: 116 → 119 files, ~55.7K → ~57.8K dòng
+
+### Audit-first lessons
+
+- Plan inaccuracies caught by `gh api` verification: `build_lswitch_and_lrouter_lflows` không tồn tại tại `branch-22.03`; actual function là `build_lflows`. Đã correct trong write.
+- Plan scope mismatch: revalidator URCU thuộc Part 9.2, không phải 9.16 connmgr. Đã skip session sai location.
+- Plan over-scope: 9.15 đã đạt tier 2 từ Phase H S45 với đầy đủ source-code anchor. Đã skip để tránh redundant work.
+- Tổng tiết kiệm: 25% effort qua audit-first.
+
+### Curriculum state post-v3.3
+
+- **119 files** sdn-onboard/*.md
+- **~57.8K lines**
+- 5 trụ cột coverage maintained:
+  - Pillar 1 (foundational knowledge): tier 2 source-code added
+  - Pillar 2 (tools mastery): 3 reference playbook (9.11 ovs-appctl, 13.14 ovn-nbctl/sbctl, 10.7 ovsdb-client)
+  - Pillar 3 (output interpretation): 41 Anatomy Template A across curriculum
+  - Pillar 4 (debug + troubleshoot): packet tracing gradient L1-L5 + forensic case studies
+  - Pillar 5 (architecture + mechanism): source-code level (xlate, classifier, revalidator, raft, northd, controller, encap)
+
+### Links
+
+- v3.3 commits: `05372ab` → `a2cf3e1` (6 commits sequential, plus tracker updates)
+- Phase I plan: `plans/sdn-foundation-architecture.md` Phụ lục J
+- Audit gate session log: `memory/session-log.md`
+
+---
+
 ## v3.2-FullDepth (2026-04-25)
 
 **Release type:** Minor release — audit residual content depth expansion.

@@ -237,7 +237,7 @@ Khối then chốt mở hộp đen OVS để thấy cơ chế bên trong: ba th�
 **Lab tooling foundation (9.21) — session 24 Phase D:**
 - Phần 9.21, [Mininet cho OVS labs — CLI, Python Topo API, MiniEdit GUI](9.21%20-%20mininet-for-ovs-labs.md) *(content, Lab 2 Crichigno/USC + mininet.org docs)*, lịch sử Mininet Stanford Clean Slate 2010 Lantz/Heller/McKeown, kiến trúc network namespace + veth làm host/dây, CLI cơ bản (`sudo mn`/`help`/`nodes`/`net`/`pingall`/`mn -c`), custom Python `Topo` class với `addHost`/`addSwitch`/`addLink`, MiniEdit GUI workflow + X11 chuyển tiếp SSH, router emulation qua sysctl `ip_forward`, tích hợp OVS qua `--switch ovsk`, so sánh với namespace thủ công, Guided Exercise tái dựng topology Lab 5.
 
-### Khối X, OVSDB management (Phần 10, 7 file sau C8)
+### Khối X, OVSDB management (Phần 10, 8 file sau Phase I.B2)
 
 Khối này tách riêng giao thức OVSDB vì đây là backbone vận hành của cả OVS và OVN, mọi config change từ `ovs-vsctl` hay `ovn-nbctl` đều đi qua OVSDB. Raft clustering ở Phần 10.1 là cơ sở cho HA deployment trong OVN Northbound/Southbound DB production.
 
@@ -251,6 +251,9 @@ Khối này tách riêng giao thức OVSDB vì đây là backbone vận hành c�
 - Phần 10.4, [OVSDB IDL + monitor_cond client](10.4%20-%20ovsdb-idl-monitor-cond-client.md) *(content)*, python-ovs IDL, conditional replication, cond_change runtime, reconnect + resync.
 - Phần 10.5, [OVSDB performance + benchmarking](10.5%20-%20ovsdb-performance-benchmarking.md) *(content)*, TPS characteristics, ovn-scale-test, perf flamegraph, tuning Raft snapshot + compact.
 - Phần 10.6, [OVSDB security — mTLS + RBAC advanced](10.6%20-%20ovsdb-security-mtls-rbac-advanced.md) *(content)*, mTLS cluster, cert rotation không downtime, RBAC multi-tenant, threat model.
+
+**Tools mastery (10.7) — Phase I.B2 session S68':**
+- Phần 10.7, [`ovsdb-client` deep playbook](10.7%20-%20ovsdb-client-deep-playbook.md) *(content + Phase I.B2)*, low-level RFC 7047 JSON-RPC tool, 7 nhóm chức năng (schema introspection, query+dump, transaction, monitoring với --timestamp forensic, coordination wait+lock, backup+restore, schema convert), 5 Anatomy + 1 GE Port_Binding race + 1 Capstone POE chọn tool đúng.
 
 ### Khối XI, Overlay encapsulation (Phần 11, 5 file)
 
@@ -268,7 +271,7 @@ Khối chuyên sâu về encapsulation layer mà OVN dùng để nối các chas
 - Phần 12.1, [DC overlay integration, VXLAN + EVPN](12.1%20-%20dc-overlay-integration-vxlan-evpn.md) *(skeleton)*, VXLAN data plane + EVPN control plane, anycast gateway.
 - Phần 12.2, [Micro-segmentation và service chaining](12.2%20-%20micro-segmentation-service-chaining.md) *(skeleton)*, ACL-based micro-seg với OVN ACL/Port_Group, NSH (Network Service Header) RFC 8300 cho service function chaining.
 
-### Khối XIII, OVN foundation (Phần 13, 14 file)
+### Khối XIII, OVN foundation (Phần 13, 15 file sau Phase I.B1)
 
 Khối then chốt thứ hai, OVN logical model. OVN công bố ngày 13/01/2015 trên blog Network Heresy bởi Justin Pettit, Ben Pfaff, Chris Wright, Madhu Venugopal.
 
@@ -291,6 +294,9 @@ Khối then chốt thứ hai, OVN logical model. OVN công bố ngày 13/01/2015
 
 **Migration guide (13.13):**
 - Phần 13.13, [OVS-to-OVN migration guide](13.13%20-%20ovs-to-ovn-migration-guide.md) *(content, cross-cutting migration)*, quy trình chuyển từ ML2/OVS sang ML2/OVN ở OpenStack Neutron, feature parity matrix, data plane cutover không gián đoạn, rollback playbook.
+
+**Tools mastery (13.14) — Phase I.B1 session S67':**
+- Phần 13.14, [`ovn-nbctl` + `ovn-sbctl` reference playbook](13.14%20-%20ovn-nbctl-sbctl-reference-playbook.md) *(content + Phase I.B1)*, sister cho 9.11 ovs-appctl. 97 lệnh ovn-nbctl chia 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, tracing options, 10 Anatomy Template A, decision matrix 11 row, GE multi-tier tenant + Capstone POE Rule 5 trụ cột.
 
 > **Khối XIV-XVI re-introduced ở rev 4 (2026-04-22)** như **Expert Extension track**, không thuộc foundation path. Scope khác với rev 2 cũ (OpenStack/Neutron removed) — nay tập trung **advanced technology adjacent to OVS/OVN**: P4 programmable data plane, service mesh + Kubernetes CNI integration, kernel+DPDK performance tuning. User có thể skip Expert Extension nếu chỉ cần OVS/OVN foundation + advanced case studies.
 
@@ -326,7 +332,7 @@ Ba Phần advanced là forensic analysis trên production OVN multichassis envir
 - **Phần 18**, [OVN ARP Responder và BUM Suppression](18.0%20-%20ovn-arp-responder-and-bum-suppression.md) *(496 dòng)*, ARP Responder ingress table 26, port_security gate, bốn kiến trúc ARP suppression và arp_proxy.
 - **Phần 19**, [OVN Multichassis Binding, PMTUD và activation-strategy](19.0%20-%20ovn-multichassis-binding-and-pmtud.md) *(1379 dòng)*, ba thời kỳ live migration OVN, multichassis port binding lifecycle, bug FDP-620 root cause, activation-strategy=rarp OVN 24.03.
 
-### Khối XX, Operational Excellence (Phần 20, 7 file)
+### Khối XX, Operational Excellence (Phần 20, 8 file sau Phase I.B3)
 
 Khối này tập trung kỹ năng vận hành và chẩn đoán thực chiến — bổ sung cho nền tảng kiến trúc của Khối IX-XIII. Đọc sau khi hoàn thành Khối IX, XIII và Phần 0.2.
 
@@ -337,6 +343,7 @@ Khối này tập trung kỹ năng vận hành và chẩn đoán thực chiến 
 - **Phần 20.4**, [OVS daily operator playbook](20.4%20-%20ovs-daily-operator-playbook.md) *(content, Session S55 Phase G.5.2)*, sister playbook cho 20.3 nhưng cho OVS pure-datapath: 10 task category operator workflow cho (1) health check 5 lệnh < 10 giây với Anatomy `ovs-vsctl show` / `ovs-dpctl show` / `upcall/show`, (2) inventory bridges/ports/Controller/Manager/QoS, (3) bridge + port lifecycle (add-br/add-port với 8 type internal/patch/geneve/vxlan/gre/dpdk/dpdkvhostuser/physical), (4) OpenFlow flow management với `add-flow`/`dump-flows`/`replace-flows` atomic, (5) tunnel management (Geneve/VXLAN/GRE), (6) QoS ingress policing + egress HTB shaping + mirror SPAN/RSPAN, (7) conntrack OpenFlow `ct()` action + dpctl dump/flush, (8) performance (dpif/show + coverage/show + PMD stats DPDK), (9) OVSDB operations (ovsdb-client + ovsdb-tool compact/backup/cluster), (10) backup + rolling upgrade + emergency reset. **2 workflow end-to-end**: new-bridge.sh (tunnel + QoS + controller) + bridge-decommission.sh. **3 Guided Exercise** + **1 Capstone POE** "Migrate br-int kernel → DPDK live: safe?" refute với parallel-bridge hoặc maintenance window cách tiếp cận đúng. Anatomy Template A cho 8 command output. Phân biệt 4 CLI layer: `ovs-vsctl` (OVSDB config) vs `ovs-ofctl` (OpenFlow) vs `ovs-dpctl` (datapath) vs `ovs-appctl` (RPC).
 - **Part 20.5**, [OVN forensic case studies](20.5%20-%20ovn-forensic-case-studies.md) *(content, Session S58 Phase G.2.3)*, sister forensic cho Part 9.26 nhưng OVN distributed control plane. **Case 1** Port_Binding migration race (dual-bind transient cross-chassis window 3-18s, ovsdb-client monitor timeline, requested_chassis pattern 22.06+). **Case 2** northd bulk tenant deletion memory cascade (5000 LSP 1-txn → 2.4GB balloon → OOM → 4m40s cluster stuck, Anatomy Template A cho `memory/show` + `inc-engine/show` + `stopwatch/show`, batch + MemoryMax + parallel-build fix). **Case 3** MAC_Binding table explosion (ARP scan exploit tenant, 67K row, CPU 35% on 60 chassis, age_threshold 24.03+ fix + ACL rate-limit + trust zoning). **§20.5.5** 3 design lesson (claim protocol idempotence / I-P memory budget / age-bounded distributed state). **2 Guided Exercise** + **1 Capstone POE** "Set mac_binding_age_threshold=60 cho mọi LR fix exploit?" refute với per-tenant classification + per-class policy + cách tiếp cận rolling deployment.
 - **Part 20.6**, [Hành trình OVS/OpenFlow/OVN 2007-2024, retrospective + 10 meta-lesson](20.6%20-%20ovs-openflow-ovn-retrospective-2007-2024.md) *(content, Session S59 Phase G.4, đóng Phase G 12/12 COMPLETE)*, Part reflective synthesis nhìn lại 17 năm: **5 thời kỳ** (sơ khai 2007-2011 OpenFlow dream / reality đối mặt 2011-2014 OpenFlow 1.1-1.5 + Google B4 + TTP / hypervisor overlays thắng 2013-2017 NSX + Neutron-OVS / OVN era 2015-2020 NBDB+SBDB+northd declarative intent / production hardening 2020-2024 I-P engine + Raft + forensic curriculum). **§20.6.7** 10 meta-lesson universal áp dụng mọi distributed system (right problem wrong abstraction / scalability cấu trúc / declarative > imperative / eventually consistent > synchronous / observability first-class / protocol purity không phải goal / open governance thắng lock-in / incident-driven hardening tự nhiên / upgrade path mandatory / training dài hạn). **§20.6.8** 6 trend 2024-2030 có cơ sở kỹ thuật (OVN 1000-chassis scale, HW conntrack offload, security compliance native, OVSDB template, observability standardization, forensic curriculum formal) + 3 hype cycle cần skepticism (AI-driven control, serverless networking, userspace datapath default). **§20.6.9** Capstone reflective "OVS/OpenFlow/OVN có thành công không?" phân biệt OpenFlow protocol không thắng như vision nhưng OpenFlow idea thắng qua route OVS/OVN embedded. Phụ lục timeline 2007-2024 với 40+ milestone.
+- **Part 20.7**, [Packet flow tracing tutorial gradient L1-L5](20.7%20-%20packet-flow-tracing-tutorial-gradient.md) *(content, Phase I.B3 session S69', đóng Phase I 6/6 COMPLETE)*, sư phạm gradient từ hello-world tới production forensic. **L1** ovn-trace 1 LS đơn 2 LSP. **L2** ovn-trace --detailed multi-table với ACL stateful (interplay ls_in_pre_acl + acl_hint + acl với ct_next 2-pass). **L3** cross-subnet xuyên 3 datapath (LS-A → LR → LS-B) với routing + dec_ttl + arp_resolve. **L4** combine ovn-trace logical view với ofproto/trace physical view trên cross-chassis Geneve tunnel (cross-link Phần 13.7.8 put_encapsulation). **L5** ovn-detrace chain với ofproto/trace --names cho production incident, inject NBDB row UUID + Logical_Flow context. **Capstone POE Phase I.B3** sinh viên tự design trace scenario, demo chọn level đúng + 5 criteria chấm. ASCII decision tree workflow chọn level (3 câu hỏi: cùng LS / cùng chassis / production?). 5 Anatomy + 5 Exercise.
 
 ---
 
