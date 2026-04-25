@@ -1,6 +1,9 @@
 # Large binary files
 references/*.pdf
 
+# Regeneratable pdftotext conversions (keep PDFs as canonical source)
+sdn-onboard/doc/ovs/*.txt
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -11,3 +14,7 @@ pr-body.txt
 
 # Claude Desktop session files
 .claude/
+tmp-pdf-pages/
+
+.gemini/
+gha-creds-*.json

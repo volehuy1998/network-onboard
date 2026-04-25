@@ -211,42 +211,82 @@
 
 ---
 
-# SDN — Software Defined Networking (OVN/OVS)
+# SDN — Software Defined Networking (OVN/OVS/OpenFlow)
 
-Nghiên cứu chuyên sâu về OVN, OpenvSwitch, và OpenFlow trong môi trường OpenStack production.
+**Release:** `v3.1-OperatorMaster` (2026-04-24). 116 file, ~52.6K dòng. Phase G Operator Mastery 5/5 area COMPLETE. Xem [`CHANGELOG.md`](CHANGELOG.md) cho release notes đầy đủ.
 
-[Part 1 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/1.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
+Chương trình đào tạo Software Defined Networking tập trung thuần vào **OpenvSwitch, OpenFlow, và OVN** như các nền tảng portable. Xây dựng từ lịch sử Stanford Clean Slate 2006 đến production forensic analysis OVN multichassis 2026 + operator daily playbook. Xem chi tiết roadmap: [`sdn-onboard/README.md`](sdn-onboard/README.md).
 
-- 1.1 - Tại sao OVN tồn tại: bài toán gốc và hành trình giải quyết
-- 1.2 - Localnet port: cầu nối giữa thế giới ảo và VLAN vật lý
-- 1.3 - MC_FLOOD và MC_UNKNOWN: broadcast và unknown destination trong distributed control plane
-- 1.4 - FDB table và dynamic MAC learning: từ bài toán flooding đến caching
-- 1.5 - MAC_Binding table: IP-to-MAC resolution trên logical router
-- 1.6 - Case study: FDB poisoning trên provider network VLAN 3808
-- 1.7 - Bài học thiết kế: trade-off và tiến hóa incremental
+**5 trụ cột kỹ năng cần đạt được**: (1) nền tảng kiến thức OVS/OpenFlow/OVN vững chắc + chi tiết, (2) am hiểu tường tận tools OVS/OVN cung cấp, (3) hiểu sâu output của tools (anatomy từng field), (4) debug + troubleshoot skill, (5) kiến trúc + cơ chế hoạt động.
 
-[Part 2 - OVN ARP Responder và BUM Suppression](sdn-onboard/2.0%20-%20ovn-arp-responder-and-bum-suppression.md)
+**Cấu trúc 20 Block (rev 5, 2026-04-24)**:
+- **Foundation (Block 0-XIII)**: 14 block với 78 file — từ "Why SDN" (Part 1) qua OpenFlow evolution (Part 3-4 đầy đủ match+action catalog), alternative SDN paradigms (Part 5-6), controller ecosystem (Part 7), Linux primer (Part 8), OVS internals + ops (Part 9 tier 1 complete), OVSDB (Part 10), overlay + tunnel labs (Part 11), DC topology (Part 12), đến OVN foundation (Part 13 full LS/LR pipeline exhaustive).
+- **Expert Extension (Block XIV-XVI, optional, deprioritized)**: 3 block với 9 file — P4 programmable pipeline (Part 14), service mesh partial (Part 15.0), kernel+DPDK performance (Part 16). Block XV K8S/Service Mesh + Block XVI DPDK/XDP deprioritized theo user directive để focus OVS/OpenFlow/OVN core.
+- **Advanced case studies (Block XVII-XIX)**: 3 Part forensic analysis production OVN multichassis (FDB poisoning + ARP responder + PMTUD multichassis binding).
+- **Operations (Block XX, new Phase G)**: 7 Part daily operator workflow — systematic debugging (20.0), security hardening + audit trail (20.1), OVN troubleshooting deep-dive (20.2), OVN daily operator playbook (20.3), OVS daily operator playbook (20.4), OVN forensic case studies (20.5), retrospective 2007-2024 (20.6).
 
-- 2.1 - Bối cảnh: ARP trên mạng vật lý và hiệu ứng khuếch đại trong overlay
-- 2.2 - Dòng chảy lịch sử: từ l2population đến ARP Responder tích hợp trong OVN
-- 2.3 - Cơ chế ARP Responder: Ingress Table 26 và hệ thống bốn tầng priority
-- 2.4 - Port_security: gate trung tâm quyết định ARP Responder có hoạt động hay không
-- 2.5 - ARP Responder và FDB: hai cơ chế độc lập cho hai bài toán
-- 2.6 - Khi ARP Responder vắng mặt: incidents thực tế và đánh giá triển khai
-- 2.7 - Bốn kiến trúc ARP suppression và arp_proxy
+Trọng tâm flagship:
 
-[Part 3 - OVN Multichassis Binding, PMTUD và activation-strategy](sdn-onboard/3.0%20-%20ovn-multichassis-binding-and-pmtud.md)
+[Part 17 - OVN L2 Forwarding và FDB Poisoning](sdn-onboard/17.0%20-%20ovn-l2-forwarding-and-fdb-poisoning.md)
 
-- 3.1 - Lịch sử ba thời kỳ live migration trong OVN (pre-22.09 → 22.09 → 24.03+)
-- 3.2 - Multichassis port binding lifecycle (CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND)
-- 3.3 - `enforce_tunneling_for_multichassis_ports` + sáu kịch bản packet path
-- 3.4 - Geneve 58-byte overhead + PMTUD pipeline + bug FDP-620 root cause
-- 3.5 - activation-strategy=rarp: tín hiệu đồng bộ ba tầng
-- 3.6 - Operational tuning: Jumbo frame + MTU cache recovery
-- 3.7 - Design lessons + Khuyến nghị vận hành
+- 17.1 - Tại sao OVN tồn tại: bài toán gốc và hành trình giải quyết
+- 17.2 - Localnet port: cầu nối giữa thế giới ảo và VLAN vật lý
+- 17.3 - MC_FLOOD và MC_UNKNOWN: broadcast và unknown destination trong distributed control plane
+- 17.4 - FDB table và dynamic MAC learning: từ bài toán flooding đến caching
+- 17.5 - MAC_Binding table: IP-to-MAC resolution trên logical router
+- 17.6 - Case study: FDB poisoning trên provider network VLAN 3808
+- 17.7 - Bài học thiết kế: trade-off và tiến hóa incremental
+
+[Part 18 - OVN ARP Responder và BUM Suppression](sdn-onboard/18.0%20-%20ovn-arp-responder-and-bum-suppression.md)
+
+- 18.1 - Bối cảnh: ARP trên mạng vật lý và hiệu ứng khuếch đại trong overlay
+- 18.2 - Dòng chảy lịch sử: từ l2population đến ARP Responder tích hợp trong OVN
+- 18.3 - Cơ chế ARP Responder: Ingress Table 26 và hệ thống bốn tầng priority
+- 18.4 - Port_security: gate trung tâm quyết định ARP Responder có hoạt động hay không
+- 18.5 - ARP Responder và FDB: hai cơ chế độc lập cho hai bài toán
+- 18.6 - Khi ARP Responder vắng mặt: incidents thực tế và đánh giá triển khai
+- 18.7 - Bốn kiến trúc ARP suppression và arp_proxy
+
+[Part 19 - OVN Multichassis Binding, PMTUD và activation-strategy](sdn-onboard/19.0%20-%20ovn-multichassis-binding-and-pmtud.md)
+
+- 19.1 - Lịch sử ba thời kỳ live migration trong OVN (pre-22.09 → 22.09 → 24.03+)
+- 19.2 - Multichassis port binding lifecycle (CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND)
+- 19.3 - `enforce_tunneling_for_multichassis_ports` + sáu kịch bản packet path
+- 19.4 - Geneve 58-byte overhead + PMTUD pipeline + bug FDP-620 root cause
+- 19.5 - activation-strategy=rarp: tín hiệu đồng bộ ba tầng
+- 19.6 - Operational tuning: Jumbo frame + MTU cache recovery
+- 19.7 - Design lessons + Khuyến nghị vận hành
 - Lab 1: Verification playbook sáu lớp (POE framework)
 - Lab 2: Reproduce bug FDP-620 với `ping -s 6000`
 - Lab 3: Đo Geneve overhead trên wire bằng tcpdump + wireshark
+
+**Operations flagship (Block XX, Phase G 2026-04):**
+
+[Part 20.0 - OVS+OVN Systematic Debugging](sdn-onboard/20.0%20-%20ovs-ovn-systematic-debugging.md) — isolation-first philosophy + 5-layer model + 3 production case study (VM no network race, upgrade schema drift, partition thundering herd).
+
+[Part 20.1 - OVS+OVN Security Hardening + Audit Trail](sdn-onboard/20.1%20-%20ovs-ovn-security-hardening.md) — 4-layer defense-in-depth (control/management/data plane) + port_security + ACL default-deny + audit trail + cert rotation zero-downtime + 2 GE + Capstone POE.
+
+[Part 20.2 - OVN Troubleshooting Deep-dive](sdn-onboard/20.2%20-%20ovn-troubleshooting-deep-dive.md) — `ovn-trace` 11 option + `ovn-detrace` chain + Port_Binding 8 type forensic + ovn-appctl 21 command + 16-symptom diagnostic matrix + 3 GE + Capstone POE.
+
+[Part 20.3 - OVN Daily Operator Playbook](sdn-onboard/20.3%20-%20ovn-daily-operator-playbook.md) — 10 task category (health check + inventory + port lifecycle + ACL + LB+NAT + DHCP+DNS + gateway+HA + conntrack + performance + backup) + 2 workflow end-to-end (new-tenant + tenant-teardown script).
+
+[Part 20.4 - OVS Daily Operator Playbook](sdn-onboard/20.4%20-%20ovs-daily-operator-playbook.md) — sister của 20.3 nhưng OVS pure-datapath. 10 task category + 2 workflow (new-bridge.sh + bridge-decommission.sh) + 4 CLI layer distinguish (vsctl / ofctl / dpctl / appctl).
+
+[Part 20.5 - OVN Forensic Case Studies](sdn-onboard/20.5%20-%20ovn-forensic-case-studies.md) — 3 distributed control plane case study (Port_Binding migration race + northd bulk tenant deletion memory cascade + MAC_Binding ARP scan exploit) + 3 design lesson.
+
+[Part 20.6 - OVS/OpenFlow/OVN Retrospective 2007-2024](sdn-onboard/20.6%20-%20ovs-openflow-ovn-retrospective-2007-2024.md) — 5 thời kỳ (sơ khai / reality đối mặt / hypervisor overlays thắng / OVN era / production hardening) + 10 meta-lesson universal + 6 frontier 2024-2030.
+
+**OVS deep internals forensic (Block IX):**
+
+- [Part 9.25 - OVS flow debugging + ofproto/trace](sdn-onboard/9.25%20-%20ovs-flow-debugging-ofproto-trace.md) — 10 GE + 4 POE, `ofproto/trace` grammar end-to-end.
+- [Part 9.26 - OVS Revalidator Storm Forensic](sdn-onboard/9.26%20-%20ovs-revalidator-storm-forensic.md) — 3 case study (megaflow invalidation + LACP bond flap cascade + conntrack zone collision cross-chassis migration) + 4 GE + 1 Capstone POE.
+- [Part 9.27 - OVS+OVN Packet Journey End-to-end](sdn-onboard/9.27%20-%20ovs-ovn-packet-journey-end-to-end.md) — 3-tier parallel diagnostic framework + Geneve TLV deep-dive + MTU forensic + 10 fault catalog pattern.
+
+**Expert Extension (Block XIV-XVI, optional):**
+
+- [Part 14.0-14.2 - P4 Programmable Pipeline](sdn-onboard/14.0%20-%20p4-language-fundamentals.md) — P4_16 + PSA + PISA + Tofino silicon + P4Runtime gRPC + Stratum.
+- [Part 15.0 - Service Mesh Integration](sdn-onboard/15.0%20-%20service-mesh-integration.md) — Istio + Envoy + Linkerd + Cilium eBPF + OVN-Kubernetes CNI.
+- [Part 16.0-16.2 - Kernel + DPDK Performance](sdn-onboard/16.0%20-%20dpdk-afxdp-kernel-tuning.md) — DPDK EAL + AF_XDP zero-copy + hugepage + NUMA affinity + perf + bpftrace profiling.
 
 ---
 

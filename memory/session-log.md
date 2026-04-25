@@ -1,164 +1,375 @@
 # Session Log
 
-> File này ghi lại session gần nhất. Claude đọc file này ĐẦU TIÊN khi bắt đầu session mới
-> để nắm bắt context mà không cần user giải thích lại.
+> Append-only journal of Claude work sessions on this repo. Read this file FIRST when resuming, to load prior context without asking the user to re-explain.
+>
+> **Language convention.** This file is English (working/meta memory). Curriculum content in `sdn-onboard/` etc. stays Vietnamese for learners.
+>
+> **Slim sweep on 2026-04-25**: file rewritten in English, kept last ~10 sessions verbose, older sessions condensed to summary table. Pre-slim full Vietnamese log is preserved in git history (commit before `c070b3f`).
 
 ---
 
-## Session gần nhất
+## Session 64, 2026-04-25, v3.1.1 patch + v3.2-FullDepth release + slim sweep
 
-**Ngày:** 2026-04-20
-**Branch:** `docs/sdn-onboard-rewrite` (reset to master `65ca274`, Part 3 re-applied)
-**Plan:** `plans/sdn-restructure-multichassis-pmtud.md` — 8 steps hoàn thành
+**Branch:** `docs/sdn-foundation-rev2`. **Tags created:** `v3.1.1-OperatorMaster-patch`, `v3.2-FullDepth`.
 
-### Đã hoàn thành
+### Sprint 1: v3.1.1 patch (audit residual remediation)
 
-1. **Tạo SDN Part 3** (`sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md`, 1379 dòng, 127,769 bytes):
-   - §3.1 Lịch sử ba thời kỳ live migration trong OVN (pre-22.09 blackhole 13.25% loss → 22.09 multichassis+duplicate → 24.03+ activation-strategy=rarp)
-   - §3.2 Multichassis port binding lifecycle (CAN_BIND_AS_MAIN/ADDITIONAL/CANNOT_BIND, timeline, 6 scenarios matrix)
-   - §3.3 `enforce_tunneling_for_multichassis_ports()` priority 110 override localnet 100 + 6 packet path scenarios
-   - §3.4 Geneve 58-byte overhead breakdown, pipeline tables 41/42, bug FDP-620 root cause + patch Ales Musil 6-line
-   - §3.5 activation-strategy=rarp: ba "cửa khóa" flows (priority 1010/1000), pinctrl_activation_strategy_handler, 4 reasons RARP > GARP, QEMU announce_self (Marcelo Tosatti 2009)
-   - §3.6 Operational tuning: Jumbo MTU 9000→8942, mtu_expires kernel tuning
-   - §3.7 Design lessons: data-plane-as-signal pattern, Prometheus exporter, 3-phase deployment
-   - Lab 1 (sáu lớp CHÍNH — POE framework với Evidence #1-#6), Lab 2 (FDP-620 reproduce với `ping -s 6000`), Lab 3 (Geneve overhead measurement)
-   - Exam Preparation Tasks + full References section với 5 OVN source files, 4 Launchpad bugs, Red Hat Jira FDP-620
+User-approved Plan A + Option A: sequential execution of v3.1.1 + v3.2 from the 9-phase audit (2026-04-25). 7 commits closed all P1-P5 audit findings:
 
-2. **Commit hash corrections**: replaced invalid `949b098626b7` (returned 404) với `ee20c48c2f5c` (Ihar Hrachyshka RARP implementation, 2022-06-18) tại 3 vị trí trong Part 3
+1. **P1.1 Dependency map backfill** (`b542de5`): 44 files across 5 zero-coverage blocks (VII/VIII/XII/XIV/XV). Rule 2 coverage 62% to ~95%. Verified line counts via `wc -l` and grep.
+2. **P1.2 Rule 11 prose Group A** (`db49646`): ~50 prose leaks fixed across 40 files (approach to cách tiếp cận, flexibility to tính linh hoạt, motivation to động cơ, etc.).
+3. **P1.3 Rule 11 Group B manual triage** (`cf93aa0`): ~13 case-specific hits in decision matrix and table labels.
+4. **P2.1 Dead URL + README + S61b regression restore** (`61f3000`): 6 dead URLs fixed, README block heading counts corrected, S61b regression restored ("Comprehensive Approach" book title in 8 files, "OpenFlow Switch Specification Version" in 12 instances).
+5. **P3.1 Memory + README + reading path 7 + Mermaid** (`26c4526`): new `memory/sdn-series-state.md` + `memory/audit-index.md`, parent README SDN section refresh, sdn-onboard README path 7 "Operator daily runbook" + Mermaid graph Block XX node.
+6. **P4.1 Cosmetic cleanup** (`b68dad5`): Paul Göransson diacritic fix (32 files), CRLF to LF normalize (41 files, regression from earlier Python script encoding), trailing whitespace strip.
+7. **P5.1 Man page backfill** (`f08c8db`): `9.14` +11 man pages, `20.1` +7 man pages, References reorganized into sub-headings.
 
-3. **Metadata sync cho Part 3**:
-   - `sdn-onboard/README.md`: thêm Part 3 section với 7 subsections + Labs + cập nhật dependency graph (Part 1 → Part 3)
-   - `README.md` (root): thêm Part 3 link trong SDN section với 7 subsections + 3 Labs
-   - `memory/file-dependency-map.md`: thêm `sdn-onboard/README.md` vào Tầng 1, thêm SDN 3.0 row vào Tầng 2b
-   - `CLAUDE.md` Current State: thêm SDN 3.0 row (1379 lines), cập nhật Master HEAD → `65ca274`
+Tag `v3.1.1-OperatorMaster-patch` annotated and pushed.
 
-### Sự kiện giữa session
+### Sprint 2: v3.2-FullDepth release
 
-**Force-push incident (2026-04-20):** Sau khi commit 3 local commits (c222075 Part 3 + 72ff8ea sync + 422552d memory), chạy `git push --force-with-lease` nhưng chưa thực hiện recovery work với remote đã diverged (remote HEAD tại `e023120` với 4 commit mới: 8c2656c SDN 1.0 rewrite + SDN 2.0 new, 4eddc49 Rule 7a fix, fe45691 sdn-onboard/README.md, e023120 merge master). Force-push ghi đè branch, mất 4 commit từ branch pointer. **Không mất dữ liệu**: toàn bộ 4 commit đã được merge vào master qua PR #47 (`65ca274`).
+15 content commits closing all CRITICAL + HIGH residual:
 
-### Recovery process
+- **P1 Block XIII Core expand** (7 commits `e3109ea` to `737980f`, audit P4.B13.1 CRITICAL + P4.B13.4 + P4.B13.5):
+  - 13.0: 153 to 337 lines (+184). Author deep-dive (Pfaff/Pettit/Shuhaa), 3 technical + 2 commercial motivations, 3-tier architecture, 4 alternative comparison, GE 3-tier compilation.
+  - 13.1: 505 to 624 (+119). Anatomy Template A for `ovn-nbctl show` + `list Datapath_Binding`, 2 Hiểu sai + Key Topic, GE NBDB to SBDB timing.
+  - 13.2: 399 to 546 (+147). Anatomy `ls-list` + `lflow-list`, 2 Hiểu sai + Key Topic 27+10 stage, Capstone POE 3-tier ping trace.
+  - 13.3: 411 to 563 (+152). Anatomy `ovn-nbctl acl-list` 9-attribute, 2 Hiểu sai + Key Topic Port_Group scale, Capstone POE 1000-VM segmentation.
+  - 13.4: 142 to 566 (+424). 3-bridge pattern, patch port `ovs_vport_receive()` tail-call, 4 failure modes, 2 GE + Capstone POE TCAM utilization.
+  - 13.5: 182 to 455 (+273). 8 Port_Binding types, claim Raft propagation, Anatomy `list Port_Binding`, GE claim workflow, 5-step debug.
+  - 13.6: 184 to 469 (+285). RFC 5880 BFD packet format + state machine + timing math, Anatomy `ovs-appctl bfd/show` 11-attribute, 13-step failover timeline.
+  - **Block XIII Core total: 1976 to 3560 lines (+1584, 80% growth).**
 
-1. Tạo backup branch `backup/part3-content-20260420` tại `422552d` (giữ Part 3 work)
-2. Reset branch ref `.git/refs/heads/docs/sdn-onboard-rewrite` về `65ca274` (master tip) — bypass `.git/HEAD.lock` bằng direct file write
-3. Materialize working tree từ master qua plumbing: `GIT_INDEX_FILE=/tmp/alt-index git read-tree HEAD` + `git checkout-index -a -f` (partial success do sandbox block unlink), rồi overwrite 7 files thủ công qua `git show origin/master:<path> > <path>`
-4. Giữ nguyên 2 file untracked (plans/, sdn-onboard/3.0) — Part 3 work
-5. Edit 4 metadata files để thêm Part 3 entries vào structure master đã có
-6. Commit Part 3 + metadata sync → ready for push
+- **P2 Block IX Ops expand** (5 commits `5242de1` to `4cdb2ff`, audit P4.B9.2 MED):
+  - 9.6 bonding+LACP: 162 to 297 (+135).
+  - 9.7 port mirroring: 154 to 275 (+121).
+  - 9.8 flow monitoring: 152 to 252 (+100).
+  - 9.10 TLS/PKI: 174 to 258 (+84).
+  - 9.12 upgrade/rolling restart: 172 to 248 (+76).
+  - **Block IX Ops total: 814 to 1330 lines (+516, 63% growth).**
 
-### Bài học (áp dụng cho sessions sau)
+- **P3 Block IV hands-on GE** (1 commit `1d192ef`, audit P4.B4.1 HIGH): 4.0/4.1/4.2/4.3/4.4/4.5 each got a Guided Exercise "implement flow with OVS for this OF version feature". Total +279 lines.
 
-- **Force-push luôn phải recovery-first**: reset + reapply trước, push sau. Không bao giờ push local HEAD khi remote đã diverged mà chưa absorb remote commits.
-- **Stale locks trong sandbox không thể remove**: workaround qua plumbing (write direct vào `.git/refs/heads/<branch>`, dùng `GIT_INDEX_FILE` + `cp` sync)
-- **Delegate ranh giới rõ**: chỉ nhờ user chạy `git push` và `gh pr create` — mọi thao tác local (commit, reset, edit) tôi tự làm được trong sandbox
+- **P4 CLI Anatomy standardize** (1 commit `9978e2e`, audit P5.C1 MED): 20.0 / 20.1 / 9.27 each got Anatomy Template A 9-attribute + 4 failure scenarios. Total +112 lines.
+
+- **P5 Block II narrative enhance** (1 commit `0da3996`, audit P6.N1 MED): 2.0 / 2.1 / 2.2 each got 2 Hiểu sai callouts. Total +12 lines.
+
+CHANGELOG entry committed (`4cb49dc`). Tag `v3.2-FullDepth` annotated and pushed. Verdict A (from A-).
+
+### Slim sweep (this commit, `c070b3f`)
+
+Owner directive: slim CLAUDE.md + memory/* of redundant content.
+
+- **CLAUDE.md** rewritten 979 to 539 lines, 145 em-dash to 0, fully English.
+- Pinned **two North Stars**: (1) mission scope OVS+OpenFlow+OVN core, no K8S/DPDK/XDP drift; (2) quality over speed, 8 operating principles + 6 anti-pattern signals.
+- Trimmed verbose `Nguồn gốc` historical preambles.
+- Slim Current State table (was 106-row session-by-session bullets, now 9-row state + pointers).
+- Moved Rule 11 §11.2 dictionary to `memory/rule-11-dictionary.md`.
+- Translated full file to English.
+
+memory/* (25 files / 10800 lines to 8 files / ~5500 lines):
+- New `memory/audit-2026-04-25-summary.md`: consolidated 9 phase reports into 142-line summary.
+- New `memory/rule-11-dictionary.md`: living translation dictionary.
+- Deleted 10 superseded files (9 audit phase reports + master + 4 older audits + 2 throwaway scripts + Phase F+H trackers + experiment-plan).
 
 ### Pending
 
-- `git push origin docs/sdn-onboard-rewrite:docs/sdn-onboard-rewrite --force-with-lease` (user chạy trên máy local)
-- `gh pr create` với title/body thật (user chạy sau khi push thành công)
-
-### Hậu kỳ sau khi PR được mở (feedback user 2026-04-20)
-
-User phát hiện hai vấn đề khi review PR:
-
-1. **Bỏ quên Step S5 của plan.** Part 1.0 không có thay đổi nào dù plan §3.2 đã quy định rõ phải cắt 3 deep-dive subsection của §1.6 (lines 919-997) và thay bằng cross-reference tới Part 3. Nguyên nhân: sau quy trình recovery force-push, Part 1 được reset về master và không áp dụng Step S5. Đã thực hiện:
-   - Cắt sạch §1.6.2-1.6.4 (79 dòng deep-dive: binding mechanism, Geneve PMTUD, jumbo/activation-strategy)
-   - Thay bằng 3 cross-reference section theo IEC 82079-1 §6.7 (anchor text rõ nghĩa, không dùng "see here")
-   - Dọn Exam Prep Key Topics: xóa entry #20-21 (chứa function name chỉ còn trong Part 3), renumber #22-24 thành #20-22 với mô tả phản ánh đúng mức độ nội dung còn lại trong Part 1
-   - Dọn Define Key Terms: xóa 6 term thuộc Part 3 (CAN_BIND_AS_MAIN, CAN_BIND_AS_ADDITIONAL, enforce_tunneling_for_multichassis_ports, shash_is_empty, OFTABLE_OUTPUT_LARGE_PKT_DETECT, effective tunnel MTU)
-   - Kết quả: 1234 → 1178 dòng
-
-2. **Lạm dụng em-dash (—).** User nhận xét "Sử dụng quá nhiều ký hiệu —, hãy sử dụng ngôn ngữ để diễn tả nó". Toàn bộ prose mới cho Step S5 viết không em-dash, dùng thay bằng dấu phẩy, "vì", "gồm", "cùng", dấu ngoặc đơn, hoặc câu riêng biệt. Em-dash còn lại trong Part 1 thuộc nội dung không thay đổi, được giữ nguyên để tránh scope creep.
-
-### Pending (bổ sung sau Step S5)
-
-- `git pull --rebase origin docs/sdn-onboard-rewrite` rồi apply patch hoặc copy file trực tiếp vào clone local (user có sẵn 3 commit từ recovery trước đó: ceccb25, 81e2759, e6c6c9f)
-- Commit Part 1 trim + metadata updates trên local, push lên remote để PR tự động update
+- Translate remaining memory/* files (`session-log.md` (this file, just rewritten), `file-dependency-map.md`, `sdn-series-state.md`, `lab-verification-pending.md`, `haproxy-series-state.md`, `audit-index.md`).
+- Final QG sweep + commit.
 
 ---
 
-## Session 2026-04-11
+## Session 63, 2026-04-24, Phase I.A1 Part 9.1 expand ofproto-dpif xlate tier 2
 
-**Branch:** `docs/sdn-onboard-rewrite` (dirty — uncommitted log integrity fixes)
+**Branch:** `docs/sdn-foundation-rev2` at `fa82d81`. **Status:** Phase I kickoff DONE. 1/9 sessions complete.
 
-### Đã hoàn thành
+### Context
 
-1. **Log integrity audit toàn diện trên SDN 1.0**:
-   - Phát hiện và sửa 8 loại vi phạm Rule 7: UUID truncation, line merge, line deletion, timestamp alteration
-   - Đối chiếu từng dòng log trong tài liệu với 3 file log gốc (ovn-controller, ovs-vswitchd, nova-compute)
-   - Phát hiện nova-compute dùng UTC+7 (22:39:xx) trong khi OVN/OVS dùng UTC (15:39:xx)
-   - Thêm 3 dòng "Claiming unknown" bị xóa, 3 unexpected events tại 15:39:52.xxx bị thiếu
-   - Sửa OVS timestamp .948→.947, tách patch port entries thành 2 dòng đúng timestamp
+Right after tagging v3.1-OperatorMaster (S62), user said "update progress, status, plan, and continue". Drafted Appendix J for Phase I (9 sessions S63-S71, target v3.2-ArchitectMaster), then started S63.
 
-2. **Đổi prefix labels trong timeline** (session 2, cùng ngày):
-   - `[nova]` → `[nova-compute]`, `[ovs ]` → `[ovs-vswitchd]`, `[ovn ]` → `[ovn-controller]`
-   - 37 occurrences thay đổi, bao gồm concept illustration block (lines 224-226)
-   - Sửa dòng `[FDB ]` giả thành annotation format `──` để phân biệt với log thực
+### Deliverable
 
-3. **Rule 7a added to CLAUDE.md**: "System Log Absolute Integrity (KHÔNG CÓ NGOẠI LỆ)" — 7 điều cấm tuyệt đối cho system log
+Part 9.1 expand §9.1.Y, 430 to 749 lines (+319). 10-subsection deep walkthrough of ofproto-dpif xlate engine:
 
-4. **Skill updates packaged**:
-   - `professor-style` SKILL.md: thêm section 6.4 (Absolute Log Integrity)
-   - `fact-checker` SKILL.md: thêm Anti-Pattern #12 (Log Tampering) + 4 checklist items
-   - Đóng gói thành `.skill` files và gửi cho user cài đặt
+- Y.1: When xlate runs (4 triggers: upcall / revalidator / ofproto-trace / flow-mod simulation).
+- Y.2: Entry point `xlate_actions()` + struct `xlate_in` / `xlate_out` field anatomy.
+- Y.3: Anatomy Template A for struct `xlate_ctx` (lifecycle + scope + depth MAX_RESUBMIT_RECURSION 64 + Resubmits 4096 + flow snapshot + action buffer + exit flag + conntrack + freezing) + 3 break scenarios (rule loop / rule explosion / conntrack recirc).
+- Y.4: Action translation walkthrough for 1 packet through 2-table pipeline with full call chain.
+- Y.5: Megaflow mask build-up via `wc` tracking (lazy wildcarding mechanism).
+- Y.6: Trace output mapping: `ofproto/trace` output fields to `ctx->` state.
+- Y.7: Kernel vs userspace split (4 layering benefits).
+- Y.8: Guided Exercise S63.1: observe xlate via `ofproto/trace --verbose` + reproduce max resubmit.
+- Y.9: Capstone POE S63: "Can xlate cache results?" refute via Pfaff NSDI 2015 §8.
+- Y.10: Source code references.
 
-5. **Cập nhật memory/project files**: session-log, CLAUDE.md, file-dependency-map, README.md
+Plan file: Appendix J added covering full Phase I (9 sessions S63-S71 + tracker + success criteria + target release v3.2).
 
-### Chưa hoàn thành (Pending)
+### Quality gates
 
-- [ ] **Commit log integrity fixes** trên branch `docs/sdn-onboard-rewrite`
-- [ ] **PR merge**: `docs/sdn-onboard-rewrite` → `master` (3 commits + uncommitted changes)
-- [ ] **Phase A1/A2**: FD exercises 7, 8 still need lab verification
-- [ ] **Phases B-E**: Xem `memory/experiment-plan.md`
+| Rule | Result |
+|------|--------|
+| Rule 9 null byte | 0 PASS |
+| Rule 11 prose | 0 leak (initial 1 leak "inspect state" fixed to "kiểm tra state") |
+| Rule 13 em-dash | 0.0267/line PASS |
+| Rule 14 SHA | stable function name + file path anchors (no version-sensitive line numbers) |
 
-### Git State khi kết thúc
+### Phase I progress
 
-```
-Branch: docs/sdn-onboard-rewrite (up to date with origin, dirty)
-Last commit on branch: 2421ff9 (docs(sdn): add live migration FDB poisoning forensic analysis)
-Files modified (uncommitted):
-  - CLAUDE.md (Rule 7a added, Current State updated)
-  - memory/file-dependency-map.md (SDN line counts updated)
-  - memory/session-log.md (this file)
-  - README.md (SDN onboard section added)
-  - sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md (prefix labels + FDB annotation)
-Untracked:
-  - skill-updates/ (professor-style + fact-checker skill updates)
-  - pidfd_getfd_demo.py (demo script from earlier session)
-```
+| Session | Area | File | Status |
+|---------|------|------|--------|
+| S63 | OVS tier 2 | 9.1 expand ofproto-dpif xlate | DONE |
+| S64-S71 | OVS+OVN tier 2 + tools + debug | various | OBSOLETE (overtaken by v3.1.1+v3.2 sprint) |
 
-### Bài học rút ra
+Phase I plan superseded by user-directed v3.1.1 + v3.2 audit-driven sprint in session 64 (2026-04-25).
 
-1. **System log = forensic evidence**: Bất kỳ thay đổi nào (truncate UUID, merge lines, sửa timestamp 1ms) đều phá hỏng reproducibility. Rule 7a ra đời từ lỗi này.
-2. **Timezone awareness khi cross-correlate**: nova-compute (UTC+7) vs OVN/OVS (UTC) — search by instance UUID thay vì timestamp khi log sources dùng timezone khác nhau.
-3. **Synthetic data phải tách biệt visual**: Dòng `[FDB ]` trông giống log thật nhưng là constructed data — gây nhầm lẫn. Annotation format `──` giải quyết vấn đề này.
+### Commit
+
+`fa82d81` `docs(sdn): session S63 Phase I.A1, Part 9.1 expand ofproto-dpif xlate tier 2 (+319 lines)`. Pushed.
 
 ---
 
-## Lịch sử sessions trước
+## Session 62, 2026-04-24, Release v3.1-OperatorMaster
 
-### Session 2026-04-11 (session 1)
+**Branch:** `docs/sdn-foundation-rev2` post `d15d701`. **Status:** Release v3.1-OperatorMaster tagged.
 
-**Branch:** `docs/sdn-onboard-rewrite`
-**Đã hoàn thành:** Log integrity audit SDN 1.0 — phát hiện và sửa vi phạm Rule 7 trên OVN/OVS/nova entries. Thêm Rule 7a vào CLAUDE.md. Packaged skill updates.
+### Context
 
-### Session 2026-04-10
+User chose Option A: accept 110 residual Rule 11 leaks, tag v3.1 immediately with CHANGELOG noting residuals + v3.1.1 patch plan.
 
-**Branch:** `docs/sdn-onboard-rewrite` (created, committed)
-**Đã hoàn thành:** Full rewrite SDN 1.0 (920→1234 lines) và SDN 2.0 (496 lines) trong professor-style. Converted headings, expanded sparse sections, added forensic timeline with production logs.
+### Deliverables
 
-### Session 2026-04-04 (session 2)
+1. `CHANGELOG.md` (new, root): Keep-a-Changelog format. v3.1 highlights: Phase G 5/5 areas + Phase H 13 sessions + Phase E fact-check + Phase F partial + pre-release audit S60-S61. Statistics: 116 files, ~52.6K lines, 60+ GE+Capstone, 4 decision matrices.
+2. Parent `README.md` SDN section refresh: release tag note + 5-pillar skill matrix + 20-block structure rev 5 (added Block XX Operations).
+3. `sdn-onboard/README.md`: release tag note + link to CHANGELOG.
+4. Git tag `v3.1-OperatorMaster` annotated.
 
-**Branch:** `feat/fd-exercise-redesign-background-child` (clean, pushed at `d25e7ce`)
-**Đã hoàn thành:** Lab verification exercises 1-6 with real output, SVG factual error fixes (4 SVGs), orphan cleanup, experiment plan created (5 phases A→E). Null byte incident discovered and fixed (PR #35→#38).
+### Pre-release audit verdict
 
-### Session 2026-04-03
+- Rule 9 null byte: PASS 0/116.
+- Rule 13 em-dash < 0.10: PASS 0/116.
+- Rule 11 Vietnamese prose: 185/295 fixed (63% reduction). 110 residual accepted as-is, fix in v3.1.1.
+- Rule 14 source code citation: spot-check PASS.
+- Lab C1b: deferred (waiting on user lab host).
 
-**Branch:** `master` (dirty)
-**Đã hoàn thành:** Thí nghiệm 6A/6B (CLOEXEC), cập nhật sections 1.4, 1.9, 1.10 với real lab output.
+### Five pillars codified (from user directive 2026-04-24)
 
-### Session 2026-03-30 (session 2)
+1. Foundational OVS/OpenFlow/OVN knowledge, deep + detailed.
+2. Tools mastery, every CLI tool.
+3. Output interpretation, anatomy of every field.
+4. Debug + troubleshoot skill.
+5. Architecture + mechanism understanding.
 
-**Branch:** `master` (dirty)
-**Đã hoàn thành:** Audit HAProxy structure + Part 1, tích hợp Version Evolution Tracker vào Phụ lục A, sửa Knowledge Dependency Graph (4 edges), thu gọn root README.
+---
 
-_(Giữ tối đa 5 entries.)_
+## Session 61b, 2026-04-24, Rule 11 broader sweep (121 prose leaks fixed)
+
+**Branch:** `docs/sdn-foundation-rev2` at `d15d701`.
+
+3-pass global sed on 107 core files (excluding 14.x/15.x/16.x deprioritized):
+- Pass 1: safe global pattern (Verify bằng, để verify, identify, support prose).
+- Pass 2: field-specific (classifier inspect, bundle identify, SA verify).
+- Pass 3: heading-level + OF version support.
+
+Result: 231 core leaks to 110 remaining (52% reduction). 45 files changed.
+
+110 remaining are numbered-step / table-column / vendor-sentence / technical-identifier patterns. Severity LOW. Accepted for v3.1, fix in v3.1.1 patch.
+
+---
+
+## Session 61a, 2026-04-24, Rule 11 Phase G sweep (64 prose leaks fixed)
+
+**Branch:** `docs/sdn-foundation-rev2` at `9469359`.
+
+7 Phase G files (20.0/20.1/20.2/20.6/9.14/9.26/9.27) sed batch: verify to kiểm chứng (27), support to hỗ trợ (24), identify to nhận diện (13). Hot file 20.2: 31 to 0.
+
+Preservation: URL `/support/dist-docs/` kept, code blocks untouched, identifier/CLI subcommand kept English.
+
+---
+
+## Session 60, 2026-04-24, Pre-release audit v3.1-OperatorMaster
+
+**Branch:** `docs/sdn-foundation-rev2` post `8dcbeca`. **Status:** Phase G COMPLETE 12/12. S60 = pre-release audit cross-session to detect drift before tagging v3.1.
+
+### Context
+
+User /clear then "continue", confirming North Star (OVS/OpenFlow/OVN, no K8S/DPDK/XDP drift). Lab C1b waiting on user notification. Decision tree S60 + S61 + S62: (1) audit pre-release, (2) fix findings, (3) tag + changelog.
+
+### Deliverable
+
+`memory/pre-release-audit-2026-04-24.md` (audit log; deleted in slim sweep but preserved in git).
+
+### Rule 9 sweep, PASS
+
+Method: `tr -d '\000' | wc -c` size-diff (initial `grep -c $'\x00'` was false-positive 116/116 because of bash null-terminator). Result: 0/116 violators.
+
+### Rule 13 sweep, PASS
+
+Method: `grep -o $'\xe2\x80\x94' | wc -l` UTF-8-safe (initial `tr -cd | wc -c / 3` gave wrong count because tr is not UTF-8 aware in Git Bash). Result: 0/116 violators (threshold 0.10/line). Spot-verified Part 20.6 0.0046/line, Part 9.26 0.0819/line, Part 0.2 0.076/line, all matching session log claims.
+
+### Rule 11 sweep, FIXABLE 64 leaks
+
+Method: awk excluding code blocks + grep prose terms. Top 3 patterns: `verify` 27, `support` 24, `identify` 13. Hot file 20.2 ovn-troubleshooting-deep-dive (31 leaks). 3 playbook files (20.3/20.4/20.5) had 0 leaks, demonstrating quality gate works when applied from the start.
+
+### Rule 14 deferred
+
+Phase G has few source code citations. Risk surface: 20.5 function names + 20.6 timeline 40+ milestones + 20.2 northd.c:8127 line ref. ~15-20 MCP calls estimated. Deferred to S61.
+
+### Verdict + Plan
+
+Foundation solid (Rule 9+13). Rule 11 needs 1 sweep session. Plan:
+- S61: Rule 11 fix sweep 64 leaks + Rule 14 MCP spot-check.
+- S62: Tag v3.1-OperatorMaster + CHANGELOG + parent README refresh.
+- S63+: Phase I (later overtaken by audit-driven v3.1.1 + v3.2 sprint).
+
+---
+
+## Session 59, 2026-04-24, Phase G.4: new Part 20.6 retrospective (Phase G CLOSED 12/12)
+
+**Branch:** `docs/sdn-foundation-rev2` post `af97cf0`. **Status:** Phase G 12/12 sessions DONE (100%), 5/5 areas COMPLETE. Release candidate v3.1-OperatorMaster fully eligible.
+
+### Deliverable, Part 20.6 reflective synthesis (new, 432 lines)
+
+`sdn-onboard/20.6 - ovs-openflow-ovn-retrospective-2007-2024.md`. Prose-heavy historical narrative looking back over 17 years of SDN.
+
+9 main sections:
+- §20.6.1 retrospective principles (hindsight bias / evidence-based / vision-reality-lesson).
+- §20.6.2 Era 1, founding 2007-2011 (Stanford / Nicira / OF 1.0 / ONF / 3 visions / scalability mistake).
+- §20.6.3 Era 2, reality 2011-2014 (OF 1.1-1.5 / Google B4 hybrid / TTP seeds declarative).
+- §20.6.4 Era 3, hypervisor overlays win 2013-2017 (VMware-Nicira / NSX / Neutron-OVS / pure OF narrows).
+- §20.6.5 Era 4, OVN 2015-2020 (announcement / NBDB-northd-SBDB-ovn-controller / Linux Foundation).
+- §20.6.6 Era 5, production hardening 2020-2024 (10 LTS milestones / I-P + Raft + observability).
+- §20.6.7 **10 universal meta-lessons** (right problem wrong abstraction / structural scalability / declarative > imperative / eventually consistent > synchronous / observability first-class / protocol purity not a goal / open governance beats lock-in / incident-driven hardening / upgrade path mandatory / training is long-haul).
+- §20.6.8 frontier 2024-2030 (6 trends with technical basis + 3 hype-cycle).
+- §20.6.9 Capstone reflective: "Did OVS/OpenFlow/OVN succeed?".
+
+Appendix: 2007-2024 timeline with 40+ milestones.
+
+Quality gates: Rule 9 null 0, Rule 11 2 fix, Rule 13 em-dash **0.0046/line** (Phase G record), Rule 14 N/A.
+
+Phase G FINAL STATE: 12/12 sessions, 5/5 areas (G.1 + G.2 + G.3 + G.4 + G.5) all COMPLETE.
+
+---
+
+## Session 58, 2026-04-24, Phase G.2.3: new Part 20.5 OVN forensic case studies
+
+**Branch:** `docs/sdn-foundation-rev2`. **Status:** G.2 area 3/3 COMPLETE.
+
+### Deliverable, Part 20.5 OVN forensic case studies (new, 842 lines)
+
+Sister of Part 9.26 but scope OVN distributed control plane cross-chassis. 3 case studies + cross-case takeaway + 2 GE + Capstone POE:
+
+- **Case 1: Port_Binding migration race** (dual-bind transient 3-18s). Mechanism: SBDB Raft propagation + ovn-controller run loop. 4-tier remediation: manual binding-release / Nova ML2 step-ordering 2s confirm / upgrade 22.06+ `requested_chassis` atomic / capacity planning.
+- **Case 2: northd bulk tenant deletion memory cascade** (5000 LSP individual transaction to 400MB->2.4GB balloon to OOM to 4m40s outage). Anatomy `memory/show` 5-field + `inc-engine/show` recompute + `stopwatch/show ovnnb_db_run` 8.9s. 4-tier: wait recovery / batch 100*50*3s / systemd MemoryMax + OOMPolicy / upgrade 23.09+ incremental GC.
+- **Case 3: MAC_Binding table explosion via ARP scan** (malware tenant scan 65K IP at 75/s to 67900 rows/15min). 4-tier: batch destroy 500*2s / ACL ARP rate-limit / upgrade 24.03+ `mac_binding_age_threshold=300` / daily cron audit.
+
+Cross-case takeaway: 3 design lessons (claim protocol idempotent+atomic / I-P memory bounded+observable / distributed learned state age-bounded by default).
+
+Quality gates: Rule 9 0, Rule 11 3 fix, Rule 13 0.0083/line (record low), Rule 14 N/A.
+
+---
+
+## Session 57, 2026-04-24, Phase G.2.2: expand Part 9.14 incident decision tree
+
+**Branch:** `docs/sdn-foundation-rev2`.
+
+Expand Part 9.14 from 956 to 1494 lines (+538). Append 5 new scenarios K-O:
+- Scenario K: BFD thundering herd after ToR underlay reboot.
+- Scenario L: ovn-northd compile stuck on bulk NBDB update.
+- Scenario M: chassis ghost claim after hard power off.
+- Scenario N: ovn-controller infinite recompute loop.
+- Scenario O: cert expiry cluster-wide outage.
+
+§9.14.7 master matrix expanded 15 to 20 symptoms. §9.14.10 GE Phase G.2.2 reproduces Scenario L. §9.14.11 Capstone POE refutes "rolling restart fixes everything".
+
+Quality gates: Rule 9 0, Rule 11 5 fix, Rule 13 0.0395/line, Rule 14 no new SHA claim.
+
+---
+
+## Session 55-56, 2026-04-24, Phase G.5.2 + G.3.3 (Block XX expansion)
+
+- **S55 G.5.2** (Part 20.4 new, 1422 lines): OVS daily operator playbook, sister of 20.3 but pure OVS. 18 sections, 10 task categories, 2 end-to-end workflows, 3 GE + Capstone POE. Closes G.5 Tools 2/2.
+- **S56 G.3.3** (Part 20.1 expand, 475 to 1334 lines, +859): Security hardening + 4-layer audit trail + RBAC + mTLS + incident response 5-step + compliance logging. Closes G.3 Debug 3/3.
+
+---
+
+## Session 51-54, 2026-04-24, Phase G.3.1 + G.3.2 + G.5.1 + G.2.1 batch
+
+- **S51 G.3.1** (Part 20.2 new, 1627 lines): OVN troubleshooting deep-dive, 14 sections covering 3-layer debug NB/SB/OpenFlow, ovn-trace + ovn-detrace deep dive, Port_Binding 8-type forensic, 16-symptom matrix, 3 GE + Capstone.
+- **S52 G.3.2** (Part 9.26 expand, 464 to 1185 lines, +721): 2 new case studies (LACP bond flap cascade + conntrack zone collision migration) + 2 GE.
+- **S53 G.5.1** (Part 20.3 new, 1554 lines): OVN daily operator playbook, 18 sections, 10 task categories, 2 end-to-end workflows.
+- **S54 G.2.1** (Part 9.14 expand, 394 to 956 lines, +562): 10 production incident scenarios A-J + 15-symptom decision matrix + GE OVSDB Raft partition + Capstone POE.
+
+---
+
+## Sessions 38-50 summary, Phase H Foundation Depth (CLOSED 13/13)
+
+Phase H goal: close depth gaps from 2026-04-24 audit (110 concept audit: 22 rich / 24 medium / 65 shallow / 18 zero-mention).
+
+Outcomes:
+- Curriculum 105 to 111 files, 37522 to 44084 lines (+6562 lines).
+- Template library `sdn-onboard/_templates/` (4 templates A/B/C/D + README, 500 lines).
+- Full match field catalog (4.8 new, 926 lines, 12 groups, 100+ fields with 9-attribute anatomy).
+- Full action catalog (4.9 new, 1544 lines, 30 sections, 40+ actions across 3 tiers).
+- OVS internals expand (9.1 + 9.15 classifier + 9.16 connmgr).
+- OVN foundation expand (13.2 LS pipeline 27+10 stages, 13.11 LR pipeline 19+7 stages, 13.1 NBDB 17 tables + SBDB 15 tables, 13.3 conntrack ACL).
+- Tools + final QG (9.14 +ovs-bugtool/pcap/testcontroller).
+
+Tag candidate at end: v3.0-FoundationDepth (later subsumed into v3.1).
+
+---
+
+## Sessions 32-37c summary, Phase E + Phase F + Phase G.1 (Audit + Expert Extension + Truy Vết)
+
+- **Phase E** (S32-S35, 2026-04-22): Audit rev2 residual cleanup (14 fixes), fact-check audit Phase D 101 files (32 issues across 6 categories fixed, Rule 14 codified), Part 9.26 OVS Revalidator Storm Forensic new (464 lines).
+- **Phase F** (S36a-S36g + S37, 2026-04-23): Block XIV (3/3) + Block XVI (3/3) + Block XV 1/3 (15.0 only). 15.1 + 15.2 deferred per user directive ("K8S priority low"). +1165 lines across 7 files.
+- **Phase G.1** (S37a-S37c, 2026-04-23): Truy Vết area COMPLETE 3/3. S37a expand 9.25 (+410). S37b new 9.27 (659 lines, OVS+OVN debug playbook end-to-end with 3-tier parallel diagnostic + Geneve TLV deep-dive + MTU forensic). S37c expand 13.7 + 20.0.
+
+---
+
+## Sessions 22-31 summary, Phase D Firewall + Audit P0-P3
+
+- **S22-23, 2026-04-22:** Phase D firewall foundation COMPLETE: Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful.
+- **S24, 2026-04-23:** Phase D new-Part phase COMPLETE: Part 9.25 + Part 9.21 + Rule 13 codified + Rule 11 retrofit S22+23.
+- **S25-S27:** Phase D expansion COMPLETE: Part 9.9 QoS (+458), 11.3 GRE (+547 + Lab 14), 11.4 IPsec (+662 + Lab 15), 9.2 kernel datapath lab steps (+251 + Lab 11).
+- **S28-S31:** Audit retrofit P0/P1/P2/P3 ALL COMPLETE. P2.5 context-review on 11 Critical files: 426 prose replacements total. ~37 prose patterns covered.
+
+---
+
+## Sessions 12-21 summary, Phase B Content + Phase C Quality Gate
+
+- **S12-15, 2026-04-21:** Phase B Content COMPLETE: 61 foundation files content-expanded across Block 0-XIII + 3 advanced Block XVII-XIX = 64 files total. Tổng ~20K lines content Phase B.
+- **S16-17, 2026-04-22:** Phase C Quality Gate (Master Quality Plan): C2 audit 70 files (4 fixes), C3 prose passes 3 rounds + 2 reverts (127 net replacements 50+ files), C4 URL audit 384 unique URLs (98.7% OK + 3 fixes), C1a lab inventory 54 headings, C5 Expert Extension Block XIV/XV/XVI (18 exercises), C6a publish pipeline (Pandoc XeLaTeX), C7 Block XIII extended (6 files 13.7-13.12, +1606 lines).
+- **S18-21:** Phase C deepening + Phase D plan, Block IX expansion (Lab 7+8), Part 9.18 native L3 routing, 9.19+9.20 flow table + VLAN.
+
+---
+
+## Sessions 2-11 archived
+
+These cover the architecture phase, skeleton refinement (Rule 10), and initial onboard series setup. Full detail preserved in git history. Key milestones:
+
+- Sessions 2-3: Initial sdn-onboard foundation rev 1 + rev 2 architecture (renumber 1.0 to 17.0, 2.0 to 18.0, 3.0 to 19.0).
+- Session 4: Block 0 content (`0.0` how-to-read, `0.1` lab-environment-setup).
+- Sessions 5-8c: Block I-IV skeleton refined per Rule 10 (architecture-first, no over-scope).
+- Session 9-11: Phase A architecture backlog + initial Phase B content kickoff.
+
+For exhaustive detail, run `git log --before=2026-04-12 -- memory/session-log.md` to see the original Vietnamese entries.
+
+---
+
+## Older context (HAProxy + Linux series)
+
+- HAProxy series: 1/29 Parts complete (Part 1, fact-checked + Quiz). Baseline HAProxy 2.0 Ubuntu 20.04.
+- Linux FD doc: `linux-onboard/file-descriptor-deep-dive.md`, 1265 lines, 14 SVG. 7/9 exercises verified (Exercises 7+8 require lab).
+
+---
+
+## Session quick-stats (post-slim)
+
+| Metric | Value |
+|--------|-------|
+| Total sessions logged | 64 (S2 to S64) |
+| Curriculum files | 116 in `sdn-onboard/*.md` |
+| Curriculum lines | ~55.7K |
+| Latest tag | `v3.2-FullDepth` (2026-04-25) |
+| Verdict | A (post-v3.2 audit closure) |
+| Lab verification | 63 exercises pending lab host (user notification awaited) |

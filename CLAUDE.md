@@ -1,311 +1,539 @@
-# Project Memory — network-onboard
+# Project Memory, network-onboard
 
-> **CRITICAL**: Đọc toàn bộ file này TRƯỚC KHI thực hiện bất kỳ thao tác nào.
-> File này là working memory của project, được commit vào git và sync qua mọi thiết bị.
+> **CRITICAL.** Read this entire file BEFORE doing anything. This file is the project's working memory, committed to git, synced across machines.
+
+> **Language convention.** This file (CLAUDE.md) and `memory/*` are written in English (working/meta files). Curriculum content under `sdn-onboard/*.md`, `linux-onboard/*.md`, `haproxy-onboard/*.md`, `network-onboard/*.md` stays Vietnamese (target audience is Vietnamese-speaking learners; see Rule 11).
+
+> **No em-dash in CLAUDE.md.** Use comma, period, colon, or parentheses. Em-dash is reserved for curriculum (Rule 13).
+
+---
+
+## ★ NORTH STAR ★ DO NOT DRIFT ★
+
+> **Core mission.** Build a learning roadmap and curriculum from foundation to advanced **Open vSwitch + OpenFlow + OVN**. Learner outcome: deep understanding of **structure + architecture + hands-on operation** of these three technologies.
+>
+> **Top priority: FOUNDATIONAL DEPTH FIRST.** Foundation must be rock-solid before adding advanced topics. When choosing between "add new advanced Part" and "expand an existing foundation Part for more depth", always choose the latter. The curriculum already has 116 files, 20 blocks, ~55.7K lines; every future addition must justify itself as **strengthening the foundation**, not as breadth expansion.
+
+**In-scope (FOCUS):**
+
+- OVS internals: kernel + userspace datapath, megaflow cache, classifier (TSS), ofproto-dpif xlate, revalidator, upcall, OVSDB, ovs-vswitchd architecture.
+- OpenFlow 1.0 to 1.5: full spec, match field catalog, action catalog, instruction set, group table, meter, bundle, OXM TLV, multi-table pipeline.
+- OVN: NBDB schema, ovn-northd compile, SBDB intermediate, ovn-controller per-chassis, br-int OpenFlow translation, Logical_Switch + Logical_Router pipeline, all 8 Port_Binding types, Load_Balancer, ACL, conntrack, NAT, BFD + HA_Chassis_Group.
+- Overlay (Geneve, VXLAN, GRE) only insofar as OVS+OVN use them as tunnels.
+- Tools mastery: `ovs-vsctl`, `ovs-ofctl`, `ovs-dpctl`, `ovs-appctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-trace`, `ofproto/trace`, `ovn-detrace`.
+- Debug + troubleshoot + forensic + daily operator playbook (incident decision tree, anatomy template, POE).
+
+**Out-of-scope (DO NOT DRIFT):**
+
+- Kubernetes networking depth (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
+- DPDK fast-path internals (PMD thread tuning, mempool, hugepage).
+- XDP / eBPF datapath as replacement for OVS kernel module.
+- Service mesh (Istio, Linkerd, Cilium control plane).
+- Pure cloud-native abstractions (CRD, operator pattern), except where directly relevant to OVN logical model.
+- Block XV (Cloud Native) was officially deprioritized by user on 2026-04-23. 15.1 + 15.2 are deferred indefinitely.
+
+**Self-check before writing a new Part or expanding a section:**
+
+> *"Does this topic make the engineer better at OVS, OpenFlow, or OVN? If it only makes them better at K8S, DPDK, or XDP, it is OUT OF SCOPE."*
+
+When in doubt, stop and ask the user before proceeding. Out-of-scope detours bloat the curriculum and dilute focus.
+
+---
+
+## ★ SECOND NORTH STAR ★ QUALITY OVER SPEED ★
+
+> **Owner directive (verbatim, 2026-04-25):** *"cái tôi cần là chất lượng, tỉ mỉ, cẩn thận và hợp lý. Tốn bao nhiêu thời gian hay bao nhiêu effort hoàn toàn không quan trọng với tôi."*
+>
+> *"Tôi đề cao tính chính xác, giải thích dễ hiểu, sự tỉ mỉ và cẩn thận hơn là tốc độ. Ví dụ làm việc tốc độ thì kết quả sẽ mất đi tính chất lượng."*
+
+**Translation:** the user values **accuracy + clear explanation + meticulousness + caution** above all. Speed is explicitly NOT a goal. Working fast trades away quality, which is unacceptable.
+
+**Operating principles:**
+
+1. **Verify, never estimate.** When the user asks for a count, statistic, or status, run `wc -l`, `grep`, `git log`, or MCP API. Do NOT guess from memory or extrapolate from prior context. State the verified number.
+2. **Explain why before what.** When introducing a concept or recommending an action, lead with the reasoning, then the conclusion. Vietnamese learners reading the curriculum need the *why* to internalize, not just the procedure.
+3. **Read the file before editing.** Always Read the actual current state before Edit/Write. Do NOT rely on cached mental models from earlier in the session. The file may have been modified by a linter, by the user, or by an earlier AI step.
+4. **Check every URL before adding it.** Use `web-fetcher` or `curl -I`. Dead URLs are silent quality bugs that surface much later.
+5. **Cross-reference upstream source.** For every commit SHA, function name, file path, line number, or schema claim, verify via MCP GitHub (Rule 14). Do not cite from memory.
+6. **Pre-flight checklist before commit.** Run Rule 6 Checklist B (before write) and Checklist C (before commit) every single time. Do not skip.
+7. **When asked to be fast, refuse politely.** If a user request implies speed (e.g., "quick fix", "just commit it"), the response is to acknowledge but still do the careful version. Speed is not a valid trade-off.
+8. **One commit per logical unit.** Do not bundle unrelated changes. Each commit should be reviewable in isolation, with a clear scope statement.
+
+**Anti-pattern signals (you are slipping into speed mode if):**
+
+- Skipping Read before Edit "because the file was just shown".
+- Citing line numbers from memory instead of verifying.
+- Writing a paragraph of conclusions before reading the source they are about.
+- Batching 3 unrelated fixes into one commit "to save commits".
+- Dropping pre-commit checklists "because nothing seems risky".
+- Estimating instead of measuring.
+
+When you catch yourself doing any of these, STOP, restart that step the careful way.
+
+---
 
 ## Owner
 
-VO LE (volehuy1998@gmail.com) — Computer Network Engineer, OpenStack/kolla-ansible, SDN/OVN/OVS researcher.
+VO LE (volehuy1998@gmail.com), Computer Network Engineer, OpenStack/kolla-ansible, SDN/OVN/OVS researcher.
+
+---
 
 ## Repository Structure
 
 ```
-network-onboard/                    ← Repo root (GitHub: volehuy1998/network-onboard)
-├── CLAUDE.md                       ← FILE NÀY — working memory
-├── README.md                       ← Parent README (entry point cho toàn bộ repo)
-├── memory/                         ← Deep memory — session log, state tracking
-│   ├── session-log.md              ← Log của session gần nhất
-│   ├── file-dependency-map.md      ← Bản đồ phụ thuộc giữa các file
-│   └── haproxy-series-state.md     ← Trạng thái từng Part trong series
-├── haproxy-onboard/                ← HAProxy onboard series (29 Parts, 6 Blocks)
-│   ├── README.md                   ← TOC + Knowledge Dependency Map + Version Tracker link
-│   ├── 1.0 - haproxy-history-and-architecture.md  ← Part 1 (DONE)
-│   ├── references/
-│   │   └── haproxy-version-evolution.md  ← Version Evolution Tracker (52 entries)
-│   └── images/
-├── linux-onboard/                  ← Linux/RHCSA onboard series
-├── network-onboard/                ← Network/CCNA onboard series
-├── references/                     ← Shared references (The Linux Programming Interface, etc.)
-└── images/                         ← Shared images
+network-onboard/                    (repo root, GitHub: volehuy1998/network-onboard)
+├── CLAUDE.md                       (THIS FILE, working memory)
+├── README.md                       (parent README, entry point for the repo)
+├── CHANGELOG.md                    (release notes, Keep a Changelog format)
+├── memory/                         (deep memory: state trackers, dictionaries, audit summaries)
+│   ├── MEMORY.md                   (auto-memory index, hooks into Claude)
+│   ├── session-log.md              (session-by-session log, append-only)
+│   ├── file-dependency-map.md      (Rule 2 cross-file sync map)
+│   ├── sdn-series-state.md         (per-Part status tracker, Rule 5 handoff)
+│   ├── audit-index.md              (TOC of audit reports)
+│   ├── audit-2026-04-25-summary.md (consolidated audit findings, latest)
+│   ├── rule-11-dictionary.md       (Vietnamese prose translation dictionary)
+│   ├── lab-verification-pending.md (exercises pending lab host)
+│   └── haproxy-series-state.md
+├── sdn-onboard/                    (SDN onboard series, Vietnamese)
+├── haproxy-onboard/                (HAProxy onboard series, Vietnamese)
+├── linux-onboard/                  (Linux/RHCSA onboard series, Vietnamese)
+├── network-onboard/                (Network/CCNA onboard series, Vietnamese)
+├── references/                     (shared references)
+└── images/                         (shared images)
 ```
 
-## Mandatory Rules — Đọc trước khi làm bất kỳ điều gì
+---
 
-### Rule 1: Skill Activation Sequence (BẮT BUỘC)
+## Mandatory Rules
 
-Khi **viết, sửa, hoặc audit/review** file `.md` trong bất kỳ onboard series nào, PHẢI kích hoạt skills theo thứ tự:
+The repo has 6 skills installed at `~/.claude/skills/`. All 6 must be used; do not skip any when the activation condition holds.
 
-> **Bài học từ lỗi thực tế (session 2026-03-30):** Audit Part 1 + cấu trúc series nhưng chỉ
-> kích hoạt 2/4 skills (professor-style, document-design), bỏ qua fact-checker và web-fetcher.
-> Kết quả: phát hiện lỗi cấu trúc nhưng bỏ sót lỗi factual và dead links.
-> Nguyên nhân: diễn giải sai "viết hoặc sửa" → coi audit là "chỉ đọc" → bỏ qua verification.
-> **Quy tắc: 4 skills LUÔN kích hoạt cho MỌI tương tác với file .md — không có ngoại lệ.**
+### Rule 1: Skill Activation Sequence (MANDATORY)
 
-```
-1. professor-style    → Kiểm soát giọng văn, cấu trúc khái niệm (6 mục: 2.1-2.6)
-2. document-design    → Kiểm soát bố cục, heading, learning elements
-3. fact-checker       → Xác minh MỌI technical claim trước khi commit
-4. web-fetcher        → Xác minh MỌI URL trước khi đưa vào tài liệu
-```
+**Group A, Core 4 (ALWAYS active for ANY interaction with `.md` files):**
 
-**KHÔNG được viết content trước rồi review sau.** Phải đọc skill TRƯỚC → viết → self-audit.
+1. `professor-style`: tone control, conceptual structure (6 criteria 2.1 to 2.6).
+2. `document-design`: layout, headings, learning elements.
+3. `fact-checker`: verify EVERY technical claim before commit.
+4. `web-fetcher`: verify EVERY URL before adding to documentation.
 
-### Rule 2: Cross-File Sync (BẮT BUỘC)
+**Group B, 2 conditional (consider before skipping):**
 
-Trước khi commit, kiểm tra `memory/file-dependency-map.md` để xác định file nào bị ảnh hưởng.
+5. `search-first`: before writing new code/script/utility. Adopt > Extend > Compose > Build.
+6. `deep-research`: when content needs multi-source citation beyond offline `doc/*` (firecrawl + exa MCP).
 
-Ví dụ thực tế đã xảy ra: sửa `haproxy-onboard/README.md` (version 3.2 → 2.0) nhưng QUÊN sửa `README.md` (parent) — vẫn còn references đến HAProxy 3.2. Nguyên nhân: không có dependency map.
+**Workflow.** Open `.md` to write/edit/audit, activate Core 4 immediately. Before writing helper code, activate `search-first`. Before writing content needing multi-source research, activate `deep-research`. Record activated skills in the fact-forcing gate answer. Do not write content first then review afterwards. Always: read skill, write, self-audit.
 
-**Quy trình bắt buộc:**
-```
-1. Xác định file đang sửa
-2. Tra dependency map → liệt kê related files
-3. Kiểm tra related files có cần cập nhật không
-4. Sửa TẤT CẢ related files trong CÙNG commit
-```
+(Origin: 2026-03-30 audit miss; 2026-04-22 added Group B.)
+
+### Rule 2: Cross-File Sync (MANDATORY)
+
+Before commit, consult `memory/file-dependency-map.md` to identify dependent files.
+
+**Process:** identify file being edited, look up dependency map, check related files, update ALL related files in the SAME commit.
+
+(Origin: parent `README.md` left stale after `haproxy-onboard/README.md` version bump.)
 
 ### Rule 3: Version Annotation Convention
 
-Khi viết nội dung có sự khác biệt giữa các phiên bản HAProxy:
-
-```markdown
-> **Lưu ý phiên bản:** <nội dung khác biệt>
-```
-
-Đồng thời cập nhật `haproxy-onboard/references/haproxy-version-evolution.md` với entry mới.
+When writing content with HAProxy version differences, use the callout `> **Version note:** <difference>`. Also update `haproxy-onboard/references/haproxy-version-evolution.md` with a new entry.
 
 ### Rule 4: Git Workflow
 
-- **Protected branch**: KHÔNG push trực tiếp lên main/master
-- **Commit convention**: Conventional Commits (`feat()`, `fix()`, `docs()`)
-- **Branching**: GitHub Flow (main + feature branches)
-- Đọc `git-workflow` skill trước mọi thao tác git
+- Protected branch: do NOT push directly to `main`/`master`.
+- Commit convention: Conventional Commits (`feat()`, `fix()`, `docs()`).
+- Branching: GitHub Flow (main + feature branches).
+- Read the `git-workflow` skill before any git operation.
 
 ### Rule 5: Session Handoff Protocol
 
-Khi KẾT THÚC session (hoặc khi user nói "dừng", "tạm dừng", "kết thúc"):
+**On session END (or when user says "stop", "pause", "end"):**
 
-```
-1. Cập nhật memory/session-log.md với:
-   - Ngày, thời gian
-   - Những gì đã làm (commits, files changed)
-   - Những gì CHƯA làm (pending tasks)
-   - Branch hiện tại và trạng thái (clean/dirty)
-   - Lệnh cần chạy trên local (nếu có, ví dụ: git push)
-2. Cập nhật memory/haproxy-series-state.md nếu Part nào thay đổi status
-3. Commit memory changes
-```
+1. Update `memory/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
+2. Update `memory/sdn-series-state.md` if any Part status changed.
+3. Commit memory changes.
 
-Khi BẮT ĐẦU session mới:
-```
-1. Đọc CLAUDE.md (file này)
-2. Đọc memory/session-log.md → biết context từ session trước
-3. Đọc memory/haproxy-series-state.md → biết trạng thái series
-4. Kiểm tra git status, git branch, git log
-5. Thông báo cho user: "Tôi đã đọc context. Session trước [tóm tắt]. Pending: [danh sách]."
-```
+**On session START:**
 
-### Rule 6: Quality Gate — Pre-flight Checklist (BẮT BUỘC)
+1. Read CLAUDE.md (this file).
+2. Read `memory/session-log.md` (last session context).
+3. Read `memory/sdn-series-state.md` (curriculum status).
+4. Run `git status`, `git branch`, `git log`.
+5. Tell the user: "I have read context. Last session [summary]. Pending: [list]."
 
-> Nguồn gốc: `.claude-skills/quality-gate/SKILL.md` — tích hợp trực tiếp vào đây để enforcement.
-> Lý do: skill nằm trong repo nhưng ngoài danh sách registered skills → không bao giờ được trigger tự động.
-> Bài học: session trước đã viết section 1.10 (close-on-exec) mà bỏ qua quality-gate hoàn toàn.
+### Rule 6: Quality Gate, Pre-flight Checklist (MANDATORY)
 
-**Checklist B — TRƯỚC KHI viết/sửa/audit file .md HOẶC .svg (BẮT BUỘC):**
-```
-□ 1. Kích hoạt professor-style SKILL → nắm 6 criteria (2.1-2.6)
-□ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules, Rule 8
-□ 3. Xác định file đang sửa
-□ 4. Tra memory/file-dependency-map.md → liệt kê related files (kể cả Tầng 5: SVG↔markdown)
-□ 5. Đọc related files để biết content hiện tại
-□ 5b. NẾU sửa SVG: grep tất cả .md tham chiếu SVG → đọc caption hiện tại → ghi nhận entity
-□ 6. BẮT ĐẦU viết/sửa (KHÔNG viết trước bước 1-5b)
-□ 6b. NẾU sửa SVG: update caption NGAY SAU khi hoàn thành SVG — trước bất kỳ task khác
-```
+**Checklist B, BEFORE writing/editing/auditing `.md` or `.svg`:**
 
-**Checklist C — TRƯỚC KHI commit (BẮT BUỘC):**
-```
-□ 1. Fact-check: liệt kê MỌI technical claims → verify từng claim
-□ 2. URL check: liệt kê MỌI URLs → verify bằng web-fetcher hoặc curl
-□ 3. Cross-file sync: tra dependency map → kiểm tra related files
-□ 4. Version annotation: nếu có cross-version content → thêm callout + update tracker
-□ 5a. SVG spacing+diacritics: nếu có SVG mới/sửa → chạy svg-audit.py + diacritics-audit.py (Rule 6). 0 violation.
-□ 5b. SVG-caption consistency: chạy svg-caption-consistency.py cho mỗi SVG đã sửa (Rule 8). 0 mismatch.
-□ 6. File integrity: chạy null byte check (Rule 9) trên MỌI file text đã modified. 0 null bytes.
-□ 7. Git workflow skill: đọc trước khi commit
-□ 8. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
-```
+1. Activate `professor-style` skill (6 criteria 2.1 to 2.6).
+2. Activate `document-design` skill (chapter template, heading rules, Rule 8).
+3. Identify the file being edited.
+4. Look up `memory/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
+5. Read related files for current content.
+6. If editing SVG: grep all `.md` referencing the SVG, read current captions, note entities.
+7. START writing/editing (NOT before steps 1 to 6).
+8. If editing SVG: update caption IMMEDIATELY after SVG completion, before any other task.
 
-**Checklist E — Khi thêm Part mới (BẮT BUỘC):**
-```
-□ 1. Chạy Checklist B
-□ 2. Tạo file theo convention: X.0 - <name>.md
-□ 3. Include header block + learning objectives theo document-design
-□ 4. Cập nhật README.md (TOC, dependency graph)
-□ 5. Cập nhật memory/haproxy-series-state.md
-□ 6. Cập nhật memory/file-dependency-map.md
-□ 7. Chạy Checklist C
-```
+**Checklist C, BEFORE commit:**
 
-**Nguyên tắc:** Checklist không phải bureaucracy — giống pre-flight check phi công. Overhead 2-3 phút. Chi phí lỗi đồng bộ: phải sửa lại session sau, tốn thêm commit, có thể bỏ sót.
+1. Fact-check: list EVERY technical claim, verify each.
+2. URL check: list EVERY URL, verify with `web-fetcher` or `curl`.
+3. Cross-file sync: check dependency map.
+4. Version annotation: cross-version content gets a callout + tracker entry.
+5. SVG spacing + diacritics: run `svg-audit.py` + `diacritics-audit.py`. Zero violation.
+6. SVG-caption consistency: run `svg-caption-consistency.py`. Zero mismatch.
+7. File integrity: null byte check (Rule 9) on EVERY modified text file. Zero null bytes.
+8. Rule 11 Vietnamese Prose scan (full regex `§11.6`, not just `inspect|support`). Classify each hit per §11.3, fix prose hits, add new dictionary entries.
+9. Rule 11 spot-check bold label + section heading: `grep '^##' <file>`, `grep -E '^\*\*[A-Z][a-z]+' <file>`, `grep -E '^> \*\*(Key Topic|Hiểu sai|Điểm mấu chốt)' <file>`.
+10. Rule 13 em-dash density: target < 0.10/line. Audit every em-dash if > 0.10, fix prose overuse.
+11. Read `git-workflow` skill before commit.
+12. Self-audit `professor-style` 6 criteria on new content.
 
-### Rule 7: Terminal Output Fidelity (BẮT BUỘC)
+**Checklist E, when adding a new Part:**
 
-> Nguồn gốc: session 2026-04-04. Viết unified FD exercise, tự ý cắt output `fdinfo` chỉ giữ `pos:`,
-> bỏ `flags:` và `mnt_id:`. User đưa output thật đầy đủ 3 dòng và yêu cầu "không được cắt bớt một
-> chữ nào" — nhưng Claude vẫn tuyên bố "khớp hoàn hảo" vì chỉ so giá trị `pos` mà không đếm số dòng.
-> Nguyên nhân gốc: không có quy tắc nào trong CLAUDE.md hoặc skills bắt buộc giữ nguyên output.
+1. Run Checklist B.
+2. Create file with naming convention `X.0 - <name>.md`.
+3. Header block + learning objectives per `document-design`.
+4. Update `README.md` (TOC, dependency graph).
+5. Update `memory/sdn-series-state.md`.
+6. Update `memory/file-dependency-map.md`.
+7. Run Checklist C.
 
-**Quy tắc:**
+Principle: this is pre-flight, not bureaucracy. 2 to 3 minutes overhead; cost of a sync bug is much higher.
 
-Khi user cung cấp terminal output thực để thay thế vào tài liệu:
+### Rule 7: Terminal Output Fidelity (MANDATORY)
 
-```
-1. KHÔNG được cắt bớt, rút gọn, hoặc lược bỏ bất kỳ dòng nào
-2. KHÔNG được sắp xếp lại thứ tự các dòng
-3. KHÔNG được thay đổi spacing, indentation, hoặc ký tự nào trong output
-4. Khi đối chiếu output: so sánh TỪNG DÒNG (line-by-line diff), không chỉ so giá trị quan tâm
-5. Nếu cần rút gọn output vì quá dài: PHẢI hỏi user trước, nêu rõ dòng nào muốn bỏ và lý do
-```
+When the user provides real terminal output to insert into documentation:
 
-Quy tắc này áp dụng cho mọi loại output: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, và bất kỳ terminal output nào user cung cấp. Output thực là bằng chứng thực nghiệm — cắt bớt bằng chứng là phá hỏng tính xác minh được (reproducibility) của tài liệu.
+1. Do NOT trim, shorten, or omit any line.
+2. Do NOT reorder lines.
+3. Do NOT change spacing, indentation, or any character.
+4. When comparing output: line-by-line diff, not just the value of interest.
+5. To shorten output: ASK the user first, naming which lines to drop and why.
 
-#### Rule 7a: System Log Absolute Integrity (KHÔNG CÓ NGOẠI LỆ)
+Applies to: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, any user-provided output.
 
-> Nguồn gốc: session 2026-04-11. Viết timeline trong SDN 1.0 (FDB poisoning case study)
-> nhưng tự ý: (a) merge 3 dòng log riêng biệt thành 1 block, (b) truncate UUID từ đầy đủ
-> `0a17b4f8-736d-4bf5-ba1e-335d17cb5973` thành `0a17b4f8`, (c) xóa hoàn toàn 3 dòng
-> "Claiming unknown" trong final claim, (d) sửa timestamp `.947` thành `.948`.
-> Rationalization sai: "đây là formatted timeline, không phải raw log."
-> Log hệ thống là forensic evidence — chỉnh sửa bằng chứng dù dưới dạng nào
-> cũng phá hỏng tính toàn vẹn. Rule 7 mục 5 ("hỏi trước") KHÔNG áp dụng cho system log.
+#### Rule 7a: System Log Absolute Integrity (NO EXCEPTIONS)
 
-Log hệ thống (daemon/service logs, diagnostic tool output) tuân theo nguyên tắc
-**toàn vẹn tuyệt đối** — nghiêm ngặt hơn Rule 7 thông thường:
+System logs (daemon/service logs, diagnostic tool output) follow stricter rules than Rule 7:
 
-```
-1. TUYỆT ĐỐI KHÔNG cắt ngắn, rút gọn, truncate — kể cả UUID, path, IP address
-2. TUYỆT ĐỐI KHÔNG merge nhiều dòng log thành 1 entry — mỗi dòng log gốc = 1 visual line
-3. TUYỆT ĐỐI KHÔNG xóa dòng log — dù nội dung "lặp lại" hoặc "không quan trọng"
-4. TUYỆT ĐỐI KHÔNG thay đổi timestamp — dù chỉ 1 millisecond
-5. KHÔNG có ngoại lệ — system log KHÔNG BAO GIỜ được cắt ngắn dưới bất kỳ lý do nào
-6. Khi trình bày log trong format khác (timeline, table, annotated block):
-   - Message body sau log prefix PHẢI giữ nguyên verbatim trên cùng 1 dòng
-   - Mỗi dòng log gốc PHẢI là 1 visual line riêng biệt trong code block
-   - Annotation → dòng riêng với prefix "──", KHÔNG chèn vào giữa message body
-7. Khi timeline chỉ hiển thị subset: PHẢI ghi "[N dòng khác omitted — context: ...]"
-```
+1. ABSOLUTELY NO truncation, even of UUID, path, IP.
+2. ABSOLUTELY NO merging multiple log lines into one entry.
+3. ABSOLUTELY NO deletion of log lines, even if "repetitive" or "unimportant".
+4. ABSOLUTELY NO timestamp modification, not even by 1 ms.
+5. NO EXCEPTIONS. System log is forensic evidence.
+6. When presenting log in another format (timeline, table, annotated block): message body after the prefix MUST stay verbatim on its own line; annotations on separate lines prefixed with `--`.
+7. When showing a subset: include `[N other lines omitted, context: ...]`.
 
-Phạm vi: mọi log từ daemon/service (ovn-controller, ovs-vswitchd, nova-compute,
-neutron-server, haproxy, nginx, journald, syslog, dmesg) và mọi output từ diagnostic
-tools (tcpdump, strace, lsof, ss, conntrack, ovs-ofctl, ovn-trace, ovn-detrace).
-Áp dụng KHÔNG PHÂN BIỆT format trình bày — raw, timeline, table, annotated, hay diagram.
+Scope: every daemon/service log (ovn-controller, ovs-vswitchd, nova-compute, neutron-server, haproxy, nginx, journald, syslog, dmesg) and every diagnostic tool output (tcpdump, strace, lsof, ss, conntrack, ovs-ofctl, ovn-trace, ovn-detrace).
 
-### Rule 8: Vietnamese Sentence Completeness (BẮT BUỘC)
+(Origin: 2026-04-11 SDN 1.0 timeline merged 3 separate log lines, truncated UUID, deleted "Claiming unknown" lines, modified timestamp `.947` to `.948`.)
 
-> Nguồn gốc: session 2026-04-04. Viết câu bridging "nhưng thực tế không" — từ phủ định "không" bị
-> bỏ lửng, thiếu tân ngữ. Người đọc phải tự suy "không" cái gì. User chỉ ra lỗi: "bạn cần giải
-> thích rõ nghĩa hơn 4 từ này". Nguyên nhân gốc: professor-style skill (read-only) không có rule
-> nào yêu cầu mệnh đề tiếng Việt phải đủ thành phần câu. Bổ sung professor-style 5.4 tại đây.
+### Rule 8: Vietnamese Sentence Completeness (MANDATORY)
 
-**Quy tắc:**
+Documentation written for Vietnamese readers. Every clause must be complete on its own; do not lean on implicit context.
 
-Tài liệu viết cho người Việt đọc — mọi mệnh đề phải đủ nghĩa khi đọc đơn lập, không dựa vào
-context ngầm. Ba lỗi cụ thể phải tránh:
+1. Negation cannot dangle: `không`, `chưa`, `chẳng` MUST come with a clear verb or object.
+2. Demonstratives are unambiguous: `điều đó`, `việc này`, `nó` MUST have a clear antecedent within the same or adjacent sentence; otherwise repeat the noun.
+3. Standalone-read test: after writing each sentence, read it isolated from context. If meaning is unclear, rewrite.
 
-```
-1. Từ phủ định bỏ lửng: "không", "chưa", "chẳng" PHẢI đi kèm động từ hoặc tân ngữ rõ ràng
-   Sai:  "...nhưng thực tế không."
-   Đúng: "...nhưng kết quả thực tế luôn khớp với dự đoán của mô hình."
+(Origin: 2026-04-04 dangling `không` at clause end with no object.)
 
-2. Đại từ chỉ định mơ hồ: "điều đó", "việc này", "nó" PHẢI có tiền ngữ rõ ràng
-   trong cùng câu hoặc câu liền trước. Nếu xa hơn → lặp lại danh từ.
-   Sai:  "Fork tạo bản sao. Dup chỉ nhân bản một FD. Điều này giải thích..."
-   Đúng: "...Sự khác biệt selective vs wholesale này giải thích..."
+### Rule 9: File Integrity, Null Byte Prevention (MANDATORY)
 
-3. Phép đọc đơn lập: sau khi viết xong một câu, đọc lại câu đó TÁCH BIỆT khỏi context.
-   Nếu nghĩa không rõ khi đứng một mình → viết lại. Tài liệu kỹ thuật không phải
-   tin nhắn chat — người đọc có thể mở đúng mục đó mà không đọc từ đầu.
-```
-
-### Rule 9: File Integrity — Null Byte Prevention (BẮT BUỘC)
-
-> Nguồn gốc: session 2026-04-04. Commit `9a17eec` chứa file `file-descriptor-deep-dive.md` có
-> 3612 trailing null bytes (0x00) ở cuối. GitHub renderer phát hiện null bytes → phân loại file
-> là binary → từ chối render markdown. VS Code preview bỏ qua trailing nulls → hiển thị bình
-> thường → user không phát hiện cho đến khi merge PR #35 lên master và mở trên GitHub.
-> Nguyên nhân gốc: Write tool đôi khi padding null bytes vào cuối file (sparse file behavior
-> hoặc buffer không flush sạch). Không có bước kiểm tra nào trong Checklist C phát hiện lỗi này.
-
-**Quy tắc:**
-
-TRƯỚC KHI `git add` bất kỳ file nào, chạy kiểm tra file integrity:
+BEFORE `git add`:
 
 ```bash
-# Bước 1: Kiểm tra null bytes trong mọi file đã modified/staged
 for f in $(git diff --name-only --cached 2>/dev/null; git diff --name-only); do
   if [ -f "$f" ]; then
     nullcount=$(python3 -c "print(open('$f','rb').read().count(b'\x00'))")
     if [ "$nullcount" -gt 0 ]; then
-      echo "BLOCKED: $f chứa $nullcount null bytes"
+      echo "BLOCKED: $f has $nullcount null bytes"
     fi
   fi
 done
-
-# Bước 2: Nếu phát hiện null bytes → loại bỏ trước khi commit
-python3 -c "
-d = open('FILE','rb').read()
-clean = d.replace(b'\x00', b'')
-open('FILE','wb').write(clean)
-print(f'Removed {len(d)-len(clean)} null bytes')
-"
-
-# Bước 3: Verify lại — kết quả PHẢI là 0
-grep -cP '\x00' FILE
 ```
 
-**Phạm vi áp dụng:** Mọi file text (.md, .py, .sh, .yml, .html, .svg, .css, .js). Null bytes
-trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ nào. File binary (.png, .jpg,
-.pdf) được miễn kiểm tra này.
+If null bytes found, strip with:
 
-**Dấu hiệu cảnh báo sớm:**
-- `file` command báo "with very long lines" trên file .md → kiểm tra ngay
-- File size bất thường lớn so với số dòng (ví dụ: 93KB cho 1169 dòng text thuần)
-- GitHub hiển thị file như binary hoặc wall of text không format
+```bash
+python3 -c "d=open('FILE','rb').read(); open('FILE','wb').write(d.replace(b'\x00',b''))"
+```
+
+Verify: `grep -cP '\x00' FILE` must return 0.
+
+Scope: every text file (`.md`, `.py`, `.sh`, `.yml`, `.html`, `.svg`, `.css`, `.js`). Null bytes in text files are ALWAYS a bug. Binary files (`.png`, `.jpg`, `.pdf`) are exempt.
+
+Warning signs: `file` command says "with very long lines" on `.md`; abnormally large file size vs line count; GitHub renders the file as binary.
+
+(Origin: commit `9a17eec` had 3612 trailing null bytes; GitHub refused to render markdown.)
+
+### Rule 10: Architecture-First Doctrine (HISTORICAL)
+
+This rule applied during the architecture phase (now complete; project is in content phase since session 12). For historical record only. Skeleton-first discipline still applies when introducing brand-new blocks.
+
+(Originally written 2026-04-21 to constrain over-eager content writing during the skeleton phase.)
+
+### Rule 11: Vietnamese Prose Discipline (MANDATORY)
+
+This is a training program for Vietnamese readers. Prefer natural Vietnamese; keep English only for named entities, syntax, and identifiers. Core principle: **translate at the right place**.
+
+#### 11.1. KEEP English when the word appears as one of:
+
+- **Product / project / organization name**: OpenFlow, OVS, OVN, Open vSwitch, NETCONF, NSX, Nicira, VMware, Linux, Ubuntu, Mininet, Cisco, Broadcom Trident, Stanford, ONF, GitHub, Spamhaus, Prometheus, Arbor Networks, Cloudflare, DigitalOcean, Red Hat, NVIDIA ConnectX-6, Intel E810, Anthropic.
+- **International protocol / acronym**: TCP, UDP, IP, ICMP, SCTP, ARP, DNS, TLS, SSH, HTTP, HTTPS, VLAN, VXLAN, Geneve, BGP, OSPF, BFD, MPLS, NAT, SNAT, DNAT, DDoS, RPC, ECMP, FTP.
+- **CLI verbatim + flag**: `ovs-ofctl`, `ovs-vsctl`, `ovs-appctl`, `ovs-dpctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-northd`, `ovn-controller`, `conntrack`, `iptables`, `modprobe`, `sysctl`, `sudo`, `ping`, `iperf`, `tcpdump`, `--dpdk`, man references like `ovs-fields(7)`, `ovs-actions(7)`, `ovn-architecture(7)`.
+- **Spec field name / match field / OpenFlow identifier**: `ct_state`, `ct_zone`, `ct_mark`, `ct_label`, `metadata`, `cookie`, `priority`, `in_port`, `nw_src`, `nw_dst`, `dl_src`, `dl_dst`, `dl_type`, `tp_dst`, `sport`, `dport`, `reg0..reg15`, `xreg0..xreg7`, OXM, NXM.
+- **Action / instruction / pipeline stage name**: `goto_table`, `resubmit`, `output`, `normal`, `drop`, `mod_dl_src`, `mod_dl_dst`, `dec_ttl`, `ct()`, `ct(commit)`, `ct_next`, `ct_commit`, `ct_lb`, `ct_clear`, `apply_actions`, `write_actions`, `write_metadata`, `clear_actions`, `Apply-Actions`, `Write-Actions`, `Clear-Actions`, `Write-Metadata`, `Goto-Table`, `allow`, `allow-related`, `reject`, `set_queue`, action values like `ct_state=+trk+new`.
+- **Pipeline stage / table name as label**: "Table 0 Classifier", "Table 1 L3 Forwarding", "Ingress ACL", "Egress ACL", "(ACL, routing, output)". These are pipeline stage names in OVS/OVN architecture.
+- **Literal state / flag / protocol value**: `NEW`, `ESTABLISHED`, `RELATED`, `INVALID`, `SYN_SENT`, `SYN_RECV`, `FIN_WAIT`, `TIME_WAIT`, `CLOSE`, `CLOSE_WAIT`, `LAST_ACK`, `UNREPLIED`, `ASSURED`, `[NEW]`, `[UPDATE]`, `[DESTROY]`.
+- **Common international networking term**: SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC, MAC, VIP, NFV, SR-IOV, SmartNIC, FIB, BUM, DMZ, VPN, L2, L3, L4, five-tuple, three-way handshake, pseudo-state, bitfield, tuple, hairpin, subnet, broadcast, multicast, unicast, datapath, bridge, kernel, userspace, namespace, tenant, multi-tenant, chassis, overlay, underlay, east-west, north-south, fast path, slow path, line-rate, offload, DPDK.
+- **OpenFlow / OVS spec concept used as noun**: flow, flow entry, flow table, flow rule, pipeline, multi-table pipeline, match field, action set, instruction, controller, stateful, stateless, conntrack, handshake.
+
+#### 11.2. TRANSLATE to Vietnamese when the word appears in prose
+
+Full dictionary (~60 entries) is in [`memory/rule-11-dictionary.md`](memory/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
+
+When you encounter a word not in the dictionary: ADD it to `memory/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
+
+#### 11.3. Same word, sometimes English sometimes Vietnamese
+
+| Word | KEEP English when | TRANSLATE when |
+|------|------------------|---------------|
+| `routing` | Stage name: `(ACL, routing, output)`, `L3 Forwarding`, `distributed routing` (OVN noun phrase) | Prose verb: "gói tin được định tuyến sang subnet khác" |
+| `output` | Action: `action=output:3`; stage in tuple `(ACL, routing, output)` | Prose: "kết quả của toàn bộ pipeline", "đầu ra của trace" |
+| `table` | OpenFlow concept: `table=0`, "multi-table pipeline" | Prose: "bảng FIB L3", "bảng MAC", "bảng trạng thái conntrack" |
+| `forwarding` | Table name: "Table 2 L2 Forwarding" | Prose: "chuyển tiếp gói tin sang h3" |
+| `state` | Field name: `ct_state`; literal: `state=ESTABLISHED` | Prose: "theo dõi trạng thái", "máy trạng thái" |
+| `flow` | OpenFlow concept: "flow entry", "flow table", "flow rule" | Generic: "luồng dữ liệu" (rare) |
+| `traffic` | Rare | Prose: "lưu lượng đông-tây", "lưu lượng reply" |
+| `connection` | Conntrack literal: `connection ESTABLISHED` | Prose: "kết nối hai chiều", "kết nối h1 to h3" |
+| `switch` | Device name: switch `s1`, OVS switch | Verb "chuyển đổi" translates |
+| `monitoring` | Component name: "Monitoring tool" | Prose: "giám sát bảng trạng thái" |
+| `pattern` | Code/config pattern name | Prose: "mẫu 7-flow Lab 8" |
+| `commit` | CLI/action: `ct(commit)`, `commit entry` | Prose: "tạo entry tồn tại vượt quá vòng đời gói tin" |
+
+**Self-classification question:** Is this word a **named entity** that OVS/OpenFlow/OVN docs use for an entity, syntax, or stage? If YES, keep English. If NO (descriptive/explanatory prose), translate.
+
+#### 11.4. Bold label and section heading
+
+Cannot leave English in:
+- Prose section heading (Vietnamese curriculum).
+- Paragraph-leading bold label: `**Sequential evaluation.**` becomes `**Đánh giá tuần tự.**`.
+- Internal callout label: `> **Key Topic:**` becomes `> **Điểm mấu chốt:**`.
+
+Can keep English when label is a concept/stage name: `## 9.24.3 Action ct(), full semantics`, `**NEW**`, `**ESTABLISHED**`.
+
+#### 11.5. Standalone-read test + hybrid acceptable + misconception callout
+
+- After each sentence, read it isolated. If it has > 3 non-standard English words, rewrite.
+- Hybrid acceptable: "tích hợp với vSphere" (technical term + Vietnamese connector). Not "integrate với vSphere".
+- Quotes inside `> **Hiểu sai:** *"..."*` must be full Vietnamese; only product/action/field names stay English.
+
+#### 11.6. Pre-commit scan checklist (MANDATORY)
+
+Run `grep -niE` for the dictionary regex (see `memory/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
+
+1. Inside URL/code block/CLI sample, skip.
+2. OVS/OVN/OpenFlow product/concept name, skip.
+3. Bold label/section heading/cognitive prose, FIX to Vietnamese.
+
+When uncertain: §11.3 self-classification question.
+
+#### 11.7. Adding new dictionary entries
+
+When you discover a new prose word not in `memory/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
+
+(Origin: session 13 (2026-04-21) initial codification; sessions 22-23 broadened.)
+
+### Rule 12: Exhaustive Offline Source Exploration (MANDATORY)
+
+Before writing any onboard content, inventory all offline sources via recursive Glob:
+
+```
+Glob "sdn-onboard/doc/**/*"
+Glob "haproxy-onboard/doc/**/*"
+Glob "linux-onboard/doc/**/*"
+Glob "network-onboard/doc/**/*"
+Glob "references/**/*"
+```
+
+**Process:**
+
+1. Session start: recursive Glob, list files in `*/doc/**` and `references/**`. Build a mapping: offline file to Block/Part using it.
+2. Before each Write: list relevant `doc/*` for the topic. Cite explicitly in fact-forcing gate, header block, and References section.
+
+**Violation signals:**
+
+- Fact-forcing gate answer missing "Offline source providing content" line.
+- File header missing `> **Primary offline source:**`.
+- References section missing offline source entry.
+- Writing technical content without `doc/*` citation when topic is covered.
+
+(Origin: session 14 (2026-04-22) missed `sdn-onboard/doc/ovs/` (11 PDF + TXT) when writing Block VII + Part 9.0.)
+
+### Rule 13: Em-dash Discipline (MANDATORY for curriculum)
+
+> **Note:** CLAUDE.md and `memory/*` are zero em-dash zone (top of file directive). Rule 13 below applies to curriculum (`*-onboard/*.md`).
+
+Em-dash is the exception, not the default. Vietnamese prose default to:
+
+- **Comma (,)** for clause continuation.
+- **Period (.) + capital** for new sentence.
+- **Colon (:)** for list introduction or explanation.
+- **Parentheses (...)** for aside.
+- **Newline + bullet** for 3+ enumerated items.
+
+#### 13.1. Em-dash IS allowed when
+
+1. Heading-subtitle separator: `# 9.22. OVS multi-table pipeline, goto_table, resubmit`. One em-dash max in heading levels 1 to 3.
+2. Bold mini-label separator in structured rule/flow: `**Rule 1, Always start at table 0.**`.
+3. Bold noun + inline code list intro.
+4. Attribution separator (organization, date).
+5. Table row visual label inside ASCII diagram code block.
+
+#### 13.2. Em-dash is NOT allowed when
+
+1. Replacing comma in continuous prose.
+2. Replacing period when starting a new sentence.
+3. Replacing relative pronoun "là, nghĩa là, tức là".
+4. Inside bullet definition `- X, explanation`.
+5. Inside header block metadata `> **Label:** X, Y`.
+
+#### 13.3. Density threshold
+
+| Level | Em-dash/line | Verdict |
+|-------|--------------|---------|
+| < 0.05 | 1 per 20 lines | Natural |
+| 0.05 to 0.10 | 1 per 10 to 20 lines | Acceptable |
+| 0.10 to 0.15 | 1 per 7 to 10 lines | Warn, audit |
+| > 0.15 | > 1 per 7 lines | Overuse, must fix |
+
+Curriculum target: **< 0.10 em-dash/line**. Files exceeding 0.10 require audit before commit.
+
+#### 13.4. Pre-commit em-dash audit (MANDATORY)
+
+```bash
+for f in $(git diff --name-only --cached | grep .md); do
+  count=$(grep -c $'\xe2\x80\x94' "$f")  # U+2014 em-dash literal
+  lines=$(wc -l < "$f")
+  ratio=$(python -c "print(f'{$count/$lines:.3f}')")
+  echo "$f: $count em-dash / $lines lines ($ratio/line)"
+done
+```
+
+If ratio > 0.10, audit each hit. Fix priority: bullet definition (a) > inline prose lowercase (b) > inline prose capital (c) > header block metadata (d).
+
+#### 13.5. New writing minimizes em-dash
+
+Place em-dash last, not first. Write sentences with normal punctuation; convert to em-dash only if strong emphasis is required. When in doubt, do not use em-dash. Check density every 50 to 100 lines; rewrite if > 0.15.
+
+(Origin: session 24 (2026-04-23) detected 361 em-dash across 4 Phase D files at density 0.13 to 0.19/line; reduced to 155 (57%) via 3-pass scripts + manual.)
+
+### Rule 14: Source Code Citation Integrity (MANDATORY)
+
+Every reference to upstream source code (OVS, OVN, Linux kernel, HAProxy, Nginx, OpenStack, DPDK, FRR, strongSwan, P4, Cilium) MUST be verified via MCP GitHub (or equivalent) BEFORE commit.
+
+#### 14.1. Commit SHA reference
+
+- Verify existence: `mcp__github__get_commit(owner, repo, sha)`.
+- Verify claims match: author + date + message + files changed.
+- Inline cite: 8 to 12 chars (SHA prefix). References section: 40-char full SHA.
+- Inline SHA and Reference section MUST match (grep pre-commit).
+
+#### 14.2. Function name reference
+
+- Verify existence: `mcp__github__search_code(query="function_name repo:owner/repo")`.
+- `search_code` has false negatives. Mandatory fallback: `mcp__github__get_file_contents`, then grep file content.
+- Preserve exact source spelling, even typos. Example: OVN source has `reply_imcp_error_if_pkt_too_big` (typo `imcp`), do not "fix" to `icmp` when citing. Annotate `(upstream typo imcp)` if it might confuse readers.
+- If function renamed across versions, annotate: `(named foo_bar in v22.03, renamed to bar_foo since v24.03 via commit abc1234)`.
+
+#### 14.3. File path reference
+
+- Verify existence at version baseline: `mcp__github__get_file_contents(path, ref)` with `ref` = curriculum baseline tag (e.g., `v22.03.8` for OVN, `v2.17.9` for OVS, `v5.15` for Linux Ubuntu 22.04).
+- If file migrated across versions, annotate per Rule 3. Example: `controller/mac-learn.c` (v22.03 to v24.03) or `controller/pinctrl.c` §MAX_FDB_ENTRIES (v24.09+, commit `fb96ae3679`).
+
+#### 14.4. Line number reference
+
+Line numbers are version-sensitive. Mandatory annotation, choose one:
+
+- **Option A** (branch-specific): `physical.c` lines 1939 to 1968 (OVN branch-24.03).
+- **Option B** (commit permalink): `physical.c` link to GitHub blob at commit SHA (`https://github.com/ovn-org/ovn/blob/SHA/controller/physical.c#L1939-L1968`).
+- **Option C** (function name anchor, RECOMMENDED): instead of line, use function name as stable anchor. Example: "In function `build_lswitch_arp_nd_responder_known_ips` in `northd/northd.c`, find the `op->lsp_has_port_sec || !op->has_unknown` check".
+
+Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is best practice.
+
+#### 14.5. Verbatim commit body quote
+
+- Copy-paste EXACT from MCP API response. No translate, no edit spacing, no bullet format change.
+- A block `> "Verbatim commit body from GitHub API:"` must be 100% English if the commit body is English.
+- Translate only with explicit "paraphrase" label. Do NOT use "verbatim" label on a paraphrase.
+- Dash bullets (`-`) preserve exact, do NOT convert to `(a)(b)(c)`.
+
+#### 14.6. Database table + schema claim
+
+- Verify schema existence via `mcp__github__get_file_contents` for `ovn-sb.ovsschema`, `ovn-nb.ovsschema`, `vswitchd/vswitch.ovsschema`.
+- Parse JSON to list actual tables + columns.
+- Do not fabricate table names. If a feature stores in `other_config` map instead of a dedicated table, say so.
+- Internal C struct is NOT a database table. Distinguish clearly. Example: `struct chassis_features` in-memory differs from a hypothetical `Chassis_features` OVSDB table.
+
+#### 14.7. Pre-commit audit pass
+
+- Grep every new claim in section: SHA, function, path, line number, table name.
+- If > 3 references in a section, run MCP audit batch (verify all).
+- Log evidence in `memory/fact-check-audit-YYYY-MM-DD.md`.
+- Commit only when 100% pass; any failed reference must be fixed or removed.
+
+(Origin: session 32-33i (2026-04-22) found 32 issues across 6 categories on 43 files; codified Rule 14 in commit `7e5608b`.)
+
+---
 
 ## Current State
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-onboard-rewrite` (reset to master + Part 3 re-applied, 2026-04-20) |
-| Master HEAD | `65ca274` — Merge pull request #47 from volehuy1998/docs/sdn-onboard-rewrite |
-| HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
-| HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
-| FD exercises | 7/9 verified. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
-| SDN 1.0 doc | `sdn-onboard/1.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1178 lines** (trimmed 2026-04-20 per plan §3.2: §1.6 deep-dive moved to Part 3, cross-refs added; log integrity preserved) |
-| SDN 2.0 doc | `sdn-onboard/2.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (rewritten 2026-04-10) |
-| SDN 3.0 doc | `sdn-onboard/3.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,769 bytes** (new 2026-04-20, 7 §3.x + 3 Labs + Exam Prep + References; Lab 1 POE sáu lớp) |
-| Pending PR | `docs/sdn-onboard-rewrite` → `master` — Part 3 addition (plans/, sdn-onboard/3.0, TOC extensions in 4 metadata files) |
-| Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.2-FullDepth` (2026-04-25). |
+| Curriculum | 116 files in `sdn-onboard/*.md`, ~55.7K lines, 20 blocks. Audit verdict: A. |
+| Active phase | Awaiting user direction. v3.1, v3.1.1, v3.2, Phase G+H all closed. |
+| Lab host | PENDING (waiting on user). 63 exercises pending verification. |
+| HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
+| Trackers | [memory/sdn-series-state.md](memory/sdn-series-state.md), [memory/audit-index.md](memory/audit-index.md), [memory/session-log.md](memory/session-log.md). |
+| Dependency map | [memory/file-dependency-map.md](memory/file-dependency-map.md) (Rule 2). |
+| Lab pending | [memory/lab-verification-pending.md](memory/lab-verification-pending.md). |
+
+Session-by-session history (S1 to S63+) is in `memory/session-log.md`. Audit history is in `memory/audit-index.md`. `git log` is the source of truth for commit detail.
+
+---
 
 ## Skill Quick Reference
 
-| Skill | Khi nào dùng |
+**Installed at `~/.claude/skills/` (6 skills, all must be used):**
+
+| Group | Skill | When to use |
+|-------|-------|-------------|
+| Core A | `professor-style` | EVERY teaching content, `.md` write, technical explanation |
+| Core A | `document-design` | EVERY `.md` in onboard series |
+| Core A | `fact-checker` | EVERY technical claim, CLI command, config directive |
+| Core A | `web-fetcher` | EVERY URL to fetch or verify |
+| Extra B | `search-first` | Before writing new code/script/utility |
+| Extra B | `deep-research` | Multi-source citation research (firecrawl + exa MCP) |
+
+**Internal CLAUDE.md-triggered skills (outside global registry):**
+
+| Skill | When to use |
 |-------|-------------|
-| professor-style | MỌI nội dung giảng dạy, viết .md, giải thích kỹ thuật |
-| document-design | MỌI file .md trong onboard series |
-| fact-checker | MỌI technical claim, CLI command, config directive |
-| web-fetcher | MỌI URL cần fetch hoặc verify |
-| git-workflow | MỌI thao tác git: commit, push, branch, PR |
-| flow-graph | Sequence diagram, protocol flow, handshake diagram |
-| quality-gate | MỌI thao tác viết/sửa/commit — pre-flight checklist (Rule 6 ở trên) |
+| `git-workflow` | EVERY git operation (commit, push, branch, PR) |
+| `flow-graph` | Sequence diagram, protocol flow, handshake diagram |
+| `quality-gate` | EVERY write/edit/commit (pre-flight, see Rule 6 above) |
+
+---
 
 ## Preferences
 
-- Accuracy first — double-check everything, cross-reference multiple sources
-- No AI writing patterns — professor/PhD teaching style
-- No emoji in technical content
-- Real examples with verifiable output
-- Concise but deep — analyst/engineer tone, not mechanical
-- Vietnamese language for documentation content
+- Accuracy first. Double-check, cross-reference multiple sources.
+- No AI writing patterns. Professor/PhD teaching style.
+- No emoji in technical content.
+- Real examples with verifiable output.
+- Concise but deep. Analyst/engineer tone, not mechanical.
+- Vietnamese for documentation content (curriculum); English for CLAUDE.md and `memory/*` (working files).
