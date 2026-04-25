@@ -215,9 +215,9 @@
 |------|-------|-------|--------|-------|
 | 13.7 | ovn-controller internals | 657 | DONE (Phase H + Phase I.A2 S65') | Tier 2 §13.7.8 controller/physical.c source: physical_run + consider_port_binding + put_encapsulation Geneve TLV class 0x0102 + Port_Binding claim race + Anatomy debug/dump-local-bindings + GE Geneve TLV trace 2-chassis |
 | 13.8 | ovn-northd translation | 465 | DONE (Phase I.A1 S64') | Tier 2 §13.8.5-8 source: northd.c + ovnnb_db_run + build_lflows + I-P engine 2-node + Anatomy inc-engine/show + parallel build_lflows_thread + Capstone POE n-threads |
-| 13.9 | OVN Load_Balancer internals | 218 | DONE | ct_lb + VIP + Service_Monitor |
+| 13.9 | OVN Load_Balancer internals | 627 | DONE (+ J.5.b v3.5) | ct_lb + VIP + Service_Monitor + section 13.9.X backfill J.5.b: selection_fields consistent hashing, hairpin_snat_ip, Load_Balancer_Group aggregation, Load_Balancer_Health_Check 4 options + Service_Monitor |
 | 13.10 | OVN DHCP + DNS native | 327 | DONE | DHCP options catalog |
-| 13.11 | OVN gateway router (distributed) | 516 | DONE (Phase H) | 1 Anatomy + 19-23 stages Template D |
+| 13.11 | OVN gateway router (distributed) | 683 | DONE (Phase H + J.5.b v3.5) | 1 Anatomy + 19-23 stages Template D + section 13.11.9 backfill J.5.b: reside-on-redirect-chassis distributed gateway option (TRUE GAP closure: 0→1 file), Logical_Router_Policy 4 action (allow/drop/reroute/jump), Logical_Router_Static_Route ECMP + route_table VRF + BFD fast failover |
 | 13.12 | OVN IPAM native (dynamic + static) | 254 | DONE | |
 
 ### Migration (13.13)
