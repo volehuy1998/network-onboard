@@ -1,979 +1,539 @@
-# Project Memory — network-onboard
+# Project Memory, network-onboard
 
-> **CRITICAL**: Đọc toàn bộ file này TRƯỚC KHI thực hiện bất kỳ thao tác nào.
-> File này là working memory của project, được commit vào git và sync qua mọi thiết bị.
+> **CRITICAL.** Read this entire file BEFORE doing anything. This file is the project's working memory, committed to git, synced across machines.
+
+> **Language convention.** This file (CLAUDE.md) and `memory/*` are written in English (working/meta files). Curriculum content under `sdn-onboard/*.md`, `linux-onboard/*.md`, `haproxy-onboard/*.md`, `network-onboard/*.md` stays Vietnamese (target audience is Vietnamese-speaking learners; see Rule 11).
+
+> **No em-dash in CLAUDE.md.** Use comma, period, colon, or parentheses. Em-dash is reserved for curriculum (Rule 13).
+
+---
+
+## ★ NORTH STAR ★ DO NOT DRIFT ★
+
+> **Core mission.** Build a learning roadmap and curriculum from foundation to advanced **Open vSwitch + OpenFlow + OVN**. Learner outcome: deep understanding of **structure + architecture + hands-on operation** of these three technologies.
+>
+> **Top priority: FOUNDATIONAL DEPTH FIRST.** Foundation must be rock-solid before adding advanced topics. When choosing between "add new advanced Part" and "expand an existing foundation Part for more depth", always choose the latter. The curriculum already has 116 files, 20 blocks, ~55.7K lines; every future addition must justify itself as **strengthening the foundation**, not as breadth expansion.
+
+**In-scope (FOCUS):**
+
+- OVS internals: kernel + userspace datapath, megaflow cache, classifier (TSS), ofproto-dpif xlate, revalidator, upcall, OVSDB, ovs-vswitchd architecture.
+- OpenFlow 1.0 to 1.5: full spec, match field catalog, action catalog, instruction set, group table, meter, bundle, OXM TLV, multi-table pipeline.
+- OVN: NBDB schema, ovn-northd compile, SBDB intermediate, ovn-controller per-chassis, br-int OpenFlow translation, Logical_Switch + Logical_Router pipeline, all 8 Port_Binding types, Load_Balancer, ACL, conntrack, NAT, BFD + HA_Chassis_Group.
+- Overlay (Geneve, VXLAN, GRE) only insofar as OVS+OVN use them as tunnels.
+- Tools mastery: `ovs-vsctl`, `ovs-ofctl`, `ovs-dpctl`, `ovs-appctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-trace`, `ofproto/trace`, `ovn-detrace`.
+- Debug + troubleshoot + forensic + daily operator playbook (incident decision tree, anatomy template, POE).
+
+**Out-of-scope (DO NOT DRIFT):**
+
+- Kubernetes networking depth (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
+- DPDK fast-path internals (PMD thread tuning, mempool, hugepage).
+- XDP / eBPF datapath as replacement for OVS kernel module.
+- Service mesh (Istio, Linkerd, Cilium control plane).
+- Pure cloud-native abstractions (CRD, operator pattern), except where directly relevant to OVN logical model.
+- Block XV (Cloud Native) was officially deprioritized by user on 2026-04-23. 15.1 + 15.2 are deferred indefinitely.
+
+**Self-check before writing a new Part or expanding a section:**
+
+> *"Does this topic make the engineer better at OVS, OpenFlow, or OVN? If it only makes them better at K8S, DPDK, or XDP, it is OUT OF SCOPE."*
+
+When in doubt, stop and ask the user before proceeding. Out-of-scope detours bloat the curriculum and dilute focus.
+
+---
+
+## ★ SECOND NORTH STAR ★ QUALITY OVER SPEED ★
+
+> **Owner directive (verbatim, 2026-04-25):** *"cái tôi cần là chất lượng, tỉ mỉ, cẩn thận và hợp lý. Tốn bao nhiêu thời gian hay bao nhiêu effort hoàn toàn không quan trọng với tôi."*
+>
+> *"Tôi đề cao tính chính xác, giải thích dễ hiểu, sự tỉ mỉ và cẩn thận hơn là tốc độ. Ví dụ làm việc tốc độ thì kết quả sẽ mất đi tính chất lượng."*
+
+**Translation:** the user values **accuracy + clear explanation + meticulousness + caution** above all. Speed is explicitly NOT a goal. Working fast trades away quality, which is unacceptable.
+
+**Operating principles:**
+
+1. **Verify, never estimate.** When the user asks for a count, statistic, or status, run `wc -l`, `grep`, `git log`, or MCP API. Do NOT guess from memory or extrapolate from prior context. State the verified number.
+2. **Explain why before what.** When introducing a concept or recommending an action, lead with the reasoning, then the conclusion. Vietnamese learners reading the curriculum need the *why* to internalize, not just the procedure.
+3. **Read the file before editing.** Always Read the actual current state before Edit/Write. Do NOT rely on cached mental models from earlier in the session. The file may have been modified by a linter, by the user, or by an earlier AI step.
+4. **Check every URL before adding it.** Use `web-fetcher` or `curl -I`. Dead URLs are silent quality bugs that surface much later.
+5. **Cross-reference upstream source.** For every commit SHA, function name, file path, line number, or schema claim, verify via MCP GitHub (Rule 14). Do not cite from memory.
+6. **Pre-flight checklist before commit.** Run Rule 6 Checklist B (before write) and Checklist C (before commit) every single time. Do not skip.
+7. **When asked to be fast, refuse politely.** If a user request implies speed (e.g., "quick fix", "just commit it"), the response is to acknowledge but still do the careful version. Speed is not a valid trade-off.
+8. **One commit per logical unit.** Do not bundle unrelated changes. Each commit should be reviewable in isolation, with a clear scope statement.
+
+**Anti-pattern signals (you are slipping into speed mode if):**
+
+- Skipping Read before Edit "because the file was just shown".
+- Citing line numbers from memory instead of verifying.
+- Writing a paragraph of conclusions before reading the source they are about.
+- Batching 3 unrelated fixes into one commit "to save commits".
+- Dropping pre-commit checklists "because nothing seems risky".
+- Estimating instead of measuring.
+
+When you catch yourself doing any of these, STOP, restart that step the careful way.
+
+---
 
 ## Owner
 
-VO LE (volehuy1998@gmail.com) — Computer Network Engineer, OpenStack/kolla-ansible, SDN/OVN/OVS researcher.
+VO LE (volehuy1998@gmail.com), Computer Network Engineer, OpenStack/kolla-ansible, SDN/OVN/OVS researcher.
+
+---
 
 ## Repository Structure
 
 ```
-network-onboard/                    ← Repo root (GitHub: volehuy1998/network-onboard)
-├── CLAUDE.md                       ← FILE NÀY — working memory
-├── README.md                       ← Parent README (entry point cho toàn bộ repo)
-├── memory/                         ← Deep memory — session log, state tracking
-│   ├── session-log.md              ← Log của session gần nhất
-│   ├── file-dependency-map.md      ← Bản đồ phụ thuộc giữa các file
-│   └── haproxy-series-state.md     ← Trạng thái từng Part trong series
-├── haproxy-onboard/                ← HAProxy onboard series (29 Parts, 6 Blocks)
-│   ├── README.md                   ← TOC + Knowledge Dependency Map + Version Tracker link
-│   ├── 1.0 - haproxy-history-and-architecture.md  ← Part 1 (DONE)
-│   ├── references/
-│   │   └── haproxy-version-evolution.md  ← Version Evolution Tracker (52 entries)
-│   └── images/
-├── linux-onboard/                  ← Linux/RHCSA onboard series
-├── network-onboard/                ← Network/CCNA onboard series
-├── references/                     ← Shared references (The Linux Programming Interface, etc.)
-└── images/                         ← Shared images
+network-onboard/                    (repo root, GitHub: volehuy1998/network-onboard)
+├── CLAUDE.md                       (THIS FILE, working memory)
+├── README.md                       (parent README, entry point for the repo)
+├── CHANGELOG.md                    (release notes, Keep a Changelog format)
+├── memory/                         (deep memory: state trackers, dictionaries, audit summaries)
+│   ├── MEMORY.md                   (auto-memory index, hooks into Claude)
+│   ├── session-log.md              (session-by-session log, append-only)
+│   ├── file-dependency-map.md      (Rule 2 cross-file sync map)
+│   ├── sdn-series-state.md         (per-Part status tracker, Rule 5 handoff)
+│   ├── audit-index.md              (TOC of audit reports)
+│   ├── audit-2026-04-25-summary.md (consolidated audit findings, latest)
+│   ├── rule-11-dictionary.md       (Vietnamese prose translation dictionary)
+│   ├── lab-verification-pending.md (exercises pending lab host)
+│   └── haproxy-series-state.md
+├── sdn-onboard/                    (SDN onboard series, Vietnamese)
+├── haproxy-onboard/                (HAProxy onboard series, Vietnamese)
+├── linux-onboard/                  (Linux/RHCSA onboard series, Vietnamese)
+├── network-onboard/                (Network/CCNA onboard series, Vietnamese)
+├── references/                     (shared references)
+└── images/                         (shared images)
 ```
 
-## Mandatory Rules — Đọc trước khi làm bất kỳ điều gì
+---
 
-### Rule 1: Skill Activation Sequence (BẮT BUỘC)
+## Mandatory Rules
 
-Repo onboard đã cài đặt **6 skill** tại `~/.claude/skills/`. Tất cả 6 skill đều phải được sử dụng — không skip bất kỳ skill nào khi điều kiện kích hoạt thoả mãn.
+The repo has 6 skills installed at `~/.claude/skills/`. All 6 must be used; do not skip any when the activation condition holds.
 
-> **Bài học từ lỗi thực tế (session 2026-03-30):** Audit Part 1 + cấu trúc series nhưng chỉ
-> kích hoạt 2/4 skills (professor-style, document-design), bỏ qua fact-checker và web-fetcher.
-> Kết quả: phát hiện lỗi cấu trúc nhưng bỏ sót lỗi factual và dead links.
-> Nguyên nhân: diễn giải sai "viết hoặc sửa" → coi audit là "chỉ đọc" → bỏ qua verification.
-> **Quy tắc: 4 core skill LUÔN kích hoạt cho MỌI tương tác với file .md — không có ngoại lệ.**
-> **Bổ sung session 2026-04-22:** sau khi cài đặt thêm `deep-research` + `search-first`,
-> repo có đủ 6 skill. Hai skill bổ sung kích hoạt theo điều kiện (xem bảng 2) — không mặc định
-> LUÔN kích hoạt như 4 core, nhưng phải được cân nhắc trước khi bỏ qua.
+### Rule 1: Skill Activation Sequence (MANDATORY)
 
-**Nhóm A — Core 4 skill (LUÔN kích hoạt cho MỌI tương tác với file .md):**
+**Group A, Core 4 (ALWAYS active for ANY interaction with `.md` files):**
 
-```
-1. professor-style    → Kiểm soát giọng văn, cấu trúc khái niệm (6 mục: 2.1-2.6)
-2. document-design    → Kiểm soát bố cục, heading, learning elements
-3. fact-checker       → Xác minh MỌI technical claim trước khi commit
-4. web-fetcher        → Xác minh MỌI URL trước khi đưa vào tài liệu
-```
+1. `professor-style`: tone control, conceptual structure (6 criteria 2.1 to 2.6).
+2. `document-design`: layout, headings, learning elements.
+3. `fact-checker`: verify EVERY technical claim before commit.
+4. `web-fetcher`: verify EVERY URL before adding to documentation.
 
-**Nhóm B — 2 skill bổ sung (kích hoạt theo điều kiện — PHẢI cân nhắc trước khi bỏ qua):**
+**Group B, 2 conditional (consider before skipping):**
 
-```
-5. search-first       → Trước khi viết code/script/utility mới. Tìm tool/library/MCP/skill
-                         đã tồn tại trước khi tự viết. Áp dụng cho mọi tác vụ coding trong
-                         repo (scripts/, lab tooling, Python audit script, SVG tooling).
-                         Nguyên tắc: "Adopt > Extend > Compose > Build" — chỉ build custom
-                         khi 3 lựa chọn trên đã loại trừ.
+5. `search-first`: before writing new code/script/utility. Adopt > Extend > Compose > Build.
+6. `deep-research`: when content needs multi-source citation beyond offline `doc/*` (firecrawl + exa MCP).
 
-6. deep-research      → Khi cần research multi-source có citation cho nội dung onboard
-                         (technology evaluation, protocol history, vendor comparison,
-                         market/adoption data). Dùng firecrawl + exa MCP để lấy 15-30 nguồn,
-                         synthesize thành cited report. BẮT BUỘC khi viết content Phase B
-                         mà topic vượt quá phạm vi offline sources (doc/*) + bản năng LLM.
-```
+**Workflow.** Open `.md` to write/edit/audit, activate Core 4 immediately. Before writing helper code, activate `search-first`. Before writing content needing multi-source research, activate `deep-research`. Record activated skills in the fact-forcing gate answer. Do not write content first then review afterwards. Always: read skill, write, self-audit.
 
-**Quy trình áp dụng toàn bộ 6 skill:**
+(Origin: 2026-03-30 audit miss; 2026-04-22 added Group B.)
 
-```
-1. Mở file .md để viết/sửa/audit → kích hoạt Core 4 (Nhóm A) ngay lập tức
-2. Trước khi viết code/script hỗ trợ (bash/Python/SVG tooling) → kích hoạt search-first
-3. Trước khi viết content section cần multi-source research → kích hoạt deep-research
-4. Ghi rõ trong fact-forcing gate answer những skill nào đã kích hoạt cho task này
-5. Nếu bỏ qua skill nào trong Nhóm B → PHẢI giải thích lý do (vd: topic đã có đủ doc/*
-   offline source; hoặc script < 10 dòng một lần dùng; hoặc coding task chỉ là edit
-   nhẹ file có sẵn)
-```
+### Rule 2: Cross-File Sync (MANDATORY)
 
-**KHÔNG được viết content trước rồi review sau.** Phải đọc skill TRƯỚC → viết → self-audit.
+Before commit, consult `memory/file-dependency-map.md` to identify dependent files.
 
-### Rule 2: Cross-File Sync (BẮT BUỘC)
+**Process:** identify file being edited, look up dependency map, check related files, update ALL related files in the SAME commit.
 
-Trước khi commit, kiểm tra `memory/file-dependency-map.md` để xác định file nào bị ảnh hưởng.
-
-Ví dụ thực tế đã xảy ra: sửa `haproxy-onboard/README.md` (version 3.2 → 2.0) nhưng QUÊN sửa `README.md` (parent) — vẫn còn references đến HAProxy 3.2. Nguyên nhân: không có dependency map.
-
-**Quy trình bắt buộc:**
-```
-1. Xác định file đang sửa
-2. Tra dependency map → liệt kê related files
-3. Kiểm tra related files có cần cập nhật không
-4. Sửa TẤT CẢ related files trong CÙNG commit
-```
+(Origin: parent `README.md` left stale after `haproxy-onboard/README.md` version bump.)
 
 ### Rule 3: Version Annotation Convention
 
-Khi viết nội dung có sự khác biệt giữa các phiên bản HAProxy:
-
-```markdown
-> **Lưu ý phiên bản:** <nội dung khác biệt>
-```
-
-Đồng thời cập nhật `haproxy-onboard/references/haproxy-version-evolution.md` với entry mới.
+When writing content with HAProxy version differences, use the callout `> **Version note:** <difference>`. Also update `haproxy-onboard/references/haproxy-version-evolution.md` with a new entry.
 
 ### Rule 4: Git Workflow
 
-- **Protected branch**: KHÔNG push trực tiếp lên main/master
-- **Commit convention**: Conventional Commits (`feat()`, `fix()`, `docs()`)
-- **Branching**: GitHub Flow (main + feature branches)
-- Đọc `git-workflow` skill trước mọi thao tác git
+- Protected branch: do NOT push directly to `main`/`master`.
+- Commit convention: Conventional Commits (`feat()`, `fix()`, `docs()`).
+- Branching: GitHub Flow (main + feature branches).
+- Read the `git-workflow` skill before any git operation.
 
 ### Rule 5: Session Handoff Protocol
 
-Khi KẾT THÚC session (hoặc khi user nói "dừng", "tạm dừng", "kết thúc"):
+**On session END (or when user says "stop", "pause", "end"):**
 
-```
-1. Cập nhật memory/session-log.md với:
-   - Ngày, thời gian
-   - Những gì đã làm (commits, files changed)
-   - Những gì CHƯA làm (pending tasks)
-   - Branch hiện tại và trạng thái (clean/dirty)
-   - Lệnh cần chạy trên local (nếu có, ví dụ: git push)
-2. Cập nhật memory/haproxy-series-state.md nếu Part nào thay đổi status
-3. Commit memory changes
-```
+1. Update `memory/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
+2. Update `memory/sdn-series-state.md` if any Part status changed.
+3. Commit memory changes.
 
-Khi BẮT ĐẦU session mới:
-```
-1. Đọc CLAUDE.md (file này)
-2. Đọc memory/session-log.md → biết context từ session trước
-3. Đọc memory/haproxy-series-state.md → biết trạng thái series
-4. Kiểm tra git status, git branch, git log
-5. Thông báo cho user: "Tôi đã đọc context. Session trước [tóm tắt]. Pending: [danh sách]."
-```
+**On session START:**
 
-### Rule 6: Quality Gate — Pre-flight Checklist (BẮT BUỘC)
+1. Read CLAUDE.md (this file).
+2. Read `memory/session-log.md` (last session context).
+3. Read `memory/sdn-series-state.md` (curriculum status).
+4. Run `git status`, `git branch`, `git log`.
+5. Tell the user: "I have read context. Last session [summary]. Pending: [list]."
 
-> Nguồn gốc: `.claude-skills/quality-gate/SKILL.md` — tích hợp trực tiếp vào đây để enforcement.
-> Lý do: skill nằm trong repo nhưng ngoài danh sách registered skills → không bao giờ được trigger tự động.
-> Bài học: session trước đã viết section 1.10 (close-on-exec) mà bỏ qua quality-gate hoàn toàn.
+### Rule 6: Quality Gate, Pre-flight Checklist (MANDATORY)
 
-**Checklist B — TRƯỚC KHI viết/sửa/audit file .md HOẶC .svg (BẮT BUỘC):**
-```
-□ 1. Kích hoạt professor-style SKILL → nắm 6 criteria (2.1-2.6)
-□ 2. Kích hoạt document-design SKILL → nắm chapter template, heading rules, Rule 8
-□ 3. Xác định file đang sửa
-□ 4. Tra memory/file-dependency-map.md → liệt kê related files (kể cả Tầng 5: SVG↔markdown)
-□ 5. Đọc related files để biết content hiện tại
-□ 5b. NẾU sửa SVG: grep tất cả .md tham chiếu SVG → đọc caption hiện tại → ghi nhận entity
-□ 6. BẮT ĐẦU viết/sửa (KHÔNG viết trước bước 1-5b)
-□ 6b. NẾU sửa SVG: update caption NGAY SAU khi hoàn thành SVG — trước bất kỳ task khác
-```
+**Checklist B, BEFORE writing/editing/auditing `.md` or `.svg`:**
 
-**Checklist C — TRƯỚC KHI commit (BẮT BUỘC):**
-```
-□ 1. Fact-check: liệt kê MỌI technical claims → verify từng claim
-□ 2. URL check: liệt kê MỌI URLs → verify bằng web-fetcher hoặc curl
-□ 3. Cross-file sync: tra dependency map → kiểm tra related files
-□ 4. Version annotation: nếu có cross-version content → thêm callout + update tracker
-□ 5a. SVG spacing+diacritics: nếu có SVG mới/sửa → chạy svg-audit.py + diacritics-audit.py (Rule 6). 0 violation.
-□ 5b. SVG-caption consistency: chạy svg-caption-consistency.py cho mỗi SVG đã sửa (Rule 8). 0 mismatch.
-□ 6. File integrity: chạy null byte check (Rule 9) trên MỌI file text đã modified. 0 null bytes.
-□ 7a. Rule 11 Vietnamese Prose scan (BẮT BUỘC — không skip):
-     - Chạy regex `§11.6` full trên MỌI file .md đã modified — KHÔNG chỉ `inspect|support`
-     - Phân loại từng hit theo §11.3 (named identifier vs prose)
-     - Fix mọi prose hit bold label + section heading + câu văn tư duy
-     - Nếu gặp từ mới chưa có trong §11.2 dictionary → bổ sung vào CLAUDE.md cùng commit
-□ 7b. Rule 11 spot-check bold label + section heading:
-     - grep '^##' <file> — mọi heading prose phải Việt (trừ tên concept/stage)
-     - grep -E '^\*\*[A-Z][a-z]+' <file> — mọi bold label đầu câu phải Việt (trừ tên concept)
-     - grep -E '^> \*\*(Key Topic|Hiểu sai|Điểm mấu chốt)' <file> — callout label phải Việt
-□ 7c. Rule 13 Em-dash density (BẮT BUỘC):
-     - Đếm em-dash/dòng mỗi file modified. Target < 0.10
-     - Nếu > 0.10: audit từng em-dash theo §13.2, fix prose overuse
-     - Final density phải < 0.10 sau fix
-□ 8. Git workflow skill: đọc trước khi commit
-□ 9. Self-audit professor-style: chạy 6 criteria (2.1-2.6) lên content vừa viết
-```
+1. Activate `professor-style` skill (6 criteria 2.1 to 2.6).
+2. Activate `document-design` skill (chapter template, heading rules, Rule 8).
+3. Identify the file being edited.
+4. Look up `memory/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
+5. Read related files for current content.
+6. If editing SVG: grep all `.md` referencing the SVG, read current captions, note entities.
+7. START writing/editing (NOT before steps 1 to 6).
+8. If editing SVG: update caption IMMEDIATELY after SVG completion, before any other task.
 
-**Checklist E — Khi thêm Part mới (BẮT BUỘC):**
-```
-□ 1. Chạy Checklist B
-□ 2. Tạo file theo convention: X.0 - <name>.md
-□ 3. Include header block + learning objectives theo document-design
-□ 4. Cập nhật README.md (TOC, dependency graph)
-□ 5. Cập nhật memory/haproxy-series-state.md
-□ 6. Cập nhật memory/file-dependency-map.md
-□ 7. Chạy Checklist C
-```
+**Checklist C, BEFORE commit:**
 
-**Nguyên tắc:** Checklist không phải bureaucracy — giống pre-flight check phi công. Overhead 2-3 phút. Chi phí lỗi đồng bộ: phải sửa lại session sau, tốn thêm commit, có thể bỏ sót.
+1. Fact-check: list EVERY technical claim, verify each.
+2. URL check: list EVERY URL, verify with `web-fetcher` or `curl`.
+3. Cross-file sync: check dependency map.
+4. Version annotation: cross-version content gets a callout + tracker entry.
+5. SVG spacing + diacritics: run `svg-audit.py` + `diacritics-audit.py`. Zero violation.
+6. SVG-caption consistency: run `svg-caption-consistency.py`. Zero mismatch.
+7. File integrity: null byte check (Rule 9) on EVERY modified text file. Zero null bytes.
+8. Rule 11 Vietnamese Prose scan (full regex `§11.6`, not just `inspect|support`). Classify each hit per §11.3, fix prose hits, add new dictionary entries.
+9. Rule 11 spot-check bold label + section heading: `grep '^##' <file>`, `grep -E '^\*\*[A-Z][a-z]+' <file>`, `grep -E '^> \*\*(Key Topic|Hiểu sai|Điểm mấu chốt)' <file>`.
+10. Rule 13 em-dash density: target < 0.10/line. Audit every em-dash if > 0.10, fix prose overuse.
+11. Read `git-workflow` skill before commit.
+12. Self-audit `professor-style` 6 criteria on new content.
 
-### Rule 7: Terminal Output Fidelity (BẮT BUỘC)
+**Checklist E, when adding a new Part:**
 
-> Nguồn gốc: session 2026-04-04. Viết unified FD exercise, tự ý cắt output `fdinfo` chỉ giữ `pos:`,
-> bỏ `flags:` và `mnt_id:`. User đưa output thật đầy đủ 3 dòng và yêu cầu "không được cắt bớt một
-> chữ nào" — nhưng Claude vẫn tuyên bố "khớp hoàn hảo" vì chỉ so giá trị `pos` mà không đếm số dòng.
-> Nguyên nhân gốc: không có quy tắc nào trong CLAUDE.md hoặc skills bắt buộc giữ nguyên output.
+1. Run Checklist B.
+2. Create file with naming convention `X.0 - <name>.md`.
+3. Header block + learning objectives per `document-design`.
+4. Update `README.md` (TOC, dependency graph).
+5. Update `memory/sdn-series-state.md`.
+6. Update `memory/file-dependency-map.md`.
+7. Run Checklist C.
 
-**Quy tắc:**
+Principle: this is pre-flight, not bureaucracy. 2 to 3 minutes overhead; cost of a sync bug is much higher.
 
-Khi user cung cấp terminal output thực để thay thế vào tài liệu:
+### Rule 7: Terminal Output Fidelity (MANDATORY)
 
-```
-1. KHÔNG được cắt bớt, rút gọn, hoặc lược bỏ bất kỳ dòng nào
-2. KHÔNG được sắp xếp lại thứ tự các dòng
-3. KHÔNG được thay đổi spacing, indentation, hoặc ký tự nào trong output
-4. Khi đối chiếu output: so sánh TỪNG DÒNG (line-by-line diff), không chỉ so giá trị quan tâm
-5. Nếu cần rút gọn output vì quá dài: PHẢI hỏi user trước, nêu rõ dòng nào muốn bỏ và lý do
-```
+When the user provides real terminal output to insert into documentation:
 
-Quy tắc này áp dụng cho mọi loại output: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, và bất kỳ terminal output nào user cung cấp. Output thực là bằng chứng thực nghiệm — cắt bớt bằng chứng là phá hỏng tính xác minh được (reproducibility) của tài liệu.
+1. Do NOT trim, shorten, or omit any line.
+2. Do NOT reorder lines.
+3. Do NOT change spacing, indentation, or any character.
+4. When comparing output: line-by-line diff, not just the value of interest.
+5. To shorten output: ASK the user first, naming which lines to drop and why.
 
-#### Rule 7a: System Log Absolute Integrity (KHÔNG CÓ NGOẠI LỆ)
+Applies to: `fdinfo`, `lsof`, `ss`, `strace`, `tcpdump`, `haproxy -vv`, log files, any user-provided output.
 
-> Nguồn gốc: session 2026-04-11. Viết timeline trong SDN 1.0 (FDB poisoning case study)
-> nhưng tự ý: (a) merge 3 dòng log riêng biệt thành 1 block, (b) truncate UUID từ đầy đủ
-> `0a17b4f8-736d-4bf5-ba1e-335d17cb5973` thành `0a17b4f8`, (c) xóa hoàn toàn 3 dòng
-> "Claiming unknown" trong final claim, (d) sửa timestamp `.947` thành `.948`.
-> Rationalization sai: "đây là formatted timeline, không phải raw log."
-> Log hệ thống là forensic evidence — chỉnh sửa bằng chứng dù dưới dạng nào
-> cũng phá hỏng tính toàn vẹn. Rule 7 mục 5 ("hỏi trước") KHÔNG áp dụng cho system log.
+#### Rule 7a: System Log Absolute Integrity (NO EXCEPTIONS)
 
-Log hệ thống (daemon/service logs, diagnostic tool output) tuân theo nguyên tắc
-**toàn vẹn tuyệt đối** — nghiêm ngặt hơn Rule 7 thông thường:
+System logs (daemon/service logs, diagnostic tool output) follow stricter rules than Rule 7:
 
-```
-1. TUYỆT ĐỐI KHÔNG cắt ngắn, rút gọn, truncate — kể cả UUID, path, IP address
-2. TUYỆT ĐỐI KHÔNG merge nhiều dòng log thành 1 entry — mỗi dòng log gốc = 1 visual line
-3. TUYỆT ĐỐI KHÔNG xóa dòng log — dù nội dung "lặp lại" hoặc "không quan trọng"
-4. TUYỆT ĐỐI KHÔNG thay đổi timestamp — dù chỉ 1 millisecond
-5. KHÔNG có ngoại lệ — system log KHÔNG BAO GIỜ được cắt ngắn dưới bất kỳ lý do nào
-6. Khi trình bày log trong format khác (timeline, table, annotated block):
-   - Message body sau log prefix PHẢI giữ nguyên verbatim trên cùng 1 dòng
-   - Mỗi dòng log gốc PHẢI là 1 visual line riêng biệt trong code block
-   - Annotation → dòng riêng với prefix "──", KHÔNG chèn vào giữa message body
-7. Khi timeline chỉ hiển thị subset: PHẢI ghi "[N dòng khác omitted — context: ...]"
-```
+1. ABSOLUTELY NO truncation, even of UUID, path, IP.
+2. ABSOLUTELY NO merging multiple log lines into one entry.
+3. ABSOLUTELY NO deletion of log lines, even if "repetitive" or "unimportant".
+4. ABSOLUTELY NO timestamp modification, not even by 1 ms.
+5. NO EXCEPTIONS. System log is forensic evidence.
+6. When presenting log in another format (timeline, table, annotated block): message body after the prefix MUST stay verbatim on its own line; annotations on separate lines prefixed with `--`.
+7. When showing a subset: include `[N other lines omitted, context: ...]`.
 
-Phạm vi: mọi log từ daemon/service (ovn-controller, ovs-vswitchd, nova-compute,
-neutron-server, haproxy, nginx, journald, syslog, dmesg) và mọi output từ diagnostic
-tools (tcpdump, strace, lsof, ss, conntrack, ovs-ofctl, ovn-trace, ovn-detrace).
-Áp dụng KHÔNG PHÂN BIỆT format trình bày — raw, timeline, table, annotated, hay diagram.
+Scope: every daemon/service log (ovn-controller, ovs-vswitchd, nova-compute, neutron-server, haproxy, nginx, journald, syslog, dmesg) and every diagnostic tool output (tcpdump, strace, lsof, ss, conntrack, ovs-ofctl, ovn-trace, ovn-detrace).
 
-### Rule 8: Vietnamese Sentence Completeness (BẮT BUỘC)
+(Origin: 2026-04-11 SDN 1.0 timeline merged 3 separate log lines, truncated UUID, deleted "Claiming unknown" lines, modified timestamp `.947` to `.948`.)
 
-> Nguồn gốc: session 2026-04-04. Viết câu bridging "nhưng thực tế không" — từ phủ định "không" bị
-> bỏ lửng, thiếu tân ngữ. Người đọc phải tự suy "không" cái gì. User chỉ ra lỗi: "bạn cần giải
-> thích rõ nghĩa hơn 4 từ này". Nguyên nhân gốc: professor-style skill (read-only) không có rule
-> nào yêu cầu mệnh đề tiếng Việt phải đủ thành phần câu. Bổ sung professor-style 5.4 tại đây.
+### Rule 8: Vietnamese Sentence Completeness (MANDATORY)
 
-**Quy tắc:**
+Documentation written for Vietnamese readers. Every clause must be complete on its own; do not lean on implicit context.
 
-Tài liệu viết cho người Việt đọc — mọi mệnh đề phải đủ nghĩa khi đọc đơn lập, không dựa vào
-context ngầm. Ba lỗi cụ thể phải tránh:
+1. Negation cannot dangle: `không`, `chưa`, `chẳng` MUST come with a clear verb or object.
+2. Demonstratives are unambiguous: `điều đó`, `việc này`, `nó` MUST have a clear antecedent within the same or adjacent sentence; otherwise repeat the noun.
+3. Standalone-read test: after writing each sentence, read it isolated from context. If meaning is unclear, rewrite.
 
-```
-1. Từ phủ định bỏ lửng: "không", "chưa", "chẳng" PHẢI đi kèm động từ hoặc tân ngữ rõ ràng
-   Sai:  "...nhưng thực tế không."
-   Đúng: "...nhưng kết quả thực tế luôn khớp với dự đoán của mô hình."
+(Origin: 2026-04-04 dangling `không` at clause end with no object.)
 
-2. Đại từ chỉ định mơ hồ: "điều đó", "việc này", "nó" PHẢI có tiền ngữ rõ ràng
-   trong cùng câu hoặc câu liền trước. Nếu xa hơn → lặp lại danh từ.
-   Sai:  "Fork tạo bản sao. Dup chỉ nhân bản một FD. Điều này giải thích..."
-   Đúng: "...Sự khác biệt selective vs wholesale này giải thích..."
+### Rule 9: File Integrity, Null Byte Prevention (MANDATORY)
 
-3. Phép đọc đơn lập: sau khi viết xong một câu, đọc lại câu đó TÁCH BIỆT khỏi context.
-   Nếu nghĩa không rõ khi đứng một mình → viết lại. Tài liệu kỹ thuật không phải
-   tin nhắn chat — người đọc có thể mở đúng mục đó mà không đọc từ đầu.
-```
-
-### Rule 9: File Integrity — Null Byte Prevention (BẮT BUỘC)
-
-> Nguồn gốc: session 2026-04-04. Commit `9a17eec` chứa file `file-descriptor-deep-dive.md` có
-> 3612 trailing null bytes (0x00) ở cuối. GitHub renderer phát hiện null bytes → phân loại file
-> là binary → từ chối render markdown. VS Code preview bỏ qua trailing nulls → hiển thị bình
-> thường → user không phát hiện cho đến khi merge PR #35 lên master và mở trên GitHub.
-> Nguyên nhân gốc: Write tool đôi khi padding null bytes vào cuối file (sparse file behavior
-> hoặc buffer không flush sạch). Không có bước kiểm tra nào trong Checklist C phát hiện lỗi này.
-
-**Quy tắc:**
-
-TRƯỚC KHI `git add` bất kỳ file nào, chạy kiểm tra file integrity:
+BEFORE `git add`:
 
 ```bash
-# Bước 1: Kiểm tra null bytes trong mọi file đã modified/staged
 for f in $(git diff --name-only --cached 2>/dev/null; git diff --name-only); do
   if [ -f "$f" ]; then
     nullcount=$(python3 -c "print(open('$f','rb').read().count(b'\x00'))")
     if [ "$nullcount" -gt 0 ]; then
-      echo "BLOCKED: $f chứa $nullcount null bytes"
+      echo "BLOCKED: $f has $nullcount null bytes"
     fi
   fi
 done
-
-# Bước 2: Nếu phát hiện null bytes → loại bỏ trước khi commit
-python3 -c "
-d = open('FILE','rb').read()
-clean = d.replace(b'\x00', b'')
-open('FILE','wb').write(clean)
-print(f'Removed {len(d)-len(clean)} null bytes')
-"
-
-# Bước 3: Verify lại — kết quả PHẢI là 0
-grep -cP '\x00' FILE
 ```
 
-**Phạm vi áp dụng:** Mọi file text (.md, .py, .sh, .yml, .html, .svg, .css, .js). Null bytes
-trong file text là LUÔN LUÔN lỗi — không có trường hợp hợp lệ nào. File binary (.png, .jpg,
-.pdf) được miễn kiểm tra này.
+If null bytes found, strip with:
 
-**Dấu hiệu cảnh báo sớm:**
-- `file` command báo "with very long lines" trên file .md → kiểm tra ngay
-- File size bất thường lớn so với số dòng (ví dụ: 93KB cho 1169 dòng text thuần)
-- GitHub hiển thị file như binary hoặc wall of text không format
-
-### Rule 10: Architecture-First Doctrine (BẮT BUỘC)
-
-> Nguồn gốc: session 2026-04-21 (session 7). Khi bắt đầu S5.1, Claude đã viết full content 198
-> dòng cho Part 1.0 (networking-industry-before-sdn) thay vì chỉ skeleton (title + summary).
-> User correction: "chúng ta đang kiến trúc bài giảng chứ chưa hề đi sâu vào nội dung... bạn có
-> quyền kiến trúc thư mục, file, ghi trước tựa đề và tóm tắt nội dung của tựa đề đó nhưng đừng
-> sa đà vào nội dung". Nguyên nhân gốc: plan `sdn-foundation-architecture.md` ghi "S5 = Block I
-> content (~1200 dòng)" khiến Claude hiểu nhầm đây là content phase. Thực tế project đang ở
-> **architecture phase** — xây khung toàn bộ 17 blocks trước, viết content sau khi khung xong.
-
-**Quy tắc:**
-
-Trong phase hiện tại (**Architecture Phase**), Claude CHỈ được phép:
-
-```
-1. Tạo cấu trúc thư mục (mkdir)
-2. Tạo file skeleton theo naming convention X.Y - <name>.md
-3. Viết trong mỗi skeleton:
-   - Header block (trạng thái, block, part, prerequisites, ebook mapping)
-   - Mục tiêu bài học (3-5 Bloom objectives)
-   - Section headings (## X.Y.Z) với tên đầy đủ
-   - Tóm tắt ngắn dưới mỗi heading (1-3 câu mô tả nội dung SẼ viết — không phải nội dung)
-   - Placeholder cho exercises/labs (tên + mục đích, không chi tiết)
-   - Tài liệu tham khảo placeholder
+```bash
+python3 -c "d=open('FILE','rb').read(); open('FILE','wb').write(d.replace(b'\x00',b''))"
 ```
 
-**Claude KHÔNG được viết trong phase này:**
+Verify: `grep -cP '\x00' FILE` must return 0.
 
-```
-1. Đoạn văn giải thích khái niệm chi tiết (>3 câu liên tục)
-2. Ví dụ cụ thể (config snippet, CLI output, log lines)
-3. Bảng so sánh đầy đủ dữ liệu
-4. Guided Exercise có nội dung step-by-step
-5. References với URL đầy đủ và annotation
-6. Analysis/reasoning content
-```
+Scope: every text file (`.md`, `.py`, `.sh`, `.yml`, `.html`, `.svg`, `.css`, `.js`). Null bytes in text files are ALWAYS a bug. Binary files (`.png`, `.jpg`, `.pdf`) are exempt.
 
-**Dấu hiệu cảnh báo over-scope:**
-- File skeleton > 80 dòng (skeleton target: 30-60 dòng)
-- Đang gọi curl/WebFetch để verify technical claims → DỪNG, claim đó là content
-- Đang viết `### ▶ Guided Exercise N: ...` có bullet steps → DỪNG, chỉ ghi title + 1-2 câu mục đích
-- Đang viết code block với output cụ thể → DỪNG, placeholder `*Code example sẽ được thêm khi viết content phase*`
+Warning signs: `file` command says "with very long lines" on `.md`; abnormally large file size vs line count; GitHub renders the file as binary.
 
-**Khi nào chuyển sang Content Phase:**
+(Origin: commit `9a17eec` had 3612 trailing null bytes; GitHub refused to render markdown.)
 
-Chỉ khi (a) toàn bộ skeleton Block 0-XVI completed (~60 file), (b) user review architecture end-to-end, (c) user explicitly nói "chuyển sang viết content" hoặc "bắt đầu content phase". Không tự ý chuyển.
+### Rule 10: Architecture-First Doctrine (HISTORICAL)
 
-**Di sản over-scope đã xảy ra:**
+This rule applied during the architecture phase (now complete; project is in content phase since session 12). For historical record only. Skeleton-first discipline still applies when introducing brand-new blocks.
 
-```
-sdn-onboard/0.0 - how-to-read-this-series.md     148 dòng content (S4, session 6)
-sdn-onboard/0.1 - lab-environment-setup.md       426 dòng content (S4, session 6)
-sdn-onboard/1.0 - networking-industry-before-sdn.md  198 dòng content (S5.1, session 7)
-```
+(Originally written 2026-04-21 to constrain over-eager content writing during the skeleton phase.)
 
-Các file này KHÔNG revert (commit đã push lên remote). Nhưng từ Part 1.1 trở đi + mọi Block mới
-PHẢI tuân Rule 10. Khi chuyển sang Content Phase, xem 3 file trên là reference implementation
-(style, cấu trúc heading, reference format) và viết lại các Part còn lại theo cùng chuẩn.
+### Rule 11: Vietnamese Prose Discipline (MANDATORY)
 
-### Rule 11: Vietnamese Prose Discipline (BẮT BUỘC)
+This is a training program for Vietnamese readers. Prefer natural Vietnamese; keep English only for named entities, syntax, and identifiers. Core principle: **translate at the right place**.
 
-> Nguồn gốc ban đầu: session 13, 2026-04-21. User chỉ ra 9 ví dụ điển hình về English abuse
-> trong Phase B content Block I-VI (~890 English hit trên 24 file, mật độ 5-26%).
-> Ví dụ: "hypervisor overlay paradigm" thay vì "mô hình hypervisor overlay",
-> "VMware announce acquisition Nicira" thay vì "VMware thông báo mua lại Nicira",
-> "troubleshoot tunnel issue cần inspect 2 layer" thay vì "khắc phục sự cố tunnel
-> cần kiểm tra 2 lớp". Root cause: mental model khái niệm trừu tượng hình thành
-> trong tiếng Anh, không translate khi viết Việt → câu lai bad.
->
-> Mở rộng session 22+23, 2026-04-22. User phát hiện Part 9.22+9.23+9.24 tái phạm
-> Rule 11 có hệ thống (60+ hit trên 1464 dòng): "Sequential evaluation" bold label,
-> "Abstraction level / Auto zone assignment / Distributed commit" bold label,
-> "operator manage thứ tự", "experiment để verify", "fail" lặp 4 lần, "motivation
-> cho Part 9.24", "performance cho traffic symmetric", v.v. Session log tự báo
-> cáo "Rule 11 OK" vì chỉ chạy regex catch `inspect|support` — bỏ sót toàn bộ
-> nhóm vocabulary mới. User làm rõ nguyên tắc **dịch đúng nơi đúng chỗ**: cùng
-> một từ (routing, output, table, state, flow, forwarding), nếu xuất hiện như
-> named identifier / syntax / tên stage của OVS-OpenFlow-OVN thì GIỮ English;
-> nếu xuất hiện trong prose mô tả thì DỊCH Việt.
+#### 11.1. KEEP English when the word appears as one of:
 
-**Đây là chương trình đào tạo cho người Việt Nam đọc** — ưu tiên tiếng Việt tự nhiên, chỉ giữ tiếng Anh cho named entity/cú pháp/identifier. Nguyên tắc cốt lõi: **dịch đúng nơi đúng chỗ**.
-
-#### 11.1. Giữ English khi từ xuất hiện như một trong các vai trò sau
-
-- **Tên sản phẩm / dự án / tổ chức**: OpenFlow, OVS, OVN, Open vSwitch, NETCONF, NSX, Nicira, VMware, Linux, Ubuntu, Mininet, Cisco, Broadcom Trident, Stanford, ONF, GitHub, Spamhaus, Prometheus, Arbor Networks, Cloudflare, DigitalOcean, Red Hat, NVIDIA ConnectX-6, Intel E810, Anthropic.
-- **Protocol / acronym chuẩn quốc tế**: TCP, UDP, IP, ICMP, SCTP, ARP, DNS, TLS, SSH, HTTP, HTTPS, VLAN, VXLAN, Geneve, BGP, OSPF, BFD, MPLS, NAT, SNAT, DNAT, DDoS, RPC, ECMP, FTP.
-- **CLI verbatim & flag**: `ovs-ofctl`, `ovs-vsctl`, `ovs-appctl`, `ovs-dpctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-northd`, `ovn-controller`, `conntrack`, `iptables`, `modprobe`, `sysctl`, `sudo`, `ping`, `iperf`, `tcpdump`, `--dpdk`, man page reference `ovs-fields(7)`, `ovs-actions(7)`, `ovn-architecture(7)`.
+- **Product / project / organization name**: OpenFlow, OVS, OVN, Open vSwitch, NETCONF, NSX, Nicira, VMware, Linux, Ubuntu, Mininet, Cisco, Broadcom Trident, Stanford, ONF, GitHub, Spamhaus, Prometheus, Arbor Networks, Cloudflare, DigitalOcean, Red Hat, NVIDIA ConnectX-6, Intel E810, Anthropic.
+- **International protocol / acronym**: TCP, UDP, IP, ICMP, SCTP, ARP, DNS, TLS, SSH, HTTP, HTTPS, VLAN, VXLAN, Geneve, BGP, OSPF, BFD, MPLS, NAT, SNAT, DNAT, DDoS, RPC, ECMP, FTP.
+- **CLI verbatim + flag**: `ovs-ofctl`, `ovs-vsctl`, `ovs-appctl`, `ovs-dpctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-northd`, `ovn-controller`, `conntrack`, `iptables`, `modprobe`, `sysctl`, `sudo`, `ping`, `iperf`, `tcpdump`, `--dpdk`, man references like `ovs-fields(7)`, `ovs-actions(7)`, `ovn-architecture(7)`.
 - **Spec field name / match field / OpenFlow identifier**: `ct_state`, `ct_zone`, `ct_mark`, `ct_label`, `metadata`, `cookie`, `priority`, `in_port`, `nw_src`, `nw_dst`, `dl_src`, `dl_dst`, `dl_type`, `tp_dst`, `sport`, `dport`, `reg0..reg15`, `xreg0..xreg7`, OXM, NXM.
-- **Action name / instruction name / stage name của OpenFlow-OVS-OVN**: `goto_table`, `resubmit`, `output`, `normal`, `drop`, `mod_dl_src`, `mod_dl_dst`, `dec_ttl`, `ct()`, `ct(commit)`, `ct_next`, `ct_commit`, `ct_lb`, `ct_clear`, `apply_actions`, `write_actions`, `write_metadata`, `clear_actions`, `Apply-Actions`, `Write-Actions`, `Clear-Actions`, `Write-Metadata`, `Goto-Table`, `allow`, `allow-related`, `reject`, `set_queue`, action value như `ct_state=+trk+new`.
-- **Pipeline stage / table name khi dùng như nhãn**: "Table 0 Classifier", "Table 1 L3 Forwarding", "Ingress ACL", "Egress ACL", "(ACL, routing, output)", "(ingress ACL → LB → routing → egress ACL)". Các từ này là **tên stage** trong kiến trúc pipeline OVS/OVN, KHÔNG dịch dù thoạt nhìn giống vocabulary thường.
-- **Literal value của state / flag / protocol**: `NEW`, `ESTABLISHED`, `RELATED`, `INVALID`, `SYN_SENT`, `SYN_RECV`, `FIN_WAIT`, `TIME_WAIT`, `CLOSE`, `CLOSE_WAIT`, `LAST_ACK`, `UNREPLIED`, `ASSURED`, `[NEW]`, `[UPDATE]`, `[DESTROY]`.
-- **Thuật ngữ ngành mạng quốc tế phổ biến**: SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC, MAC, VIP, NFV, SR-IOV, SmartNIC, FIB, BUM, DMZ, VPN, L2, L3, L4, five-tuple (5-tuple), three-way handshake, pseudo-state, bitfield, tuple, hairpin, subnet, broadcast, multicast, unicast, datapath, bridge, kernel, userspace, namespace, tenant, multi-tenant, chassis, overlay, underlay, east-west, north-south, fast path, slow path, line-rate, offload, DPDK.
-- **Concept từ OpenFlow / OVS spec dùng như noun**: flow, flow entry, flow table, flow rule, pipeline, multi-table pipeline, match field, action set, instruction, controller, stateful, stateless, conntrack, handshake.
+- **Action / instruction / pipeline stage name**: `goto_table`, `resubmit`, `output`, `normal`, `drop`, `mod_dl_src`, `mod_dl_dst`, `dec_ttl`, `ct()`, `ct(commit)`, `ct_next`, `ct_commit`, `ct_lb`, `ct_clear`, `apply_actions`, `write_actions`, `write_metadata`, `clear_actions`, `Apply-Actions`, `Write-Actions`, `Clear-Actions`, `Write-Metadata`, `Goto-Table`, `allow`, `allow-related`, `reject`, `set_queue`, action values like `ct_state=+trk+new`.
+- **Pipeline stage / table name as label**: "Table 0 Classifier", "Table 1 L3 Forwarding", "Ingress ACL", "Egress ACL", "(ACL, routing, output)". These are pipeline stage names in OVS/OVN architecture.
+- **Literal state / flag / protocol value**: `NEW`, `ESTABLISHED`, `RELATED`, `INVALID`, `SYN_SENT`, `SYN_RECV`, `FIN_WAIT`, `TIME_WAIT`, `CLOSE`, `CLOSE_WAIT`, `LAST_ACK`, `UNREPLIED`, `ASSURED`, `[NEW]`, `[UPDATE]`, `[DESTROY]`.
+- **Common international networking term**: SDN, DC, WAN, LAN, DPU, ASIC, NOS, VM, RFC, MAC, VIP, NFV, SR-IOV, SmartNIC, FIB, BUM, DMZ, VPN, L2, L3, L4, five-tuple, three-way handshake, pseudo-state, bitfield, tuple, hairpin, subnet, broadcast, multicast, unicast, datapath, bridge, kernel, userspace, namespace, tenant, multi-tenant, chassis, overlay, underlay, east-west, north-south, fast path, slow path, line-rate, offload, DPDK.
+- **OpenFlow / OVS spec concept used as noun**: flow, flow entry, flow table, flow rule, pipeline, multi-table pipeline, match field, action set, instruction, controller, stateful, stateless, conntrack, handshake.
 
-#### 11.2. Dịch Việt khi từ xuất hiện trong prose mô tả / giải thích
+#### 11.2. TRANSLATE to Vietnamese when the word appears in prose
 
-**Vocabulary tư duy — LUÔN dịch:**
+Full dictionary (~60 entries) is in [`memory/rule-11-dictionary.md`](memory/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
 
-| English | Vietnamese | English | Vietnamese |
-|---|---|---|---|
-| paradigm | mô hình | architecture | kiến trúc |
-| approach | cách tiếp cận | deployment | triển khai |
-| support | hỗ trợ | adoption | sự chấp nhận / việc áp dụng |
-| trade-off | sự đánh đổi | backward compat | tương thích ngược |
-| lock-in | bị phụ thuộc vào | rebrand | đổi tên thương hiệu |
-| announce | thông báo / công bố | troubleshoot | khắc phục sự cố |
-| inspect | kiểm tra | integration | tích hợp |
-| exclusive | độc quyền | steep learning curve | quá trình học hỏi rất khó khăn |
-| operator | người vận hành | engineer | kỹ sư |
-| developer / dev team | nhóm phát triển | performance | hiệu năng |
-| optimization | tối ưu hoá | overhead | chi phí phụ |
-| compile (verb) | biên dịch | compiler (noun) | compiler (giữ) / trình biên dịch |
-| deploy (verb) | triển khai | deployment (noun) | việc triển khai |
-| experiment (noun) | thử nghiệm / thí nghiệm | verify | kiểm chứng |
-| fail / failure | thất bại | behavior | hành vi |
-| motivation | động cơ | criteria | tiêu chí |
-| subtle | tinh tế | pedagogical | sư phạm |
-| explicit | tường minh | implicit | ngầm định |
-| version | phiên bản | strict | nghiêm ngặt |
-| tolerate | chấp nhận | undefined | không xác định |
-| guideline | hướng dẫn | convention | quy ước |
-| bypass (verb) | né / vượt qua | modify | sửa |
-| rewrite | sửa / viết lại | report (verb) | báo / báo cáo |
-| input / output (noun, prose) | đầu vào / kết quả | control (noun, prose) | điều khiển / kiểm soát |
-| tracking mechanism | cơ chế theo dõi | state tracking | theo dõi trạng thái |
-| track (verb, prose) | theo dõi | monitoring | giám sát |
-| monitor event | theo dõi sự kiện | event stream | luồng sự kiện |
-| symmetric | đối xứng | asymmetric | không đối xứng / một chiều |
-| bidirectional | hai chiều | unidirectional / one-way | một chiều |
-| communication | giao tiếp | connection (prose) | kết nối |
-| session (prose) | phiên | lookup (prose) | tra cứu |
-| pattern (prose) | mẫu | template (prose) | khuôn mẫu |
-| namespace isolation | cô lập namespace | multi-tenant isolation | cô lập multi-tenant |
-| overlap | chồng lấn | multiplex | ghép kênh |
-| modularization | module hoá | modular | module hoá |
-| flexibility | tính linh hoạt | concern | nhiệm vụ / mối quan tâm |
-| transfer control | chuyển giao điều khiển | recirculate (trong prose) | đưa về pipeline |
-| expression (prose) | biểu thức | assignment (prose) | việc gán |
-| read-only (prose) | chỉ đọc | read / write (prose) | đọc / ghi |
-| junior / senior | mới vào nghề / kỳ cựu | production (IT) | **môi trường production** (giữ "production") |
-| production (manufacturing) | sản xuất | incident | sự cố |
-| post-mortem | báo cáo hậu sự | beyond lifetime | vượt quá vòng đời |
-| debug (verb, prose) | gỡ lỗi | debugging (noun) | việc gỡ lỗi |
-| scale (noun, prose) | quy mô | scalability | khả năng mở rộng |
-| flow explosion | bùng nổ flow | table explosion | bùng nổ bảng |
-| cross-product | tích chéo | termination | tính kết thúc |
-| traffic (prose) | lưu lượng | packet (prose) | gói tin |
-| forwarding (prose, verb nghĩa "chuyển tiếp") | chuyển tiếp | routing (prose, verb nghĩa "định tuyến") | định tuyến |
-| rule ordering | thứ tự rule | first-match wins | ai match trước thì thắng |
-| consumer (prose IT) | người tiêu thụ / consumer | buy-in | sự ủng hộ |
-| shepherd (verb) | dẫn dắt | worry (verb) | lo ngại / lo lắng |
-| favor (verb) | ưu ái | bent (verb) | bẻ cong |
-| workaround | biện pháp tạm thời | unusual | bất thường |
-| significant (adj prose) | đáng kể / có ý nghĩa lớn | industry dynamics | động lực ngành |
-| promote adoption | thúc đẩy sự chấp nhận | advocate for | vận động cho |
+When you encounter a word not in the dictionary: ADD it to `memory/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
 
-#### 11.3. Cùng một từ, lúc dịch lúc không — minh hoạ
+#### 11.3. Same word, sometimes English sometimes Vietnamese
 
-| Từ | Giữ English khi | Dịch Việt khi |
-|---|---|---|
-| `routing` | Tên stage: `(ACL, routing, output)`, `L3 Forwarding`, `distributed routing` (cụm danh từ OVN) | Prose động từ: "gói tin được định tuyến sang subnet khác" |
-| `output` | Action: `action=output:3`; tên stage trong tuple `(ACL, routing, output)` | Prose: "kết quả của toàn bộ pipeline", "đầu ra của trace" |
-| `table` | OpenFlow concept: `table=0`, "multi-table pipeline", "table lookup trong OpenFlow" | Prose: "bảng FIB L3", "bảng MAC", "bảng trạng thái conntrack" |
-| `forwarding` | Tên table: "Table 2 L2 Forwarding" | Prose: "chuyển tiếp gói tin sang h3" |
+| Word | KEEP English when | TRANSLATE when |
+|------|------------------|---------------|
+| `routing` | Stage name: `(ACL, routing, output)`, `L3 Forwarding`, `distributed routing` (OVN noun phrase) | Prose verb: "gói tin được định tuyến sang subnet khác" |
+| `output` | Action: `action=output:3`; stage in tuple `(ACL, routing, output)` | Prose: "kết quả của toàn bộ pipeline", "đầu ra của trace" |
+| `table` | OpenFlow concept: `table=0`, "multi-table pipeline" | Prose: "bảng FIB L3", "bảng MAC", "bảng trạng thái conntrack" |
+| `forwarding` | Table name: "Table 2 L2 Forwarding" | Prose: "chuyển tiếp gói tin sang h3" |
 | `state` | Field name: `ct_state`; literal: `state=ESTABLISHED` | Prose: "theo dõi trạng thái", "máy trạng thái" |
-| `flow` | OpenFlow concept: "flow entry", "flow table", "flow rule" | Generic (hiếm dùng): "luồng dữ liệu" |
-| `traffic` | Hiếm khi giữ | Prose: "lưu lượng đông-tây", "lưu lượng reply" |
-| `connection` | Conntrack literal: `connection ESTABLISHED` | Prose: "kết nối hai chiều", "kết nối h1 → h3" |
-| `switch` | Tên thiết bị: switch `s1`, OVS switch | Động từ "chuyển đổi" thì dịch |
-| `monitoring` | Tên công cụ/component: "Monitoring tool" | Prose: "giám sát bảng trạng thái" |
+| `flow` | OpenFlow concept: "flow entry", "flow table", "flow rule" | Generic: "luồng dữ liệu" (rare) |
+| `traffic` | Rare | Prose: "lưu lượng đông-tây", "lưu lượng reply" |
+| `connection` | Conntrack literal: `connection ESTABLISHED` | Prose: "kết nối hai chiều", "kết nối h1 to h3" |
+| `switch` | Device name: switch `s1`, OVS switch | Verb "chuyển đổi" translates |
+| `monitoring` | Component name: "Monitoring tool" | Prose: "giám sát bảng trạng thái" |
 | `pattern` | Code/config pattern name | Prose: "mẫu 7-flow Lab 8" |
 | `commit` | CLI/action: `ct(commit)`, `commit entry` | Prose: "tạo entry tồn tại vượt quá vòng đời gói tin" |
 
-**Câu hỏi để tự phân loại:** từ này có phải là *tên riêng* mà tài liệu OVS/OpenFlow/OVN dùng để gọi một entity, syntax, hoặc stage không? Nếu CÓ → giữ English. Nếu KHÔNG (từ dùng để mô tả, giải thích, kể chuyện) → dịch Việt.
+**Self-classification question:** Is this word a **named entity** that OVS/OpenFlow/OVN docs use for an entity, syntax, or stage? If YES, keep English. If NO (descriptive/explanatory prose), translate.
 
-#### 11.4. Bold label và section heading
+#### 11.4. Bold label and section heading
 
-**KHÔNG được để English cho:**
-- Section heading prose: `## Guided Exercise 2 — State table inspection và TCP lifecycle` → `## Guided Exercise 2 — Kiểm tra state table và vòng đời TCP` (giữ `Guided Exercise` + `state table` là concept; dịch `inspection` → `Kiểm tra`, `TCP lifecycle` → `vòng đời TCP`).
-- Bold label mở đầu đoạn: `**Sequential evaluation.**` → `**Đánh giá tuần tự.**`; `**Abstraction level.**` → `**Mức trừu tượng.**`; `**Auto zone assignment.**` → `**Tự động gán zone.**`; `**Distributed commit.**` → `**Commit phân tán.**`.
-- Callout label nội bộ: `> **Key Topic:**` → `> **Điểm mấu chốt:**`.
+Cannot leave English in:
+- Prose section heading (Vietnamese curriculum).
+- Paragraph-leading bold label: `**Sequential evaluation.**` becomes `**Đánh giá tuần tự.**`.
+- Internal callout label: `> **Key Topic:**` becomes `> **Điểm mấu chốt:**`.
 
-**Được giữ English cho:**
-- Section heading là tên concept/stage: `## 9.24.3 Action ct() — ngữ nghĩa đầy đủ`, `## 9.24.7 ct_zone — cô lập multi-tenant`.
-- Bold label là tên concept: `**NEW**`, `**ESTABLISHED**`, `**commit**`, `**zone=N**`.
+Can keep English when label is a concept/stage name: `## 9.24.3 Action ct(), full semantics`, `**NEW**`, `**ESTABLISHED**`.
 
-#### 11.5. Test đọc đơn lập + Hybrid acceptable + Misconception callout
+#### 11.5. Standalone-read test + hybrid acceptable + misconception callout
 
-- Sau khi viết xong một câu, đọc tách biệt khỏi context. Nếu câu có > 3 từ tiếng Anh không phải technical term chuẩn → rewrite.
-- Hybrid acceptable: "tích hợp với vSphere" (technical term + từ nối thuần Việt). Không viết "integrate với vSphere".
-- Câu quote trong `> **Hiểu sai:** *"..."*` phải đầy đủ tiếng Việt — chỉ giữ tên sản phẩm / action / field / literal.
+- After each sentence, read it isolated. If it has > 3 non-standard English words, rewrite.
+- Hybrid acceptable: "tích hợp với vSphere" (technical term + Vietnamese connector). Not "integrate với vSphere".
+- Quotes inside `> **Hiểu sai:** *"..."*` must be full Vietnamese; only product/action/field names stay English.
 
-#### 11.6. Checklist scan trước khi commit (BẮT BUỘC)
+#### 11.6. Pre-commit scan checklist (MANDATORY)
 
-Không được tin tưởng vào regex lẻ `inspect|support`. BẮT BUỘC chạy lần lượt:
+Run `grep -niE` for the dictionary regex (see `memory/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
 
-```bash
-# Scan nhóm vocabulary tư duy — dùng ripgrep case-insensitive
-grep -niE '\b(paradigm|architecture|approach|deployment|adoption|trade-?off|lock-?in|rebrand|announce|troubleshoot|inspect|integration|exclusive|operator|engineer|performance|optimization|overhead|compile[rd]?|deploy(ment)?|experiment|verify|fail(ure)?|behavior|motivation|criteria|subtle|pedagogical|explicit|implicit|version|strict|tolerate|undefined|guideline|convention|bypass|modify|rewrite|report(ing)?|input|output|control|tracking|symmetric|bidirectional|communication|session|lookup|pattern|template|namespace|overlap|multiplex|modular|flexibility|concern|expression|assignment|junior|senior|incident|post-?mortem|lifetime|debug(ging)?|scale|scalability|rule|first-?match|track(ing)?|monitor(ing)?|event)\b' <file.md>
-```
+1. Inside URL/code block/CLI sample, skip.
+2. OVS/OVN/OpenFlow product/concept name, skip.
+3. Bold label/section heading/cognitive prose, FIX to Vietnamese.
 
-Kết quả không nên trống — phần lớn hit là false positive (trong URL, code block, product name). Phân loại từng hit:
-1. **Inside URL, code block, CLI sample** → skip.
-2. **Tên sản phẩm/tổ chức/concept OpenFlow-OVS-OVN** → skip.
-3. **Bold label / section heading / prose tư duy** → FIX Việt hóa.
+When uncertain: §11.3 self-classification question.
 
-Nếu nghi ngờ, áp dụng câu hỏi §11.3: "đây có phải tên riêng trong thế giới OVS không?"
+#### 11.7. Adding new dictionary entries
 
-#### 11.7. Khi thêm từ mới vào dictionary
+When you discover a new prose word not in `memory/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
 
-Nếu trong quá trình review gặp một từ chưa có trong §11.2, BỔ SUNG vào bảng ngay lập tức trong cùng commit fix, kèm ví dụ ngữ cảnh. Dictionary là tài liệu sống — không đông cứng ở phiên bản session 22+23.
+(Origin: session 13 (2026-04-21) initial codification; sessions 22-23 broadened.)
 
-Từ điển mở rộng chi tiết: `.claude/plans/tender-scribbling-comet.md` Phần 1 (plan session 13) + retrofit session 22+23 trong cùng file này.
+### Rule 12: Exhaustive Offline Source Exploration (MANDATORY)
 
-### Rule 12: Exhaustive Offline Source Exploration (BẮT BUỘC)
-
-> Nguồn gốc: session 14, 2026-04-22. Khi bắt đầu Phase B cho Block VII, Claude dùng Glob
-> pattern `**/*.skill` + `.claude-skills/**/*` mà không recursive explore `sdn-onboard/doc/`.
-> Kết quả: bỏ sót toàn bộ kho offline USC/Crichigno trong `sdn-onboard/doc/ovs/` (11 PDF + TXT),
-> viết 4 file Block VII + Part 9.0 mà không cite offline sources. User chỉ ra: "tôi đã bảo
-> sdn-onboard/doc/* là tài liệu offline quý giá nhưng vì sao không nằm trong danh sách file/line
-> tham chiếu?" và "sdn-onboard/doc/ovs/* không nằm trong context của bạn à?"
-
-**Quy tắc:**
-
-Khi bắt đầu session làm việc với onboard series, TRƯỚC KHI viết bất kỳ content nào, BẮT BUỘC
-inventory đầy đủ kho offline bằng recursive Glob:
+Before writing any onboard content, inventory all offline sources via recursive Glob:
 
 ```
-Glob "sdn-onboard/doc/**/*"        (không phải chỉ "sdn-onboard/doc/*")
-Glob "haproxy-onboard/doc/**/*"    (tương tự cho series khác)
+Glob "sdn-onboard/doc/**/*"
+Glob "haproxy-onboard/doc/**/*"
 Glob "linux-onboard/doc/**/*"
 Glob "network-onboard/doc/**/*"
 Glob "references/**/*"
 ```
 
-**Quy trình bắt buộc:**
+**Process:**
 
-```
-1. Session start:
-   - Chạy recursive Glob liệt kê mọi file trong */doc/** và references/**
-   - Lập bảng mapping: file offline nào → Block/Part nào sử dụng
-   - Ghi nhớ bảng này trong memory nếu session dài
+1. Session start: recursive Glob, list files in `*/doc/**` and `references/**`. Build a mapping: offline file to Block/Part using it.
+2. Before each Write: list relevant `doc/*` for the topic. Cite explicitly in fact-forcing gate, header block, and References section.
 
-2. Trước mỗi Write file .md content:
-   - Kiểm tra mapping: doc file nào phù hợp với topic này
-   - LIỆT KÊ đầy đủ trong fact-forcing gate answer:
-     "Nguồn offline cung cấp content: <đường dẫn cụ thể> — <chapter/section>"
-   - Include trong header block của file: "> **Nguồn offline chính:** ..."
-   - Include trong References section cuối file
+**Violation signals:**
 
-3. Nếu user cung cấp nhắc nhở về offline sources:
-   - Stop ngay lập tức
-   - Re-run recursive Glob
-   - Identify gap
-   - Propose remediation (backfill existing files + apply prospectively)
-```
+- Fact-forcing gate answer missing "Offline source providing content" line.
+- File header missing `> **Primary offline source:**`.
+- References section missing offline source entry.
+- Writing technical content without `doc/*` citation when topic is covered.
 
-**Dấu hiệu vi phạm Rule 12:**
+(Origin: session 14 (2026-04-22) missed `sdn-onboard/doc/ovs/` (11 PDF + TXT) when writing Block VII + Part 9.0.)
 
-- Fact-forcing gate answer thiếu dòng "Nguồn offline cung cấp content"
-- File content header không có "> **Nguồn offline chính:**"
-- References section không có mục cho offline source
-- Viết content technical mà không có doc/* citation dù topic có sẵn trong compass/USC labs
+### Rule 13: Em-dash Discipline (MANDATORY for curriculum)
 
-**Phạm vi áp dụng:** Mọi session onboard series. Không có ngoại lệ — dù topic có vẻ "quá đơn giản"
-hay "không cần source", vẫn phải verify offline mapping trước khi kết luận.
+> **Note:** CLAUDE.md and `memory/*` are zero em-dash zone (top of file directive). Rule 13 below applies to curriculum (`*-onboard/*.md`).
 
-**Di sản khắc phục đã làm (session 14):**
+Em-dash is the exception, not the default. Vietnamese prose default to:
 
-- Backfill `doc/*` references vào `9.0 - ovs-history-2007-present.md` và `9.1 - ovs-3-component-architecture.md`
-- Viết 13 file content Block IX (9.0-9.14 + backfill) với đầy đủ doc/* citation
-- 4 file Block VII (7.0-7.3) không có doc/* vì controller ecosystem không được cover bởi compass/USC labs
-- Part 9.0-9.14 citation pattern: compass_artifact Chapter X + USC Lab Y (nếu có) + online upstream URL
+- **Comma (,)** for clause continuation.
+- **Period (.) + capital** for new sentence.
+- **Colon (:)** for list introduction or explanation.
+- **Parentheses (...)** for aside.
+- **Newline + bullet** for 3+ enumerated items.
 
-### Rule 13: Em-dash Discipline (BẮT BUỘC)
+#### 13.1. Em-dash IS allowed when
 
-> Nguồn gốc: session 24, 2026-04-23. User phát hiện em-dash (—) bị lạm dụng xuyên suốt Phase D Part 9.22/9.23/9.24/9.25 — mật độ 0.13-0.19 em-dash/dòng. Tổng 361 em-dash trên 4 file ~2.100 dòng. Đa phần dùng em-dash thay vì diễn đạt tự nhiên tiếng Việt (comma, period, colon, parentheses). Chữ Việt không cần nhiều em-dash như tiếng Anh — mỗi em-dash người đọc phải dừng lại suy nghĩ ngắt câu. Quá nhiều em-dash làm văn bản đứt gãy, khó đọc. User: *"Hãy audit toàn bộ em-dash, tôi thấy ký hiệu đang bị lạm dùng quá nhiều thay vì sử dụng ngôn ngữ tự nhiên để diễn đạt."*
+1. Heading-subtitle separator: `# 9.22. OVS multi-table pipeline, goto_table, resubmit`. One em-dash max in heading levels 1 to 3.
+2. Bold mini-label separator in structured rule/flow: `**Rule 1, Always start at table 0.**`.
+3. Bold noun + inline code list intro.
+4. Attribution separator (organization, date).
+5. Table row visual label inside ASCII diagram code block.
 
-**Nguyên tắc cốt lõi: em-dash là ngoại lệ, không phải mặc định.**
+#### 13.2. Em-dash is NOT allowed when
 
-Khi viết prose tiếng Việt, KHÔNG dùng em-dash thay cho dấu câu thông thường. Mặc định ưu tiên:
-- **Dấu phẩy (,)** khi continuation cùng mệnh đề
-- **Dấu chấm (.) + viết hoa** khi sang câu mới
-- **Dấu hai chấm (:)** khi giới thiệu danh sách hoặc giải thích
-- **Ngoặc đơn (...)** khi aside / parenthetical
-- **Xuống dòng + bullet list** khi enumerate 3+ mục
+1. Replacing comma in continuous prose.
+2. Replacing period when starting a new sentence.
+3. Replacing relative pronoun "là, nghĩa là, tức là".
+4. Inside bullet definition `- X, explanation`.
+5. Inside header block metadata `> **Label:** X, Y`.
 
-#### 13.1. Em-dash được phép dùng khi
+#### 13.3. Density threshold
 
-1. **Heading-subtitle separator**: `# 9.22. OVS multi-table pipeline — \`goto_table\`, \`resubmit\``. Em-dash tách tiêu đề chính và mô tả phụ trong heading level 1-3. Mỗi heading 0-1 em-dash tối đa.
+| Level | Em-dash/line | Verdict |
+|-------|--------------|---------|
+| < 0.05 | 1 per 20 lines | Natural |
+| 0.05 to 0.10 | 1 per 10 to 20 lines | Acceptable |
+| 0.10 to 0.15 | 1 per 7 to 10 lines | Warn, audit |
+| > 0.15 | > 1 per 7 lines | Overuse, must fix |
 
-2. **Bold mini-label separator trong mô tả rule/flow có cấu trúc**: `**Quy tắc 1 — Luôn bắt đầu ở table 0.**`, `**Flow 1 — default normal processing**`. Em-dash ngăn cách ID và label text của rule/flow có cấu trúc đồng đều.
+Curriculum target: **< 0.10 em-dash/line**. Files exceeding 0.10 require audit before commit.
 
-3. **Bold noun + inline code list**: `**Instruction** là lệnh ở cấp *table entry* — \`Apply-Actions\`, \`Write-Actions\`, ...`. Em-dash introduce danh sách inline code sau câu mô tả (colon `:` cũng OK).
-
-4. **Attribution tách tổ chức/ngày**: `(Crichigno, Sharif, Kfoury — University of South Carolina, NSF Award 1829698)`. Hoặc có thể dùng ngoặc đơn / comma tuỳ ngữ cảnh.
-
-5. **Table row visual label trong code block**: `Table 0 — Port security + VLAN decap`. Khi dùng ASCII diagram trong ```` ``` ```` block để mô tả pipeline layout.
-
-#### 13.2. Em-dash KHÔNG được dùng khi
-
-1. **Thay dấu phẩy trong câu prose liền mạch**: SAI `OVS-based OVN 22.03 có optimization — `allow` bỏ qua luôn lệnh `ct()`` → ĐÚNG `OVS-based OVN 22.03 có tối ưu hoá: `allow` bỏ qua luôn lệnh `ct()`.`.
-
-2. **Thay dấu chấm khi sang câu mới**: SAI `Không có gói tin nào được gửi thật — đây là simulation thuần tuý` → ĐÚNG `Không có gói tin nào được gửi thật. Đây là simulation thuần tuý`.
-
-3. **Thay đại từ quan hệ "là, nghĩa là, tức là"**: SAI `OpenFlow 1.0.0 — bản đặc tả đầu tiên` → ĐÚNG `OpenFlow 1.0.0, bản đặc tả đầu tiên`.
-
-4. **Trong bullet definition "- X — giải thích"**: SAI `- \`cookie=0xN\` — nhãn nhóm flow (Part 9.19 §19.4).` → ĐÚNG `- \`cookie=0xN\`: nhãn nhóm flow (Part 9.19 §19.4).`.
-
-5. **Trong header block metadata (> **Label:** ...)**: SAI `> **Plan:** §F.4.5 — Phase D flow debugging toolbox.` → ĐÚNG `> **Plan:** §F.4.5, Phase D flow debugging toolbox.`.
-
-#### 13.3. Ngưỡng mật độ (density threshold)
-
-| Mức | Em-dash/dòng | Đánh giá |
-|-----|-------------|----------|
-| < 0.05 | 1 em-dash mỗi 20 dòng | Tự nhiên, đúng mức |
-| 0.05 - 0.10 | 1 em-dash mỗi 10-20 dòng | Chấp nhận được |
-| 0.10 - 0.15 | 1 em-dash mỗi 7-10 dòng | Cảnh báo, cần audit |
-| > 0.15 | > 1 em-dash mỗi 7 dòng | Lạm dụng, phải fix |
-
-Target cho onboard series: **< 0.10 em-dash/dòng**. Mọi file vi phạm ngưỡng 0.10 bắt buộc audit trước commit.
-
-#### 13.4. Checklist Em-dash Audit (BẮT BUỘC trước commit)
+#### 13.4. Pre-commit em-dash audit (MANDATORY)
 
 ```bash
-# 1. Đếm mật độ mỗi file modified
 for f in $(git diff --name-only --cached | grep .md); do
-  count=$(grep -c '—' "$f")
+  count=$(grep -c $'\xe2\x80\x94' "$f")  # U+2014 em-dash literal
   lines=$(wc -l < "$f")
   ratio=$(python -c "print(f'{$count/$lines:.3f}')")
   echo "$f: $count em-dash / $lines lines ($ratio/line)"
 done
-
-# 2. Nếu ratio > 0.10, audit từng hit:
-grep -n '—' "<file.md>" | while read line; do
-  echo "$line"
-  # Phân loại: heading / bold label / attribution / code table / prose
-  # Nếu prose → FIX theo §13.2
-done
-
-# 3. Fix theo priority:
-#    (a) Bullet definition "- X — Y" → "- X: Y"
-#    (b) Inline prose "X — Y" (Y lowercase) → "X, Y"
-#    (c) Inline prose "X — Y" (Y capital Vietnamese) → "X. Y"
-#    (d) Header block metadata "Label: X — Y" → "Label: X, Y"
-
-# 4. Final check: density phải < 0.10 sau fix
 ```
 
-#### 13.5. Khi viết Part mới — dùng em-dash tối thiểu
+If ratio > 0.10, audit each hit. Fix priority: bullet definition (a) > inline prose lowercase (b) > inline prose capital (c) > header block metadata (d).
 
-Từ session 24 trở đi, viết content mới theo nguyên tắc:
-- Đặt em-dash cuối cùng, không phải đầu tiên. Viết câu xong bằng dấu câu thông thường trước, rồi mới chuyển sang em-dash nếu thực sự cần nhấn mạnh ngắt mạnh.
-- Nếu không chắc, không dùng em-dash.
-- Check density sau khi viết 50-100 dòng. Nếu > 0.15, rewrite.
+#### 13.5. New writing minimizes em-dash
 
-#### 13.6. Di sản retrofit (session 24)
+Place em-dash last, not first. Write sentences with normal punctuation; convert to em-dash only if strong emphasis is required. When in doubt, do not use em-dash. Check density every 50 to 100 lines; rewrite if > 0.15.
 
-Part 9.22/9.23/9.24/9.25 giảm em-dash từ 361 → 155 (57% reduction) bằng 3 script pass + manual edits:
-- `tmp-emdash-audit.py` — phân loại theo category
-- `tmp-emdash-reduce.py` — pattern replacement conservative
-- `tmp-emdash-aggressive.py` — bullet definition + Vietnamese sentence split + comma split
-- Manual edits cho dangling markup + spacing bugs
+(Origin: session 24 (2026-04-23) detected 361 em-dash across 4 Phase D files at density 0.13 to 0.19/line; reduced to 155 (57%) via 3-pass scripts + manual.)
 
-Dictionary và Checklist C cập nhật với §13.4 Em-dash scan.
+### Rule 14: Source Code Citation Integrity (MANDATORY)
 
-### Rule 14: Source Code Citation Integrity (BẮT BUỘC)
+Every reference to upstream source code (OVS, OVN, Linux kernel, HAProxy, Nginx, OpenStack, DPDK, FRR, strongSwan, P4, Cilium) MUST be verified via MCP GitHub (or equivalent) BEFORE commit.
 
-> Nguồn gốc: session 32+33a+33b, 2026-04-22. User flag `MAX_FDB_ENTRIES`
-> nằm trong `controller/mac-learn.c` cho OVN v22.03-v24.03 nhưng v24.09+
-> đã migrate sang `controller/pinctrl.c`. Audit sweep Phase E Scope D
-> phát hiện 32 issue qua 6 category trên 43 file: wrong commit SHA
-> (`ee20c48c2f5c` invalid trong context cited vào thời điểm Phase E audit —
-> re-verify 2026-04-25 cho thấy SHA này returns HTTP 200 ở ovn-org/ovn
-> khi check bằng `api.github.com/repos/ovn-org/ovn/commits/`, Reference 27
-> cùng file cite SHA đúng hơn `949b098626b7`. Finding phản ánh repo/branch
-> context mismatch tại thời điểm audit, không phải invalid permanently),
-> broken cross-ref (`./3.0` → `./19.0`, 4 instances),
-> function name fabricated (`reply_icmp_error_if_pkt_too_big` không
-> tồn tại — actual upstream có typo `reply_imcp_error_if_pkt_too_big`),
-> fabricated OVSDB table (`Chassis_features` — thực tế feature flags
-> ở `Chassis.other_config` map), wrong version attribution
-> (`MAC_Binding.timestamp` claim v22.03 — actual v22.09 qua commit
-> `1a947dd3`), wrong default (`mac_binding_age_threshold=600s` claim
-> — actual default 0 disabled), line numbers không annotation version,
-> verbatim quote có leak Vietnamese. Nguyên nhân gốc: Rule 1-13 không
-> có quy tắc bắt buộc verify source code reference qua upstream trước
-> khi cite.
+#### 14.1. Commit SHA reference
 
-**Quy tắc:**
+- Verify existence: `mcp__github__get_commit(owner, repo, sha)`.
+- Verify claims match: author + date + message + files changed.
+- Inline cite: 8 to 12 chars (SHA prefix). References section: 40-char full SHA.
+- Inline SHA and Reference section MUST match (grep pre-commit).
 
-Mọi reference tới mã nguồn upstream (OVS, OVN, Linux kernel, HAProxy,
-Nginx, OpenStack, DPDK, FRR, strongSwan, P4, Cilium, v.v.) PHẢI được
-verify qua MCP GitHub (hoặc tương đương) TRƯỚC khi được commit vào
-curriculum. Sáu loại reference và cách verify:
+#### 14.2. Function name reference
 
-**14.1. Commit SHA reference**
+- Verify existence: `mcp__github__search_code(query="function_name repo:owner/repo")`.
+- `search_code` has false negatives. Mandatory fallback: `mcp__github__get_file_contents`, then grep file content.
+- Preserve exact source spelling, even typos. Example: OVN source has `reply_imcp_error_if_pkt_too_big` (typo `imcp`), do not "fix" to `icmp` when citing. Annotate `(upstream typo imcp)` if it might confuse readers.
+- If function renamed across versions, annotate: `(named foo_bar in v22.03, renamed to bar_foo since v24.03 via commit abc1234)`.
 
-- Verify existence: `mcp__github__get_commit(owner, repo, sha)`
-- Verify claims match: author + date + message + files changed
-- Inline cite dùng 8-12 ký tự (SHA prefix); Reference section dùng
-  40-ký tự đầy đủ
-- **Inline SHA và Reference section phải match** — grep pre-commit
-  để catch mismatch trong cùng file
+#### 14.3. File path reference
 
-**14.2. Function name reference**
+- Verify existence at version baseline: `mcp__github__get_file_contents(path, ref)` with `ref` = curriculum baseline tag (e.g., `v22.03.8` for OVN, `v2.17.9` for OVS, `v5.15` for Linux Ubuntu 22.04).
+- If file migrated across versions, annotate per Rule 3. Example: `controller/mac-learn.c` (v22.03 to v24.03) or `controller/pinctrl.c` §MAX_FDB_ENTRIES (v24.09+, commit `fb96ae3679`).
 
-- Verify existence: `mcp__github__search_code(query="function_name repo:owner/repo")`
-- **Lưu ý search_code false negative**: một số function có thật nhưng
-  search không index. Fallback mandatory: `mcp__github__get_file_contents`
-  đọc thực file rồi grep nội dung.
-- **Preserve exact source spelling** kể cả typo (ví dụ OVN source có
-  hàm `reply_imcp_error_if_pkt_too_big` với typo `imcp` — không sửa
-  thành `icmp` khi cite). Nếu typo gây nhầm, thêm note `(tên gốc
-  upstream có typo imcp)`.
-- Nếu function đã rename giữa versions, annotate: "(tên cũ `foo_bar`
-  trong v22.03, rename thành `bar_foo` từ v24.03 qua commit `abc1234`)"
+#### 14.4. Line number reference
 
-**14.3. File path reference**
+Line numbers are version-sensitive. Mandatory annotation, choose one:
 
-- Verify tồn tại tại version baseline: `mcp__github__get_file_contents(path, ref)`
-  với `ref` là tag curriculum baseline (vd `v22.03.8` cho OVN,
-  `v2.17.9` cho OVS, `v5.15` cho Linux kernel Ubuntu 22.04)
-- Nếu file di trú giữa versions: annotate per Rule 3
-  - Ví dụ: "`controller/mac-learn.c` (v22.03 → v24.03) hoặc
-    `controller/pinctrl.c` §MAX_FDB_ENTRIES (v24.09+, commit
-    `fb96ae3679` merge)"
+- **Option A** (branch-specific): `physical.c` lines 1939 to 1968 (OVN branch-24.03).
+- **Option B** (commit permalink): `physical.c` link to GitHub blob at commit SHA (`https://github.com/ovn-org/ovn/blob/SHA/controller/physical.c#L1939-L1968`).
+- **Option C** (function name anchor, RECOMMENDED): instead of line, use function name as stable anchor. Example: "In function `build_lswitch_arp_nd_responder_known_ips` in `northd/northd.c`, find the `op->lsp_has_port_sec || !op->has_unknown` check".
 
-**14.4. Line number reference**
+Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is best practice.
 
-- Line number LUÔN version-sensitive. Bắt buộc annotate:
-  - Option A — branch-specific: "`physical.c` dòng 1939-1968 (OVN
-    branch-24.03)"
-  - Option B — commit permalink: "`physical.c`
-    [link tới GitHub blob tại commit SHA](https://github.com/ovn-org/ovn/blob/SHA/controller/physical.c#L1939-L1968)"
-  - Option C — function name anchor: thay vì dòng, dùng function
-    name làm anchor stable (ví dụ "Trong function
-    `build_lswitch_arp_nd_responder_known_ips` ở `northd/northd.c`,
-    tìm `op->lsp_has_port_sec || !op->has_unknown` check")
-- **Line number drift phổ biến**: v22.03 → main thường shift 2000+
-  dòng. Option C (function name) là recommended best practice.
+#### 14.5. Verbatim commit body quote
 
-**14.5. Verbatim quote commit body**
+- Copy-paste EXACT from MCP API response. No translate, no edit spacing, no bullet format change.
+- A block `> "Verbatim commit body from GitHub API:"` must be 100% English if the commit body is English.
+- Translate only with explicit "paraphrase" label. Do NOT use "verbatim" label on a paraphrase.
+- Dash bullets (`-`) preserve exact, do NOT convert to `(a)(b)(c)`.
 
-- Copy-paste EXACT từ MCP API response, không dịch, không edit
-  spacing, không đổi bullet format
-- Block `> "Trích nguyên văn commit body từ GitHub API:"` phải 100%
-  English nếu commit body là English
-- Chỉ dịch sang Vietnamese nếu chọn format "paraphrase" explicit,
-  KHÔNG dùng label "nguyên văn" trên paraphrase
-- **Dash bullets (`-`) preserve exact** — không chuyển sang `(a)(b)(c)`
+#### 14.6. Database table + schema claim
 
-**14.6. Database table + schema claims**
+- Verify schema existence via `mcp__github__get_file_contents` for `ovn-sb.ovsschema`, `ovn-nb.ovsschema`, `vswitchd/vswitch.ovsschema`.
+- Parse JSON to list actual tables + columns.
+- Do not fabricate table names. If a feature stores in `other_config` map instead of a dedicated table, say so.
+- Internal C struct is NOT a database table. Distinguish clearly. Example: `struct chassis_features` in-memory differs from a hypothetical `Chassis_features` OVSDB table.
 
-- Verify schema existence via `mcp__github__get_file_contents` cho
-  `ovn-sb.ovsschema`, `ovn-nb.ovsschema`, `vswitchd/vswitch.ovsschema`
-- Parse JSON để liệt kê tables + columns actual
-- **Không fabricate table names** — nếu feature lưu ở `other_config`
-  map thay vì dedicated table, nói rõ
-- **Internal C struct ≠ database table** — phân biệt rõ (ví dụ
-  `struct chassis_features` in-memory khác với giả thiết bảng
-  `Chassis_features` trên OVSDB)
+#### 14.7. Pre-commit audit pass
 
-**14.7. Audit pass TRƯỚC khi commit**
+- Grep every new claim in section: SHA, function, path, line number, table name.
+- If > 3 references in a section, run MCP audit batch (verify all).
+- Log evidence in `memory/fact-check-audit-YYYY-MM-DD.md`.
+- Commit only when 100% pass; any failed reference must be fixed or removed.
 
-- Grep mọi claim mới trong section: SHA, function, path, line number,
-  table name
-- Nếu > 3 references trong section, chạy MCP audit batch (verify
-  tất cả)
-- Ghi log evidence vào `memory/fact-check-audit-YYYY-MM-DD.md`
-- Commit chỉ khi 100% pass; bất kỳ ref nào fail → fix hoặc xóa claim
+(Origin: session 32-33i (2026-04-22) found 32 issues across 6 categories on 43 files; codified Rule 14 in commit `7e5608b`.)
 
-**Phạm vi áp dụng:** Mọi onboard series (SDN, HAProxy, Linux, Network),
-mọi Part mới hoặc audit lại file cũ. Rule 14 áp dụng tiếp nối
-(prospectively) + retrofit (cho file đã viết khi phát hiện drift).
-
-**Dấu hiệu vi phạm Rule 14:**
-
-- Inline cite commit SHA nhưng không có matching entry trong References
-  section (hoặc SHA khác nhau giữa inline và References)
-- Function name không có trong upstream khi search MCP + không có
-  trong file khi grep direct
-- File path không tồn tại tại version baseline (404)
-- Line number không annotate version trong cùng sentence/paragraph
-- Block "Trích nguyên văn" có Vietnamese trong English quote
-- Database table claim mà không verify schema (vd claim "Chassis_features"
-  mà không kiểm ovn-sb.ovsschema)
-- Commit Session X chứa source code ref mới mà `memory/fact-check-audit`
-  không có entry ngày X
-
-**Quy trình khi viết Part mới (prospective enforcement):**
-
-1. Pre-write phase: research topic trên upstream, note mọi SHA +
-   function + file path + line number + table name định cite
-2. Batch verify qua MCP trước khi draft content
-3. Draft content chỉ dùng ref đã verify
-4. Post-write audit: re-grep section, verify lần 2 bằng MCP
-5. Commit chỉ khi Step 2 + Step 4 đều pass
-
-**Quy trình khi retrofit file cũ (reactive enforcement):**
-
-1. Grep file cho pattern trong §14.1-§14.6
-2. Batch verify MCP
-3. Fix từng issue theo category
-4. Log findings vào `memory/fact-check-audit-YYYY-MM-DD.md`
-5. Re-verify post-fix
-6. Commit với message "docs(...): Rule 14 retrofit — N issues fixed"
-
-**Bài học Phase E (session 32-33i):**
-
-- MCP `search_code` có false negative (ví dụ `build_lswitch_learn_fdb_op`
-  search return 0 dù function tồn tại ở `northd/northd.c` line 6299
-  v22.03.8). Fallback `get_file_contents` bắt buộc.
-- Source code có typo intentional (ví dụ `imcp` thay vì `icmp` trong
-  OVN `reply_imcp_error_if_pkt_too_big`). Preserve spelling.
-- Version attribution phổ biến bị lệch 1 LTS (vd v22.03 vs v22.09).
-  Luôn verify commit date + release tag gần nhất.
-- Foundation/conceptual blocks (Block I-VIII + X-XII + XIV-XVI + XX)
-  density source code ref thấp — ít fact-check risk. Forensic case
-  study blocks (XVII-XIX) + internals blocks (XIII OVN + IX OVS) là
-  nơi chứa phần lớn risk.
+---
 
 ## Current State
 
 | Key | Value |
 |-----|-------|
-| Active branch | `docs/sdn-foundation-rev2` @ `fa82d81` (post-S63 Phase I kickoff). Tag `v3.1-OperatorMaster` @ `0fa0687`. Phase I 1/9 (11%) toward v3.2-ArchitectMaster. |
-| Session 63 status | **DONE** (2026-04-24) Phase I.A1 — Part 9.1 expand §9.1.Y ofproto-dpif xlate tier 2 (430→749 dòng, +319). 10 subsection deep walkthrough: 4 trigger + xlate_actions entry + xlate_ctx Anatomy Template A + action translation walkthrough + megaflow wc tracking + trace output mapping + kernel/userspace split + GE + Capstone POE + source refs. Rule 9 null 0, Rule 11 0 prose leak, Rule 13 em-dash 0.0267/line PASS, Rule 14 stable function anchors. Plan file Phụ lục J full appended (9 session S63-S71 + tracker). Commit `fa82d81` pushed. Next S64 Part 9.15 classifier TSS. |
-| Phase I status | **IN PROGRESS** 1/9 session (11%). Target v3.2-ArchitectMaster. 3 area: OVS tier 2 (S63-S65) + OVN tier 2 (S66-S68) + Tools mastery + Debug gradient (S69-S71). Scope: 3 file mới + 6 file expand. Plan: `plans/sdn-foundation-architecture.md` Phụ lục J. |
-| Release v3.1-OperatorMaster | **🎉 TAGGED** (2026-04-24 S62). 116 file, ~52.6K dòng, 20 block, 60+ GE+Capstone, 4 decision matrix. Phase G 5/5 COMPLETE + Phase H 13 session + Phase E audit + Phase F partial + S60-S61 pre-release audit (Rule 9+13 PASS, Rule 11 185/295 fixed 63%, 110 residual accept v3.1.1). CHANGELOG.md viết. User directive 2026-04-24 mở rộng: 5 trụ cột kỹ năng. Plan: S63+ Phase I OVS+OVN tier 2 internals + tools mastery. |
-| Session 60 status | **DONE** (2026-04-24) Pre-release audit cross-session 116 file. Rule 9 null PASS 0/116. Rule 13 em-dash PASS 0/116. Rule 11 64 prose leak Phase G. Rule 14 spot-check pending. Audit log `memory/pre-release-audit-2026-04-24.md`. Commit `ab9f38b`. |
-| Session 61a status | **DONE** (2026-04-24) Rule 11 Phase G sweep 7 file 64 → 0 leak. Commit `9469359`. |
-| Session 61b status | **DONE** (2026-04-24) Rule 11 broader sweep 3-pass global sed 107 core file (skip 14.x/15.x/16.x deprioritized). 231 → 110 leak (52% reduction). Commit `d15d701`. 110 residual accept v3.1.1 patch. |
-| Session 62 status | **DONE** (2026-04-24) Release v3.1-OperatorMaster. CHANGELOG.md new root. README parent + sdn-onboard README refresh với release tag note + 5 trụ cột + 20 block structure. Git tag `v3.1-OperatorMaster` annotated. |
-| Phase E status | **🎉 COMPLETE** — Scope A (audit rev2 residual cleanup, 14 fixes), Scope D (fact-check audit 101 file, 32 issues fixed), Scope B (Part 9.26 OVS forensic 464 dòng), Rule 14 codified. Session 32+33a-33i+34+35. |
-| Session 32 status | **DONE** Audit rev2 residual (Rule 11 + header backfill) + Phụ lục G + MAX_FDB_ENTRIES version drift fix (`076ef87`+`b243207`). |
-| Session 33a status | **DONE** Scope D.1 3 Advanced OVN fact-check (17.0/18.0/19.0, 26 issues 6 category) commit `acc58a2`. |
-| Session 33b status | **DONE** Scope D.2 Block XIII OVN foundation (5 issues Chassis_features fabricated + stage count + timestamp version) commit `e06bf63`. |
-| Session 33c status | **DONE** Scope D.3 Block IX OVS internals (1 date drift OVS 2.0) commit `93442cc`. |
-| Session 33d-h status | **DONE** Block 0-VIII+X-XII+XIV-XVI+XX (0 issues, low density) batch audit. |
-| Session 33i status | **DONE** Rule 14 Source Code Citation Integrity codify vào CLAUDE.md (7 subsection 14.1-14.7) commit `7e5608b`. |
-| Session 34 status | **DONE** Part 9.26 OVS Revalidator Storm Forensic (464 dòng, 6 điểm cốt lõi, 2 Guided Exercise + 1 Capstone POE) với Rule 14 pre-write verify — commit `180ab2fd635e` + `464bc6f9` + `0d9dc8e9` all verified real. |
-| Session 35 status | **DONE** README TOC Block IX 27 file + memory/session-log.md + CLAUDE.md Current State sync. |
-| Phase F status | **🔶 PARTIAL COMPLETE (7/9 sessions, 78%) — K8S DEPRIORITIZED** — Block XIV (3/3: 14.0/14.1/14.2) + Block XVI (3/3: 16.0/16.1/16.2) + Block XV 1/3 (15.0 only). **15.1 + 15.2 DEFERRED** theo user directive 2026-04-23 "xếp độ ưu tiên K8S xuống thấp". Plan adjustment: `plans/sdn-foundation-architecture.md` **Phụ lục I** (new). Delta Phase F: +1165 dòng across 7 files. |
-| Phase F audit status | **✅ PASSED** — Audit 2026-04-23 across 14 Rules + 6 SKILL. Log: `memory/phase-f-audit-2026-04-23.md`. Rule 9 null bytes 0, Rule 13 em-dash 0.038-0.078/line, Rule 14 MCP verify all repos. |
-| Phase F commits | 8 commits pushed: `524773e` (36a 14.0) → `bbc331f` (36b 14.1) → `9a8e2ea` (36c 14.2) → `2fead39` (36d 16.0) → `ef1963d` (36e 16.1) → `1483cfd` (36f 16.2) → `19d8092` (audit) → `c777acf` (36g 15.0). |
-| Phase F priority reprioritized | User directive 2026-04-23 post-36g: mission core = **lịch sử + hiểu biết + kiến thức + thao tác công cụ + truy vết + xử lý sự cố + debug với OVS/OpenFlow/OVN**. Block XV Cloud Native (Istio/Linkerd/Cilium/OVN-K8s) thuộc Expert Extension priority thấp. 15.1 deferred (medium priority, OVN lens), 15.2 deferred (low priority, không OVS/OVN). |
-| Phase G status | **🎉 COMPLETE 12/12 sessions (100%), 5/5 area COMPLETE** | Plan approved 2026-04-23 (Option C). Scope: OVS/OVN Core Deepening 5 areas tất cả COMPLETE: G.1 Truy vết ✅ 3/3 + G.2 Xử lý sự cố ✅ 3/3 + G.3 Debug sâu ✅ 3/3 + G.5 Thao tác công cụ ✅ 2/2 + **G.4 Lịch sử ✅ 1/1** (S59 Part 20.6 retrospective). **5/5 area COMPLETE**. Release-ready **v3.1-OperatorMaster** eligible full declare. Plan `plans/sdn-foundation-architecture.md` Phụ lục I §I.4. |
-| Session 59 status | **DONE** (2026-04-24) G.4 new Part 20.6 "Hành trình OVS/OpenFlow/OVN 2007-2024" (432 dòng), **đóng Phase G 12/12 (100%) + 5/5 area COMPLETE**. Reflective synthesis Part không code-heavy, prose-heavy narrative historical. 9 section chính + phụ lục timeline: **§20.6.1** nguyên tắc retrospective analytic (tôn trọng hindsight bias, evidence-based, phân biệt vision/reality/lesson). **§20.6.2** thời kỳ 1 sơ khai 2007-2011 (Stanford Clean Slate, Nicira founding 08/2007, OpenFlow 1.0 spec 31/12/2009, ONF 21/03/2011, 3 vision ban đầu + sai lầm ngầm về scalability). **§20.6.3** thời kỳ 2 reality đối mặt 2011-2014 (OpenFlow 1.1-1.5 evolution, Google B4 SIGCOMM 2013 lesson hybrid cần Google-sized team, TTP + Flow Objectives seed declarative intent). **§20.6.4** thời kỳ 3 hypervisor overlays thắng 2013-2017 (VMware mua Nicira 1.26 tỷ USD 07/2012, NSX 2013, OpenStack Neutron + OVS + ML2 default, pure OpenFlow controller thu hẹp scope). **§20.6.5** thời kỳ 4 OVN era 2015-2020 (Pfaff/Pettit announce 01/2015, NBDB+northd+SBDB+ovn-controller scope rõ, bảng so sánh OVN vs pure OpenFlow 7 dimension, Linux Foundation OVS 2016). **§20.6.6** thời kỳ 5 production hardening 2020-2024 (bảng 10 LTS milestone OVS 2.13→3.2 + OVN 20.06→24.03, pattern I-P engine + Raft + observability first-class + incident-driven). **§20.6.7** 10 meta-lesson universal (right problem wrong abstraction / scalability cấu trúc / declarative > imperative / eventually consistent > synchronous / observability first-class / protocol purity không goal / open governance thắng lock-in / incident-driven hardening / upgrade path mandatory / training dài hạn). **§20.6.8** frontier 2024-2030: 6 trend có cơ sở kỹ thuật (OVN 1000-chassis / HW conntrack offload / security compliance native / OVSDB template / observability standard / forensic curriculum) + 3 hype cycle skepticism (AI-driven control / serverless networking / userspace datapath). **§20.6.9** Capstone reflective "OVS/OpenFlow/OVN có thành công không?" phân biệt OpenFlow protocol không thắng như vision 2011 nhưng OpenFlow idea thắng qua route OVS/OVN embedded. Phụ lục timeline 2007-2024 với 40+ milestone. Rule 9 null 0, Rule 11 2 fix (operator→người vận hành, performance→hiệu năng), Rule 13 em-dash density **0.0046/line** (kỷ lục thấp nhất toàn Phase G, 2 em-dash / 432 dòng), Rule 14 N/A. Block XX 6→7 file. Curriculum 115→116 file, 52.209 → 52.641 dòng. Phase G 11/12 → **12/12 ✅ 100% COMPLETE**, G.4 0/1 → 1/1 COMPLETE. **🎉 Tất cả 5/5 area Phase G COMPLETE** (G.1 + G.2 + G.3 + G.4 + G.5). Release candidate **v3.1-OperatorMaster full eligible**. |
-| Session 58 status | **DONE** (2026-04-24) G.2.3 new Part 20.5 OVN forensic case studies (842 dòng), **đóng G.2 3/3 COMPLETE**, **4/5 area Phase G COMPLETE**. Sister của Part 9.26 nhưng scope OVN distributed control plane cross-chassis. 3 case study + cross-case takeaway + 2 GE + Capstone POE: **Case 1 Port_Binding migration race** (dual-bind transient 3-18s, ovsdb-client timestamp monitor forensic, ML2 flip chassis column + chB claim sớm + chA release trễ → window 2 chassis cùng có flow; mechanism SBDB Raft propagation + ovn-controller run-loop; 4-tier: manual binding-release / Nova ML2 step ordering 2s confirm / upgrade 22.06+ `requested_chassis` atomic / capacity planning). **Case 2 northd bulk tenant deletion memory cascade** (5000 LSP individual txn → 400MB→2.4GB balloon 90s → OOM → standby full recompute 180s → 4m40s stuck; Anatomy Template A memory/show 5-field + inc-engine/show status "recompute" + stopwatch/show ovnnb_db_run 8.9s; mechanism I-P engine fallback full recompute + GC lag; 4-tier: wait recovery / batch 100×50×3s / systemd MemoryMax + OOMPolicy / upgrade 23.09+ incremental GC + 23.03+ parallel-build). **Case 3 MAC_Binding table explosion ARP scan exploit** (malware tenant scan 65K IP rate 75/s → 67900 row/15min → CPU 35% × 60 chassis, nb_cfg lag 8s; non-self-heal vì OVN 22.03 MAC_Binding unbounded; 4-tier: batch destroy 500×2s / ACL ARP rate-limit egress / upgrade 24.03+ `mac_binding_age_threshold=300` / daily cron audit + trust zoning per tenant). **§20.5.5 cross-case takeaway 3 design lesson**: claim protocol idempotent+atomic (intent vs state separation, ordered transition, timeout rollback) / I-P memory budget bounded+observable (metric expose, GC proactive, MemoryMax explicit, batch enforcement) / distributed learned state age-bounded default (age attribute mandatory, GC default-on, opt-out not opt-in). **GE1** reproduce Port_Binding dual-bind 2-chassis sandbox với ovsdb-client timestamp + flow count parallel, POE predict 22.03 window 2-15s vs 22.06+ <500ms. **GE2** reproduce MAC_Binding ARP scan 100 IP từ netns + validate age_threshold 60s auto-GC. **§20.5.8 Capstone POE G.2.3** refute "set `mac_binding_age_threshold=60` mọi LR fix exploit" với 5 observation (latency-sensitive tenant impact / stable fleet wasted re-learn / threshold thấp weak vs scan rate cao / apply 240 LR = burst update / "đúng" phụ thuộc pattern traffic). Correct 3-step: classify tenant risk / per-class template (trusted 3600s / standard 300s / high-risk 60s + ACL) / rolling triển khai + monitor. Rule 9 null 0, Rule 11 3 fix (operator→người vận hành, deployment→triển khai), Rule 13 em-dash density **0.0083/line** (kỷ lục session thấp nhất), Rule 14 N/A (function names `binding_add_lport`/`clear_tracked_data`/etc. reference generic pattern). Block XX 5→6 file. Curriculum 114→115 file, 51.367 → 52.209 dòng. Phase G 10/12 → 11/12 (92%), G.2 2/3 → 3/3 ✅ COMPLETE. **4/5 area Phase G COMPLETE** (G.1 + G.2 + G.3 + G.5). Release candidate v3.1-OperatorMaster eligible declare. |
-| Session 57 status | **DONE** (2026-04-24) G.2.2 expand Part 9.14 incident decision tree từ 956 → 1494 dòng (+538). Append **5 scenario mới K-O** (§9.14.6 K-O) theo Template A anatomy + signature/evidence/RCA/remediation 3-tier/prevention: **Scenario K** BFD thundering herd sau ToR underlay reboot (N chassis đồng loạt init BFD session tạo control plane storm O(N²); rate-limit 3-tier + stagger startup + upgrade 24.03 staggered BFD), phân biệt rõ với Scenario E (intermittent flap) vs K (burst convergence). **Scenario L** ovn-northd compile stuck bulk NBDB update (500 LSP 1-txn → build_lflows 42s max; Anatomy Template A stopwatch/show 5 field với kịch bản bẻ gãy 3 pattern; 3-tier fix: batch transaction / parallel-build / Port_Group consolidation). **Scenario M** chassis ghost claim sau hard power off (Port_Binding.chassis stuck; Chassis_Private.nb_cfg_timestamp indicator; 3-tier: `ovn-sbctl chassis-del` manual / stale-binding-timeout-ms 22.06+ / HA_Chassis_Group auto failover). **Scenario N** ovn-controller recompute loop vô tận (inc-engine/show node stuck "recompute"; lflow-cache hit rate 0%; external_ids churn culprit; 3-tier: recompute+flush cache khẩn / ovsdb-client monitor identify trigger / idempotent tool automation). **Scenario O** cert expiry outage cluster-wide (SSL_ERROR_ZERO_RETURN; 3-tier: emergency reissue ovs-pki req-sign + ansible deploy / verify connection-status / cross-sign 60d rotation process tham chiếu Part 20.1 §20.15). **§9.14.7** master matrix expanded **15 → 20 symptom** + layer-grouping table (datapath/CP-OVS/CP-OVN/underlay/kernel). **§9.14.10** GE Phase G.2.2 reproduce Scenario L (bulk 500 LSP 1-txn vs batch 50×10, stopwatch so sánh + POE predict/observe/explain). **§9.14.11** Capstone POE Phase G.2.2 refute "rolling restart ovn-controller fix mọi sự cố OVN?", phân tích 3 scenario N/M/O cho thấy restart clear in-memory state but not persistent state (Chassis row, cert chain), cascade storm trên cluster lớn. Correct approach: classify → Tier 1 scenario-specific → Tier 3 structural. Rule 9 null 0, Rule 11 5 fix (Junior→kỹ sư mới vào nghề, operator→người vận hành), Rule 13 em-dash density 0.0395/line (rất thấp), Rule 14 no new SHA claim. Curriculum 114 file, 50.829 → 51.367 dòng. Phase G 9/12 → 10/12 (83%), G.2 Xử lý sự cố 1/3 → 2/3. |
-| Session 51 status | **DONE** (2026-04-24) G.3.1 new Part 20.2 OVN troubleshooting deep-dive (1627 dòng). 14 section cover 3-layer debug OVN (NB/SB/OpenFlow), `ovn-trace` 11 option + 4 output mode + 9 subsection deep-dive, `ovn-detrace` chain `ofproto/trace | ovn-detrace` với Anatomy Template A, Port_Binding 8 type forensic × 22 failure mode consolidated, `ovn-appctl -t ovn-controller` 11 command + `ovn-appctl -t ovn-northd` 10 command (7 Anatomy key), MAC_Binding + FDB + Service_Monitor stateful triage, 16-symptom diagnostic matrix, 3 GE + 1 Capstone POE refute "restart cures all". Rule 9 null 0, Rule 11 8 fix (Engineer→Kỹ sư, Verify→Kiểm chứng), Rule 13 em-dash density 0.0535/line, Rule 14 no new SHA claim. Block XX 2→3 file. Curriculum 111→112 file, 44.084→45.711 dòng. Commit `bd2ae48`. |
-| Session 52 status | **DONE** (2026-04-24) G.3.2 expand Part 9.26 OVS Revalidator Storm Forensic từ 464 → 1185 dòng (+721). Append 2 case study mới + 2 Guided Exercise + 1 cross-case takeaway: **Case 2** §9.26.11 LACP bond flap cascade (ToR firmware trigger LACPDU timeout → 200 chassis đồng loạt mark slave DOWN → megaflow mask invalidation storm → upcall rate 50 pps → 250K pps → VM latency cascade) với Anatomy Template A cho `bond/show` 10 field + `lacp/show` state bits + `dump-ports drop counter` + 4 coverage counter bond-specific, mechanism deep-dive `bond_update_post_recirc_rules()` + remediation 4 tầng (lacp-time slow maintenance window / upgrade 3.1+ single-slave optimization). **Case 3** §9.26.12 Conntrack zone collision cross-chassis migration (tenant T2 migrate chassis-A→B race với T1 zone 1012 → state cross-talk → "random connection reset" dual-tenant) với Anatomy `ct-zone-list` + `dpctl/dump-conntrack zone=N` detect duplicate, mechanism `alloc_ct_zone()` bitmap refresh race + remediation (restart ovn-controller + sequential migration + upgrade 24.03+ transactional alloc + daily audit cron). **§9.26.13** cross-case takeaway: 3 incident class "eventually consistent distributed cache" + 4 design lesson (convergence test adversarial / observability per-cycle metric / symptom cascading / latency phân tách). **GE3** reproduce bond_reconfigure spike với veth slave flap (balance-slb sandbox). **GE4** zone audit script `sort | uniq -d` O(n log n) verify 10K LSP < 0.1s. Rule 9 null 0, Rule 11 1 fix (Verify→Kiểm chứng), Rule 13 em-dash density 0.0802/line (< 0.10). Curriculum 112 file, 45.711 → 46.432 dòng. Phase G 4/12 → 5/12 (42%), G.3 Debug sâu 1/3 → 2/3. Commit `262f768`. |
-| Session 53 status | **DONE** (2026-04-24) G.5.1 new Part 20.3 OVN daily operator playbook (1554 dòng). 18 section cover 10 task category scenario-driven cho operator daily workflow: (1) health check morning routine 5 lệnh < 10 giây với Anatomy Template A `ovn-nbctl show` + chassis liveness + northd/ovn-controller status + nb_cfg sync + lflow count; (2) inventory listing 5 cách đếm LS/LSP/LR/ACL/LB/NAT/DHCP/Chassis; (3) port lifecycle 6 scenario (add/bind/remove/rename/migrate/disable); (4) ACL management 6 scenario với Port_Group consolidation 5-10x; (5) Load_Balancer + NAT 6 scenario (create/modify/health-check/SNAT/DNAT/remove); (6) DHCP + DNS native 5 scenario; (7) Gateway + HA_Chassis 5 scenario (LRP external/HA group/active check/failover/BFD); (8) Conntrack 5 scenario (dump/count/flush/zone check/timeout); (9) Performance 5 metric (stopwatch/inc-engine/lflow-cache/datapath/Prometheus export); (10) Backup + maintenance 5 scenario (NBDB+SBDB backup/restore/chassis cordon 7-step/rolling upgrade/audit). **2 workflow end-to-end**: §20.3.11 new-tenant.sh + §20.3.12 tenant-teardown.sh script complete bash. **3 Guided Exercise**: health check walkthrough + new tenant provisioning + chassis maintenance procedure. **Capstone POE** "Add 500 ACL safe for prod?" refute với Port_Group consolidation + priority block recommendation. 8 hiểu sai phổ biến + 8 điểm cốt lõi. Rule 9 null 0, Rule 11 0 prose leak (đã apply Kiểm chứng từ đầu), Rule 13 em-dash density 0.0257/line (rất thấp), Rule 14 no new SHA. Block XX 3→4 file. Curriculum 112→113 file, 46.432 → 47.986 dòng. Phase G 5/12 → 6/12 (50%), G.5 Thao tác công cụ 0/2 → 1/2. Commit `e6e4170`. |
-| Session 54 status | **DONE** (2026-04-24) G.2.1 expand Part 9.14 incident decision tree từ 394 → 956 dòng (+562). Append §9.14.6 "Ten detailed production incident scenario": Scenario A OVSDB Raft split-brain + 3-tier heal (cluster/change-election-timer) + Scenario B ovs-vswitchd OOM kill + memory/show anatomy + Scenario C handler thread saturation (Anatomy Template A `upcall/show` đầy đủ 6 field + lost_upcalls rate red flag) + Scenario D megaflow cache thrashing + coverage delta + Scenario E tunnel BFD flap cascade + bfd_interval tuning + Scenario F HW offload silent fallback (mlx5 ct unsupported combo) + Scenario G NIC ring buffer overflow (ethtool -G 4096) + Scenario H conntrack table full (nf_conntrack_max + timeout) + Scenario I fail-mode=secure lockout (standalone vs secure trade-off) + Scenario J bond slave microburst flap (updelay/downdelay hysteresis). **§9.14.7** master 15-symptom decision matrix (5 original + 10 mới). **§9.14.8** Guided Exercise reproduce OVSDB Raft partition với iptables DROP + heal procedure 3-tier. **§9.14.9** Capstone POE "Tăng nf_conntrack_max từ 512K → 2M fix Scenario H?" refute với 3-tier correct approach (immediate cap + timeout tuning + root cause leak identify). Rule 9 null 0, Rule 11 0 prose leak, Rule 13 em-dash density 0.0554/line, Rule 14 no new SHA. Curriculum 113 file, 47.986 → 48.548 dòng. Phase G 6/12 → 7/12 (58%), G.2 Xử lý sự cố 0/3 → 1/3. Commit `4646157`. |
-| Session 55 status | **DONE** (2026-04-24) G.5.2 new Part 20.4 OVS daily operator playbook (1422 dòng) — sister playbook cho 20.3 nhưng OVS pure-datapath, **đóng G.5 Thao tác công cụ 2/2 COMPLETE**. 18 section cover 10 task category daily OVS workflow: (1) health check 5 lệnh < 10s với Anatomy Template A `ovs-vsctl show` 8-field + `ovs-dpctl show` lookups/masks + `upcall/show` + flow-count; (2) inventory bridges/ports/Controller/Manager/QoS/Mirror; (3) bridge + port lifecycle 6 scenario với 8 type (internal/patch/geneve/vxlan/gre/dpdk/dpdkvhostuser/physical); (4) OpenFlow rule management 6 scenario (add/dump/del/mod/replace-flows atomic/monitor); (5) tunnel management 5 scenario (Geneve/VXLAN/GRE + tnl/neigh + tnl/ports + trace); (6) QoS+mirror 5 scenario (ingress policing / egress HTB / queue output / SPAN / RSPAN VLAN); (7) conntrack 5 scenario (enable via ct() / dump/flush/monitor/zone limit); (8) performance 6 metric (dpif/show + coverage/show + memory/show + revalidator/purge + DPDK PMD stats + bond/LACP); (9) OVSDB 5 scenario (list-dbs/list-tables/dump / compact / backup-restore / cluster/status / monitor); (10) backup + maintenance 5 scenario (pre-maintenance snapshot / rolling upgrade / bridge cross-datapath migration / emergency reset / daily cron audit). **2 workflow end-to-end**: `new-bridge.sh` (tunnel + QoS + controller) + `bridge-decommission.sh` với orphan QoS GC. **3 Guided Exercise** + **1 Capstone POE** "Migrate br-int kernel → DPDK live: safe?" refute với parallel-bridge (Option A) hoặc maintenance window (Option B) correct approach — hugepage + vhost-user không hot-switchable. Phân biệt rõ 4 CLI layer: ovs-vsctl (OVSDB config) / ovs-ofctl (OpenFlow) / ovs-dpctl (datapath kernel) / ovs-appctl (RPC runtime). 8 hiểu sai phổ biến + 10 điểm cốt lõi + 12 references. Rule 9 null 0, Rule 11 0 prose leak, Rule 13 em-dash density **0.0387/line** (rất thấp), Rule 14 no new SHA. Block XX 4→5 file. Curriculum 113→114 file, 48.548 → 49.970 dòng. Phase G 7/12 → 8/12 (67%), G.5 Thao tác công cụ 1/2 → 2/2 ✅ COMPLETE. Commit `c52f074`. |
-| Session 57 status | **DONE** (2026-04-24) G.2.2 expand Part 9.14 incident decision tree từ 956 → 1494 dòng (+538). Append **5 scenario mới K-O** (§9.14.6 K-O) theo Template A anatomy + signature/evidence/RCA/remediation 3-tier/prevention: **Scenario K** BFD thundering herd sau ToR underlay reboot (N chassis đồng loạt init BFD session tạo control plane storm O(N²); rate-limit 3-tier + stagger startup + upgrade 24.03 staggered BFD) — phân biệt rõ với Scenario E (intermittent flap) vs K (burst convergence). **Scenario L** ovn-northd compile stuck bulk NBDB update (500 LSP 1-txn → build_lflows 42s max; Anatomy Template A stopwatch/show 5 field với kịch bản bẻ gãy 3 pattern; 3-tier fix: batch transaction / parallel-build / Port_Group consolidation). **Scenario M** chassis ghost claim sau hard power off (Port_Binding.chassis stuck; Chassis_Private.nb_cfg_timestamp indicator; 3-tier: `ovn-sbctl chassis-del` manual / stale-binding-timeout-ms 22.06+ / HA_Chassis_Group auto failover). **Scenario N** ovn-controller recompute loop vô tận (inc-engine/show node stuck "recompute"; lflow-cache hit rate 0%; external_ids churn culprit; 3-tier: recompute+flush cache khẩn / ovsdb-client monitor identify trigger / idempotent tool automation). **Scenario O** cert expiry outage cluster-wide (SSL_ERROR_ZERO_RETURN; 3-tier: emergency reissue ovs-pki req-sign + ansible deploy / verify connection-status / cross-sign 60d rotation process tham chiếu Part 20.1 §20.15). **§9.14.7** master matrix expanded **15 → 20 symptom** + layer-grouping table (datapath/CP-OVS/CP-OVN/underlay/kernel). **§9.14.10** GE Phase G.2.2 reproduce Scenario L (bulk 500 LSP 1-txn vs batch 50×10, stopwatch so sánh + POE predict/observe/explain). **§9.14.11** Capstone POE Phase G.2.2 refute "rolling restart ovn-controller fix mọi sự cố OVN?" — phân tích 3 scenario N/M/O cho thấy restart clear in-memory state but not persistent state (Chassis row, cert chain), cascade storm trên cluster lớn. Correct approach: classify → Tier 1 scenario-specific → Tier 3 structural. Rule 9 null 0, Rule 11 5 fix (Junior→kỹ sư mới vào nghề, operator→người vận hành), Rule 13 em-dash density 0.0395/line (rất thấp), Rule 14 no new SHA claim. Curriculum 114 file, 50.829 → 51.367 dòng. Phase G 9/12 → 10/12 (83%), G.2 Xử lý sự cố 1/3 → 2/3. |
-| Session 56 status | **DONE** (2026-04-24) G.3.3 expand Part 20.1 security hardening từ 475 → 1334 dòng (+859) — **đóng G.3 Debug sâu 3/3 COMPLETE**. Append 6 section mới §20.12-18 + 2 Guided Exercise + 1 Capstone POE: **§20.12 Audit trail 4-layer architecture** (who/what/when/where) — Layer 1 NBDB change audit qua ovsdb-client monitor + retention policy 90d/1y/6y/7y compliance mapping + chattr +a append-only log integrity / Layer 2 SBDB translation audit + correlation với nb_cfg_timestamp / Layer 3 OpenFlow audit với baseline diff detect manual bypass cookie=0x0 / Layer 4 conntrack event log GDPR Art.30 + PCI-DSS 10.2.2 mapping. 4-layer correlation runbook "SSH fail 14:30" investigation step-by-step. **§20.13 Port_security forensic** — 2 detection signature + 5-step evidence collection (ACL log snapshot + OVS flow state + conntrack + pcap mirror + SHA256 chain-of-custody) + attribution workflow MAC → Port_Binding → chassis → LSP → tenant → user + root cause classification matrix. **§20.14 RBAC OVSDB deep-dive** — RBAC_Role + RBAC_Permission schema + chassis-specific authorization column + setup new role 3-step via ovsdb-client transact + RBAC rejection log attribution. **§20.15 mTLS + cert rotation zero-downtime** — 4-class cert lifecycle + 6-step CA rotation với cross-sign + combined bundle + daily cron cert-expiry-check + rollback procedure. **§20.16 Security incident response 5-step playbook** — contain/preserve/eradicate/recover/postmortem + postmortem template 6-section + compliance reporting deadline GDPR 72h + PCI immediate + HIPAA 60d. **§20.17 Compliance logging framework** — log aggregation architecture (chassis → Loki/ES → S3/Glacier 7y) + rsyslog config + Grafana 6-panel dashboard + 4 Alertmanager rule (ACLDrop/PortSecurity/CertExpiry/RBACDenial). **GE2** ACL log parsing với awk attribution 6-step. **GE3** Certificate rotation drill 7-step trên sandbox 3-chassis. **§20.18 Capstone POE** compliance audit scenario (PCI-DSS CDE isolation evidence 9 artifact). Rule 9 null 0, Rule 11 0 prose leak, Rule 13 em-dash density 0.0577/line, Rule 14 no new SHA. Curriculum 114 file, 49.970 → 50.829 dòng. Phase G 8/12 → 9/12 (75%), G.3 Debug sâu 2/3 → 3/3 ✅ COMPLETE. **3/5 area Phase G ✅ COMPLETE** (G.1 + G.3 + G.5). |
-| Session 37a status | **DONE** (2026-04-23) G.1.1 expand Part 9.25 — +3 Guided Exercise (multi-bridge patch port / reg-metadata state / ct+tunnel recirculation) +3 objective +3 key point. 636 → 1046 dòng (+410). Commit `fad6631` pushed. |
-| Session 37b status | **DONE** (2026-04-23) G.1.2 new Part 9.27 OVS+OVN Debug playbook end-to-end (659 dòng). Complement Part 0.2 tour với focus: 3-tier parallel diagnostic framework (`ovn-trace` + `ofproto/trace` + `dpif/dump-flows`), Geneve TLV deep-dive (class 0x0102), MTU forensic (overhead 66 byte), fault catalog 10 pattern, 2 GE + 1 Capstone POE. Rule 13 density 0.074/line. Block IX 26 → 27 file. Commit `2e139c8` pushed. |
-| Session 37c status | **DONE** (2026-04-23) G.1.3+G.1.4: expand Part 13.7 +§13.7.7 ovn-controller run loop deep-dive (main_loop anatomy + I-P engine graph + recompute events + diagnostic recipes sync lag), 334 → 491 dòng (+157). Expand Part 20.0 +§20.7 case study playback 3 production scenario (VM no network race, upgrade schema drift, partition thundering herd), 582 → 788 dòng (+206). Rule 13 density 0.039/0.070 per file. G.1 TRUY VẾT area COMPLETE. Commit `3793139` pushed. |
-| Phase H status | **🎉 COMPLETE 13/13 session (100%) — v3.0-FoundationDepth** — S38-S50 DONE 2026-04-24. Curriculum 111 file, 44.084 dòng (+6.562 từ baseline 37.522). Template library (A/B/C/D). Full match field + action catalog. Full OVN LS+LR pipeline exhaustive. Full NBDB+SBDB schema. Gaps closed: ls_out_*/lr_in_*/lr_out_*/ovs-bugtool. Rule 9+13 PASS trên 111 file. Plan `plans/phase-h-foundation-depth.md`. Tracker `memory/phase-h-progress.md`. |
-| Audit 2026-04-24 status | **DONE refreshed+severity-upgraded** — `memory/sdn-onboard-audit-2026-04-24.md`. 110 concept audit: 22 rich / 24 medium / 65 shallow / 18 zero-mention. Code block stats: median 3 dòng, 71% ≤5 dòng (CRITICAL gap xác nhận user feedback). Upstream baseline research via Agent Explore: OVS Advanced Tutorial 1.250 dòng, OVN Tutorial 3.500-4.000 dòng, ovs-fields(7) 100+ field 9-attribute anatomy. |
-| Session 38 status | **DONE** (2026-04-24) H.0 + H.2.1 pilot: (a) Template library `sdn-onboard/_templates/` với 4 template A/B/C/D + README (500 dòng); (b) Pilot Part 9.4 OVS CLI tools playbook expansion 267→1406 dòng (+1139). Rule 9 null byte 0; Rule 13 em-dash 0.041/line; Rule 11 12 prose fix. 38 code block median 12 mean 15.4 ≤5 blocks 13.2%. Upstream lift từ man ovs-vsctl/ovs-ofctl/ovs-dpctl + openvswitch.org/support/dist-docs. |
-| Session 39 status | **DONE** (2026-04-24) H.2.2: Part 9.11 ovs-appctl reference playbook expansion 215→1170 dòng (+955, vượt target 46%). 18 nhóm target × Anatomy block: introspection (vlog/memory/coverage) + bridge+FDB+mdb + bond+LACP + STP+RSTP + BFD+CFM + ofproto + dpctl/dpif + dpif-netdev + tunnel + upcall/revalidator + OVSDB cluster. Decision matrix 10-symptom + Guided Exercise coverage delta. Rule 9 null byte 0; Rule 13 em-dash 0.044/line; Rule 11 4 prose fix. 50 code block median 5 (reference doc pattern), key Anatomy ≥15 dòng. Upstream ovs-appctl(8)+ovs-vswitchd(8)+ovsdb-server(1)+RFC 5880. |
-| Session 40 status | **DONE** (2026-04-24) H.2.3: Part 9.2 kernel datapath deep-dive expansion 529→878 dòng (+349, vượt target 75%). 5 section mới: §9.2.8 EMC (8K entry/PMD hash exact-match) + §9.2.9 SMC (OVS 2.15+ 16K entry signature tier) + §9.2.10 Upcall Netlink genl wire format (nlmsghdr+genlmsghdr+OVS_PACKET_ATTR TLV) + §9.2.11 Ukey 6-state lifecycle + revalidator RCU read-side + §9.2.12 3-tier cache summary table + 10-item production health checklist. Legacy cleanup: rename §9.2.6 dup → §9.2.13. Rule 9 null byte 0; Rule 13 em-dash 0.058/line; Rule 11 4 prose fix (overhead→chi phí phụ, pattern→mẫu). Upstream NSDI 2015+2020+OVS source ofproto-dpif-upcall.c+Linux genl man+USC Lab 9. |
-| Session 41 status | **DONE** (2026-04-24) H.3 Match Fields: tạo mới Part 4.8 `openflow-match-field-catalog.md` (926 dòng). 12 nhóm × Template B 9-attribute anatomy: Metadata (6 field) + Register (16+8+4) + L2 (9) + ARP (5) + IPv4 (6) + IPv6 (7) + L4 TCP/UDP/SCTP (8) + ICMP (4) + Tunnel (6) + Conntrack (9) + MPLS (4) + ip_frag + packet_type. Prerequisite chain table 12 rows + lazy wildcarding thực nghiệm nối Part 9.2. Curriculum 109→110 file (Block IV 8→9). Rule 9 null byte 0; Rule 13 em-dash 0.045/line; Rule 11 5 prose fix. Upstream ovs-fields(7)+OpenFlow 1.3/1.5 spec+RFC 4861/6437/7348/8926+OVS meta-flow.h. |
-| Session 42 status | **DONE** (2026-04-24) H.4.1 Actions tier 1: tạo mới Part 4.9 `openflow-action-catalog.md` (762 dòng tier 1). Template C 8-attribute anatomy applied first time. 14 section: §4.9.1 action vs instruction (6 instruction OF 1.1+) + §4.9.2-10 Category 1 Output (output, drop, normal, flood, all, controller, local, in_port, table, group với 4 types all/select/indirect/fast_failover) + §4.9.11-13 control actions (resubmit, clone, note) + §4.9.14 Action Set 12-priority execution order vs Apply-Actions sequential. Tier 2+3 sẽ expand S43+S44. Curriculum 110→111 file (Block IV 9→10). Rule 9 null byte 0; Rule 13 em-dash 0.051/line; Rule 11 4 prose fix. Upstream ovs-actions(7)+OpenFlow 1.3/1.5 spec §5.10-5.11+OVS ofp-actions.h+ofproto-dpif-xlate.c. |
-| Session 43 status | **DONE** (2026-04-24) H.4.2 Actions tier 2: append Part 4.9 tier 2 (762→1124 dòng, +362). 8 section mới: §4.9.15 VLAN encap (push/pop 0x8100+0x88a8 Q-in-Q) + §4.9.16 MPLS + PBB + encap/decap generic OF 1.5 + §4.9.17 set_field generic với mask + §4.9.18 legacy mod_* family (11 action) + dec_ttl router function + copy_ttl MPLS stacking + §4.9.19 move/load register bit-range + ARP responder 7-action pattern + §4.9.20 write_metadata + set_tunnel + §4.9.21 QoS (set_queue + enqueue + meter OF 1.3+ với band type drop/dscp_remark) + §4.9.22 bảng tổng hợp tier 1+2. Coverage ~35/40 action. Rule 9 null byte 0; Rule 13 em-dash 0.046/line; Rule 11 2 prose fix. Upstream ovs-actions(7) Category 2-4+7 + OpenFlow 1.3 §5.10 + OVS ofp-actions.h. |
-| Session 44 status | **DONE** (2026-04-24) H.4.3 Actions tier 3 advanced — Part 4.9 FINAL: append tier 3 (1124→1544 dòng, +420). 8 section: §4.9.23 ct() full (commit/zone/nat/force/alg/exec/table + ct_clear + typical stateful firewall pattern) + §4.9.24 learn() MAC learning self-programming + fin_idle_timeout + §4.9.25 conjunction() cross-product ACL compression (OVN Port_Group context) + §4.9.26 multipath() ECMP với 4 hash algorithm + §4.9.27 bundle/bundle_load + §4.9.28 check_pkt_larger() PMTUD (OVN lr_in_chk_pkt_len) + §4.9.29 full catalog summary 40+ action + §4.9.30 Guided Exercise full-pipeline (rate limit → stateful CT → SNAT → output 4-table chain). Part 4.9 TOTAL 1544 dòng 30 section 40+ action 100% foundation coverage. Rule 9 null byte 0; Rule 13 em-dash 0.050/line; 50 code blocks median 5 mean 7.6. Upstream ovs-actions(7) Cat 5+6+OVS ofproto-dpif-xlate.c+cross-ref Part 9.24+13.3+13.11. |
-| Session 45 status | **DONE** (2026-04-24) H.5 OVS internals expand 3 file: 9.1 (341→430 +89) + 9.15 (254→407 +153) + 9.16 (240→433 +193) = +435 dòng (vượt target +350 là 24%). 9.1 §9.1.X: ofproto-dpif 5-layer architecture + dpif/show anatomy + thread model (main/handler/revalidator/PMD/URCU). 9.15 §9.15.7: subtable internals (struct cls_subtable cmap + minimask) + `dpctl/dump-flows` masked output anatomy; §9.15.8: Patricia trie prefix optimization; §9.15.9: performance pathology (subtable explosion + priority sort churn). 9.16 §9.16.7: multi-controller 3-node setup + ofproto/show-connection anatomy + role election timeline; §9.16.8: OFPT_ROLE_REQUEST wire format + OFPT_SET_ASYNC; §9.16.9: connmgr coverage counter; §9.16.10: troubleshooting matrix 6-symptom. Rule 9 0, Rule 13 0.023-0.047/line, Rule 11 0 new leak. Upstream OVS `lib/classifier.c`+`ofproto/connmgr.c`+OpenFlow 1.3 §7.3.9+§7.5.4+SIGCOMM 1999 TSS. |
-| Session 46-50 batch status | **DONE** (2026-04-24) Phase H COMPLETE — 5 session batch cover OVN foundation + tools + final QG. S46 H.6.1 LS pipeline (13.2 201→399 +198): ingress 27 stage + egress 10 stage Template D. S47 H.6.2 LR pipeline (13.11 268→516 +248): ingress 19-23 stage + egress 7 stage Template D. S48 H.6.3 schema (13.1 191→446 +255 + 13.10 272→319 +47): NBDB 17 table + SBDB 15 table deep + DHCP options catalog. S49 H.7 conntrack (13.3 189→454 +265): OVN ACL expression syntax + allow-related + conjunction + LB deep + Service_Monitor + NAT patterns. S50 H.8 tools+QG (9.14 218→370 +152): ovs-bugtool + ovs-pcap + ovs-testcontroller + final QG v3.0-FoundationDepth checklist. Gap foundation fix: ls_out_*/lr_in_*/lr_out_*/ovs-bugtool/ovs-pcap (từ 0-mention → full coverage). Curriculum 111 file, 44.084 dòng, 1572 code block median 3 mean 6.2 ≤5 blocks 66.3% (từ baseline 71%). Rule 9 null 0, Rule 13 em-dash 0 dense, Rule 11+14 pass. Upstream ovn-architecture(7)+ovn-nb(5)+ovn-sb(5)+northd source+ovs-bugtool(8). |
-| Lab host status | **⏳ PENDING — chờ user** — 2026-04-23 user confirm "chưa có môi trường để thực hành, khi nào có sẽ thông báo". 63 exercise pending C1b. |
-| Tools state | Node v24.15.0 LTS installed (winget, 2026-04-23). MCP GitHub full access confirmed working. Restart Claude Code to activate node for hooks. |
-| Session 22+23 status | **🎉 Phase D firewall foundation COMPLETE** (2026-04-22). Part 9.22 multi-table + 9.23 stateless ACL + 9.24 conntrack stateful. |
-| Session 24 status | **🎉 Phase D new-Part phase COMPLETE** (2026-04-23). Part 9.25 + Part 9.21 + Rule 13 ra đời + Rule 11 retrofit session 22+23. |
-| Session 25 status | **DONE** Audit P0.1 (README TOC 14 orphans) + P0.2 (2 dead URL) + P1.4 (Rule 13 top 10, 508→156) + P3.8 (CLAUDE.md state) + Part 9.9 QoS expansion (+458 dòng). |
-| Session 26 status | **DONE** Part 11.3 GRE expansion (+547 dòng, Lab 14 full). |
-| Session 27 status | **DONE** Part 11.4 IPsec expansion (+662 dòng, Lab 15 full) + Part 9.2 kernel datapath lab steps (+251 dòng, Lab 11). **🎉 Phase D expansion COMPLETE 4/4.** |
-| Session 28 status | **DONE** Audit P2.6 (Rule 13 remaining 20 files, 689→196) + P2.7 (Dictionary expansion 12 entries) + P2.5-safe (5 Critical files, 36 replacements). |
-| Session 29 status | **DONE** Audit P2.5 context-review 3 pre-existing Critical (19.0 + 17.0 + 18.0 = 123 replacements + 10 URL restorations). |
-| Session 30 status | **DONE** Audit P2.5 context-review 2 Phase B Critical (3.2 + 4.6 = 132 changes). URL protection improved. Manual syntax cleanup 6 lines. |
-| Session 31 status | **🎉 COMPLETE** Audit P2.5 context-review 6 residual Critical (3.1 + 3.0 + 2.1 + 2.4 + 5.0 + 6.0 = 171 replacements). **P2.5 TOTAL 11/11 Critical DONE**, 426 replacements. |
-| Phase D final status | **9/9 deliverable DONE**: 5 Part mới (9.21/9.22/9.23/9.24/9.25) + 4 expansion (9.9/11.3/11.4/9.2). Còn C1b Lab Verification + C6b Final Publish chờ lab host. |
-| Audit 2026-04-23 state | **🎉 FULL COMPLETE** — tất cả P0/P1/P2/P3 items. Only C1b Lab Verification + C6b Final Publish v2.0 deferred (bên ngoài audit scope). |
-| Audit 2026-04-23 P2.5 summary | 11 Critical files cleaned, 426 prose replacements total. Patterns: operator/engineer/version/deployment/verify/incident/fail/support/performance/approach/pattern/expose/scalability/dynamics/adoption/shepherd/consumer/workaround/trade-off/worry/bent/favor/significant/unusual/overlap/troubleshoot/subtle/pedagogical/motivation/criteria/flexibility/bidirectional/symmetric/asymmetric/experiment/tolerate/undefined (~37 patterns). 0 URL corruption, 0 null bytes. |
-| Commits session 24-31 pushed | **15 commits**: `ce2c13b` → `41f6533` → `24bb66b` → `edbba24` → `cab7ea5` → `b225c1d` → `b1200c9` → `497d9e7` → `434890f` → `2a11a53` → `2f152f6` → `d883751` → `02edad8` → `22a8616` → `f868d8e`. |
-| Session 17 status | **🎉 COMPLETE — C5.4 + C5.5 + C7 + C8 + C9 + C10 all DONE + pushed** (2026-04-22). Core OVS/OpenFlow/OVN đạt bề rộng + bề sâu + cross-cutting view. |
-| Session 17 deliverables | 17 file mới (9 core blocks + 3 cross-cutting + 5 Rule 11 retrofit) + expand 14 file Block XIV/XV/XVI cũ. Tổng +8315 dòng content. README TOC updated 3 lần (Block X + XIII + Block 0). |
-| Curriculum state (end session 31) | **93 file, ~40.5K dòng** content OVS/OpenFlow/OVN. Block IX 26 file (cao nhất curriculum), Block XI 5 file (GRE + IPsec full expansion). Rule 9 null bytes 0 trên 93 file. Rule 11 prose 100% safe + 11/11 Critical context-cleaned. Rule 12 offline source 100%. Rule 13 em-dash 100% compliance (< 0.10/line). |
-| Curriculum state (end session 23) | **91 file, ~34.8K dòng** content OVS/OpenFlow/OVN. Block IX (24 file — cao nhất curriculum, 4 tier + Firewall foundation 9.22-9.24), các block khác unchanged vs session 17. |
-| Curriculum state (end session 17) | **85+ file, ~32K+ dòng** content OVS/OpenFlow/OVN. Block IX (18 file), Block X (7 file), Block XIII (14 file), Block XVII-XIX (3 file), Expert Extension (9 file), Block 0 intro (3 file), các block khác unchanged. |
-| Next session deferred | C1b Lab Verification (chờ lab host) → C6b Final Publish v2.0 (chờ C1b) |
-| Session 17 deltas (final) | **C5.4** (pushed): 9 file Block XIV/XV/XVI section body expanded 2523→2917 (+394). **C5.5** (pushed): 5 file Exercise Rule 11 retrofit. **C7** (committed 3 batches, ready push): 6 file mới 13.7-13.12 OVN ovn-controller/northd/LB/DHCP-DNS/GR/IPAM (+1606 dòng). |
-| Block XIII final state | 7 core (13.0-13.6) + 6 extended (13.7-13.12) = 13 file 2847 dòng. Scope OVS/OpenFlow/OVN core per user directive. README TOC updated. |
-| C2 audit result | 70/70 file audited. 4 fixes applied: HIGH (Part 1.2 Capstone Predict step), MEDIUM (5 heading type cleanups), LOW (Part 1.1 numbering). Cross-ref integrity validated. Commit `d821e65` + `10fe2e5`. |
-| C3 prose passes (3 rounds + 2 reverts) | **R1** `3a92e27`: paradigm/rebrand/troubleshoot (45). **R2** `c78cb39`: scalability/bottleneck/real-time/backward-compat (32). **R3** `739db7f`: adoption/deprecation (53). **Reverts**: `63a0506` (3.2 English quote + URL), `7b22823` (1.1 RFC 7348 quote). **Net 127 replacements** across 50+ files. Remaining (approach/deployment/trade-off/announce) deferred. |
-| C4 URL audit | 384 unique URLs, 98.7% OK. 3 dead URLs fixed (Netflix + YouTube press moved, archive.openflow.org timeout → ONF spec archive). 2 placeholder URLs kept as-is (10.0.0.3, odl-controller:8181). Commit `e6d7a8b`. |
-| C1a lab inventory | 54 Exercise/Lab/Capstone headings inventoried in `memory/lab-verification-pending.md`. Priority matrix: HIGH (8 Capstones với numeric output), MEDIUM (14 Block IX OVS exercises), LOW (historical Block II-III). Ready for C1b when lab host available. |
-| C5 expert extension | **Arch + Exercise content COMPLETE** — 9 files Block XIV/XV/XVI với 18 exercises fully specified (Mục đích/Chuẩn bị/Mô hình/Bước/Output/Bài học/Cleanup). Section X.Y.Z skeleton giữ nguyên cho future content phase. 2523 lines total. Lab outputs doc-plausible pending C1b. Commits `2c6d052` + `dc8634e` + `562bee9`. |
-| C6a publish pipeline | `scripts/build-sdn-pdf.sh` + `scripts/README.md` — Pandoc XeLaTeX Vietnamese PDF + EPUB3 builder. Targets v1.0-preVerified (current state) → v2.0-Verified (post C1b) → v2.1+ (future content expansion). Commit `ce13e49`. |
-| Lab verification tracker | `memory/lab-verification-pending.md` — fully populated C1a pass. Resume point for C1b (chờ user notify lab host available). |
-| Push state (session 16 final) | **10 commits pushed** (→ `73856a4`). **12 commits pending push**: `562bee9` C5.3 exercises (+2006 lines) → `8a0b8fb` handoff-2 → `03e6c0b/b452388/1fe4ac5` README updates → `c78cb39` C3 R2 → `a0bf84c` root README → `76a4418` CLAUDE.md sync → `c0fbccc` foundation forward-refs → `739db7f` C3 R3 → `63a0506/7b22823` sed reverts. |
-| README updates (session 16 ext-2) | `sdn-onboard/README.md`: TOC Block XIV/XV/XVI entries, mermaid graph với dashed Expert track arrows, 6th reading path (Expert Extension sub-tracks). Root `README.md`: SDN structure overview note (rev 4). |
-| Last 8 commits trên branch | `6ad6b8f` em-dash scripts archive → `6009320` Block VI content → `ced93e0` Block V content → `4da6a98` Part 4.7 content → `2eef2e6` Block IV 4.2-4.6 content → `b3de38c` Part 4.1 content → `6aef52b` IPv6 scope cut → `6bae8f4` Block III content |
-| Master HEAD | `e7864d3` chore(plans) — local master ahead origin/master by 1 commit (chưa push, ngoài scope SDN rev 2) |
-| HAProxy baseline | HAProxy 2.0 on Ubuntu 20.04 (Canonical repo) |
-| HAProxy Parts | 1/29 completed (Part 1 only, fact-checked, Quiz added) |
-| Linux FD doc | `linux-onboard/file-descriptor-deep-dive.md` — **1265 lines, 14 SVG figures** |
-| FD exercises | 7/9 verified. Exercise 7 (strace) + Exercise 8 (FD limit) cần lab |
-| SDN 17.0 doc | `sdn-onboard/17.0 - ovn-l2-forwarding-and-fdb-poisoning.md` — **1178 lines** (renamed từ `1.0 - ovn-l2-...` ở S3; renumbered Phần 1 → Phần 17, mục 1.X → 17.X; forward refs tới Part 19 §19.2/§19.4/§19.5-19.6) |
-| SDN 18.0 doc | `sdn-onboard/18.0 - ovn-arp-responder-and-bum-suppression.md` — **496 lines** (renamed từ `2.0 - ovn-arp-...` ở S3; renumbered Phần 2 → Phần 18, mục 2.X → 18.X; cross-refs sang Part 17 mục 17.4/17.6 đã cập nhật) |
-| SDN 19.0 doc | `sdn-onboard/19.0 - ovn-multichassis-binding-and-pmtud.md` — **1379 lines, 127,903 bytes** (renamed từ `3.0 - ovn-multichassis-...` ở S3; renumbered Phần 3 → Phần 19, §3.X → §19.X; RFC refs RFC 791 §3.1 / RFC 8926 §3.4/§3.5 preserved intact) |
-| SDN Block 0 | `sdn-onboard/0.0 - how-to-read-this-series.md` (148 lines) + `0.1 - lab-environment-setup.md` (426 lines) = 574 dòng content. S4 DONE. |
-| S3 status | S3.1-S3.6 completed 2026-04-20. User đã push commit remote ở session 6. Legacy artifacts đã cleanup. |
-| S4 status | **DONE** (2026-04-21). S4.1-S4.3 content Block 0, S4.4 quality gate (null byte 0, URL 6/7 → 7/7 sau fix Vanderbilt, cross-file sync, version annotation). Commit `c38c3c9` + handoff `76173cd` đã push lên remote. Index stale do plumbing path đã được refresh ở session 7. |
-| Current phase | **Content Phase (Phase B) — in progress**. Block I (1.0/1.1/1.2), Block II (2.0-2.4), Block III (3.0-3.2), Block IV (4.0-4.7), Block V (5.0-5.2), Block VI (6.0-6.1) DONE = 20/~66 foundation file content-expanded. Remaining skeleton: Block VII-XIII + 4.x leftovers. |
-| S5 status | Block I content + skeleton DONE. Part 1.0 = 198 dòng content (over-scope, commit `9cd8041`). Part 1.1 + Part 1.2 skeleton refined Rule 10 (~70 dòng/file) ở S5a, commit `10ab5cb`. |
-| S6a status | **DONE** (session 8, 2026-04-21). Block II skeleton refined Rule 10: Part 2.0 (DCAN/Open Signaling/GSMP RFC 3292), 2.1 (Ipsilon RFC 1953/Active Networking DARPA), 2.2 (NAC/orchestration/virtualization), 2.3 (ForCES RFC 3654/3746 + 4D Project Princeton/CMU 2005), 2.4 (Ethane SIGCOMM 2007 — direct OpenFlow predecessor). Tầng 2g thêm vào dependency map. Commit `dc1b0b9`. |
-| S7a status | **DONE** (session 8b, 2026-04-21). Block III skeleton refined Rule 10: Part 3.0 (Stanford Clean Slate 2006-2012 + Nicira founding 08/2007 + VMware $1.26B 07/2012), 3.1 (OpenFlow 1.0 spec 31/12/2009 + 12-tuple match + 8 actions), 3.2 (ONF formation 21/03/2011 + 6 founding operators + 2018 ON.Lab merger). Tầng 2h thêm vào dependency map với non-repetition rules + Phase B fact-check list. Commit `ff0dd14`. |
-| S8a status | **DONE** (session 8c, 2026-04-21). Block IV skeleton refined Rule 10: Part 4.0 (OF 1.1 multi-table + 4 group types FAST_FAILOVER), 4.1 (OF 1.2 OXM TLV + controller roles MASTER/SLAVE), 4.2 (OF 1.3 LTS — meter table + PBB + IPv6 ext headers), 4.3 (OF 1.4 bundles + eviction + optical), 4.4 (OF 1.5 egress + TCP flags + packet type), 4.5 (TTP ONF TS-017 + Flow Objectives ONOS), 4.6 (5 limitations + Google B4 SIGCOMM 2013 + lessons → P4). Tầng 2i thêm vào dependency map. Commit `908279d`. |
-| Architecture backlog (rev 3) | P0-P5 COMPLETE 2026-04-21. Total 70 markdown files. |
-| Phase B content progress (session 15 end) | **🎉 COMPLETE — 61/~61 file foundation content-expanded + 3 advanced production = 64 file toàn curriculum**. Sessions 12-13: Block 0-VI 20 file. Session 14: Block VII 4 + Block IX 15 + Block VIII 1 = 20 file. Session 15: Block VIII 3 + Block X 3 + Block XI 5 + Block XII 3 + Block XIII 7 = 21 file. Tổng ~20.000 dòng content Phase B. |
-| Phase B status | **DONE end-to-end**. Toàn bộ Block 0-XIII content-expanded với Rule 11 (Vietnamese Prose Discipline) + Rule 12 (Exhaustive Offline Source Exploration) compliance. Advanced XVII-XIX đã production trước đó (sessions 1-9). |
-| Offline sources inventory (session 14) | `sdn-onboard/doc/compass_artifact_wf-*.md` (Anthropic OVS curriculum, 682 dòng) + `sdn-onboard/doc/ovs/` (USC/Crichigno NSF 1829698: OVS.pdf, OpenVSwitch.pdf, 7 lab PDF+TXT). Rule 12 codified exhaustive exploration. |
-| Experiment plan | `memory/experiment-plan.md` — Phases A-E, priority-ordered |
-| Push state on next machine | Branch `docs/sdn-foundation-rev2` ahead origin bởi ~30+ commit (session 12+13+14). Khi resume trên máy mới: `git fetch origin && git checkout docs/sdn-foundation-rev2 && git pull --ff-only origin docs/sdn-foundation-rev2` + `git push origin docs/sdn-foundation-rev2` nếu chưa push. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.2-FullDepth` (2026-04-25). |
+| Curriculum | 116 files in `sdn-onboard/*.md`, ~55.7K lines, 20 blocks. Audit verdict: A. |
+| Active phase | Awaiting user direction. v3.1, v3.1.1, v3.2, Phase G+H all closed. |
+| Lab host | PENDING (waiting on user). 63 exercises pending verification. |
+| HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
+| Trackers | [memory/sdn-series-state.md](memory/sdn-series-state.md), [memory/audit-index.md](memory/audit-index.md), [memory/session-log.md](memory/session-log.md). |
+| Dependency map | [memory/file-dependency-map.md](memory/file-dependency-map.md) (Rule 2). |
+| Lab pending | [memory/lab-verification-pending.md](memory/lab-verification-pending.md). |
+
+Session-by-session history (S1 to S63+) is in `memory/session-log.md`. Audit history is in `memory/audit-index.md`. `git log` is the source of truth for commit detail.
+
+---
 
 ## Skill Quick Reference
 
-**Skill đã cài đặt tại `~/.claude/skills/` (6 skill — tất cả phải được dùng):**
+**Installed at `~/.claude/skills/` (6 skills, all must be used):**
 
-| Nhóm | Skill | Khi nào dùng |
-|------|-------|-------------|
-| Core A | professor-style | MỌI nội dung giảng dạy, viết .md, giải thích kỹ thuật |
-| Core A | document-design | MỌI file .md trong onboard series |
-| Core A | fact-checker | MỌI technical claim, CLI command, config directive |
-| Core A | web-fetcher | MỌI URL cần fetch hoặc verify |
-| Extra B | search-first | Trước khi viết code/script/utility mới — tìm tool/library/MCP/skill đã tồn tại |
-| Extra B | deep-research | Research multi-source có citation (firecrawl + exa MCP) khi offline doc/* không đủ |
+| Group | Skill | When to use |
+|-------|-------|-------------|
+| Core A | `professor-style` | EVERY teaching content, `.md` write, technical explanation |
+| Core A | `document-design` | EVERY `.md` in onboard series |
+| Core A | `fact-checker` | EVERY technical claim, CLI command, config directive |
+| Core A | `web-fetcher` | EVERY URL to fetch or verify |
+| Extra B | `search-first` | Before writing new code/script/utility |
+| Extra B | `deep-research` | Multi-source citation research (firecrawl + exa MCP) |
 
-**Skill tham chiếu nội bộ (ngoài registry global, trigger qua CLAUDE.md):**
+**Internal CLAUDE.md-triggered skills (outside global registry):**
 
-| Skill | Khi nào dùng |
+| Skill | When to use |
 |-------|-------------|
-| git-workflow | MỌI thao tác git: commit, push, branch, PR |
-| flow-graph | Sequence diagram, protocol flow, handshake diagram |
-| quality-gate | MỌI thao tác viết/sửa/commit — pre-flight checklist (Rule 6 ở trên) |
+| `git-workflow` | EVERY git operation (commit, push, branch, PR) |
+| `flow-graph` | Sequence diagram, protocol flow, handshake diagram |
+| `quality-gate` | EVERY write/edit/commit (pre-flight, see Rule 6 above) |
+
+---
 
 ## Preferences
 
-- Accuracy first — double-check everything, cross-reference multiple sources
-- No AI writing patterns — professor/PhD teaching style
-- No emoji in technical content
-- Real examples with verifiable output
-- Concise but deep — analyst/engineer tone, not mechanical
-- Vietnamese language for documentation content
+- Accuracy first. Double-check, cross-reference multiple sources.
+- No AI writing patterns. Professor/PhD teaching style.
+- No emoji in technical content.
+- Real examples with verifiable output.
+- Concise but deep. Analyst/engineer tone, not mechanical.
+- Vietnamese for documentation content (curriculum); English for CLAUDE.md and `memory/*` (working files).
