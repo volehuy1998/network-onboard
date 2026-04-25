@@ -135,9 +135,9 @@
 | `ALG (FTP/TFTP/SIP)` | 20 Cross-domain | 0 | low | - |
 | `NAT` | 5 Motivation | 1.0 | low | 11.4 - ipsec-tunnel-lab.md:20, 13.17 - ovn-register-conventions-regbit-mlf.md:34 |
 | `NAT` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:174, 13.11 - ovn-gateway-router-distributed.md:536 |
-| `NAT` | 12 Troubleshoot | 1.0 | low | 13.9 - ovn-load-balancer-internals.md:581, 20.2 - ovn-troubleshooting-deep-dive.md:744 |
+| `NAT` | 12 Troubleshoot | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:384, 13.18 - ovn-mlf-regbit-catalog.md:386 |
 | `NAT` | 17 Incident | 0.5 | low | 11.3 - gre-tunnel-lab.md:272, 20.3 - ovn-daily-operator-playbook.md:1554 |
-| `NAT` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:8, 13.4 - br-int-architecture-and-patch-ports.md:29 |
+| `NAT` | 20 Cross-domain | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:450, 13.4 - br-int-architecture-and-patch-ports.md:8 |
 | ``learn` action` | 4 Role | 0.5 | medium | - |
 | ``learn` action` | 5 Motivation | 0 | low | - |
 | ``learn` action` | 7 Importance | 0 | low | - |
@@ -708,11 +708,11 @@
 | `pbb_isid (24 bits, PB/VB)` | 17 Incident | 0 | low | - |
 | `pbb_isid (24 bits, PB/VB)` | 18 Lab | 0.5 | medium | 4.8 - openflow-match-field-catalog.md:887 |
 | `pbb_isid (24 bits, PB/VB)` | 20 Cross-domain | 0 | low | - |
-| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 5 Motivation | 1.0 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:454, README.md:227 |
+| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 5 Motivation | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:44, 19.0 - ovn-multichassis-binding-and-pmtud.md:454 |
 | `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:589, 4.8 - openflow-match-field-catalog.md:967 |
 | `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 12 Troubleshoot | 1.0 | low | 14.0 - p4-language-fundamentals.md:460, 14.1 - tofino-pisa-silicon.md:86 |
 | `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 17 Incident | 1.0 | low | 13.7 - ovn-controller-internals.md:631, 14.2 - p4runtime-gnmi-integration.md:69 |
-| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 20 Cross-domain | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:284, 15.2 - cilium-ebpf-internals.md:24 |
+| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 20 Cross-domain | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:284, 13.18 - ovn-mlf-regbit-catalog.md:287 |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 2 History | 0.5 | medium | 4.8 - openflow-match-field-catalog.md:47 |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 4 Role | 0.5 | medium | - |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 5 Motivation | 0 | low | - |
@@ -883,7 +883,7 @@
 | `Action: group` | 12 Troubleshoot | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:67 |
 | `Action: group` | 17 Incident | 1.0 | low | 13.11 - ovn-gateway-router-distributed.md:251, 19.0 - ovn-multichassis-binding-and-pmtud.md:512 |
 | `Action: group` | 20 Cross-domain | 1.0 | low | 0.2 - end-to-end-packet-journey.md:98, 13.2 - ovn-logical-switches-routers.md:374 |
-| `Action: drop (implicit)` | 5 Motivation | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:180, 14.0 - p4-language-fundamentals.md:316 |
+| `Action: drop (implicit)` | 5 Motivation | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:180, 13.18 - ovn-mlf-regbit-catalog.md:44 |
 | `Action: drop (implicit)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:485, 0.3 - master-keyword-index.md:644 |
 | `Action: drop (implicit)` | 12 Troubleshoot | 1.0 | low | 1.2 - five-drivers-why-sdn.md:98, 11.0 - vxlan-geneve-stt.md:355 |
 | `Action: drop (implicit)` | 17 Incident | 1.0 | low | 10.7 - ovsdb-client-deep-playbook.md:506, 13.10 - ovn-dhcp-dns-native.md:162 |
@@ -1081,7 +1081,7 @@
 | `Action: sample (Nicira extension, OVS 2.5+)` | 18 Lab | 0.5 | medium | - |
 | `Action: sample (Nicira extension, OVS 2.5+)` | 20 Cross-domain | 1.0 | low | 9.8 - flow-monitoring-sflow-netflow-ipfix.md:178 |
 | `Action: exit (Nicira extension)` | 5 Motivation | 1.0 | low | 9.18 - ovs-native-l3-routing.md:294 |
-| `Action: exit (Nicira extension)` | 7 Importance | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:82 |
+| `Action: exit (Nicira extension)` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615, 13.4 - br-int-architecture-and-patch-ports.md:82 |
 | `Action: exit (Nicira extension)` | 12 Troubleshoot | 1.0 | low | 13.0 - ovn-announcement-2015-rationale.md:24, 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file |
 | `Action: exit (Nicira extension)` | 17 Incident | 1.0 | low | 16.0 - dpdk-afxdp-kernel-tuning.md:55, 16.0 - dpdk-afxdp-kernel-tuning.md:274 |
 | `Action: exit (Nicira extension)` | 19 Failure mode | 0.5 | medium | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:675 |
@@ -1149,7 +1149,6 @@
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 12 Troubleshoot | 0 | low | - |
-| `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:875 |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 17 Incident | 0 | low | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
@@ -1271,7 +1270,6 @@
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 7 Importance | 0 | low | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 12 Troubleshoot | 0 | low | - |
-| `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:888 |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 17 Incident | 0 | low | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 4 Role | 0.5 | medium | - |
@@ -1280,7 +1278,6 @@
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 11 Workflow | 0.5 | medium | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 12 Troubleshoot | 0 | low | - |
-| `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:887 |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 17 Incident | 0 | low | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 20 Cross-domain | 0 | low | - |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 5 Motivation | 1.0 | low | 3.1 - openflow-1.0-specification.md:108 |
@@ -1342,29 +1339,28 @@
 | `NB_Global Table` | 17 Incident | 0.5 | low | - |
 | `NB_Global Table` | 20 Cross-domain | 0 | low | - |
 | `Logical_Switch Table (NB)` | 5 Motivation | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:258, 20.2 - ovn-troubleshooting-deep-dive.md:1189 |
-| `Logical_Switch Table (NB)` | 7 Importance | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:118 |
-| `Logical_Switch Table (NB)` | 12 Troubleshoot | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:633, 20.2 - ovn-troubleshooting-deep-dive.md:688 |
+| `Logical_Switch Table (NB)` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:118 |
+| `Logical_Switch Table (NB)` | 12 Troubleshoot | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:712, 20.2 - ovn-troubleshooting-deep-dive.md:633 |
 | `Logical_Switch Table (NB)` | 17 Incident | 1.0 | low | 20.3 - ovn-daily-operator-playbook.md:1418, 20.6 - ovs-openflow-ovn-retrospective-2007-2024.md:245 |
 | `Logical_Switch Table (NB)` | 18 Lab | 0.5 | medium | 13.8 - ovn-northd-translation.md:29 |
 | `Logical_Switch Table (NB)` | 20 Cross-domain | 0 | low | - |
-| `Logical_Switch_Port Table (NB)` | 4 Role | 0.5 | medium | - |
 | `Logical_Switch_Port Table (NB)` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:1189 |
-| `Logical_Switch_Port Table (NB)` | 7 Importance | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:118 |
+| `Logical_Switch_Port Table (NB)` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:118 |
 | `Logical_Switch_Port Table (NB)` | 12 Troubleshoot | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:633, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file |
 | `Logical_Switch_Port Table (NB)` | 17 Incident | 1.0 | low | 20.6 - ovs-openflow-ovn-retrospective-2007-2024.md:245 |
 | `Logical_Switch_Port Table (NB)` | 18 Lab | 0.5 | medium | 13.8 - ovn-northd-translation.md:29 |
 | `Logical_Switch_Port Table (NB)` | 20 Cross-domain | 0 | low | - |
-| `Logical_Router Table (NB)` | 4 Role | 0.5 | medium | - |
 | `Logical_Router Table (NB)` | 5 Motivation | 1.0 | low | 20.5 - ovn-forensic-case-studies.md:376, 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
-| `Logical_Router Table (NB)` | 7 Importance | 0.5 | low | - |
+| `Logical_Router Table (NB)` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615 |
 | `Logical_Router Table (NB)` | 8 Mechanism | 0.5 | medium | - |
 | `Logical_Router Table (NB)` | 12 Troubleshoot | 1.0 | low | 5.1 - hypervisor-overlays-nvp-nsx.md:282, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file |
 | `Logical_Router Table (NB)` | 17 Incident | 1.0 | low | 20.5 - ovn-forensic-case-studies.md:772, 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
 | `Logical_Router Table (NB)` | 18 Lab | 0.5 | medium | 13.8 - ovn-northd-translation.md:29 |
+| `Logical_Router Table (NB)` | 19 Failure mode | 0.5 | medium | 13.18 - ovn-mlf-regbit-catalog.md:427 |
 | `Logical_Router Table (NB)` | 20 Cross-domain | 1.0 | low | 20.5 - ovn-forensic-case-studies.md:786 |
-| `Logical_Router_Port Table (NB)` | 4 Role | 0.5 | medium | - |
+| `Logical_Router_Port Table (NB)` | 2 History | 0.5 | medium | 13.18 - ovn-mlf-regbit-catalog.md:615 |
 | `Logical_Router_Port Table (NB)` | 5 Motivation | 0 | low | - |
-| `Logical_Router_Port Table (NB)` | 7 Importance | 0.5 | low | - |
+| `Logical_Router_Port Table (NB)` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615 |
 | `Logical_Router_Port Table (NB)` | 8 Mechanism | 0.5 | medium | - |
 | `Logical_Router_Port Table (NB)` | 11 Workflow | 0.5 | medium | - |
 | `Logical_Router_Port Table (NB)` | 12 Troubleshoot | 0.5 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file, 20.3 - ovn-daily-operator-playbook.md:troubleshoot-file |
@@ -1386,12 +1382,13 @@
 | `Logical_Router_Policy (NB)` | 11 Workflow | 0.5 | medium | - |
 | `Logical_Router_Policy (NB)` | 12 Troubleshoot | 0 | low | - |
 | `Logical_Router_Policy (NB)` | 17 Incident | 0 | low | - |
+| `Logical_Router_Policy (NB)` | 19 Failure mode | 0.5 | medium | 13.18 - ovn-mlf-regbit-catalog.md:427 |
 | `Logical_Router_Policy (NB)` | 20 Cross-domain | 0 | low | - |
 | `NAT Table (NB)` | 5 Motivation | 1.0 | low | 11.4 - ipsec-tunnel-lab.md:20, 13.17 - ovn-register-conventions-regbit-mlf.md:34 |
 | `NAT Table (NB)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:174, 13.11 - ovn-gateway-router-distributed.md:536 |
-| `NAT Table (NB)` | 12 Troubleshoot | 1.0 | low | 13.9 - ovn-load-balancer-internals.md:581, 20.2 - ovn-troubleshooting-deep-dive.md:744 |
+| `NAT Table (NB)` | 12 Troubleshoot | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:384, 13.18 - ovn-mlf-regbit-catalog.md:386 |
 | `NAT Table (NB)` | 17 Incident | 0.5 | low | 11.3 - gre-tunnel-lab.md:272, 20.3 - ovn-daily-operator-playbook.md:1554 |
-| `NAT Table (NB)` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:8, 13.4 - br-int-architecture-and-patch-ports.md:29 |
+| `NAT Table (NB)` | 20 Cross-domain | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:450, 13.4 - br-int-architecture-and-patch-ports.md:8 |
 | `Load_Balancer Table (NB)` | 5 Motivation | 0 | low | - |
 | `Load_Balancer Table (NB)` | 7 Importance | 0.5 | low | - |
 | `Load_Balancer Table (NB)` | 12 Troubleshoot | 1.0 | low | 0.3 - master-keyword-index.md:971, 13.9 - ovn-load-balancer-internals.md:592 |
@@ -1431,7 +1428,7 @@
 | `Port_Group Table (NB)` | 20 Cross-domain | 1.0 | low | 12.2 - micro-segmentation-service-chaining.md:20, 12.2 - micro-segmentation-service-chaining.md:149 |
 | `ACL Table (NB)` | 5 Motivation | 1.0 | low | 1.1 - data-center-pain-points.md:26, 1.1 - data-center-pain-points.md:153 |
 | `ACL Table (NB)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:174, 13.2 - ovn-logical-switches-routers.md:520 |
-| `ACL Table (NB)` | 12 Troubleshoot | 1.0 | low | 1.1 - data-center-pain-points.md:153, 20.0 - ovs-ovn-systematic-debugging.md:827 |
+| `ACL Table (NB)` | 12 Troubleshoot | 1.0 | low | 1.1 - data-center-pain-points.md:153, 13.18 - ovn-mlf-regbit-catalog.md:530 |
 | `ACL Table (NB)` | 17 Incident | 1.0 | low | 0.3 - master-keyword-index.md:459, 13.14 - ovn-nbctl-sbctl-reference-playbook.md:629 |
 | `ACL Table (NB)` | 20 Cross-domain | 1.0 | low | 12.2 - micro-segmentation-service-chaining.md:20, 12.2 - micro-segmentation-service-chaining.md:149 |
 | `Meter Table (NB)` | 4 Role | 0.5 | medium | - |
@@ -1485,7 +1482,6 @@
 | `HA_Chassis_Group (NB)` | 7 Importance | 1.0 | low | 20.3 - ovn-daily-operator-playbook.md:707 |
 | `HA_Chassis_Group (NB)` | 12 Troubleshoot | 1.0 | low | 13.5 - port-binding-types-ovn-native.md:173, 20.2 - ovn-troubleshooting-deep-dive.md:1603 |
 | `HA_Chassis_Group (NB)` | 17 Incident | 1.0 | low | 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
-| `HA_Chassis_Group (NB)` | 19 Failure mode | 0.5 | medium | 20.2 - ovn-troubleshooting-deep-dive.md:1603 |
 | `HA_Chassis_Group (NB)` | 20 Cross-domain | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:280 |
 | `SB_Global Table` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:948 |
 | `SB_Global Table` | 5 Motivation | 0 | low | - |
@@ -1518,20 +1514,18 @@
 | `Datapath_Binding Table (SB)` | 5 Motivation | 0 | low | - |
 | `Datapath_Binding Table (SB)` | 7 Importance | 1.0 | low | 13.15 - ovn-interconnect-multi-region.md:111, 13.15 - ovn-interconnect-multi-region.md:203 |
 | `Datapath_Binding Table (SB)` | 8 Mechanism | 0.5 | medium | - |
-| `Datapath_Binding Table (SB)` | 12 Troubleshoot | 0.5 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file, 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file |
+| `Datapath_Binding Table (SB)` | 12 Troubleshoot | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:689, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file |
 | `Datapath_Binding Table (SB)` | 13 Coupling | 0.5 | medium | 13.7 - ovn-controller-internals.md:47 |
 | `Datapath_Binding Table (SB)` | 17 Incident | 0.5 | low | - |
-| `Datapath_Binding Table (SB)` | 19 Failure mode | 0.5 | medium | 13.1 - ovn-nbdb-sbdb-architecture.md:538 |
 | `Datapath_Binding Table (SB)` | 20 Cross-domain | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:280 |
 | `Port_Binding Table (SB)` | 5 Motivation | 1.0 | low | 13.7 - ovn-controller-internals.md:33, 13.7 - ovn-controller-internals.md:591 |
 | `Port_Binding Table (SB)` | 7 Importance | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:33, 13.15 - ovn-interconnect-multi-region.md:111 |
-| `Port_Binding Table (SB)` | 12 Troubleshoot | 1.0 | low | 0.3 - master-keyword-index.md:1035, 13.6 - ha-chassis-group-and-bfd.md:28 |
+| `Port_Binding Table (SB)` | 12 Troubleshoot | 1.0 | low | 0.3 - master-keyword-index.md:1035, 13.18 - ovn-mlf-regbit-catalog.md:529 |
 | `Port_Binding Table (SB)` | 17 Incident | 1.0 | low | 10.7 - ovsdb-client-deep-playbook.md:271, 10.7 - ovsdb-client-deep-playbook.md:355 |
 | `Port_Binding Table (SB)` | 18 Lab | 0.5 | medium | 10.4 - ovsdb-idl-monitor-cond-client.md:248, 10.7 - ovsdb-client-deep-playbook.md:463 |
 | `Port_Binding Table (SB)` | 20 Cross-domain | 1.0 | low | 10.7 - ovsdb-client-deep-playbook.md:236, 13.14 - ovn-nbctl-sbctl-reference-playbook.md:280 |
 | `Logical_Flow Table (SB)` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:36 |
 | `Logical_Flow Table (SB)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:934, 13.4 - br-int-architecture-and-patch-ports.md:82 |
-| `Logical_Flow Table (SB)` | 8 Mechanism | 0.5 | medium | - |
 | `Logical_Flow Table (SB)` | 12 Troubleshoot | 1.0 | low | 0.3 - master-keyword-index.md:1020, 0.3 - master-keyword-index.md:1030 |
 | `Logical_Flow Table (SB)` | 17 Incident | 1.0 | low | 10.7 - ovsdb-client-deep-playbook.md:355, 13.1 - ovn-nbdb-sbdb-architecture.md:553 |
 | `Logical_Flow Table (SB)` | 18 Lab | 0.5 | medium | README.md:355 |
@@ -1553,7 +1547,7 @@
 | `MAC_Binding Table (SB)` | 5 Motivation | 1.0 | low | 13.7 - ovn-controller-internals.md:33, 20.5 - ovn-forensic-case-studies.md:376 |
 | `MAC_Binding Table (SB)` | 7 Importance | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:106 |
 | `MAC_Binding Table (SB)` | 8 Mechanism | 0.5 | medium | - |
-| `MAC_Binding Table (SB)` | 12 Troubleshoot | 1.0 | low | 20.5 - ovn-forensic-case-studies.md:19, 20.6 - ovs-openflow-ovn-retrospective-2007-2024.md:227 |
+| `MAC_Binding Table (SB)` | 12 Troubleshoot | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:631, 20.5 - ovn-forensic-case-studies.md:19 |
 | `MAC_Binding Table (SB)` | 17 Incident | 1.0 | low | 0.3 - master-keyword-index.md:1037, 10.7 - ovsdb-client-deep-playbook.md:589 |
 | `MAC_Binding Table (SB)` | 18 Lab | 0.5 | medium | 20.5 - ovn-forensic-case-studies.md:678, README.md:355 |
 | `MAC_Binding Table (SB)` | 20 Cross-domain | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:280, 20.5 - ovn-forensic-case-studies.md:378 |
@@ -1734,7 +1728,7 @@
 | `ovn-sbctl lflow-list` | 5 Motivation | 0 | low | - |
 | `ovn-sbctl lflow-list` | 7 Importance | 1.0 | low | 13.1 - ovn-nbdb-sbdb-architecture.md:164, 13.2 - ovn-logical-switches-routers.md:177 |
 | `ovn-sbctl lflow-list` | 8 Mechanism | 0.5 | medium | - |
-| `ovn-sbctl lflow-list` | 12 Troubleshoot | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:744, 20.2 - ovn-troubleshooting-deep-dive.md:744 |
+| `ovn-sbctl lflow-list` | 12 Troubleshoot | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:744, 13.18 - ovn-mlf-regbit-catalog.md:386 |
 | `ovn-sbctl lflow-list` | 17 Incident | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:20, 13.16 - ovn-logical-pipeline-table-id-map.md:20 |
 | `ovn-sbctl lflow-list` | 20 Cross-domain | 0 | low | - |
 | `ovn-sbctl dump-flows` | 4 Role | 0.5 | medium | - |
@@ -1800,7 +1794,7 @@
 | `ovn-trace --ovs` | 17 Incident | 0 | low | - |
 | `ovn-trace --ovs` | 20 Cross-domain | 0 | low | - |
 | `ovn-appctl exit` | 5 Motivation | 1.0 | low | 9.18 - ovs-native-l3-routing.md:294 |
-| `ovn-appctl exit` | 7 Importance | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:82 |
+| `ovn-appctl exit` | 7 Importance | 1.0 | low | 13.18 - ovn-mlf-regbit-catalog.md:615, 13.4 - br-int-architecture-and-patch-ports.md:82 |
 | `ovn-appctl exit` | 12 Troubleshoot | 1.0 | low | 13.0 - ovn-announcement-2015-rationale.md:24, 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file |
 | `ovn-appctl exit` | 17 Incident | 1.0 | low | 16.0 - dpdk-afxdp-kernel-tuning.md:55, 16.0 - dpdk-afxdp-kernel-tuning.md:274 |
 | `ovn-appctl exit` | 19 Failure mode | 0.5 | medium | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:675 |
