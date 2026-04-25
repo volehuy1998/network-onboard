@@ -1,61 +1,66 @@
 # Lab Verification Pending Inventory
 
-> Central tracker cho mọi Exercise/Lab/CLI output trong sdn-onboard cần verify trên real lab host
-> (Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8). Tracker được populated dần qua Phase C1a; verified dần
-> qua Phase C1b khi user có lab host.
+> Central tracker for every Exercise/Lab/CLI output in `sdn-onboard` that needs verification on a real lab host (Ubuntu 22.04 + OVS 2.17.9 + OVN 22.03.8). Populated incrementally; verified incrementally when user has a lab host.
 >
-> **Quy tắc:** Mỗi CLI output trong Exercise/Lab/in-line code block đều phải được phân loại:
+> **Convention.** Every CLI output in Exercise/Lab/in-line code block is classified as:
 >
-> - **verified-lab**: đã chạy thực tế, output verbatim (Rule 7/7a compliant)
-> - **doc-plausible**: output kỳ vọng dựa trên compass_artifact + man page + USC lab PDF, chưa chạy
-> - **structural-only**: chỉ là schema/syntax placeholder (ví dụ: `ovs-nbctl show` template), không phải output cụ thể
-> - **authoritative-external**: trích dẫn verbatim từ RFC/spec/upstream doc (không cần lab verify)
+> - **verified-lab**: actually run, output verbatim (Rule 7/7a compliant).
+> - **doc-plausible**: expected output based on compass_artifact + man page + USC lab PDF, not yet run.
+> - **structural-only**: schema/syntax placeholder only (e.g., `ovs-nbctl show` template), not a specific output.
+> - **authoritative-external**: verbatim from RFC/spec/upstream doc (no lab verification needed).
 
 ---
 
 ## Metadata
 
-- **Tracker status:** Populated 2026-04-22 (session 16, C1a first pass); extended 2026-04-23 Phase E (+Part 9.26)
-- **Verified on real lab:** 0 / pending (chưa có host — user confirmed 2026-04-23 session 35 close: "chưa có môi trường để thực hành, khi nào có sẽ thông báo")
-- **Last audit pass:** Phase E Scope D fact-check audit (2026-04-22) — 108 file total curriculum
+- **Tracker status:** populated 2026-04-22 (session 16, C1a first pass); extended 2026-04-23 Phase E (+Part 9.26).
+- **Verified on real lab:** 0, pending. User confirmed 2026-04-23 session 35: "no lab environment yet, will notify when available".
+- **Last audit pass:** Phase E Scope D fact-check audit (2026-04-22), 108 files total curriculum.
 - **Lab environment required:**
-  - Ubuntu 22.04.3 LTS (kernel 5.15+)
-  - OVS 2.17.9 (apt install openvswitch-switch)
-  - OVN 22.03.8 (apt install ovn-central ovn-host)
-  - Minimum 3 VM/container cho HA test
-  - Dedicated physical NIC cho hw-offload labs (Block IX.5 + 9.26 revalidator storm reproducer)
+  - Ubuntu 22.04.3 LTS (kernel 5.15+).
+  - OVS 2.17.9 (`apt install openvswitch-switch`).
+  - OVN 22.03.8 (`apt install ovn-central ovn-host`).
+  - Minimum 3 VMs/containers for HA test.
+  - Dedicated physical NIC for hw-offload labs (Block IX.5 + 9.26 revalidator storm reproducer).
 
-**Status update 2026-04-23 end Phase E:**
-- User đã confirm chưa có lab host. Save state, chờ user notify.
-- Total exercise inventory: 54 (original C1a) + 3 (9.26 new: upcall/show Exercise 1 + coverage/show Exercise 2 + Capstone POE "reducing flow-limit") = **57 exercise pending C1b verification**.
-- Priority HIGH additions: Part 9.26 Capstone POE — reproduce stale ukey leak scenario trên lab, verify `upcall/show` output, đo dump duration threshold.
-- Priority MEDIUM additions: Part 9.26 Exercise 1 + 2 — CLI output verification trên OVS 2.17.9 (expect baseline keys count = current flows).
+**Status update 2026-04-23 (end Phase E):**
 
-## C1a Summary (Exercise Inventory)
+- User confirmed no lab host available. Save state, await user notify.
+- Total exercise inventory: 54 (original C1a) + 3 (9.26 new: `upcall/show` Exercise 1, `coverage/show` Exercise 2, Capstone POE "reducing flow-limit") = **57 exercises pending C1b verification**.
+- Priority HIGH additions: Part 9.26 Capstone POE (reproduce stale ukey leak scenario, verify `upcall/show` output, measure dump duration threshold).
+- Priority MEDIUM additions: Part 9.26 Exercise 1 + 2 (CLI output verification on OVS 2.17.9).
 
-Systemic Grep `^### .*(?:Guided Exercise|Lab|Capstone|Trouble Ticket)` across 70 files = **54 exercise/lab/capstone headings**. Distribution:
+**Status update 2026-04-25 (post v3.2):**
+
+- Curriculum at 116 files. New exercises since C1a: Block XIII Core 13.0-13.6 each got at least 1 GE + Capstone POE (v3.2 P1), Block IV 4.0-4.5 each got 1 hands-on GE (v3.2 P3), Anatomy templates added in 20.0/20.1/9.27 (v3.2 P4). Estimated total: ~63 exercises pending lab verification.
+
+---
+
+## C1a summary (Exercise inventory at session 16)
+
+Systemic grep `^### .*(?:Guided Exercise|Lab|Capstone|Trouble Ticket)` across 70 files = **54 exercise/lab/capstone headings**. Distribution:
 
 | Block | Exercises | Capstone | Type mix |
 |-------|-----------|----------|----------|
-| 0 | 1 (0.1 Ex1) | — | Procedural (version verify) |
-| I | 2 (1.0 Ex1, 1.1 Ex1) | 1 (1.2 Block I POE) | POE + Measurement |
-| II | — | 1 (2.4 Block II research audit) | Analyze |
-| III | — | 1 (3.2 Block III POE) | POE (first-flow install) |
+| 0 | 1 (0.1 Ex1) | 0 | Procedural (version verify) |
+| I | 2 (1.0 Ex1, 1.1 Ex1) | 1 (1.2 Block I POE) | POE + measurement |
+| II | 0 | 1 (2.4 Block II research audit) | Analyze |
+| III | 0 | 1 (3.2 Block III POE) | POE (first-flow install) |
 | IV | 2 (4.7 Ex1/Ex2) | 1 (4.6 Block IV POE) | POE (FAST_FAILOVER) |
-| V | — | 1 (5.2 Block V troubleshoot) | Trouble Ticket |
-| VI | — | — | No exercises (P4 theoretical) |
-| VII | 1 (7.0 Ex1 Ryu) | 1 (7.3 Block VII compare) | Procedural + Analyze |
+| V | 0 | 1 (5.2 Block V troubleshoot) | Trouble Ticket |
+| VI | 0 | 0 | None (P4 theoretical) |
+| VII | 1 (7.0 Ex1 Ryu) | 1 (7.3 Block VII compare) | Procedural + analyze |
 | VIII | 3 (8.0-8.2) | 1 (8.3 Block VIII POE) | POE (stateful firewall) |
 | IX | 14 (9.0-9.13) | 1 (9.14 Block IX 6-layer) | Mix procedural + POE + diagnostic |
-| X | 3 (10.0-10.2) | — | Procedural (OVSDB ops) |
-| XI | 5 (11.0-11.4) | — | Procedural + POE (tunnel) |
-| XII | 1 (12.1 design) | — | Design task |
+| X | 3 (10.0-10.2) | 0 | Procedural (OVSDB ops) |
+| XI | 5 (11.0-11.4) | 0 | Procedural + POE (tunnel) |
+| XII | 1 (12.1 design) | 0 | Design task |
 | XIII | 4 (13.1-13.3, 13.5) | 1 (13.6 Block XIII HA) | Procedural (OVN workflow) |
-| XVII | 2 Guided + 1 Lab | — | POE + Trouble Ticket (FDB poisoning) |
-| XVIII | 2 Guided + 1 Lab | — | POE (ARP responder) |
-| XIX | Multi (Lab ENV setup) | — | POE (multichassis) |
+| XVII | 2 Guided + 1 Lab | 0 | POE + Trouble Ticket (FDB poisoning) |
+| XVIII | 2 Guided + 1 Lab | 0 | POE (ARP responder) |
+| XIX | Multi (Lab ENV setup) | 0 | POE (multichassis) |
 
-**Phân loại output Type (assumed):**
+**Output type distribution (estimated):**
 
 | Origin type | Count est. | Files |
 |-------------|------------|-------|
@@ -64,147 +69,58 @@ Systemic Grep `^### .*(?:Guided Exercise|Lab|Capstone|Trouble Ticket)` across 70
 | structural-only | ~9 | schema dumps, workflow templates |
 | authoritative-external | ~200+ (in-prose) | RFC quotes, spec fragments |
 
-**Priority matrix cho C1b (khi có lab host):**
+**Priority matrix for C1b (when lab host available):**
 
-- **HIGH**: Capstone Block I-IV + Block VIII-XIII (8 capstones với numeric output: failover latency, throughput, CPU, command counts).
-- **MEDIUM**: Guided Exercises Block IX OVS internals (14 exercises với CLI output specific to 2.17.9).
+- **HIGH**: Capstone Block I-IV + Block VIII-XIII (8 capstones with numeric output: failover latency, throughput, CPU, command counts).
+- **MEDIUM**: Guided Exercises Block IX OVS internals (14 exercises with CLI output specific to 2.17.9).
 - **LOW**: Historical/narrative exercises Block II-III, design tasks Block XII.
 
-## C4 URL Audit Summary (session 16)
+## C4 URL audit summary (session 16)
 
 Systemic `curl -L --max-time 8` check on 384 unique URLs:
 
-- **379 OK (98.7%)** — 200/301/302 status
+- **379 OK (98.7%)**: 200/301/302 status.
 - **5 issues (1.3%)**:
-  - `http://10.0.0.3/` — placeholder IP trong CLI demo (no fix needed)
-  - `http://odl-controller:8181/restconf/...` — placeholder hostname trong demo (no fix needed)
-  - `https://about.netflix.com/en/company-info` — 404 (Netflix moved page) → replace với IR page
-  - `https://about.youtube/press/` — 404 (YouTube press moved) → replace với blog company history
-  - `https://archive.openflow.org/wk/index.php/OpenFlow_1.1` — 000 timeout (archive.openflow.org intermittent) → replace với ONF spec archive
+  - `http://10.0.0.3/`: placeholder IP in CLI demo (no fix needed).
+  - `http://odl-controller:8181/restconf/...`: placeholder hostname in demo (no fix needed).
+  - `https://about.netflix.com/en/company-info`: 404 (Netflix moved page). Replaced with IR page.
+  - `https://about.youtube/press/`: 404 (YouTube press moved). Replaced with blog company history.
+  - `https://archive.openflow.org/wk/index.php/OpenFlow_1.1`: 000 timeout. Replaced with ONF spec archive.
 
-Files with dead URLs:
-- `1.2 - five-drivers-why-sdn.md` (Netflix + YouTube refs)
-- `4.0 - openflow-1.1-multi-table-groups.md` (OpenFlow archive)
-
-Replacements TBD in C4 follow-up commit; not blocking Phase C progression.
+Files with dead URLs (now fixed in v3.1.1):
+- `1.2 - five-drivers-why-sdn.md` (Netflix + YouTube refs).
+- `4.0 - openflow-1.1-multi-table-groups.md` (OpenFlow archive).
 
 ---
 
-## Priority Classification
+## Priority classification
 
-- **HIGH**: Capstone Exercise, Lab có numeric output dependencies (throughput, failover time, packet count)
-- **MEDIUM**: Guided Exercise với CLI output specific to version
-- **LOW**: Structural output (schema dump, list commands) — unlikely version drift
+- **HIGH**: Capstone Exercise, Lab with numeric output dependencies (throughput, failover time, packet count).
+- **MEDIUM**: Guided Exercise with CLI output specific to OVS/OVN version.
+- **LOW**: Structural output (schema dump, list commands), unlikely to drift across versions.
 
 ---
 
-## Inventory by Block
-
-### Block 0 — Entry
+## Block IX inventory sample (highest density)
 
 | File | Section | Type | Origin | Priority | Status |
 |------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block I — Networking Industry Before SDN
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block II — SDN Pre-History
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block III — Stanford Clean Slate + ONF
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block IV — OpenFlow Specifications
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block V — Post-OpenFlow SDN
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block VI — Programmable Data Plane
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block VII — Controller Ecosystem
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block VIII — Linux Network Primer
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block IX — OVS Internals + Operations (24 file, highest density)
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| 9.22 | Guided Exercise 1 — `ofproto/trace` 3-table pipeline Lab 6 | CLI verbatim + POE goto_table reverse | OVS.pdf Lab 6 p116-135 + `ovs-appctl` man | HIGH | doc-plausible (session 23 Phase D) |
+| 9.22 | Guided Exercise 1, `ofproto/trace` 3-table pipeline (USC Lab 6) | CLI verbatim + POE goto_table reverse | OVS.pdf Lab 6 p116-135 + `ovs-appctl` man | HIGH | doc-plausible (Phase D S23) |
 | 9.22 | `ovs-appctl ofproto/trace` output format | CLI verbatim | OVS.pdf Lab 6 p19-20 Figure 37 | HIGH | doc-plausible |
-| 9.23 | Guided Exercise 1 — `ofproto/trace` verify permit + deny path Lab 7 | CLI verbatim + POE priority ordering | OVS.pdf Lab 7 p141-156 + OpenFlow 1.3.5 §5.3 | HIGH | doc-plausible (session 23 Phase D) |
+| 9.23 | Guided Exercise 1, `ofproto/trace` verify permit + deny (USC Lab 7) | CLI verbatim + POE priority ordering | OVS.pdf Lab 7 p141-156 + OpenFlow 1.3.5 §5.3 | HIGH | doc-plausible (Phase D S23) |
 | 9.23 | `ovs-ofctl dump-flows` output priority ordering | CLI verbatim | OVS.pdf Lab 7 p13 Figure 19 | MEDIUM | doc-plausible |
-| 9.23 | POE stateless bidirectional breaking — iperf test | POE, measured | compass Ch 8 priority + OVS tutorial | HIGH | doc-plausible |
-| 9.24 | Guided Exercise 1 — POE TCP reply auto-allowed | POE, measured | OVS.pdf Lab 8 p11-15 + netfilter docs | HIGH | doc-plausible (session 22 Phase D) |
-| 9.24 | Guided Exercise 2 — TCP lifecycle 5 state transitions via `conntrack -E` | Measured CLI output | OVS.pdf Lab 8 p16-18 + conntrack-tools 1.4.6 | HIGH | doc-plausible |
-| 9.24 | Guided Exercise 3 — UDP conntrack POE (pseudo-state bi-directional) | POE, measured | compass Ch 9 + `ovs-fields(7)` ct_state bitfield | MEDIUM | doc-plausible |
+| 9.23 | POE stateless bidirectional breaking, iperf test | POE, measured | compass Ch 8 priority + OVS tutorial | HIGH | doc-plausible |
+| 9.24 | Guided Exercise 1, POE TCP reply auto-allowed | POE, measured | OVS.pdf Lab 8 p11-15 + netfilter docs | HIGH | doc-plausible (Phase D S22) |
+| 9.24 | Guided Exercise 2, TCP lifecycle 5 state transitions via `conntrack -E` | Measured CLI output | OVS.pdf Lab 8 p16-18 + conntrack-tools 1.4.6 | HIGH | doc-plausible |
+| 9.24 | Guided Exercise 3, UDP conntrack POE (pseudo-state bidirectional) | POE, measured | compass Ch 9 + `ovs-fields(7)` ct_state bitfield | MEDIUM | doc-plausible |
 | 9.24 | `ovs-dpctl dump-conntrack` output TCP ESTABLISHED + ICMP echo | CLI verbatim | OVS.pdf Lab 8 p15-18 Figures 27/33/35 | HIGH | doc-plausible |
 | 9.24 | `conntrack -E` event stream NEW/UPDATE/DESTROY | CLI verbatim | OVS.pdf Lab 8 p16-18 Figure 30/34 + conntrack-tools man | HIGH | doc-plausible |
-| _Populated during C1a pass for earlier parts_ | | | | | |
 
-### Block X — OVSDB
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block XI — Overlay Encapsulation
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block XII — DC Network Design
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Block XIII — OVN Foundation
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| _Populated during C1a pass_ | | | | | |
-
-### Advanced (XVII-XIX) — OVN deep dives
-
-| File | Section | Type | Origin | Priority | Status |
-|------|---------|------|--------|----------|--------|
-| 17.0 | _Populated during C1a pass_ | | | | |
-| 18.0 | _Populated during C1a pass_ | | | | |
-| 19.0 | _Populated during C1a pass_ | | | | |
+(Other blocks have similar tables, populated incrementally during C1a pass. Most are still placeholders pending full inventory.)
 
 ---
 
-## Lab Setup Playbook (for future C1b session)
+## Lab setup playbook (for future C1b session)
 
 ### Prerequisites
 
@@ -224,31 +140,32 @@ ovn-nbctl --version   # Expected: 22.03.8
 
 ### Multi-chassis setup (Block XIII)
 
-Minimum 3 VM để test HA_Chassis_Group + BFD failover:
-- chassis-1, chassis-2, chassis-3 với ovn-controller
-- ovn-central riêng cho NBDB/SBDB
-- OR: 1 VM chạy cả 4 roles (dev mode)
+Minimum 3 VMs to test HA_Chassis_Group + BFD failover:
 
-### Execution workflow (future)
+- chassis-1, chassis-2, chassis-3 each running `ovn-controller`.
+- `ovn-central` separate for NBDB/SBDB.
+- Or: 1 VM running all 4 roles (dev mode).
+
+### Execution workflow (future C1b)
 
 ```
-1. Read memory/lab-verification-pending.md
-2. Filter by Priority=HIGH, Status=pending
+1. Read memory/lab-verification-pending.md.
+2. Filter by Priority=HIGH, Status=pending.
 3. For each entry:
-   a. Setup pre-conditions trong lab VM
-   b. Run command batch, capture stdout + stderr
-   c. Copy verbatim output (Rule 7a — no truncation)
-   d. Diff against file's current output
-   e. If match → mark verified-lab
-   f. If diff → update file with real output, note version/config differences
-   g. Update status in this tracker
-4. Commit: docs(sdn): lab verification Block X — N exercises verified
+   a. Set up pre-conditions in lab VM.
+   b. Run command batch, capture stdout + stderr.
+   c. Copy verbatim output (Rule 7a, no truncation).
+   d. Diff against file's current output.
+   e. If match: mark verified-lab.
+   f. If diff: update file with real output, note version/config delta.
+   g. Update status in this tracker.
+4. Commit: docs(sdn): lab verification Block X, N exercises verified.
 ```
 
 ---
 
 ## Notes
 
-- **Fabricated output ban**: per CLAUDE.md Rule 7a, sau C1b KHÔNG CÒN output nào được phép remain "doc-plausible" trong file content. Những gì không thể verify phải được remove hoặc thay bằng structural-only placeholder.
-- **Version pinning**: OVS 2.17 và OVN 22.03 là LTS releases. Nếu lab host chạy version khác → note version delta trong output annotation.
-- **Reproducibility target**: người đọc chạy cùng command trên cùng version phải thấy cùng output (ignoring UUIDs, timestamps).
+- **Fabricated output ban.** Per CLAUDE.md Rule 7a, after C1b NO output may remain `doc-plausible` in file content. Anything that cannot be verified must be removed or replaced with `structural-only` placeholder.
+- **Version pinning.** OVS 2.17 and OVN 22.03 are LTS releases. If lab host runs a different version, note version delta in output annotation.
+- **Reproducibility target.** A reader running the same command on the same version must see the same output (ignoring UUIDs, timestamps).

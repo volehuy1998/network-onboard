@@ -1,18 +1,18 @@
 # Rule 11 Vietnamese Prose Dictionary
 
-> Tách từ `CLAUDE.md` Rule 11 §11.2 (2026-04-25 slim sweep). Đây là từ điển sống cho Rule 11 Vietnamese Prose Discipline. Khi commit fix Rule 11 gặp từ chưa có, BỔ SUNG vào bảng này (Rule 11 §11.7).
+> Extracted from `CLAUDE.md` Rule 11 §11.2 (2026-04-25 slim sweep). This is the living dictionary for Rule 11 Vietnamese Prose Discipline. When a Rule 11 fix commit encounters a word not yet listed, ADD it here (Rule 11 §11.7).
 
-## Bối cảnh
+## Context
 
-Rule 11 áp dụng nguyên tắc "dịch đúng nơi đúng chỗ": named identifier (OVS/OVN/OpenFlow concept, CLI verbatim, protocol acronym) GIỮ English; prose tư duy mô tả PHẢI dịch Việt. Bảng này list mọi từ tư duy phổ biến và bản dịch chuẩn để curriculum nhất quán.
+Rule 11 applies the "translate at the right place" principle. Named identifiers (OVS/OVN/OpenFlow concept, CLI verbatim, protocol acronym) KEEP English; descriptive prose words MUST translate to Vietnamese. This table lists common prose words with their canonical Vietnamese translation, so curriculum stays consistent.
 
-Quy tắc tự phân loại: §11.1 trong CLAUDE.md (giữ English) + §11.3 (cùng từ, lúc dịch lúc không, ví dụ minh hoạ).
+Self-classification rule: see CLAUDE.md §11.1 (keep English) + §11.3 (same word, sometimes English sometimes Vietnamese, with examples).
 
 ---
 
-#### 11.2. Dịch Việt khi từ xuất hiện trong prose mô tả / giải thích
+#### 11.2. TRANSLATE to Vietnamese when the word appears in descriptive prose
 
-**Vocabulary tư duy — LUÔN dịch:**
+**Cognitive vocabulary, ALWAYS translate:**
 
 | English | Vietnamese | English | Vietnamese |
 |---|---|---|---|

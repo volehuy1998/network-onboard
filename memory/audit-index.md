@@ -1,74 +1,54 @@
 # Memory Audit Log Index
 
-> TOC of audit logs trong `memory/`. Claude đọc file này để tìm audit log phù hợp
-> theo topic và date. Tránh redundant re-audit.
+> TOC of audit logs in `memory/`. Use this to find an existing audit before redundantly re-running. English only (working/meta).
 
 ---
 
-## Latest audit (2026-04-25, v3.1-OperatorMaster post-release)
+## Latest audit (2026-04-25, v3.1 post-release, ALL findings closed)
 
-**9-phase audit session S63 post-release.** Master consolidation:
-- `audit-2026-04-25-master-report.md` — Executive summary + roadmap v3.1.1 + v3.2
+The 9-phase audit was post-release. After v3.1.1 + v3.2 sprints, ALL CRITICAL + ALL HIGH closed.
 
-Phase reports:
-- `audit-2026-04-25-phase1-inventory.md` — Baseline (116 file, 52.649 dòng) + coherence (README heading count, dependency map gap)
-- `audit-2026-04-25-phase2-structural.md` — Rule 9 null byte + Rule 13 em-dash + Rule 14 spot-check + encoding (CRLF/trailing whitespace)
-- `audit-2026-04-25-phase3-prose.md` — Rule 11 Vietnamese prose (96 FIX + 25 KEEP + 20 REVIEW)
-- `audit-2026-04-25-phase4-architecture.md` — Block III/IV/IX/XIII cluster depth audit (55 file, 24.135 dòng, 1 CRITICAL + 4 HIGH)
-- `audit-2026-04-25-phase5-cli-ops.md` — CLI tool playbook + forensic + Block XX (trụ cột #3 thao tác + output)
-- `audit-2026-04-25-phase6-historical.md` — Block I/II/III/20.6 narrative (trụ cột #2+4 lịch sử + diễn đạt)
-- `audit-2026-04-25-phase7-coherence.md` — Cross-cutting: TOC + dependency map + URL integrity + reading path + memory tracker
-- `audit-2026-04-25-phase8-sampling.md` — 30 Anatomy + 10 GE + 5 Capstone POE random sampling
+- [`audit-2026-04-25-summary.md`](audit-2026-04-25-summary.md): consolidated 9-phase summary, finding distribution, 5-pillar coverage heatmap, per-phase summary, resolution map (v3.1.1 + v3.2 commits), residuals.
 
-**Verdict:** Production-ready GPA A-. 1 CRITICAL (Block XIII Core shallow) + 7 HIGH findings. Roadmap v3.1.1 (10-15h) + v3.2 (40-60h).
+The original 9 verbose phase reports plus master report (~3200 lines total) were deleted on 2026-04-25 in the slim sweep (commit `c070b3f`); their full content is preserved in git history (`git show 84d0d5e -- memory/audit-2026-04-25-phase*.md`).
+
+**Post-v3.2 verdict:** A (from A- baseline). Curriculum: 116 files, ~55.7K lines, foundational depth complete, 0 CRITICAL + 0 HIGH residual.
 
 ---
 
-## Previous audits (chronological descending)
+## Older audits (deleted in slim sweep, available in git)
 
-### 2026-04-24 Pre-release audit
-
-- `pre-release-audit-2026-04-24.md` — S60 pre-release audit (Rule 9 PASS, Rule 13 PASS, Rule 11 64 leak fixable) trước khi tag v3.1-OperatorMaster
-
-### 2026-04-23-rev2 Phase H progression
-
-- `sdn-onboard-audit-2026-04-23-rev2.md` — Rev 2 Phase H audit (110 concept depth, upstream baseline research)
-- `sdn-onboard-audit-2026-04-23.md` — Rev 1 Phase H audit (original)
-- `phase-f-audit-2026-04-23.md` — Phase F audit (Block XIV-XVI Expert Extension)
-
-### 2026-04-24 Phase H progression
-
-- `sdn-onboard-audit-2026-04-24.md` — Phase H audit refreshed (10 concept batch with severity-upgraded)
-- `phase-h-progress.md` — Phase H tracker (13 session S38-S50, target v3.0-FoundationDepth)
-
-### 2026-04-22 Phase E fact-check
-
-- `fact-check-audit-2026-04-22.md` — Phase E fact-check audit log (32 source code citation issue, 6 category, 43 file). Rule 14 Source Code Citation Integrity emergence.
+| Audit | Date | Status | Recovery |
+|-------|------|--------|----------|
+| Pre-release v3.1 | 2026-04-24 | Closed by v3.1 release | `git show 84d0d5e -- memory/pre-release-audit-2026-04-24.md` |
+| Phase F (Block XIV-XVI Expert) | 2026-04-23 | Phase F COMPLETE | `git show 84d0d5e -- memory/phase-f-audit-2026-04-23.md` |
+| Phase H Foundation Depth (rev1 + rev2) | 2026-04-23/24 | Phase H COMPLETE | `git show 84d0d5e -- memory/sdn-onboard-audit-2026-04-23*.md memory/sdn-onboard-audit-2026-04-24.md` |
+| Phase E Fact-check (Rule 14 origin) | 2026-04-22 | Closed; Rule 14 codified | `git show 84d0d5e -- memory/fact-check-audit-2026-04-22.md` |
+| Phase H progress tracker | 2026-04-24 | Phase H COMPLETE | `git show 84d0d5e -- memory/phase-h-progress.md` |
 
 ---
 
-## Other memory files (non-audit)
+## Other memory files
 
-- `session-log.md` — Latest session log (updated each session)
-- `file-dependency-map.md` — File cross-reference map (Rule 2 Cross-File Sync)
-- `sdn-series-state.md` — SDN series state tracker (Rule 5 Session Handoff)
-- `haproxy-series-state.md` — HAProxy series state tracker (sister series)
-- `experiment-plan.md` — Phase A→E experiment plan
-- `lab-verification-pending.md` — C1b lab host chờ user notify
-- `em-dash-cleanup.py` + `em-dash-cleanup-v2.py` — Python script cho Rule 13 sweeps
+- [`session-log.md`](session-log.md): session-by-session journal (slim, last 10 verbose, older summarized).
+- [`file-dependency-map.md`](file-dependency-map.md): file cross-reference map (Rule 2 Cross-File Sync).
+- [`sdn-series-state.md`](sdn-series-state.md): SDN curriculum status tracker (Rule 5 Session Handoff).
+- [`rule-11-dictionary.md`](rule-11-dictionary.md): Vietnamese prose translation dictionary (Rule 11 §11.2).
+- [`lab-verification-pending.md`](lab-verification-pending.md): exercises pending lab host (waiting on user).
+- [`haproxy-series-state.md`](haproxy-series-state.md): HAProxy onboard series state.
+- [`MEMORY.md`](MEMORY.md): auto-memory index (Claude hooks).
 
 ---
 
-## Audit flow conventions
+## Audit conventions
 
-- File name pattern: `{topic}-audit-{YYYY-MM-DD}.md` hoặc `audit-{YYYY-MM-DD}-phase{N}-{scope}.md`
-- Topic prefix: `sdn-onboard` / `phase-f` / `phase-h` / `pre-release` / `fact-check`
-- Finding ID pattern: `{P<phase>}.<category><number>` (e.g. `P1.D1`, `P4.B13.1`)
-- Severity levels: CRITICAL / HIGH / MED / LOW / STRONG (positive) / INFO
+- **File name pattern:** `audit-{YYYY-MM-DD}-{scope}.md` or `{phase|topic}-audit-{YYYY-MM-DD}.md`.
+- **Finding ID pattern:** `P<phase>.<category><number>`, e.g., `P1.D1`, `P4.B13.1`.
+- **Severity levels:** CRITICAL, HIGH, MED, LOW, STRONG (positive finding), INFO.
 
-## Quick reference cho next audit
+## Quick reference for next audit
 
-- Broad scope (116 file cross-block): dùng pattern `audit-YYYY-MM-DD-phaseN-*.md` + master report
-- Narrow scope (Phase-specific or block-specific): dùng pattern `{phase|block}-audit-YYYY-MM-DD.md`
-- Fact-check specific: `fact-check-audit-YYYY-MM-DD.md`
-- Retrofit finding: reference previous audit log để track history
+- Broad scope (cross-block, all curriculum): one summary file per audit date, no per-phase split.
+- Narrow scope (single Phase or single Block): `{phase|block}-audit-YYYY-MM-DD.md`.
+- Fact-check (Rule 14): `fact-check-audit-YYYY-MM-DD.md`.
+- Reference previous audit log to track finding history.
