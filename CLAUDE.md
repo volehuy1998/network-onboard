@@ -519,14 +519,17 @@ Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is b
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.2-FullDepth` (2026-04-25). |
-| Curriculum | 116 files in `sdn-onboard/*.md`, ~55.7K lines, 20 blocks. Audit verdict: A. |
-| Active phase | Awaiting user direction. v3.1, v3.1.1, v3.2, Phase G+H all closed. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.5-KeywordBackbone` (2026-04-25). |
+| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.5K lines**, 20 blocks. Audit verdict: A. |
+| Active phase | v3.5-KeywordBackbone RELEASED (14/14 phase done). PR #51 chờ merge (51 commits). v3.1 → v3.5 all released. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn-series-state.md](memory/sdn-series-state.md), [memory/audit-index.md](memory/audit-index.md), [memory/session-log.md](memory/session-log.md). |
 | Dependency map | [memory/file-dependency-map.md](memory/file-dependency-map.md) (Rule 2). |
 | Lab pending | [memory/lab-verification-pending.md](memory/lab-verification-pending.md). |
+| v3.5 plan | [plans/keyword-backbone-v3.5-plan.md](plans/keyword-backbone-v3.5-plan.md) — LIVE Progress Tracker 14/14 done. |
+| v3.5 source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md) — REF 2617 dòng English authoritative. |
+| v3.5 master index | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md) — Vietnamese DEEP adaptation lookup spine, 320+ keyword 5-axis. |
 
 Session-by-session history (S1 to S63+) is in `memory/session-log.md`. Audit history is in `memory/audit-index.md`. `git log` is the source of truth for commit detail.
 
