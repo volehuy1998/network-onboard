@@ -39,16 +39,19 @@
 | `Control socket / pidfile convention` | 12 Troubleshoot | 0 | low | - |
 | `Control socket / pidfile convention` | 17 Incident | 0 | low | - |
 | `Control socket / pidfile convention` | 20 Cross-domain | 0 | low | - |
+| `openvswitch.ko (kernel datapath)` | 2 History | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:968 |
 | `openvswitch.ko (kernel datapath)` | 5 Motivation | 0 | low | - |
-| `openvswitch.ko (kernel datapath)` | 7 Importance | 1.0 | low | 9.1 - ovs-3-component-architecture.md:24 |
+| `openvswitch.ko (kernel datapath)` | 7 Importance | 1.0 | low | 9.1 - ovs-3-component-architecture.md:24, 9.2 - ovs-kernel-datapath-megaflow.md:955 |
 | `openvswitch.ko (kernel datapath)` | 12 Troubleshoot | 1.0 | low | 0.1 - lab-environment-setup.md:13, README.md:195 |
-| `openvswitch.ko (kernel datapath)` | 17 Incident | 0.5 | low | - |
+| `openvswitch.ko (kernel datapath)` | 17 Incident | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:955, 9.2 - ovs-kernel-datapath-megaflow.md:968 |
 | `openvswitch.ko (kernel datapath)` | 18 Lab | 0.5 | medium | 9.18 - ovs-native-l3-routing.md:67 |
+| `openvswitch.ko (kernel datapath)` | 19 Failure mode | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:968 |
 | `openvswitch.ko (kernel datapath)` | 20 Cross-domain | 1.0 | low | 0.2 - end-to-end-packet-journey.md:126 |
 | `Megaflow` | 5 Motivation | 0 | low | - |
-| `Megaflow` | 7 Importance | 0.5 | low | - |
+| `Megaflow` | 7 Importance | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876 |
 | `Megaflow` | 12 Troubleshoot | 0.5 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file, 9.14 - incident-response-decision-tree.md:troubleshoot-file |
-| `Megaflow` | 17 Incident | 1.0 | low | 9.0 - ovs-history-2007-present.md:266 |
+| `Megaflow` | 17 Incident | 1.0 | low | 9.0 - ovs-history-2007-present.md:266, 9.2 - ovs-kernel-datapath-megaflow.md:876 |
+| `Megaflow` | 19 Failure mode | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:945 |
 | `Megaflow` | 20 Cross-domain | 0 | low | - |
 | `Upcall` | 5 Motivation | 0 | low | - |
 | `Upcall` | 7 Importance | 0.5 | low | - |
@@ -89,22 +92,19 @@
 | `Connection tracking (`ct`)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:1075 |
 | `Connection tracking (`ct`)` | 17 Incident | 0 | low | - |
 | `Connection tracking (`ct`)` | 20 Cross-domain | 0 | low | - |
-| ``ct_state`` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:749 |
-| ``ct_state`` | 4 Role | 0.5 | medium | - |
-| ``ct_state`` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:390 |
-| ``ct_state`` | 7 Importance | 0.5 | low | - |
+| ``ct_state`` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:390, 9.24 - ovs-conntrack-stateful-firewall.md:668 |
+| ``ct_state`` | 7 Importance | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876 |
 | ``ct_state`` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
-| ``ct_state`` | 17 Incident | 0 | low | - |
+| ``ct_state`` | 17 Incident | 0.5 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876 |
 | ``ct_state`` | 18 Lab | 0.5 | medium | README.md:229 |
-| ``ct_state`` | 20 Cross-domain | 0 | low | - |
-| ``ct_zone`` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:750 |
+| ``ct_state`` | 20 Cross-domain | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:664, 9.24 - ovs-conntrack-stateful-firewall.md:668 |
 | ``ct_zone`` | 5 Motivation | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:22 |
 | ``ct_zone`` | 7 Importance | 0.5 | low | - |
 | ``ct_zone`` | 8 Mechanism | 0.5 | medium | - |
 | ``ct_zone`` | 12 Troubleshoot | 0 | low | - |
 | ``ct_zone`` | 17 Incident | 0 | low | - |
 | ``ct_zone`` | 18 Lab | 0.5 | medium | README.md:229 |
-| ``ct_zone`` | 20 Cross-domain | 0 | low | - |
+| ``ct_zone`` | 20 Cross-domain | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:664 |
 | ``ct_mark`` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:751 |
 | ``ct_mark`` | 4 Role | 0.5 | medium | - |
 | ``ct_mark`` | 5 Motivation | 0 | low | - |
@@ -723,21 +723,19 @@
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 12 Troubleshoot | 0 | low | - |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 17 Incident | 0 | low | - |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 20 Cross-domain | 0 | low | - |
-| `ct_state (32 bits, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:749 |
-| `ct_state (32 bits, OVS 2.5+)` | 4 Role | 0.5 | medium | - |
-| `ct_state (32 bits, OVS 2.5+)` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:390 |
-| `ct_state (32 bits, OVS 2.5+)` | 7 Importance | 0.5 | low | - |
+| `ct_state (32 bits, OVS 2.5+)` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:390, 9.24 - ovs-conntrack-stateful-firewall.md:668 |
+| `ct_state (32 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876, 9.2 - ovs-kernel-datapath-megaflow.md:976 |
 | `ct_state (32 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
-| `ct_state (32 bits, OVS 2.5+)` | 17 Incident | 0 | low | - |
+| `ct_state (32 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876 |
 | `ct_state (32 bits, OVS 2.5+)` | 18 Lab | 0.5 | medium | 9.25 - ovs-flow-debugging-ofproto-trace.md:1034, README.md:229 |
-| `ct_state (32 bits, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
-| `ct_zone (16 bits, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:750 |
+| `ct_state (32 bits, OVS 2.5+)` | 19 Failure mode | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:989 |
+| `ct_state (32 bits, OVS 2.5+)` | 20 Cross-domain | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:664, 9.24 - ovs-conntrack-stateful-firewall.md:668 |
 | `ct_zone (16 bits, OVS 2.5+)` | 5 Motivation | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:22 |
-| `ct_zone (16 bits, OVS 2.5+)` | 7 Importance | 0.5 | low | - |
+| `ct_zone (16 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:684 |
 | `ct_zone (16 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
-| `ct_zone (16 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | - |
+| `ct_zone (16 bits, OVS 2.5+)` | 17 Incident | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:684 |
 | `ct_zone (16 bits, OVS 2.5+)` | 18 Lab | 0.5 | medium | README.md:229 |
-| `ct_zone (16 bits, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
+| `ct_zone (16 bits, OVS 2.5+)` | 20 Cross-domain | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:664, 9.24 - ovs-conntrack-stateful-firewall.md:801 |
 | `ct_mark (32 bits, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:751 |
 | `ct_mark (32 bits, OVS 2.5+)` | 4 Role | 0.5 | medium | - |
 | `ct_mark (32 bits, OVS 2.5+)` | 5 Motivation | 0 | low | - |
@@ -753,6 +751,7 @@
 | `ct_label (128 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
 | `ct_label (128 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:836 |
 | `ct_label (128 bits, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
+| `ct_nw_proto (8 bits, OVS 2.8+)` | 2 History | 0.5 | medium | 9.24 - ovs-conntrack-stateful-firewall.md:737 |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 4 Role | 0.5 | medium | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 5 Motivation | 0 | low | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 7 Importance | 0 | low | - |
@@ -762,7 +761,6 @@
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 12 Troubleshoot | 0 | low | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 17 Incident | 0 | low | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 20 Cross-domain | 0 | low | - |
-| `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:753 |
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 4 Role | 0.5 | medium | - |
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 5 Motivation | 0 | low | - |
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 7 Importance | 0.5 | low | - |
@@ -1051,7 +1049,7 @@
 | `Action: ct_clear (Nicira extension, OVS 2.5+)` | 18 Lab | 0.5 | medium | 4.9 - openflow-action-catalog.md:1847, README.md:156 |
 | `Action: ct_clear (Nicira extension, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
 | `Action: decap (Nicira extension, OVS 2.1+)` | 5 Motivation | 0 | low | - |
-| `Action: decap (Nicira extension, OVS 2.1+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:1653, README.md:156 |
+| `Action: decap (Nicira extension, OVS 2.1+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:1653, 9.2 - ovs-kernel-datapath-megaflow.md:929 |
 | `Action: decap (Nicira extension, OVS 2.1+)` | 12 Troubleshoot | 0.5 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file, 20.7 - packet-flow-tracing-tutorial-gradient.md:troubleshoot-file |
 | `Action: decap (Nicira extension, OVS 2.1+)` | 17 Incident | 0.5 | low | - |
 | `Action: decap (Nicira extension, OVS 2.1+)` | 20 Cross-domain | 1.0 | low | 18.0 - ovn-arp-responder-and-bum-suppression.md:44, 9.25 - ovs-flow-debugging-ofproto-trace.md:992 |
