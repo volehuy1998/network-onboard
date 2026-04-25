@@ -39,8 +39,7 @@
 | `Control socket / pidfile convention` | 12 Troubleshoot | 0 | low | - |
 | `Control socket / pidfile convention` | 17 Incident | 0 | low | - |
 | `Control socket / pidfile convention` | 20 Cross-domain | 0 | low | - |
-| `openvswitch.ko (kernel datapath)` | 2 History | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:968 |
-| `openvswitch.ko (kernel datapath)` | 5 Motivation | 0 | low | - |
+| `openvswitch.ko (kernel datapath)` | 5 Motivation | 1.0 | low | 9.32 - ovs-classifier-internals-deep.md:396 |
 | `openvswitch.ko (kernel datapath)` | 7 Importance | 1.0 | low | 9.1 - ovs-3-component-architecture.md:24, 9.2 - ovs-kernel-datapath-megaflow.md:955 |
 | `openvswitch.ko (kernel datapath)` | 12 Troubleshoot | 1.0 | low | 0.1 - lab-environment-setup.md:13, README.md:195 |
 | `openvswitch.ko (kernel datapath)` | 17 Incident | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:955, 9.2 - ovs-kernel-datapath-megaflow.md:968 |
@@ -54,10 +53,10 @@
 | `Megaflow` | 19 Failure mode | 0.5 | medium | 9.2 - ovs-kernel-datapath-megaflow.md:945 |
 | `Megaflow` | 20 Cross-domain | 0 | low | - |
 | `Upcall` | 5 Motivation | 0 | low | - |
-| `Upcall` | 7 Importance | 0.5 | low | - |
+| `Upcall` | 7 Importance | 1.0 | low | 9.32 - ovs-classifier-internals-deep.md:246 |
 | `Upcall` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.4 - ovs-daily-operator-playbook.md:troubleshoot-file |
 | `Upcall` | 17 Incident | 1.0 | low | 9.0 - ovs-history-2007-present.md:305 |
-| `Upcall` | 20 Cross-domain | 1.0 | low | 9.1 - ovs-3-component-architecture.md:170 |
+| `Upcall` | 20 Cross-domain | 1.0 | low | 9.1 - ovs-3-component-architecture.md:170, 9.32 - ovs-classifier-internals-deep.md:238 |
 | `Handler thread` | 4 Role | 0.5 | medium | - |
 | `Handler thread` | 5 Motivation | 0 | low | - |
 | `Handler thread` | 7 Importance | 0.5 | low | - |
@@ -65,6 +64,7 @@
 | `Handler thread` | 11 Workflow | 0.5 | medium | - |
 | `Handler thread` | 12 Troubleshoot | 0.5 | low | 9.14 - incident-response-decision-tree.md:troubleshoot-file |
 | `Handler thread` | 17 Incident | 0 | low | - |
+| `Handler thread` | 19 Failure mode | 0.5 | medium | 9.32 - ovs-classifier-internals-deep.md:376 |
 | `Handler thread` | 20 Cross-domain | 0 | low | - |
 | `Revalidator thread` | 4 Role | 0.5 | medium | - |
 | `Revalidator thread` | 5 Motivation | 0 | low | - |
@@ -1092,7 +1092,7 @@
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 20 Cross-domain | 0 | low | - |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 5 Motivation | 1.0 | low | 4.2 - openflow-1.3-meters-pbb-lts.md:240, 4.3 - openflow-1.4-bundles-eviction.md:279 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:3, README.md:156 |
-| `Action: bundle / bundle_load (Nicira extension, OV` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.1 - ovs-ovn-security-hardening.md:troubleshoot-file |
+| `Action: bundle / bundle_load (Nicira extension, OV` | 12 Troubleshoot | 1.0 | low | 9.32 - ovs-classifier-internals-deep.md:118, 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 17 Incident | 0.5 | low | 4.3 - openflow-1.4-bundles-eviction.md:36, 4.7 - openflow-programming-with-ovs.md:598 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 18 Lab | 0.5 | medium | 4.9 - openflow-action-catalog.md:1847, README.md:156 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 20 Cross-domain | 1.0 | low | 1.2 - five-drivers-why-sdn.md:166 |
@@ -1415,6 +1415,7 @@
 | `Address_Set Table (NB)` | 11 Workflow | 0.5 | medium | - |
 | `Address_Set Table (NB)` | 12 Troubleshoot | 0.5 | low | 9.26 - ovs-revalidator-storm-forensic.md:troubleshoot-file |
 | `Address_Set Table (NB)` | 17 Incident | 0.5 | low | - |
+| `Address_Set Table (NB)` | 19 Failure mode | 0.5 | medium | 9.32 - ovs-classifier-internals-deep.md:173 |
 | `Address_Set Table (NB)` | 20 Cross-domain | 0 | low | - |
 | `Port_Group Table (NB)` | 2 History | 0.5 | medium | 13.2 - ovn-logical-switches-routers.md:247 |
 | `Port_Group Table (NB)` | 5 Motivation | 1.0 | low | 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
@@ -1423,6 +1424,7 @@
 | `Port_Group Table (NB)` | 12 Troubleshoot | 1.0 | low | 20.3 - ovn-daily-operator-playbook.md:7, 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
 | `Port_Group Table (NB)` | 17 Incident | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:629, 13.3 - ovn-acl-lb-nat-port-groups.md:548 |
 | `Port_Group Table (NB)` | 18 Lab | 0.5 | medium | 1.1 - data-center-pain-points.md:166, README.md:356 |
+| `Port_Group Table (NB)` | 19 Failure mode | 0.5 | medium | 9.32 - ovs-classifier-internals-deep.md:173 |
 | `Port_Group Table (NB)` | 20 Cross-domain | 1.0 | low | 12.2 - micro-segmentation-service-chaining.md:20, 12.2 - micro-segmentation-service-chaining.md:149 |
 | `ACL Table (NB)` | 5 Motivation | 1.0 | low | 1.1 - data-center-pain-points.md:26, 1.1 - data-center-pain-points.md:153 |
 | `ACL Table (NB)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:174, 13.2 - ovn-logical-switches-routers.md:520 |

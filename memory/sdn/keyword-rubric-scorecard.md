@@ -9,13 +9,13 @@
 
 | Tier | Count | % | Threshold |
 |------|-------|---|-----------|
-| DEEP-20 | 26 | 6.8% | ≥ 18/20 |
-| DEEP-15 | 30 | 7.8% | 15-17.5/20 |
+| DEEP-20 | 27 | 7.0% | ≥ 18/20 |
+| DEEP-15 | 29 | 7.6% | 15-17.5/20 |
 | PARTIAL-10 | 41 | 10.7% | 10-14.5/20 |
 | REFERENCE-5 | 133 | 34.7% | 5-9.5/20 |
 | PLACEHOLDER | 153 | 39.9% | < 5/20 |
 
-**Aggregate average:** 6.56/20 (32.8%)
+**Aggregate average:** 6.58/20 (32.9%)
 
 ---
 
@@ -32,12 +32,12 @@
 
 | Keyword | Total | Tier | Files | Top axes pass | Top axes fail |
 |---------|-------|------|-------|---------------|---------------|
-| `openvswitch.ko (kernel datapath)` | 15.0/20 | DEEP-15 | 15 | 1,3,4 | 5,6,14 |
+| `openvswitch.ko (kernel datapath)` | 17.0/20 | DEEP-15 | 16 | 1,2,3 | 6,14 |
 | `Megaflow` | 14.5/20 | PARTIAL-10 | 23 | 2,3,4 | 5,18,20 |
-| `Upcall` | 12.0/20 | PARTIAL-10 | 13 | 3,4,8 | 2,5,6 |
-| `Handler thread` | 6.5/20 | REFERENCE-5 | 4 | 3,8,1 | 2,5,6 |
+| `Upcall` | 12.5/20 | PARTIAL-10 | 14 | 3,4,7 | 2,5,6 |
+| `Handler thread` | 7.0/20 | REFERENCE-5 | 5 | 3,8,1 | 2,5,6 |
 | `Revalidator thread` | 6.0/20 | REFERENCE-5 | 6 | 1,3,4 | 2,5,6 |
-| `Recirculation (`recirc_id`)` | 8.0/20 | REFERENCE-5 | 6 | 1,8,9 | 2,5,6 |
+| `Recirculation (`recirc_id`)` | 8.0/20 | REFERENCE-5 | 7 | 1,8,9 | 2,5,6 |
 | `Connection tracking (`ct`)` | 6.5/20 | REFERENCE-5 | 3 | 7,11,1 | 2,5,6 |
 | ``ct_state`` | 15.5/20 | DEEP-15 | 14 | 2,3,4 | 6,19 |
 | ``ct_zone`` | 12.5/20 | PARTIAL-10 | 7 | 2,4,5 | 6,12,17 |
@@ -86,7 +86,7 @@
 | `Manager subcommands` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `SSL subcommands` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `Generic database subcommands` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
-| `ovs-ofctl` | 18.5/20 | DEEP-20 | 65 | 2,3,4 |  |
+| `ovs-ofctl` | 18.5/20 | DEEP-20 | 66 | 2,3,4 |  |
 | `ovs-appctl` | 19.0/20 | DEEP-20 | 65 | 2,3,4 |  |
 | `ovs-dpctl` | 17.5/20 | DEEP-15 | 18 | 2,3,4 |  |
 | `ovsdb-tool` | 15.5/20 | DEEP-15 | 19 | 2,3,4 | 6,20 |
@@ -100,10 +100,10 @@
 
 | Keyword | Total | Tier | Files | Top axes pass | Top axes fail |
 |---------|-------|------|-------|---------------|---------------|
-| ``ovs-appctl coverage/show`` | 19.0/20 | DEEP-20 | 47 | 2,3,5 |  |
+| ``ovs-appctl coverage/show`` | 19.0/20 | DEEP-20 | 48 | 2,3,5 |  |
 | ``ovs-appctl dpif/show`` | 19.0/20 | DEEP-20 | 48 | 2,3,5 |  |
 | ``ovs-appctl dpif/dump-flows BR`` | 8.0/20 | REFERENCE-5 | 11 | 3,9,11 | 2,5,6 |
-| ``ovs-appctl ofproto/trace`` | 19.0/20 | DEEP-20 | 45 | 2,3,4 |  |
+| ``ovs-appctl ofproto/trace`` | 19.0/20 | DEEP-20 | 46 | 2,3,4 |  |
 | ``ovs-appctl fdb/show BR`` | 5.5/20 | REFERENCE-5 | 3 | 15,1,3 | 2,5,6 |
 | ``ovs-appctl bond/show` / `lacp/show`` | 19.0/20 | DEEP-20 | 48 | 2,3,5 |  |
 | ``ovs-appctl vlog/list` / `vlog/set`` | 15.0/20 | DEEP-15 | 33 | 3,4,6 | 5,18 |
@@ -133,7 +133,7 @@
 
 | Keyword | Total | Tier | Files | Top axes pass | Top axes fail |
 |---------|-------|------|-------|---------------|---------------|
-| `in_port (16 bits, OpenFlow 1.0+)` | 15.5/20 | DEEP-15 | 48 | 2,3,5 | 19,20 |
+| `in_port (16 bits, OpenFlow 1.0+)` | 15.5/20 | DEEP-15 | 49 | 2,3,5 | 19,20 |
 | `in_phy_port (32 bits, OpenFlow 1.2+ / OVS 1.7+)` | 7.5/20 | REFERENCE-5 | 2 | 9,1,2 | 5,6,12 |
 | `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 10.0/20 | PARTIAL-10 | 14 | 2,8,9 | 5,6,17 |
 | `eth_type (16 bits, OF 1.2+ / OVS 1.1+)` | 10.5/20 | PARTIAL-10 | 15 | 2,9,10 | 5,6,17 |
@@ -158,17 +158,17 @@
 | `mpls_bos (1 bit, OF 1.3+ / OVS 1.11+)` | 8.0/20 | REFERENCE-5 | 4 | 9,11,1 | 5,6,17 |
 | `tunnel_id / tun_id (64 bits, OF 1.3+ / OVS 1.1+)` | 13.5/20 | PARTIAL-10 | 15 | 1,2,3 | 5,6,18 |
 | `pbb_isid (24 bits, PB/VB)` | 9.0/20 | REFERENCE-5 | 3 | 6,9,13 | 5,12,17 |
-| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 20.0/20 | DEEP-20 | 61 | 1,2,3 |  |
+| `metadata (64 bits, OF 1.2+ / OVS 1.8+)` | 20.0/20 | DEEP-20 | 62 | 1,2,3 |  |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 6.0/20 | REFERENCE-5 | 2 | 1,2,3 | 5,6,12 |
 | `xreg0-xreg7 (64 bits each, OF 1.3+ / OVS 2.4+)` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `xxreg0-xxreg3 (128 bits each, OVS 2.6+)` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
-| `ct_state (32 bits, OVS 2.5+)` | 16.0/20 | DEEP-15 | 20 | 2,3,4 | 6 |
-| `ct_zone (16 bits, OVS 2.5+)` | 15.5/20 | DEEP-15 | 17 | 2,4,5 | 6,19 |
+| `ct_state (32 bits, OVS 2.5+)` | 16.0/20 | DEEP-15 | 21 | 2,3,4 | 6 |
+| `ct_zone (16 bits, OVS 2.5+)` | 15.5/20 | DEEP-15 | 18 | 2,4,5 | 6,19 |
 | `ct_mark (32 bits, OVS 2.5+)` | 9.0/20 | REFERENCE-5 | 12 | 3,9,11 | 5,6,12 |
 | `ct_label (128 bits, OVS 2.5+)` | 12.0/20 | PARTIAL-10 | 15 | 6,7,8 | 5,18,19 |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 5.5/20 | REFERENCE-5 | 2 | 1,2,3 | 5,6,7 |
 | `ct_tp_src / ct_tp_dst (16 bits, OVS 2.8+)` | 7.5/20 | REFERENCE-5 | 3 | 2,11,1 | 5,6,12 |
-| `conj_id (32 bits, OVS 2.4+)` | 7.0/20 | REFERENCE-5 | 5 | 9,1,2 | 5,6,12 |
+| `conj_id (32 bits, OVS 2.4+)` | 7.0/20 | REFERENCE-5 | 6 | 9,1,2 | 5,6,12 |
 | `pkt_mark (32 bits, OVS 2.0+)` | 5.5/20 | REFERENCE-5 | 2 | 1,2,3 | 5,6,12 |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 9.0/20 | REFERENCE-5 | 9 | 2,14,15 | 5,6,17 |
 | `dp_hash (32 bits, OVS 2.2+ / NXM_NX_DP_HASH)` | 7.0/20 | REFERENCE-5 | 4 | 3,8,9 | 2,5,6 |
@@ -182,7 +182,7 @@
 | `Instruction: goto_table` | 16.0/20 | DEEP-15 | 18 | 2,3,4 | 19 |
 | `Action: output` | 20.0/20 | DEEP-20 | 89 | 1,2,3 |  |
 | `Action: group` | 19.5/20 | DEEP-20 | 72 | 1,2,3 |  |
-| `Action: drop (implicit)` | 20.0/20 | DEEP-20 | 91 | 1,2,3 |  |
+| `Action: drop (implicit)` | 20.0/20 | DEEP-20 | 92 | 1,2,3 |  |
 | `Action: set_field` | 15.0/20 | DEEP-15 | 21 | 2,3,4 | 5,6,19 |
 | `Action: copy_field (OpenFlow 1.5+)` | 10.5/20 | PARTIAL-10 | 4 | 2,5,9 | 6,12,17 |
 | `Action: push_vlan` | 8.5/20 | REFERENCE-5 | 8 | 3,4,9 | 5,6,12 |
@@ -199,8 +199,8 @@
 | `Action: copy_ttl_out` | 5.5/20 | REFERENCE-5 | 2 | 1,3,4 | 2,5,6 |
 | `Action: set_nw_ttl` | 7.0/20 | REFERENCE-5 | 2 | 9,1,2 | 5,6,12 |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 17.0/20 | DEEP-15 | 30 | 2,3,4 | 19 |
-| `Action: learn (Nicira extension, OVS 1.11+)` | 19.0/20 | DEEP-20 | 64 | 2,3,5 |  |
-| `Action: conjunction (Nicira extension, OVS 2.4+)` | 12.5/20 | PARTIAL-10 | 15 | 2,6,7 | 5,17,19 |
+| `Action: learn (Nicira extension, OVS 1.11+)` | 19.0/20 | DEEP-20 | 65 | 2,3,5 |  |
+| `Action: conjunction (Nicira extension, OVS 2.4+)` | 13.5/20 | PARTIAL-10 | 16 | 2,6,7 | 5,17,20 |
 | `Action: ct (Nicira extension, OVS 2.5+)` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `Action: ct_clear (Nicira extension, OVS 2.5+)` | 7.5/20 | REFERENCE-5 | 6 | 7,9,1 | 5,6,12 |
 | `Action: decap (Nicira extension, OVS 2.1+)` | 15.0/20 | DEEP-15 | 24 | 2,3,4 | 5,6,19 |
@@ -210,7 +210,7 @@
 | `Action: sample (Nicira extension, OVS 2.5+)` | 14.5/20 | PARTIAL-10 | 21 | 2,3,7 | 5,6,19 |
 | `Action: exit (Nicira extension)` | 17.0/20 | DEEP-15 | 55 | 2,3,4 | 20 |
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 11.0/20 | PARTIAL-10 | 7 | 2,7,8 | 5,6,17 |
-| `Action: bundle / bundle_load (Nicira extension, OVS 1.11+)` | 17.5/20 | DEEP-15 | 27 | 2,3,4 |  |
+| `Action: bundle / bundle_load (Nicira extension, OVS 1.11+)` | 18.0/20 | DEEP-20 | 28 | 2,3,4 |  |
 | `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 11.0/20 | PARTIAL-10 | 1 | 1,2,5 | 6,12,17 |
 | `Action: move (Nicira extension)` | 19.5/20 | DEEP-20 | 58 | 2,3,4 |  |
 | `Action: output:NXM (dynamic port)` | 4.5/20 | PLACEHOLDER | 2 | 1,3,4 | 2,5,6 |
@@ -299,9 +299,9 @@
 | `Load_Balancer Table (NB)` | 13.5/20 | PARTIAL-10 | 18 | 3,4,6 | 2,5,14 |
 | `Load_Balancer_Group (NB)` | 6.5/20 | REFERENCE-5 | 3 | 9,13,1 | 2,5,6 |
 | `Load_Balancer_Health_Check (NB)` | 8.0/20 | REFERENCE-5 | 4 | 8,9,11 | 2,5,6 |
-| `Address_Set Table (NB)` | 9.0/20 | REFERENCE-5 | 8 | 6,9,13 | 5,14,18 |
-| `Port_Group Table (NB)` | 15.0/20 | DEEP-15 | 22 | 3,4,5 | 14,19 |
-| `ACL Table (NB)` | 19.0/20 | DEEP-20 | 80 | 2,3,4 |  |
+| `Address_Set Table (NB)` | 9.5/20 | REFERENCE-5 | 9 | 6,9,13 | 5,14,18 |
+| `Port_Group Table (NB)` | 15.5/20 | DEEP-15 | 23 | 3,4,5 | 14 |
+| `ACL Table (NB)` | 19.0/20 | DEEP-20 | 81 | 2,3,4 |  |
 | `Meter Table (NB)` | 13.0/20 | PARTIAL-10 | 15 | 2,6,7 | 5,17,19 |
 | `QoS Table (NB)` | 18.0/20 | DEEP-20 | 49 | 2,3,4 |  |
 | `DHCP_Options Table (NB)` | 12.5/20 | PARTIAL-10 | 13 | 4,6,8 | 2,5,14 |
@@ -397,7 +397,7 @@
 | `ovn-sbctl lflow-list --uuid` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `ovn-sbctl lflow-list --ovs` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `ovn-sbctl lflow-list --vflows` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
-| `ovn-sbctl dump-flows` | 17.5/20 | DEEP-15 | 54 | 2,3,5 | 14 |
+| `ovn-sbctl dump-flows` | 17.5/20 | DEEP-15 | 55 | 2,3,5 | 14 |
 | `ovn-sbctl chassis-add` | 7.5/20 | REFERENCE-5 | 3 | 4,9,11 | 2,5,6 |
 | `ovn-sbctl chassis-del` | 10.5/20 | PARTIAL-10 | 4 | 6,7,9 | 2,5,14 |
 | `ovn-sbctl lsp-bind` | 4.5/20 | PLACEHOLDER | 2 | 1,3,4 | 2,5,6 |
@@ -410,7 +410,7 @@
 | `ovn-appctl: Runtime Control` | 0.0/20 | PLACEHOLDER | 0 |  | 1,2,3 |
 | `ovn-appctl exit` | 17.0/20 | DEEP-15 | 55 | 2,3,4 | 20 |
 | `ovn-appctl pause / resume` | 15.0/20 | DEEP-15 | 14 | 2,3,5 | 18,20 |
-| `ovn-appctl is-paused / status` | 17.5/20 | DEEP-15 | 52 | 2,3,4 | 14 |
+| `ovn-appctl is-paused / status` | 17.5/20 | DEEP-15 | 53 | 2,3,4 | 14 |
 | `ovn-appctl set-n-threads / get-n-threads` | 7.0/20 | REFERENCE-5 | 1 | 9,11,15 | 2,5,6 |
 | `ovn-appctl inc-engine/show-stats` | 11.5/20 | PARTIAL-10 | 8 | 3,9,11 | 5,6,14 |
 | `ovn-appctl sb-cluster-state-reset / nb-cluster-state-reset` | 5.0/20 | REFERENCE-5 | 1 | 1,3,4 | 2,5,6 |
