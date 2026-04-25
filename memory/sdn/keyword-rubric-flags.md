@@ -74,6 +74,7 @@
 | `Revalidator thread` | 11 Workflow | 0.5 | medium | - |
 | `Revalidator thread` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 9.26 - ovs-revalidator-storm-forensic.md:troubleshoot-file |
 | `Revalidator thread` | 17 Incident | 0.5 | low | - |
+| `Revalidator thread` | 19 Failure mode | 0.5 | medium | 9.1 - ovs-3-component-architecture.md:330 |
 | `Revalidator thread` | 20 Cross-domain | 0 | low | - |
 | `Recirculation (`recirc_id`)` | 4 Role | 0.5 | medium | - |
 | `Recirculation (`recirc_id`)` | 5 Motivation | 0 | low | - |
@@ -491,6 +492,7 @@
 | `in_port (16 bits, OpenFlow 1.0+)` | 12 Troubleshoot | 1.0 | low | 9.25 - ovs-flow-debugging-ofproto-trace.md:41, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file |
 | `in_port (16 bits, OpenFlow 1.0+)` | 17 Incident | 0.5 | low | - |
 | `in_port (16 bits, OpenFlow 1.0+)` | 18 Lab | 0.5 | medium | 4.8 - openflow-match-field-catalog.md:833, 9.25 - ovs-flow-debugging-ofproto-trace.md:1030 |
+| `in_port (16 bits, OpenFlow 1.0+)` | 19 Failure mode | 0.5 | medium | 4.9 - openflow-action-catalog.md:1886 |
 | `in_port (16 bits, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
 | `in_phy_port (32 bits, OpenFlow 1.2+ / OVS 1.7+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:675 |
 | `in_phy_port (32 bits, OpenFlow 1.2+ / OVS 1.7+)` | 4 Role | 0.5 | medium | - |
@@ -724,7 +726,7 @@
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 17 Incident | 0 | low | - |
 | `reg0-reg15 (32 bits each, OVS 1.1+)` | 20 Cross-domain | 0 | low | - |
 | `ct_state (32 bits, OVS 2.5+)` | 5 Motivation | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:390, 9.24 - ovs-conntrack-stateful-firewall.md:668 |
-| `ct_state (32 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876, 9.2 - ovs-kernel-datapath-megaflow.md:976 |
+| `ct_state (32 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:1862, 9.1 - ovs-3-component-architecture.md:293 |
 | `ct_state (32 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
 | `ct_state (32 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | 9.2 - ovs-kernel-datapath-megaflow.md:876 |
 | `ct_state (32 bits, OVS 2.5+)` | 18 Lab | 0.5 | medium | 9.25 - ovs-flow-debugging-ofproto-trace.md:1034, README.md:229 |
@@ -868,8 +870,9 @@
 | `Instruction: goto_table` | 5 Motivation | 1.0 | low | 4.0 - openflow-1.1-multi-table-groups.md:85, 9.22 - ovs-multi-table-pipeline.md:45 |
 | `Instruction: goto_table` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:575, 0.3 - master-keyword-index.md:589 |
 | `Instruction: goto_table` | 12 Troubleshoot | 0.5 | low | 20.4 - ovs-daily-operator-playbook.md:troubleshoot-file, 9.25 - ovs-flow-debugging-ofproto-trace.md:troubleshoot-file |
-| `Instruction: goto_table` | 17 Incident | 0.5 | low | README.md:227 |
-| `Instruction: goto_table` | 18 Lab | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:337, 9.23 - ovs-stateless-acl-firewall.md:21 |
+| `Instruction: goto_table` | 17 Incident | 0.5 | low | 9.22 - ovs-multi-table-pipeline.md:467, README.md:227 |
+| `Instruction: goto_table` | 18 Lab | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:337, 9.22 - ovs-multi-table-pipeline.md:469 |
+| `Instruction: goto_table` | 19 Failure mode | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:449 |
 | `Instruction: goto_table` | 20 Cross-domain | 1.0 | low | 9.22 - ovs-multi-table-pipeline.md:45 |
 | `Action: output` | 5 Motivation | 1.0 | low | 3.4 - openflow-version-differences-1.0-1.3-1.5.md:75, 4.7 - openflow-programming-with-ovs.md:296 |
 | `Action: output` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:383, 0.3 - master-keyword-index.md:493 |
@@ -1020,10 +1023,11 @@
 | `Action: set_nw_ttl` | 17 Incident | 0 | low | - |
 | `Action: set_nw_ttl` | 20 Cross-domain | 0 | low | - |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 5 Motivation | 1.0 | low | 14.0 - p4-language-fundamentals.md:71, 9.22 - ovs-multi-table-pipeline.md:45 |
-| `Action: resubmit (Nicira extension, OVS 1.1+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:64, 9.18 - ovs-native-l3-routing.md:18 |
+| `Action: resubmit (Nicira extension, OVS 1.1+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:64, 4.9 - openflow-action-catalog.md:1862 |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 12 Troubleshoot | 0.5 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file, 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 17 Incident | 1.0 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:1203, 19.0 - ovn-multichassis-binding-and-pmtud.md:1230 |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 18 Lab | 0.5 | medium | README.md:156, README.md:227 |
+| `Action: resubmit (Nicira extension, OVS 1.1+)` | 19 Failure mode | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:472 |
 | `Action: resubmit (Nicira extension, OVS 1.1+)` | 20 Cross-domain | 1.0 | low | 9.22 - ovs-multi-table-pipeline.md:45 |
 | `Action: learn (Nicira extension, OVS 1.11+)` | 4 Role | 0.5 | medium | - |
 | `Action: learn (Nicira extension, OVS 1.11+)` | 5 Motivation | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:258, 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:414 |
@@ -1090,12 +1094,12 @@
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 12 Troubleshoot | 0.5 | low | 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 17 Incident | 0 | low | - |
 | `Action: multipath (Nicira extension, OVS 1.11+)` | 20 Cross-domain | 0 | low | - |
-| `Action: bundle / bundle_load (Nicira extension, OV` | 5 Motivation | 1.0 | low | 4.2 - openflow-1.3-meters-pbb-lts.md:240, 4.3 - openflow-1.4-bundles-eviction.md:279 |
+| `Action: bundle / bundle_load (Nicira extension, OV` | 5 Motivation | 1.0 | low | 3.5 - openflow-message-catalog.md:444, 4.2 - openflow-1.3-meters-pbb-lts.md:240 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:3, README.md:156 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 12 Troubleshoot | 1.0 | low | 9.32 - ovs-classifier-internals-deep.md:118, 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 17 Incident | 0.5 | low | 4.3 - openflow-1.4-bundles-eviction.md:36, 4.7 - openflow-programming-with-ovs.md:598 |
 | `Action: bundle / bundle_load (Nicira extension, OV` | 18 Lab | 0.5 | medium | 4.9 - openflow-action-catalog.md:1847, README.md:156 |
-| `Action: bundle / bundle_load (Nicira extension, OV` | 20 Cross-domain | 1.0 | low | 1.2 - five-drivers-why-sdn.md:166 |
+| `Action: bundle / bundle_load (Nicira extension, OV` | 20 Cross-domain | 1.0 | low | 1.2 - five-drivers-why-sdn.md:166, 3.5 - openflow-message-catalog.md:282 |
 | `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 4 Role | 0.5 | medium | - |
 | `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 5 Motivation | 1.0 | low | 4.9 - openflow-action-catalog.md:1773 |
 | `Action: fin_timeout (Nicira extension, OVS 1.11+)` | 7 Importance | 1.0 | low | 4.9 - openflow-action-catalog.md:1773 |
@@ -1135,32 +1139,30 @@
 | `Action: pop:dst (Nicira extension)` | 13 Coupling | 0.5 | medium | 4.9 - openflow-action-catalog.md:1771 |
 | `Action: pop:dst (Nicira extension)` | 17 Incident | 0 | low | - |
 | `Action: pop:dst (Nicira extension)` | 20 Cross-domain | 0 | low | - |
-| `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 5 Motivation | 0 | low | - |
-| `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
+| `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:27 |
 | `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 12 Troubleshoot | 0 | low | - |
 | `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 17 Incident | 0 | low | - |
 | `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 18 Lab | 0.5 | medium | 3.2 - onf-formation-and-governance.md:309, 3.3 - openflow-protocol-messages-state-machine.md:417 |
 | `OFPT_HELLO (Type 0, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 5 Motivation | 0 | low | - |
-| `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
+| `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:112 |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 12 Troubleshoot | 0 | low | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 17 Incident | 0 | low | - |
 | `OFPT_FEATURES_REQUEST (Type 5, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 5 Motivation | 0 | low | - |
-| `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
+| `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:112 |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 11 Workflow | 0.5 | medium | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 12 Troubleshoot | 0 | low | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 17 Incident | 0 | low | - |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 18 Lab | 0.5 | medium | 3.2 - onf-formation-and-governance.md:309 |
 | `OFPT_FEATURES_REPLY (Type 6, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
-| `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:876 |
 | `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 5 Motivation | 0 | low | - |
-| `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
+| `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:293 |
 | `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 11 Workflow | 0.5 | medium | - |
 | `OFPT_PACKET_IN (Type 10, OpenFlow 1.0+)` | 12 Troubleshoot | 0 | low | - |
@@ -1178,15 +1180,14 @@
 | `OFPT_PACKET_OUT (Type 13, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 5 Motivation | 0 | low | - |
-| `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 7 Importance | 0.5 | low | - |
+| `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:198 |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 12 Troubleshoot | 0.5 | low | 3.3 - openflow-protocol-messages-state-machine.md:21 |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 17 Incident | 0 | low | - |
 | `OFPT_FLOW_MOD (Type 14, OpenFlow 1.0+)` | 20 Cross-domain | 0 | low | - |
-| `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:883 |
 | `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 4 Role | 0.5 | medium | - |
 | `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 5 Motivation | 1.0 | low | 3.1 - openflow-1.0-specification.md:108, 3.1 - openflow-1.0-specification.md:108 |
-| `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 7 Importance | 0.5 | low | - |
+| `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:376, 3.5 - openflow-message-catalog.md:376 |
 | `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 11 Workflow | 0.5 | medium | - |
 | `OFPT_BARRIER_REQUEST / OFPT_BARRIER_REPLY (Types 2` | 12 Troubleshoot | 0 | low | - |
@@ -1268,6 +1269,7 @@
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 7 Importance | 0 | low | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 12 Troubleshoot | 0 | low | - |
+| `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:888 |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 17 Incident | 0 | low | - |
 | `OFPT_REQUESTFORWARD (Type 32, OpenFlow 1.4+)` | 20 Cross-domain | 0 | low | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 4 Role | 0.5 | medium | - |
@@ -1276,13 +1278,15 @@
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 8 Mechanism | 0.5 | medium | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 11 Workflow | 0.5 | medium | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 12 Troubleshoot | 0 | low | - |
+| `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:887 |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 17 Incident | 0 | low | - |
 | `OFPT_TABLE_STATUS (Type 30, OpenFlow 1.3+)` | 20 Cross-domain | 0 | low | - |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 5 Motivation | 1.0 | low | 3.1 - openflow-1.0-specification.md:108 |
-| `Connection State Machine: FEATURES_REQUEST/REPLY` | 7 Importance | 0.5 | low | - |
+| `Connection State Machine: FEATURES_REQUEST/REPLY` | 7 Importance | 1.0 | low | 3.5 - openflow-message-catalog.md:112, 3.5 - openflow-message-catalog.md:376 |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 12 Troubleshoot | 0.5 | low | 3.3 - openflow-protocol-messages-state-machine.md:112, 3.3 - openflow-protocol-messages-state-machine.md:380 |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 17 Incident | 0 | low | - |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 18 Lab | 0.5 | medium | 3.2 - onf-formation-and-governance.md:309, 3.3 - openflow-protocol-messages-state-machine.md:417 |
+| `Connection State Machine: FEATURES_REQUEST/REPLY` | 19 Failure mode | 0.5 | medium | 3.5 - openflow-message-catalog.md:169 |
 | `Connection State Machine: FEATURES_REQUEST/REPLY` | 20 Cross-domain | 0 | low | - |
 | `OFPT_SET_ASYNC (Type 28, OpenFlow 1.4+)` | 4 Role | 0.5 | medium | - |
 | `OFPT_SET_ASYNC (Type 28, OpenFlow 1.4+)` | 5 Motivation | 0 | low | - |
@@ -1881,10 +1885,9 @@
 | `ovn-appctl recompute` | 12 Troubleshoot | 1.0 | low | 0.3 - master-keyword-index.md:1031, 20.5 - ovn-forensic-case-studies.md:53 |
 | `ovn-appctl recompute` | 17 Incident | 1.0 | low | 13.7 - ovn-controller-internals.md:72, 13.7 - ovn-controller-internals.md:318 |
 | `ovn-appctl recompute` | 20 Cross-domain | 1.0 | low | 9.14 - incident-response-decision-tree.md:904, 9.14 - incident-response-decision-tree.md:1266 |
-| `ovn-appctl lflow-cache/flush` | 2 History | 0.5 | medium | 20.2 - ovn-troubleshooting-deep-dive.md:1690 |
 | `ovn-appctl lflow-cache/flush` | 4 Role | 0.5 | medium | - |
 | `ovn-appctl lflow-cache/flush` | 5 Motivation | 0 | low | - |
-| `ovn-appctl lflow-cache/flush` | 7 Importance | 1.0 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:677 |
+| `ovn-appctl lflow-cache/flush` | 7 Importance | 1.0 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:677, 3.5 - openflow-message-catalog.md:376 |
 | `ovn-appctl lflow-cache/flush` | 8 Mechanism | 0.5 | medium | - |
 | `ovn-appctl lflow-cache/flush` | 12 Troubleshoot | 0.5 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
 | `ovn-appctl lflow-cache/flush` | 17 Incident | 1.0 | low | 20.2 - ovn-troubleshooting-deep-dive.md:30, 19.0 - ovn-multichassis-binding-and-pmtud.md:677 |
