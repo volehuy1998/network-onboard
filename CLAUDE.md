@@ -23,15 +23,36 @@
 - Tools mastery: `ovs-vsctl`, `ovs-ofctl`, `ovs-dpctl`, `ovs-appctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-trace`, `ofproto/trace`, `ovn-detrace`.
 - Debug + troubleshoot + forensic + daily operator playbook (incident decision tree, anatomy template, POE).
 
-**Out-of-scope (DO NOT DRIFT):**
+**Out-of-scope (DO NOT DRIFT, all LOWEST priority since 2026-04-25 consolidated directive):**
 
-- Kubernetes networking depth (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
-- DPDK fast-path internals (PMD thread tuning, mempool, hugepage).
-- XDP / eBPF datapath as replacement for OVS kernel module.
-- Service mesh (Istio, Linkerd, Cilium control plane).
-- Pure cloud-native abstractions (CRD, operator pattern), except where directly relevant to OVN logical model.
-- Block XV (Cloud Native) was officially deprioritized by user on 2026-04-23. 15.1 + 15.2 are deferred indefinitely.
-- **BGP-related content (LOWEST priority since 2026-04-25 directive):** BGP EVPN, regular BGP routing, FRR BGP integration, OVN-BGP-Agent. Existing Part 11.2 (BGP EVPN tier 2) stays as-is. Do NOT propose BGP expansion in "next direction" options. If a Part touches BGP (e.g., 13.11 LR external), keep mention high-level and cross-link to 11.2 instead of deep-diving. Override only if user explicitly requests BGP work.
+User directive (verbatim, 2026-04-25): *"eBPF, XDP, DPDK, K8S ... đều là những thứ nâng cao và tôi muốn hạ thấp độ ưu tiên của nó xuống cuối cùng."*
+
+- **eBPF** (datapath alternatives, XDP programs, libxdp, Cilium internals).
+- **XDP / AF_XDP** (eXpress Data Plane, kernel bypass alternative to OVS datapath).
+- **DPDK** (PMD threads, mempool, hugepage, NUMA tuning, fast-path internals).
+- **Kubernetes networking depth** (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
+- **Service mesh** (Istio, Linkerd, Cilium control plane).
+- **BGP-related content** (BGP EVPN, regular BGP routing, FRR BGP integration, OVN-BGP-Agent).
+- **Pure cloud-native abstractions** (CRD, operator pattern), except where directly relevant to OVN logical model.
+
+**Existing content stays as-is** (no revert): 9.3 DPDK+AF_XDP, 9.5 hardware offload, 11.2 BGP EVPN tier 2, 14.x P4, 15.0 service mesh, 16.x DPDK/AF_XDP, 17.0/18.0/19.0 OVN advanced.
+
+**Rules for ongoing work:**
+
+1. Do NOT propose expansion of these topics in "next direction" options unless user explicitly requests.
+2. If a Part touches these topics, keep mention high-level + cross-link to existing deep-dive Part. Do not deep-dive further.
+3. When auditing residual SHALLOW files, exclude these from upgrade priority.
+4. Override only if user explicitly requests work in these areas.
+
+**5-tier priority hierarchy (for "next direction" decisions):**
+
+1. **HIGHEST** = OVS/OpenFlow/OVN core internals (datapath, classifier, conntrack, ofproto, OVN northd/controller, NBDB/SBDB, Geneve as OVN tunnel).
+2. **HIGH** = Tools mastery + debug pedagogy (CLI playbook, Anatomy Template A, troubleshooting).
+3. **MEDIUM** = Foundation prerequisites (Linux primer netns/bridge/veth/tc/conntrack).
+4. **LOW** = History/narrative (Block II/III), DC applied (Block XII).
+5. **LOWEST** = Advanced adjacents (eBPF, XDP, DPDK, K8S, BGP, P4, service mesh).
+
+Block XV (Cloud Native) was officially deprioritized 2026-04-23. 15.1 + 15.2 deferred indefinitely.
 
 **Self-check before writing a new Part or expanding a section:**
 
