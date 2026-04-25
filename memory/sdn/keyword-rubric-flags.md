@@ -400,13 +400,13 @@
 | ``ovs-appctl coverage/show`` | 7 Importance | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1129 |
 | ``ovs-appctl coverage/show`` | 12 Troubleshoot | 1.0 | low | 9.1 - ovs-3-component-architecture.md:27, 9.1 - ovs-3-component-architecture.md:27 |
 | ``ovs-appctl coverage/show`` | 17 Incident | 1.0 | low | 9.26 - ovs-revalidator-storm-forensic.md:94, 9.26 - ovs-revalidator-storm-forensic.md:94 |
-| ``ovs-appctl coverage/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.26 - ovs-revalidator-storm-forensic.md:98 |
+| ``ovs-appctl coverage/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | ``ovs-appctl dpif/show`` | 4 Role | 0.5 | medium | - |
 | ``ovs-appctl dpif/show`` | 5 Motivation | 1.0 | low | README.md:232 |
 | ``ovs-appctl dpif/show`` | 7 Importance | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1129 |
 | ``ovs-appctl dpif/show`` | 12 Troubleshoot | 1.0 | low | 9.27 - ovs-ovn-packet-journey-end-to-end.md:23, 13.4 - br-int-architecture-and-patch-ports.md:74 |
 | ``ovs-appctl dpif/show`` | 17 Incident | 1.0 | low | 13.8 - ovn-northd-translation.md:241, 9.11 - ovs-appctl-reference-playbook.md:32 |
-| ``ovs-appctl dpif/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.26 - ovs-revalidator-storm-forensic.md:98 |
+| ``ovs-appctl dpif/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | ``ovs-appctl dpif/dump-flows BR`` | 4 Role | 0.5 | medium | - |
 | ``ovs-appctl dpif/dump-flows BR`` | 5 Motivation | 0 | low | - |
 | ``ovs-appctl dpif/dump-flows BR`` | 7 Importance | 0.5 | low | - |
@@ -433,7 +433,7 @@
 | ``ovs-appctl bond/show` / `lacp/show`` | 7 Importance | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1129 |
 | ``ovs-appctl bond/show` / `lacp/show`` | 12 Troubleshoot | 1.0 | low | 9.6 - bonding-and-lacp.md:213, 13.4 - br-int-architecture-and-patch-ports.md:74 |
 | ``ovs-appctl bond/show` / `lacp/show`` | 17 Incident | 1.0 | low | 9.6 - bonding-and-lacp.md:213, 13.8 - ovn-northd-translation.md:241 |
-| ``ovs-appctl bond/show` / `lacp/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.26 - ovs-revalidator-storm-forensic.md:98 |
+| ``ovs-appctl bond/show` / `lacp/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | ``ovs-appctl vlog/list` / `vlog/set`` | 2 History | 0.5 | medium | 4.9 - openflow-action-catalog.md:351 |
 | ``ovs-appctl vlog/list` / `vlog/set`` | 5 Motivation | 0 | low | - |
 | ``ovs-appctl vlog/list` / `vlog/set`` | 7 Importance | 0.5 | low | - |
@@ -445,13 +445,13 @@
 | ``ovs-appctl memory/show`` | 7 Importance | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1129 |
 | ``ovs-appctl memory/show`` | 12 Troubleshoot | 1.0 | low | 9.1 - ovs-3-component-architecture.md:27, 9.1 - ovs-3-component-architecture.md:27 |
 | ``ovs-appctl memory/show`` | 17 Incident | 1.0 | low | 13.8 - ovn-northd-translation.md:241, 9.11 - ovs-appctl-reference-playbook.md:32 |
-| ``ovs-appctl memory/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.26 - ovs-revalidator-storm-forensic.md:98 |
+| ``ovs-appctl memory/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | ``ovs-appctl upcall/show`` | 4 Role | 0.5 | medium | - |
 | ``ovs-appctl upcall/show`` | 5 Motivation | 1.0 | low | README.md:232 |
 | ``ovs-appctl upcall/show`` | 7 Importance | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1129 |
 | ``ovs-appctl upcall/show`` | 12 Troubleshoot | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 20.2 - ovn-troubleshooting-deep-dive.md:688 |
 | ``ovs-appctl upcall/show`` | 17 Incident | 1.0 | low | README.md:235, README.md:235 |
-| ``ovs-appctl upcall/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.26 - ovs-revalidator-storm-forensic.md:98 |
+| ``ovs-appctl upcall/show`` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | ``ovs-appctl dpctl/dump-conntrack`` | 4 Role | 0.5 | medium | - |
 | ``ovs-appctl dpctl/dump-conntrack`` | 5 Motivation | 0 | low | - |
 | ``ovs-appctl dpctl/dump-conntrack`` | 7 Importance | 0.5 | low | - |
@@ -460,7 +460,7 @@
 | ``ovs-appctl dpctl/dump-conntrack`` | 11 Workflow | 0.5 | medium | - |
 | ``ovs-appctl dpctl/dump-conntrack`` | 12 Troubleshoot | 0.5 | low | 9.26 - ovs-revalidator-storm-forensic.md:troubleshoot-file |
 | ``ovs-appctl dpctl/dump-conntrack`` | 17 Incident | 0.5 | low | - |
-| ``ovs-appctl dpctl/dump-conntrack`` | 20 Cross-domain | 0 | low | - |
+| ``ovs-appctl dpctl/dump-conntrack`` | 20 Cross-domain | 1.0 | low | 9.11 - ovs-appctl-reference-playbook.md:1204 |
 | ``ovs-appctl revalidator/wait` / `revalidator/purge` | 4 Role | 0.5 | medium | - |
 | ``ovs-appctl revalidator/wait` / `revalidator/purge` | 5 Motivation | 0 | low | - |
 | ``ovs-appctl revalidator/wait` / `revalidator/purge` | 7 Importance | 0.5 | low | - |
@@ -509,7 +509,8 @@
 | `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 7 Importance | 0.5 | low | - |
 | `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 12 Troubleshoot | 0.5 | low | 9.14 - incident-response-decision-tree.md:troubleshoot-file |
 | `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 17 Incident | 0 | low | - |
-| `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 20 Cross-domain | 0 | low | - |
+| `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 18 Lab | 0.5 | medium | 4.8 - openflow-match-field-catalog.md:1237 |
+| `eth_src / eth_dst (48 bits, OF 1.2+ / OVS 1.1+)` | 20 Cross-domain | 1.0 | low | 4.8 - openflow-match-field-catalog.md:1235, 4.8 - openflow-match-field-catalog.md:1239 |
 | `eth_type (16 bits, OF 1.2+ / OVS 1.1+)` | 4 Role | 0.5 | medium | - |
 | `eth_type (16 bits, OF 1.2+ / OVS 1.1+)` | 5 Motivation | 0 | low | - |
 | `eth_type (16 bits, OF 1.2+ / OVS 1.1+)` | 7 Importance | 0.5 | low | - |
@@ -526,7 +527,7 @@
 | `vlan_vid (12 bits, OF 1.2+ / OVS 1.7+)` | 12 Troubleshoot | 0 | low | - |
 | `vlan_vid (12 bits, OF 1.2+ / OVS 1.7+)` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:693 |
 | `vlan_vid (12 bits, OF 1.2+ / OVS 1.7+)` | 17 Incident | 0 | low | - |
-| `vlan_vid (12 bits, OF 1.2+ / OVS 1.7+)` | 20 Cross-domain | 0 | low | - |
+| `vlan_vid (12 bits, OF 1.2+ / OVS 1.7+)` | 20 Cross-domain | 1.0 | low | 4.8 - openflow-match-field-catalog.md:1235 |
 | `vlan_pcp (3 bits, OF 1.2+ / OVS 1.7+)` | 4 Role | 0.5 | medium | - |
 | `vlan_pcp (3 bits, OF 1.2+ / OVS 1.7+)` | 5 Motivation | 0 | low | - |
 | `vlan_pcp (3 bits, OF 1.2+ / OVS 1.7+)` | 7 Importance | 0.5 | low | - |
@@ -734,28 +735,25 @@
 | `ct_zone (16 bits, OVS 2.5+)` | 5 Motivation | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:22 |
 | `ct_zone (16 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:684 |
 | `ct_zone (16 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
-| `ct_zone (16 bits, OVS 2.5+)` | 17 Incident | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:684 |
+| `ct_zone (16 bits, OVS 2.5+)` | 17 Incident | 1.0 | low | 4.7 - openflow-programming-with-ovs.md:802, 9.24 - ovs-conntrack-stateful-firewall.md:684 |
 | `ct_zone (16 bits, OVS 2.5+)` | 18 Lab | 0.5 | medium | README.md:229 |
 | `ct_zone (16 bits, OVS 2.5+)` | 20 Cross-domain | 1.0 | low | 9.24 - ovs-conntrack-stateful-firewall.md:664, 9.24 - ovs-conntrack-stateful-firewall.md:801 |
-| `ct_mark (32 bits, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:751 |
 | `ct_mark (32 bits, OVS 2.5+)` | 4 Role | 0.5 | medium | - |
 | `ct_mark (32 bits, OVS 2.5+)` | 5 Motivation | 0 | low | - |
 | `ct_mark (32 bits, OVS 2.5+)` | 7 Importance | 0.5 | low | - |
 | `ct_mark (32 bits, OVS 2.5+)` | 8 Mechanism | 0.5 | medium | - |
 | `ct_mark (32 bits, OVS 2.5+)` | 12 Troubleshoot | 0 | low | - |
-| `ct_mark (32 bits, OVS 2.5+)` | 17 Incident | 0 | low | - |
+| `ct_mark (32 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | 4.8 - openflow-match-field-catalog.md:1271 |
 | `ct_mark (32 bits, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
-| `ct_label (128 bits, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:752 |
 | `ct_label (128 bits, OVS 2.5+)` | 4 Role | 0.5 | medium | - |
 | `ct_label (128 bits, OVS 2.5+)` | 5 Motivation | 0 | low | - |
 | `ct_label (128 bits, OVS 2.5+)` | 7 Importance | 1.0 | low | README.md:313 |
 | `ct_label (128 bits, OVS 2.5+)` | 12 Troubleshoot | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
 | `ct_label (128 bits, OVS 2.5+)` | 17 Incident | 0.5 | low | 20.0 - ovs-ovn-systematic-debugging.md:836 |
 | `ct_label (128 bits, OVS 2.5+)` | 20 Cross-domain | 0 | low | - |
-| `ct_nw_proto (8 bits, OVS 2.8+)` | 2 History | 0.5 | medium | 9.24 - ovs-conntrack-stateful-firewall.md:737 |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 4 Role | 0.5 | medium | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 5 Motivation | 0 | low | - |
-| `ct_nw_proto (8 bits, OVS 2.8+)` | 7 Importance | 0 | low | - |
+| `ct_nw_proto (8 bits, OVS 2.8+)` | 7 Importance | 0.5 | low | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 8 Mechanism | 0.5 | medium | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 9 Engineer-op | 0.5 | medium | - |
 | `ct_nw_proto (8 bits, OVS 2.8+)` | 11 Workflow | 0.5 | medium | - |
@@ -793,7 +791,7 @@
 | `pkt_mark (32 bits, OVS 2.0+)` | 20 Cross-domain | 0 | low | - |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 4 Role | 0.5 | medium | - |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 5 Motivation | 0 | low | - |
-| `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 7 Importance | 0.5 | low | - |
+| `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 7 Importance | 1.0 | low | 4.8 - openflow-match-field-catalog.md:1255 |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 8 Mechanism | 0.5 | medium | - |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 9 Engineer-op | 0.5 | medium | - |
 | `tcp_flags (16 bits, OVS 2.1+ / NXM_NX_TCP_FLAGS)` | 11 Workflow | 0.5 | medium | - |
@@ -830,7 +828,7 @@
 | `Instruction: meter` | 5 Motivation | 1.0 | low | 14.0 - p4-language-fundamentals.md:71, 20.5 - ovn-forensic-case-studies.md:467 |
 | `Instruction: meter` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:644, 14.0 - p4-language-fundamentals.md:63 |
 | `Instruction: meter` | 12 Troubleshoot | 1.0 | low | 13.6 - ha-chassis-group-and-bfd.md:448, 9.9 - qos-policing-shaping-metering.md:24 |
-| `Instruction: meter` | 17 Incident | 1.0 | low | 3.3 - openflow-protocol-messages-state-machine.md:501, 4.2 - openflow-1.3-meters-pbb-lts.md:126 |
+| `Instruction: meter` | 17 Incident | 1.0 | low | 3.3 - openflow-protocol-messages-state-machine.md:501, 3.6 - openflow-instruction-catalog.md:124 |
 | `Instruction: meter` | 20 Cross-domain | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:222 |
 | `Instruction: apply_actions` | 2 History | 0.5 | medium | 9.18 - ovs-native-l3-routing.md:59 |
 | `Instruction: apply_actions` | 4 Role | 0.5 | medium | - |
@@ -840,11 +838,11 @@
 | `Instruction: apply_actions` | 12 Troubleshoot | 0 | low | - |
 | `Instruction: apply_actions` | 17 Incident | 0 | low | - |
 | `Instruction: apply_actions` | 20 Cross-domain | 0 | low | - |
-| `Instruction: clear_actions` | 1 Concept | 0.5 | low | 0.3 - master-keyword-index.md:611 |
 | `Instruction: clear_actions` | 4 Role | 0.5 | medium | - |
 | `Instruction: clear_actions` | 5 Motivation | 0 | low | - |
 | `Instruction: clear_actions` | 7 Importance | 0 | low | - |
 | `Instruction: clear_actions` | 8 Mechanism | 0.5 | medium | - |
+| `Instruction: clear_actions` | 9 Engineer-op | 0.5 | medium | - |
 | `Instruction: clear_actions` | 11 Workflow | 0.5 | medium | - |
 | `Instruction: clear_actions` | 12 Troubleshoot | 0 | low | - |
 | `Instruction: clear_actions` | 17 Incident | 0 | low | - |
@@ -869,7 +867,7 @@
 | `Instruction: goto_table` | 5 Motivation | 1.0 | low | 4.0 - openflow-1.1-multi-table-groups.md:85, 9.22 - ovs-multi-table-pipeline.md:45 |
 | `Instruction: goto_table` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:575, 0.3 - master-keyword-index.md:589 |
 | `Instruction: goto_table` | 12 Troubleshoot | 0.5 | low | 20.4 - ovs-daily-operator-playbook.md:troubleshoot-file, 9.25 - ovs-flow-debugging-ofproto-trace.md:troubleshoot-file |
-| `Instruction: goto_table` | 17 Incident | 0.5 | low | 9.22 - ovs-multi-table-pipeline.md:467, README.md:227 |
+| `Instruction: goto_table` | 17 Incident | 0.5 | low | 3.6 - openflow-instruction-catalog.md:66, 9.22 - ovs-multi-table-pipeline.md:467 |
 | `Instruction: goto_table` | 18 Lab | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:337, 9.22 - ovs-multi-table-pipeline.md:469 |
 | `Instruction: goto_table` | 19 Failure mode | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:449 |
 | `Instruction: goto_table` | 20 Cross-domain | 1.0 | low | 9.22 - ovs-multi-table-pipeline.md:45 |
@@ -891,9 +889,9 @@
 | `Action: set_field` | 5 Motivation | 0 | low | - |
 | `Action: set_field` | 7 Importance | 1.0 | low | 9.18 - ovs-native-l3-routing.md:18, README.md:156 |
 | `Action: set_field` | 12 Troubleshoot | 0.5 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:troubleshoot-file, 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file |
-| `Action: set_field` | 17 Incident | 1.0 | low | 9.25 - ovs-flow-debugging-ofproto-trace.md:835 |
+| `Action: set_field` | 17 Incident | 1.0 | low | 3.6 - openflow-instruction-catalog.md:30, 9.25 - ovs-flow-debugging-ofproto-trace.md:835 |
 | `Action: set_field` | 18 Lab | 0.5 | medium | 9.25 - ovs-flow-debugging-ofproto-trace.md:1032, README.md:156 |
-| `Action: set_field` | 20 Cross-domain | 1.0 | low | 9.18 - ovs-native-l3-routing.md:101 |
+| `Action: set_field` | 20 Cross-domain | 1.0 | low | 4.9 - openflow-action-catalog.md:1923, 4.9 - openflow-action-catalog.md:1943 |
 | `Action: copy_field (OpenFlow 1.5+)` | 4 Role | 0.5 | medium | - |
 | `Action: copy_field (OpenFlow 1.5+)` | 5 Motivation | 1.0 | low | 3.4 - openflow-version-differences-1.0-1.3-1.5.md:197 |
 | `Action: copy_field (OpenFlow 1.5+)` | 7 Importance | 0.5 | low | - |
@@ -901,24 +899,20 @@
 | `Action: copy_field (OpenFlow 1.5+)` | 12 Troubleshoot | 0 | low | - |
 | `Action: copy_field (OpenFlow 1.5+)` | 17 Incident | 0 | low | - |
 | `Action: copy_field (OpenFlow 1.5+)` | 20 Cross-domain | 0 | low | - |
-| `Action: push_vlan` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:798 |
 | `Action: push_vlan` | 5 Motivation | 0 | low | - |
 | `Action: push_vlan` | 7 Importance | 0.5 | low | - |
 | `Action: push_vlan` | 8 Mechanism | 0.5 | medium | - |
 | `Action: push_vlan` | 11 Workflow | 0.5 | medium | - |
 | `Action: push_vlan` | 12 Troubleshoot | 0 | low | - |
-| `Action: push_vlan` | 13 Coupling | 0.5 | medium | 0.3 - master-keyword-index.md:798 |
 | `Action: push_vlan` | 17 Incident | 0 | low | - |
-| `Action: push_vlan` | 20 Cross-domain | 0 | low | - |
-| `Action: pop_vlan` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:798 |
+| `Action: push_vlan` | 20 Cross-domain | 1.0 | low | 4.9 - openflow-action-catalog.md:1944 |
 | `Action: pop_vlan` | 5 Motivation | 0 | low | - |
 | `Action: pop_vlan` | 7 Importance | 0.5 | low | - |
 | `Action: pop_vlan` | 8 Mechanism | 0.5 | medium | - |
-| `Action: pop_vlan` | 9 Engineer-op | 0.5 | medium | - |
 | `Action: pop_vlan` | 11 Workflow | 0.5 | medium | - |
 | `Action: pop_vlan` | 12 Troubleshoot | 0 | low | - |
 | `Action: pop_vlan` | 17 Incident | 0 | low | - |
-| `Action: pop_vlan` | 20 Cross-domain | 0 | low | - |
+| `Action: pop_vlan` | 20 Cross-domain | 1.0 | low | 4.9 - openflow-action-catalog.md:1944 |
 | `Action: push_mpls` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:799 |
 | `Action: push_mpls` | 4 Role | 0.5 | medium | - |
 | `Action: push_mpls` | 5 Motivation | 0 | low | - |
@@ -968,10 +962,10 @@
 | `Action: dec_ttl` | 7 Importance | 1.0 | low | 9.18 - ovs-native-l3-routing.md:18, README.md:156 |
 | `Action: dec_ttl` | 8 Mechanism | 0.5 | medium | - |
 | `Action: dec_ttl` | 12 Troubleshoot | 0.5 | low | 20.2 - ovn-troubleshooting-deep-dive.md:troubleshoot-file, 20.7 - packet-flow-tracing-tutorial-gradient.md:troubleshoot-file |
-| `Action: dec_ttl` | 13 Coupling | 0.5 | medium | README.md:360 |
-| `Action: dec_ttl` | 17 Incident | 0.5 | low | README.md:360 |
+| `Action: dec_ttl` | 17 Incident | 0.5 | low | 3.6 - openflow-instruction-catalog.md:30, README.md:360 |
 | `Action: dec_ttl` | 18 Lab | 0.5 | medium | 9.22 - ovs-multi-table-pipeline.md:337, README.md:156 |
-| `Action: dec_ttl` | 20 Cross-domain | 0 | low | - |
+| `Action: dec_ttl` | 19 Failure mode | 0.5 | medium | 4.9 - openflow-action-catalog.md:1937 |
+| `Action: dec_ttl` | 20 Cross-domain | 1.0 | low | 4.9 - openflow-action-catalog.md:1924, 4.9 - openflow-action-catalog.md:1945 |
 | `Action: dec_mpls_ttl` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:820 |
 | `Action: dec_mpls_ttl` | 4 Role | 0.5 | medium | - |
 | `Action: dec_mpls_ttl` | 5 Motivation | 0 | low | - |
@@ -1038,7 +1032,7 @@
 | `Action: conjunction (Nicira extension, OVS 2.4+)` | 5 Motivation | 0 | low | - |
 | `Action: conjunction (Nicira extension, OVS 2.4+)` | 7 Importance | 1.0 | low | 13.2 - ovn-logical-switches-routers.md:520, 13.3 - ovn-acl-lb-nat-port-groups.md:170 |
 | `Action: conjunction (Nicira extension, OVS 2.4+)` | 12 Troubleshoot | 0.5 | low | 9.14 - incident-response-decision-tree.md:troubleshoot-file |
-| `Action: conjunction (Nicira extension, OVS 2.4+)` | 17 Incident | 0 | low | - |
+| `Action: conjunction (Nicira extension, OVS 2.4+)` | 17 Incident | 0.5 | low | 13.3 - ovn-acl-lb-nat-port-groups.md:628 |
 | `Action: conjunction (Nicira extension, OVS 2.4+)` | 18 Lab | 0.5 | medium | 4.9 - openflow-action-catalog.md:1847, README.md:156 |
 | `Action: conjunction (Nicira extension, OVS 2.4+)` | 20 Cross-domain | 0 | low | - |
 | `Action: ct_clear (Nicira extension, OVS 2.5+)` | 2 History | 0.5 | medium | 0.3 - master-keyword-index.md:844 |
@@ -1410,13 +1404,12 @@
 | `Load_Balancer_Health_Check (NB)` | 12 Troubleshoot | 0.5 | low | 0.3 - master-keyword-index.md:971, 13.9 - ovn-load-balancer-internals.md:592 |
 | `Load_Balancer_Health_Check (NB)` | 17 Incident | 0 | low | - |
 | `Load_Balancer_Health_Check (NB)` | 20 Cross-domain | 0 | low | - |
-| `Address_Set Table (NB)` | 2 History | 0.5 | medium | 13.2 - ovn-logical-switches-routers.md:247 |
 | `Address_Set Table (NB)` | 4 Role | 0.5 | medium | - |
 | `Address_Set Table (NB)` | 5 Motivation | 0 | low | - |
 | `Address_Set Table (NB)` | 7 Importance | 0.5 | low | - |
 | `Address_Set Table (NB)` | 11 Workflow | 0.5 | medium | - |
 | `Address_Set Table (NB)` | 12 Troubleshoot | 0.5 | low | 9.26 - ovs-revalidator-storm-forensic.md:troubleshoot-file |
-| `Address_Set Table (NB)` | 17 Incident | 0.5 | low | - |
+| `Address_Set Table (NB)` | 17 Incident | 1.0 | low | 13.3 - ovn-acl-lb-nat-port-groups.md:628 |
 | `Address_Set Table (NB)` | 19 Failure mode | 0.5 | medium | 9.32 - ovs-classifier-internals-deep.md:173 |
 | `Address_Set Table (NB)` | 20 Cross-domain | 0 | low | - |
 | `Port_Group Table (NB)` | 2 History | 0.5 | medium | 13.2 - ovn-logical-switches-routers.md:247 |
@@ -1443,8 +1436,7 @@
 | `QoS Table (NB)` | 7 Importance | 1.0 | low | 0.3 - master-keyword-index.md:351, 0.3 - master-keyword-index.md:644 |
 | `QoS Table (NB)` | 12 Troubleshoot | 0.5 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file, 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
 | `QoS Table (NB)` | 17 Incident | 1.0 | low | 4.2 - openflow-1.3-meters-pbb-lts.md:126, 4.7 - openflow-programming-with-ovs.md:562 |
-| `QoS Table (NB)` | 20 Cross-domain | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:130, 9.0 - ovs-history-2007-present.md:43 |
-| `DHCP_Options Table (NB)` | 2 History | 0.5 | medium | 13.19 - ovn-pipeline-stage-catalog.md:143 |
+| `QoS Table (NB)` | 20 Cross-domain | 1.0 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:130, 4.9 - openflow-action-catalog.md:1923 |
 | `DHCP_Options Table (NB)` | 5 Motivation | 0 | low | - |
 | `DHCP_Options Table (NB)` | 7 Importance | 0.5 | low | - |
 | `DHCP_Options Table (NB)` | 12 Troubleshoot | 0.5 | low | 17.0 - ovn-l2-forwarding-and-fdb-poisoning.md:troubleshoot-file, 20.0 - ovs-ovn-systematic-debugging.md:troubleshoot-file |
@@ -1470,14 +1462,16 @@
 | `BFD Table (NB)` | 5 Motivation | 0 | low | - |
 | `BFD Table (NB)` | 7 Importance | 1.0 | low | 13.19 - ovn-pipeline-stage-catalog.md:204, 13.6 - ha-chassis-group-and-bfd.md:7 |
 | `BFD Table (NB)` | 12 Troubleshoot | 1.0 | low | 13.5 - port-binding-types-ovn-native.md:173, 13.6 - ha-chassis-group-and-bfd.md:28 |
-| `BFD Table (NB)` | 17 Incident | 1.0 | low | 13.11 - ovn-gateway-router-distributed.md:251, 13.6 - ha-chassis-group-and-bfd.md:317 |
+| `BFD Table (NB)` | 17 Incident | 1.0 | low | 13.11 - ovn-gateway-router-distributed.md:251, 13.3 - ovn-acl-lb-nat-port-groups.md:652 |
 | `BFD Table (NB)` | 18 Lab | 0.5 | medium | 13.6 - ha-chassis-group-and-bfd.md:322 |
 | `BFD Table (NB)` | 20 Cross-domain | 1.0 | low | 13.6 - ha-chassis-group-and-bfd.md:28, 13.6 - ha-chassis-group-and-bfd.md:442 |
+| `HA_Chassis Table (NB)` | 2 History | 0.5 | medium | 13.3 - ovn-acl-lb-nat-port-groups.md:650 |
 | `HA_Chassis Table (NB)` | 5 Motivation | 1.0 | low | 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
 | `HA_Chassis Table (NB)` | 7 Importance | 1.0 | low | 13.6 - ha-chassis-group-and-bfd.md:312, 20.3 - ovn-daily-operator-playbook.md:707 |
 | `HA_Chassis Table (NB)` | 12 Troubleshoot | 1.0 | low | 13.5 - port-binding-types-ovn-native.md:173, 20.2 - ovn-troubleshooting-deep-dive.md:694 |
 | `HA_Chassis Table (NB)` | 17 Incident | 1.0 | low | 20.3 - ovn-daily-operator-playbook.md:1554, 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
 | `HA_Chassis Table (NB)` | 20 Cross-domain | 1.0 | low | 13.14 - ovn-nbctl-sbctl-reference-playbook.md:280 |
+| `HA_Chassis_Group (NB)` | 2 History | 0.5 | medium | 13.3 - ovn-acl-lb-nat-port-groups.md:650 |
 | `HA_Chassis_Group (NB)` | 5 Motivation | 1.0 | low | 5.1 - hypervisor-overlays-nvp-nsx.md:282 |
 | `HA_Chassis_Group (NB)` | 7 Importance | 1.0 | low | 20.3 - ovn-daily-operator-playbook.md:707 |
 | `HA_Chassis_Group (NB)` | 12 Troubleshoot | 1.0 | low | 13.5 - port-binding-types-ovn-native.md:173, 20.2 - ovn-troubleshooting-deep-dive.md:1603 |
@@ -1735,8 +1729,8 @@
 | `ovn-sbctl dump-flows` | 5 Motivation | 1.0 | low | 9.25 - ovs-flow-debugging-ofproto-trace.md:19, 9.25 - ovs-flow-debugging-ofproto-trace.md:39 |
 | `ovn-sbctl dump-flows` | 7 Importance | 1.0 | low | 19.0 - ovn-multichassis-binding-and-pmtud.md:18, 9.27 - ovs-ovn-packet-journey-end-to-end.md:643 |
 | `ovn-sbctl dump-flows` | 12 Troubleshoot | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.25 - ovs-flow-debugging-ofproto-trace.md:41 |
-| `ovn-sbctl dump-flows` | 17 Incident | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:553, 9.4 - ovs-cli-tools-playbook.md:586 |
-| `ovn-sbctl dump-flows` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.4 - ovs-cli-tools-playbook.md:694 |
+| `ovn-sbctl dump-flows` | 17 Incident | 1.0 | low | 13.16 - ovn-logical-pipeline-table-id-map.md:553, 9.11 - ovs-appctl-reference-playbook.md:1188 |
+| `ovn-sbctl dump-flows` | 20 Cross-domain | 1.0 | low | 13.4 - br-int-architecture-and-patch-ports.md:74, 9.11 - ovs-appctl-reference-playbook.md:1203 |
 | `ovn-sbctl chassis-add` | 5 Motivation | 0 | low | - |
 | `ovn-sbctl chassis-add` | 7 Importance | 0.5 | low | - |
 | `ovn-sbctl chassis-add` | 8 Mechanism | 0.5 | medium | - |
