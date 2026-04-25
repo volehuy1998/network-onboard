@@ -6,9 +6,58 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
-## v3.6-ContentDepth (2026-04-26)
+## Reckoning 2026-04-26
 
-**Release type:** Content depth pass over v3.5-KeywordBackbone framework. Khung sườn (128 file, 20 Block) đã xong ở v3.5; v3.6 tập trung audit alias-detection bias trong coverage matrix + đóng các TRUE gap còn lại + đào sâu 1 thin coverage.
+> **Sự kiện.** User audit metric depth thực sự của curriculum qua 13-tiêu-chí check ("am hiểu từ cơ bản đến chuyên sâu" mỗi keyword). Phát hiện v3.5/v3.6 đo BREADTH (keyword có file mention không) thay vì DEPTH (keyword có dạy đủ rubric không). Tag tên grandiose ("Master/Deep/Full/Backbone/ContentDepth") nhưng không đáp ứng mastery rubric user mandate.
+
+**Bản chất sai lầm:** acceptance gate self-defined ("Tier A MISSING ≤ 50", "Well-covered ≥ 65%") đo breadth, không đo depth per-keyword. V3.6 tag sau 1 session với 6 keyword closure + 9 alias rule script tweak, while plan v3.7 sau đó ước tính realistic effort 200-500 giờ. Tag claim không đồng nhất với scope effort = self-deception signal.
+
+**Self-correction:** Plan v3.7-Reckoning + v4.0-MasteryComplete (xem [`plans/sdn/v3.7-reckoning-and-mastery.md`](plans/sdn/v3.7-reckoning-and-mastery.md)) thay metric breadth bằng rubric 20-axis depth (13 tiêu chí user định + 7 Claude đề xuất). Governance principles formal trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md) cấm self-tag tương lai (5 GP binding).
+
+**Reckoning đối chiếu các tag v3.x:**
+
+| Tag | Date | Tên gốc claim | Real status (rubric 20-axis estimate, pending Phase D audit) |
+|-----|------|---------------|------------------------------------------------------------|
+| v3.1-OperatorMaster | 2026-04 | "Operator master" cho operations playbook | Operations Phần (9.4/9.11/9.14/20.x) có chất, từng keyword trong đó ~5-7/13 user-axis |
+| v3.1.1-OperatorMaster-patch | 2026-04 | Patch operator | Patch nhỏ |
+| v3.2-FullDepth | 2026-04 | "Full depth" expand | Expand depth file-level, không per-keyword 20-axis |
+| v3.3-ArchitectMaster | 2026-04 | "Architect master" architecture | Tier 2 source code cho ~5 file cốt lõi, 100+ file khác placement only |
+| v3.4-DeepFoundation | 2026-04-25 | "Deep foundation" 5 trụ cột mission core | 5 trụ cột deep keyword cốt lõi của trụ cột đó. Keyword phụ trong cùng trụ cột vẫn shallow |
+| v3.5-KeywordBackbone | 2026-04-25 | Framework hoàn thiện 320+ keyword | Master index 320 entry là PLACEMENT, không phải MASTERY. Đúng nghĩa "backbone" (xương sống), chưa "đầy đủ thịt" |
+| ~~v3.6-ContentDepth~~ → **v3.6-AuditTooling** | 2026-04-26 | "Content depth pass" | Renamed Phase A v3.7 reckoning. Bản chất: audit infrastructure improvement (9 alias rule script v3) + 6 keyword small closure (~120 dòng curriculum), KHÔNG phải content depth trên 320 keyword |
+
+**Tag handling decisions (Phase A v3.7):**
+
+- **v3.6-ContentDepth:** DELETE local + RECREATE as `v3.6-AuditTooling` với tag message honest. Commits giữ nguyên (không rewrite history), chỉ đổi tag pointer name. Tag chưa push remote nên delete local an toàn.
+- **v3.1-v3.5:** KEEP nguyên (work là thực, chỉ tên overstate). Reckoning đối chiếu này document để future reader hiểu lens-shift của metric.
+
+**Estimated current state (sẽ verified Phase D audit):**
+
+| Tier | Số keyword | Estimate score per 20-axis rubric | Status |
+|------|-----------|------------------------------------|--------|
+| DEEP-13 cornerstone | ~30-50 | 11-13/20 (~80-95%) | Strongest |
+| PARTIAL-7 medium | ~100-150 | 5-8/20 (~30-50%) | Half-done |
+| REFERENCE-3 peripheral | ~150-200 | 2-4/20 (~15-25%) | Mostly placement only |
+
+**Aggregate estimate:** ~35-40% theo rubric 20-axis full coverage. Phase D sẽ verified.
+
+**Governance going forward:**
+
+5 Governance Principles (GP-1 đến GP-5) binding cho v3.7 plan + future plans. Past plans (v3.1-v3.6) governed by their own loose acceptance gates, không retroactive enforcement. Detail trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md):
+
+- **GP-1: No tag without rubric audit pass.** Mirror trong CLAUDE.md Rule 15.
+- **GP-2: Every keyword scorecard committed.**
+- **GP-3: Incremental verified progress.**
+- **GP-4: User approval gates (8 gate cho v3.7 plan).**
+- **GP-5: No metric gaming (depth không breadth).**
+
+---
+
+## v3.6-AuditTooling (renamed from v3.6-ContentDepth, 2026-04-26)
+
+> **Tag rename note:** Tag gốc `v3.6-ContentDepth` deleted local 2026-04-26 Phase A v3.7. Recreated as `v3.6-AuditTooling` cho honest naming. Commits từ `31f3709` đến `c5deee2` giữ nguyên git history; chỉ tag pointer đổi name. Bản chất: audit tooling improvement + 6 keyword small closure, không phải content depth thực trên 320 keyword.
+
+**Release type (honest after rename):** Audit tooling improvement (script alias rule v2 + v3, 9 rule mới) + 6 small keyword closure (~120 dòng curriculum). Tag gốc tự đặt tên "Content depth pass" sai bản chất; renamed to "AuditTooling" theo Phase A v3.7 reckoning. Khung sườn placement framework v3.5 chưa đáp ứng mastery rubric 20-axis.
 
 **Branch:** `docs/sdn-foundation-rev2`
 **Base:** v3.5-KeywordBackbone + 7 commit (Phase 1 → Phase 4).

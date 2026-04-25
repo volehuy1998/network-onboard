@@ -513,26 +513,58 @@ Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is b
 
 (Origin: session 32-33i (2026-04-22) found 32 issues across 6 categories on 43 files; codified Rule 14 in commit `7e5608b`.)
 
+### Rule 15: No Self-Tag (MANDATORY)
+
+> **Mirror governance principle GP-1.** Full text trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md) Section 1. CLAUDE.md tóm tắt enforcement.
+
+Curriculum SDN không được tag bất kỳ release version nào (v3.x, v4.x, vX.Y) cho đến khi đồng thời thỏa 4 điều kiện:
+
+1. **Scorecard committed:** Mỗi keyword in-scope của REF có scorecard 20-axis trong repo, version-controlled.
+2. **Threshold achieved:** Tất cả keyword đạt minimum threshold per Phase B rubric (Cornerstone DEEP-20, Medium DEEP-15, Peripheral PARTIAL-10).
+3. **Audit script run + report committed:** `scripts/per_keyword_rubric_audit.py` chạy thành công, scorecard fresh trong 24 giờ trước commit.
+4. **User written sign-off:** User confirmation explicit (chat message hoặc commit message hoặc plan tracker entry) approve tag.
+
+**Pre-tag checklist (mandatory):**
+
+- [ ] Run audit script, scorecard committed
+- [ ] Verify threshold met (script exit 0)
+- [ ] Verify scorecard timestamp ≤ 24 giờ vs HEAD
+- [ ] User sign-off captured trong commit message
+- [ ] Tag annotated message reference scorecard commit SHA
+
+**Exception (hotfix only):**
+
+- Security CVE upstream affecting keyword treatment
+- Factual error correction (wrong commit SHA, typo in code citation)
+- Typo/formatting trong existing content
+- MUST có user explicit approval + rubric impact assessment + follow-up regression audit ≤ 7 ngày
+
+**No other exceptions.** "Quick win", "milestone", "checkpoint" tag NOT allowed.
+
+(Origin: 2026-04-26 reckoning. V3.6-ContentDepth tagged sau 1 session với "Tier A MISSING ≤ 50" acceptance gate measure breadth không depth. User check 13-tiêu-chí expose tag misleading. Plan v3.7 codify governance để prevent recurrence. See [governance-principles.md](memory/sdn/governance-principles.md) for full GP-1 text + 4 sister principles.)
+
 ---
 
 ## Current State
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-ContentDepth` (2026-04-26). |
-| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.6K lines**, 20 blocks. Coverage strict 80%, substantive 72%. Audit verdict: A. |
-| Active phase | v3.6-ContentDepth RELEASED (4/4 phase done, 7 commit). v3.1 → v3.6 all released. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). |
+| Curriculum | **128 files** in `sdn-onboard/*.md`, **~70.6K lines**, 20 blocks. Coverage breadth strict 80%, **honest depth ~35-40% per 20-axis rubric estimate** (verified Phase D audit pending). |
+| Active phase | **v3.7-Reckoning Phase A in progress** (governance reset + tag rename). Plan target v4.0-MasteryComplete. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md). |
 | Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
 | Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
-| v3.5 plan | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md) — RELEASED 14/14 phase done. |
-| v3.6 plan | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md) — RELEASED 4/4 phase done 2026-04-26. |
-| v3.6 audit script | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix audit với 9 alias rule (v2 + v3 substantive). |
-| v3.6 gap-final | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), Phase 1 + Phase 2 deliverable, decision log. |
-| v3.5 source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md) — REF 2617 dòng English authoritative. |
-| v3.5 master index | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md) — Vietnamese DEEP adaptation lookup spine, 320+ keyword 5-axis. |
+| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md), 5 GP binding cho v3.7 + future plans. Mirror trong Rule 15. |
+| **Active plan** | [plans/sdn/v3.7-reckoning-and-mastery.md](plans/sdn/v3.7-reckoning-and-mastery.md), APPROVED 2026-04-26, 8 phase A→H, target tag v4.0-MasteryComplete sau Phase H. |
+| Past plan v3.5 | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md), Closed (placement framework, không phải mastery). |
+| Past plan v3.6 | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md), Closed (audit tooling + 6 keyword closure, tag renamed). |
+| Audit script v3 | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix breadth audit. Phase D sẽ build per_keyword_rubric_audit.py riêng cho depth. |
+| Gap tracker | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), v3.6 Phase 1+2 deliverable. Superseded by Phase D scorecard. |
+| REF source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md), REF 2617 dòng English authoritative, 320+ keyword in-scope. |
+| Master index 0.3 | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md), Vietnamese lookup spine 1153 dòng, 320+ keyword 5-axis 1-line. **Note:** placement map, không phải mastery map. |
 | Plans index | [plans/README.md](plans/README.md) (per-series structure) |
 | Memory index | [memory/README.md](memory/README.md) (per-series + shared structure) |
 
