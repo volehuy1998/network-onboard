@@ -12,12 +12,73 @@
 
 ---
 
+## -2. Progress Tracker (LIVE — cập nhật mỗi khi hoàn thành phase lớn)
+
+> **Cập nhật cuối:** 2026-04-25 sau J.5.e commit `e4b7d2d`. PR #51: 44 commits, ~14K+ additions cumulative.
+
+### Phase status (14 phases tổng)
+
+| # | Phase | Status | Commit | Lines added | Note |
+|---|-------|--------|--------|-------------|------|
+| 1 | J.1 Audit (inventory + matrix + priority) | ✅ DONE | `af29ae3` | +1351 | 250 work items mapped, 3 memory file + 3 Python script |
+| 2 | J.5.c.i 13.17 register + REGBIT + MLF | ✅ DONE | `12f62ce` | +516 | NEW. Foundation cho 13.16. branch-22.03 verified |
+| 3 | J.5.c.ii 13.16 pipeline table IDs | ✅ DONE | `6b54484` | +579 | NEW. **CRITICAL gap closure** (0/63 stages) |
+| 4 | J.3 NEW (9.28-9.31) | ✅ DONE | `63fb8db` | +1287 | 4 NEW utility files: ovs-pcap/tcpundump, vtep-ctl, ovs-pki, ovsdb-tool |
+| 5 | J.4.c (3.3 OF messages + 3.4 version diff) | ✅ DONE | `2feaa60` | +979 | 2 NEW Block III files |
+| 6 | J.4.a + J.4.b (4.8 + 4.9 expand) | ✅ DONE | `a470b28` | +526 | 12 missing match field + 12 missing action |
+| 7 | J.5.a 13.15 OVN Inter-Connect | ✅ DONE | `0a35079` | +621 | NEW. Closes forward-ref `9.31 → 13.15` |
+| 8 | J.5.d 13.14 expand (options + ovn-trace + ovn-detrace) | ✅ DONE | `327ce65` | +337 | 30+ ovn-nbctl options + microflow expression syntax |
+| 9 | J.5.e 20.2 lflow-cache tunables | ✅ DONE | `e4b7d2d` | +104 | 5 external_ids tunable Anatomy |
+| — | J.3 EXPAND (9.4 + 9.11 + 9.27) | ⏸ DEFERRED | — | — | Marginal value low; existing files đã comprehensive (1406+1170+696 dòng); J.5.d đã làm pattern tương tự cho 13.14 |
+| 10 | J.5.b 13.x schema completeness | ⏳ TODO | — | est ~200 | 50+ NB/SB column 5-axis Anatomy backfill |
+| 11 | J.6 Distributed troubleshoot scenarios | ⏳ TODO | — | est ~1300 | 12 scenario × ~100 dòng across 12 file native |
+| 12 | J.2 Master index 0.3 (LAST per max-quality) | ⏳ TODO | — | est ~3000 | Vietnamese DEEP adaptation của REF, build với knowledge gained |
+| 13 | J.7 Validation + Release v3.5 | ⏳ TODO | — | est ~50 | Re-grep matrix, spot-check, tag + GitHub Release |
+
+### Cumulative metrics
+
+| Metric | Value |
+|--------|-------|
+| Phases done | 9/14 (64%) |
+| Phases active todo | 4 (J.5.b + J.6 + J.2 + J.7) |
+| Phase deferred | 1 (J.3 EXPAND) |
+| Files NEW | 9 (13.17, 13.16, 9.28, 9.29, 9.30, 9.31, 3.3, 3.4, 13.15) |
+| Files EXPAND | 4 (4.8, 4.9, 13.14, 20.2) |
+| Lines added (curriculum) | ~6900 |
+| Lines added (plan + REF + memory + scripts) | ~3400 |
+| Total session content | ~10,300 dòng |
+| Quality gates pass rate | 100% (Rule 9, 11, 13, 14) |
+| Forward-ref broken | 0 (closed by J.5.a) |
+
+### Gap matrix improvement (verified)
+
+| Tier | Trước session | Sau session | Δ |
+|------|---------------|-------------|---|
+| A MISSING | 197 | 184 | -13 |
+| B SHALLOW | 53 | 60 | +7 (some moved up từ MISSING) |
+| C-OK BREADTH | 51 | 50 | -1 |
+| C-DEEP WIDE | 82 | 89 | +7 |
+
+### Decisions made trong execution
+
+| Decision | Rationale | Phase |
+|----------|-----------|-------|
+| J.5.c trước J.5.a | Pipeline IDs là foundation, register cần biết trước IC | J.5 ordering |
+| J.4.c trước J.4.a/b | NEW file (3.3 + 3.4) trước EXPAND (4.8 + 4.9) cho lower regression risk | J.4 ordering |
+| J.3 EXPAND DEFERRED | Existing 9.4/9.11/9.27 đã comprehensive; J.5.d covered similar pattern cho 13.14 | J.3 ordering |
+| 13.15 cite BAN BGP | Per North Star, chỉ static route, không expand `ovn-bgp-agent` | J.5.a |
+| File 13.17 fix REF version drift | REF mô tả 24.03+, baseline 22.03.8 có REGBIT layout khác | J.5.c.i |
+| Pipeline 63 stages (không phải 64) | Verified `northd/northd.c` PIPELINE_STAGES count | J.5.c.ii |
+
+---
+
 ## -1. Changelog plan
 
 | Version | Date | Change |
 |---------|------|--------|
 | v1 (draft) | 2026-04-25 (chiều) | Initial draft, 489 dòng, 13 section. Đề xuất 1 file 20.8 dedicated bundling 14 scenarios. |
-| v2 (current) | 2026-04-25 (tối) | Rewrite sau user feedback Q1-Q5: (1) Q2 REVERSED (no bundling, distribute 14 scenario vào 13 file native), (2) Q3 deep mode 0.3 ~3000 dòng, (3) Q4 OVN 22.03.8 baseline + version note, (4) Q5 sequencing J.3→J.4→J.5 (J.5.c trước trong J.5). Thêm Section 5 detailed mục lục cho 10 NEW file + Section 6 detailed sections cho 10 EXPAND file + Section 7 distributed scenario mapping. Tổng 1337 dòng, 15 L2 + 27 L3 section. |
+| v2 | 2026-04-25 (tối) | Rewrite sau user feedback Q1-Q5: (1) Q2 REVERSED (no bundling, distribute 14 scenario vào 13 file native), (2) Q3 deep mode 0.3 ~3000 dòng, (3) Q4 OVN 22.03.8 baseline + version note, (4) Q5 sequencing J.3→J.4→J.5 (J.5.c trước trong J.5). Thêm Section 5 detailed mục lục cho 10 NEW file + Section 6 detailed sections cho 10 EXPAND file + Section 7 distributed scenario mapping. Tổng 1337 dòng. |
+| v2.1 (current) | 2026-04-25 (tối, sau session execute) | Thêm Section -2 Progress Tracker LIVE. Document execution decisions: J.3 EXPAND deferred per redundancy, J.5.c trước J.5.a per foundation principle, J.4.c trước J.4.a/b per NEW-before-EXPAND. 9/14 phase done, 4 active todo + 1 deferred. |
 
 ---
 
