@@ -30,8 +30,8 @@
 | 8 | J.5.d 13.14 expand (options + ovn-trace + ovn-detrace) | ✅ DONE | `327ce65` | +337 | 30+ ovn-nbctl options + microflow expression syntax |
 | 9 | J.5.e 20.2 lflow-cache tunables | ✅ DONE | `e4b7d2d` | +104 | 5 external_ids tunable Anatomy |
 | — | J.3 EXPAND (9.4 + 9.11 + 9.27) | ⏸ DEFERRED | — | — | Marginal value low; existing files đã comprehensive (1406+1170+696 dòng); J.5.d đã làm pattern tương tự cho 13.14 |
-| 10 | J.5.b 13.x schema completeness (focused) | ✅ DONE | (next commit) | +343 | 13.11 +167 (reside-on-redirect-chassis TRUE gap + Logical_Router_Policy + Static_Route ECMP/VRF/BFD) + 13.9 +176 (selection_fields + hairpin_snat_ip + Load_Balancer_Group + Health_Check). Audit-driven focused (5 true gap thay vì 50 column blanket) |
-| 11 | J.6 Distributed troubleshoot scenarios | ⏳ TODO | — | est ~1300 | 12 scenario × ~100 dòng across 12 file native |
+| 10 | J.5.b 13.x schema completeness (focused) | ✅ DONE | `9cc50dd` | +343 | 13.11 +167 (reside-on-redirect-chassis TRUE gap + Logical_Router_Policy + Static_Route ECMP/VRF/BFD) + 13.9 +176 (selection_fields + hairpin_snat_ip + Load_Balancer_Group + Health_Check). Audit-driven focused (5 true gap thay vì 50 column blanket) |
+| 11 | J.6 Distributed troubleshoot scenarios (focused cross-link) | ✅ DONE | (next commit) | +75 | Audit J.6: tất cả 14/14 scenario đã có coverage trong existing curriculum (20.0/20.2/20.5/9.26/13.x). Thay distribute 1200 dòng duplicate, tạo master cross-link table trong 20.0 §20.0.X mapping REF Section 4 → curriculum file:section (150 dòng). Pragmatic approach giữ no-bundling rule + tránh duplicate. |
 | 12 | J.2 Master index 0.3 (LAST per max-quality) | ⏳ TODO | — | est ~3000 | Vietnamese DEEP adaptation của REF, build với knowledge gained |
 | 13 | J.7 Validation + Release v3.5 | ⏳ TODO | — | est ~50 | Re-grep matrix, spot-check, tag + GitHub Release |
 
@@ -39,8 +39,8 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases done | 10/14 (71%) |
-| Phases active todo | 3 (J.6 + J.2 + J.7) |
+| Phases done | 11/14 (79%) |
+| Phases active todo | 2 (J.2 + J.7) |
 | Phase deferred | 1 (J.3 EXPAND) |
 | Files NEW | 9 (13.17, 13.16, 9.28, 9.29, 9.30, 9.31, 3.3, 3.4, 13.15) |
 | Files EXPAND | 4 (4.8, 4.9, 13.14, 20.2) |

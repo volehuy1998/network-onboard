@@ -271,7 +271,7 @@
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 20.0 | OVS+OVN systematic debugging | 815 | DONE (Phase G.1.4 + v3.2 P4) | 5-layer model + 8 scenarios + 3 case studies + Anatomy `coverage/show` |
+| 20.0 | OVS+OVN systematic debugging | 890 | DONE (Phase G.1.4 + v3.2 P4 + J.6 v3.5) | 5-layer model + 8 scenarios + 3 case studies + Anatomy `coverage/show`. + section 20.0.X backfill J.6: master cross-link table mapping REF Section 4 14 production scenarios → existing curriculum file:section (lookup spine, no duplicate). Audit-driven decision: 14/14 scenario đã coverage substantial trong existing 20.0/20.2/20.5/9.26/13.x; cross-link table thay vì 1200 dòng duplicate. |
 | 20.1 | OVS+OVN security hardening | 1399 | DONE (Phase G.3.3 + v3.2 P4) | 4-layer audit trail + Anatomy ACL audit + port_security |
 | 20.2 | OVN troubleshooting deep-dive | 1731 | DONE (Phase G.3.1 + J.5.e v3.5) | `ovn-trace` + 21 ovn-appctl + 16-symptom matrix + 3 GE + Capstone POE. + section 20.2.15 backfill J.5.e: 5 lflow-cache external_ids tunable (ovn-enable-lflow-cache, ovn-limit-lflow-cache, ovn-memlimit-lflow-cache-kb, ovn-trim-limit-lflow-cache, ovn-trim-wmark-perc-lflow-cache) Anatomy + decision matrix tuning + anti-pattern. |
 | 20.3 | OVN daily operator playbook | 1554 | DONE (Phase G.5.1) | 10 task categories + 2 e2e workflows + 3 GE + Capstone POE |
