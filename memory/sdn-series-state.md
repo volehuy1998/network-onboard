@@ -195,7 +195,7 @@
 | 12.1 | DC overlay integration (VXLAN + EVPN) | 178 | SHALLOW | |
 | 12.2 | Micro-segmentation + service chaining | 162 | SHALLOW | |
 
-## Block XIII, OVN foundation (17 files, ~7783 lines, v3.5 J.5.c added 13.17 register + 13.16 pipeline IDs)
+## Block XIII, OVN foundation (18 files, ~8401 lines, v3.5 J.5.a/c added 13.15 IC + 13.16 pipeline IDs + 13.17 register)
 
 ### Core (13.0-13.6, all v3.2 P1 expanded)
 
@@ -227,10 +227,11 @@
 | 13.13 | OVS to OVN migration guide | 403 | DONE | NB schema mapping + phase rollout + rollback |
 | 13.14 | ovn-nbctl + ovn-sbctl reference playbook | 660 | DONE (Phase I.B1 S67') | Sister cho 9.11. 97 lệnh ovn-nbctl 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, 10 Anatomy, decision matrix 11 row, GE multi-tier tenant, Capstone POE Rule 5 trụ cột |
 
-### Foundation depth (13.16 + 13.17, Phase J.5.c v3.5-KeywordBackbone)
+### Foundation depth (13.15 + 13.16 + 13.17, Phase J.5.a/c v3.5-KeywordBackbone)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
+| 13.15 | OVN Inter-Connect federated multi-region | 618 | DONE (Phase J.5.a) | NEW Phase J.5.a. Federated 4-database architecture (NB+SB local + IC_NB+IC_SB central), ovn-ic + ovn-ic-northd daemon, Transit Switch + Transit Router + AvailabilityZone, 2-region lab synthetic, 3-region capstone POE design. Đóng forward-ref 9.31→13.15. Source verified man page ovn-ic(8) + ovn-ic-nbctl(8) + ovn-ic-sbctl(8) + OVN architecture doc. BAN BGP-agent maintained: chỉ static route + link 11.2 cho overview. |
 | 13.16 | OVN logical pipeline, bản đồ table ID toàn bộ stage trên br-int | 579 | DONE (Phase J.5.c.ii) | NEW Phase J.5.c.ii. **CRITICAL gap closure** (0/63 stage được mention trước đây). Source verified branch-22.03: northd/northd.c PIPELINE_STAGES (26 LS_IN + 10 LS_OUT + 20 LR_IN + 7 LR_OUT = 63 stage thực, không phải 64 như REF claim), controller/lflow.h OFTABLE_* (table 0, 8-33, 37-39, 40-49, 64-72). Công thức ánh xạ logical→OF table. 3 Anatomy + 2 GE + 1 Capstone POE. Cross-link 11+ Phần. Version drift 22.03→24.03→24.09 documented. |
 | 13.17 | OVN register conventions, REGBIT và MLF flags | 516 | DONE (Phase J.5.c.i) | NEW Phase J.5.c.i. Foundation cho 13.16 pipeline IDs. Source verified branch-22.03: include/ovn/logical-fields.h (MFF_LOG_DATAPATH/FLAGS/INPORT/OUTPORT, 13 MLF flag, ct_label bit), northd/northd.c (15 REGBIT reg0 + 5 REGBIT reg9), Geneve TLV class 0x0102. 2 Anatomy + 1 GE + 1 Capstone POE. Cross-link tới 4.8/9.24/11.0/13.7/13.8/13.16/20.7. |
 
