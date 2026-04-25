@@ -153,6 +153,15 @@
 | 9.26 | OVS revalidator storm forensic | 1185 | DONE (Phase E.B + G.3.2) | 2 Anatomy + 3 case study + 4 GE + 1 Capstone + 5 POE |
 | 9.27 | OVS+OVN packet journey end-to-end | 696 | DONE (v3.2 P4) | 2 GE + 1 Capstone + Anatomy `tnl/ports/show` + `bfd/show` |
 
+### CLI mastery utilities (9.28-9.31, Phase J.3 v3.5-KeywordBackbone)
+
+| Part | Title | Lines | Status | Notes |
+|------|-------|-------|--------|-------|
+| 9.28 | ovs-pcap + ovs-tcpundump utility | 269 | DONE (Phase J.3) | NEW. Pure pcap reformatter cho `ofproto/trace` workflow. Verify upstream `ovs-pcap(1)` + `ovs-tcpundump(1)` man page. Anatomy + GE replay packet ICMP qua trace. Anti-pattern `tcpdump -x` thiếu Ethernet header. |
+| 9.29 | vtep-ctl + VTEP schema | 347 | DONE (Phase J.3) | NEW. HW VXLAN gateway integration cho bare metal. 7 nhóm command (Physical_Switch/Port, Logical_Switch/Router, MAC binding local/remote, Manager, Database). Bind LSWITCH với physical port:VLAN. Lab synthetic dùng `ovs-vtep` simulator. Verify upstream `vtep-ctl(8)` + vtep.ovsschema. |
+| 9.30 | ovs-pki PKI helper | 293 | DONE (Phase J.3) | NEW. SSL/TLS bootstrap cho mTLS giữa chassis ↔ SB DB. 7 commands (init/req/sign/req+sign/verify/fingerprint/self-sign). Two-CA hierarchy (controllerca + switchca). Anti-pattern `req+sign` trên production chassis. Verify upstream `ovs-pki(8)`. |
+| 9.31 | ovsdb-tool offline utility | 378 | DONE (Phase J.3) | NEW. 15 commands chia 5 nhóm: creation (create/create-cluster/join-cluster), schema management (convert/needs-conversion/version), inspection (query/transact/show-log), cluster integrity (check-cluster/cluster-to-standalone), maintenance (compact). Anatomy bootstrap 3-node SB cluster from scratch. Verify upstream `ovsdb-tool(1)`. |
+
 ## Block X, OVSDB management (8 files, ~2584 lines, Phase I.B2 added 10.7)
 
 | Part | Title | Lines | Status | Notes |
