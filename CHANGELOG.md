@@ -6,6 +6,112 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## v3.4-DeepFoundation (2026-04-25)
+
+**Release type:** Foundation depth consolidation, tier 2 source-code internals across Block VIII (Linux primer), Block X (OVSDB), Block XI (Overlay), plus Block IX/XIII completion + critical bug fixes.
+
+**Branch:** `docs/sdn-foundation-rev2`
+**Base:** v3.3-ArchitectMaster + 23 commits.
+**Effort:** Multiple working sessions.
+
+### Mục tiêu
+
+Đóng gap tier 2 source-code level depth cho mọi file foundation in-scope (excluding permanently-banned topics: DPDK/BPF/XDP/BGP/K8S). Curriculum đạt comprehensive coverage tier 2 cho 5 trụ cột mission core.
+
+### Major directives
+
+**2026-04-25 PERMANENT BAN directive:** DPDK, BPF/eBPF, XDP/AF_XDP, BGP, K8S excluded from active plan. Existing content stays as-is, no expansion. CLAUDE.md North Star + memory feedback files codify rule.
+
+### Changes
+
+**Critical bug fix (1 commit):**
+
+- **`5944827` Part 0.2 truncation fix**: 56 → 460 dòng. Foundation anchor referenced từ 5+ Phần Phase G + I (9.25, 9.27, 13.7.8, 20.0, 20.7) trước đây kết thúc giữa câu "12 giai đoạn chi tiết:". Fixed bằng 12-stage packet journey complete + diagnostic workflow + GE + key takeaways.
+
+**Block XI Overlay tier 2 (3 commits, +893 lines):**
+
+- `7064d20` 11.0 VXLAN/Geneve/STT: 213 → 551 (+338). Geneve packet format byte-by-byte, IANA TLV class registry (OVN class 0x0102), header overhead math, NIC offload matrix.
+- `673299b` 11.1 MTU/PMTUD/offload: 213 → 517 (+304). PMTUD packet flow IPv4+IPv6, PMTU black hole 5 root cause, TCP MSS clamping, OVN check_pkt_larger source.
+- `5868137` 11.2 BGP EVPN: 157 → 408 (+251). Type 2 NLRI byte-by-byte, Type 3/4/5 deep, IRB modes, OVN integration use cases. **Note: BGP banned from future expansion per directive.**
+
+**Block VIII Linux primer tier 2 (4 commits, +876 lines):**
+
+- `47df050` 8.0 namespaces+cgroups: 194 → 382 (+188). clone/unshare/setns syscall internals, lifecycle ref counting, OVS daemon namespace pattern.
+- `2d94b87` 8.1 bridge+veth+macvlan: 254 → 430 (+176). veth driver source (`net/core/veth.c`), bridge forwarding logic, OVS internal port comparison.
+- `5dba35b` 8.2 VLAN+bonding+team: 182 → 426 (+244). bonding LACP 4-substate state machine, xmit_hash_policy, OVS bond comparison.
+- `7279a3b` 8.3 tc+conntrack: 207 → 475 (+268). Kernel queueing path, HTB token bucket source, nf_conntrack hash table + zone implementation.
+
+**Block X OVSDB tier 2 (1 commit, +429 lines):**
+
+- `ddba050` 10.0 OVSDB schema RFC 7047: 196 → 625 (+429). Wire protocol byte-by-byte, 10 operations deep với JSON example, monitor + monitor_cond + monitor_cond_since evolution, IDL synchronization model, schema evolution flow.
+
+**Block IX OVS internals tier 2 (3 commits, +671 lines):**
+
+- `534e95a` 9.17 perf benchmark: 276 → 538 (+262). Hot path source mapping (kernel + userspace), coverage counter mapping, NUMA + cache locality methodology.
+- `2352f3d` 9.19 flow table granularity: 278 → 521 (+243). Microflow vs Megaflow trade-off, wildcard mask design, match field cardinality.
+- `16628df` 9.13 libvirt+docker: 202 → 561 (+359). libvirt-OVS protocol contract, Docker netns lifecycle, production security baseline expand.
+
+**Sequence H, OVN core completion (3 commits, +550 lines):**
+
+- `9677733` 13.9 OVN Load_Balancer: 218 → 451 (+233). `ct_lb` action source, Service_Monitor SBDB schema, distributed health check.
+- `c553594` 13.10 OVN DHCP+DNS: 327 → 492 (+165). `put_dhcp_opts` + `dns_lookup` action source, NBDB→SBDB compile flow.
+- `dffb24e` 13.12 OVN IPAM: 254 → 406 (+152). `ipam_get_unused_ip()` algorithm, MAC generation, IPv6 EUI-64 mode.
+
+**Sequence O, OVS pure completion (3 commits, +533 lines):**
+
+- `2c2e27c` 9.0 OVS history: 258 → 419 (+161). Timeline 17 năm version-by-version, NSDI 2015 + 2020 papers deep.
+- `5e10344` 9.18 native L3 routing: 317 → 493 (+176). `dec_ttl` source, ECMP `multipath()`, 3-stage routing pattern.
+- `e89a88c` 9.20 VLAN access+trunk: 337 → 533 (+196). `vlan_mode` 4 type source, push_vlan/pop_vlan action, QinQ 802.1ad deep.
+
+**Meta (4 commits):**
+
+- `0f04ed8` CLAUDE.md add BGP to out-of-scope (LOWEST priority).
+- `4fa24a4` CLAUDE.md consolidate 5-tier priority hierarchy.
+- `67090c8` CLAUDE.md elevate to PERMANENT BAN cho DPDK/BPF/XDP/BGP/K8S.
+- `f62ab05`, `19aaad6` tracker updates.
+
+### Statistics (v3.4 delta from v3.3)
+
+- **20 files modified, 23 commits.**
+- **+4,687 lines, -110 lines = +4,577 net.**
+- Curriculum: 119 files unchanged, ~57,800 → **~61,826 lines** (+~4K).
+- Block VIII Linux primer: ~837 → 1,713 lines (+105% growth).
+- Block X OVSDB: ~2,996 → 3,425 lines.
+- Block XI Overlay: ~2,196 → 3,089 lines.
+- Block XIII OVN: ~6,028 → 6,838 lines.
+
+### Curriculum state post-v3.4
+
+- **HIGHEST tier (OVS+OpenFlow+OVN core internals):** All files DONE tier 2.
+- **HIGH tier (Tools mastery + debug):** All DONE.
+- **MEDIUM tier (Foundation prerequisites):** All DONE.
+- **LOW tier (history + DC applied):** Stays at current depth (intentional, per North Star "foundation depth first" + relevance analysis).
+
+5 pillars coverage:
+
+- **#1 Foundational knowledge:** OVS + OpenFlow + OVN tier 2 source-code level. ~50+ Anatomy Template A.
+- **#2 Tools mastery:** 9.4 + 9.11 + 13.14 + 10.7 + 20.x reference playbooks complete.
+- **#3 Output interpretation:** 50+ Anatomy với Healthy/Warning/Critical thresholds.
+- **#4 Debug + troubleshoot:** Decision tree (9.14, 20.0, 20.2), tracing gradient (20.7), forensic case studies (9.26, 20.5).
+- **#5 Architecture + mechanism:** Source-code level cho xlate, classifier, revalidator, raft, northd, controller, encap, IPAM, LB, DHCP+DNS.
+
+### Permanently banned (since 2026-04-25)
+
+DPDK, BPF/eBPF, XDP/AF_XDP, BGP-related, K8S deep. Existing content (9.3, 11.2, 14.x, 15.x, 16.x, 17.0-19.0) stays as-is, no expansion.
+
+### Quality gates maintained
+
+- Rule 9 null bytes: 0 regressions.
+- Rule 11 prose: ~99% compliance, 60+ fixes during expand.
+- Rule 13 em-dash density: all expanded files < 0.10/line.
+- Rule 14 source code citations: all verified upstream (`branch-22.03` OVN, `v2.17.9` OVS, Linux `v5.15`).
+
+### Links
+
+- v3.4 commits: `5944827` → `e89a88c` (23 commits sequential, plus meta + tracker).
+
+---
+
 ## v3.3-ArchitectMaster (2026-04-25)
 
 **Release type:** Minor release, Architecture Master tier 2 source-code internals + tools mastery + debug pedagogical gradient.

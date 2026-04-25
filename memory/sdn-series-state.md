@@ -2,7 +2,7 @@
 
 > Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
 
-**Current release:** `v3.3-ArchitectMaster` (tag 2026-04-25, Phase I CLOSE). Verdict A. All CRITICAL + HIGH audit findings closed; OVS/OVN/OVSDB tier 2 source-code internals + tools mastery added.
+**Current release:** `v3.4-DeepFoundation` (tag 2026-04-25, Sequence H+O CLOSE). Verdict A. Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S.
 
 **Baseline:** Ubuntu 22.04 LTS + OVS 2.17.9 (jammy-updates) + OVN 22.03.8 (LTS) + kernel 5.15 + Mininet 2.3.0. Upgrade path: Ubuntu 24.04 + OVS 3.3 + OVN 24.03.
 
@@ -263,10 +263,11 @@
 
 ---
 
-## Total statistics (post-Block XI tier 2 + 0.2 fix)
+## Total statistics (post-v3.4-DeepFoundation)
 
-- **Total files:** 119 (+3 from Phase I: 13.14, 10.7, 20.7)
-- **Total lines:** ~59,500 (Phase I +2,100 + 0.2 truncation fix +404 + Block XI tier 2 +1,263)
+- **Total files:** 119 (3 NEW từ Phase I: 13.14, 10.7, 20.7; rest existing expanded)
+- **Total lines:** ~61,826 (verified `find sdn-onboard -name '*.md' | xargs wc -l`)
+- **Tier 2 coverage:** All HIGHEST + HIGH + MEDIUM tier files DONE. LOW tier (history + DC applied) stays at current depth per North Star relevance analysis.
 - **Total Blocks:** 20 (0 to XX)
 - **DONE:** ~110/119 (92%)
 - **PARTIAL:** 0/119
@@ -284,6 +285,7 @@
 | v3.3-ArchitectMaster | RELEASED 2026-04-25 | Phase I 6 sessions: Sequence A (3 expand) 13.8 northd source +205 + 13.7 physical.c +166 + 10.1 raft.c +213; Sequence B (3 NEW) 13.14 ovn-nbctl/sbctl 660 + 10.7 ovsdb-client 589 + 20.7 tracing gradient 691. Tier 2 source-code internals + tools mastery + debug pedagogical gradient. |
 | v3.3.1-OverlayMaster | UNRELEASED 2026-04-25 | 0.2 truncation fix (+404) + Block XI Overlay tier 2 (11.0/11.1/11.2 +1263). Foundation anchor 12-stage tour fully implemented + Geneve packet format byte-by-byte + PMTUD black hole + EVPN Type 2 NLRI deep + IRB modes + OVN integration use cases. |
 | v3.3.2-LinuxPrimer | UNRELEASED 2026-04-25 | Block VIII Linux primer tier 2 (8.0/8.1/8.2/8.3 +876). Kernel source-code level: clone/unshare/setns syscall + veth driver + bonding LACP state machine + nf_conntrack zones + 4 Anatomy + 4 Capstone POE. |
+| v3.4-DeepFoundation | RELEASED 2026-04-25 | Tag aggregate cho mọi tier 2 work post-v3.3. 23 commits, +4,577 net lines, 20 files. Block VIII (4 file) + Block X 10.0 + Block XI (3 file) + Block IX (9.0/9.13/9.17/9.18/9.19/9.20) + Block XIII (13.9/13.10/13.12) + 0.2 truncation fix. PERMANENT BAN directive codified for DPDK/BPF/XDP/BGP/K8S. |
 | v4.0 | Long-term | New Parts based on user feedback + production lab verify |
 
 ## Closed gaps (audit 2026-04-25)
