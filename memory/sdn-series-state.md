@@ -31,6 +31,7 @@
 | 0.0 | How to read this series | 148 | DONE | Meta orientation + reading paths + convention markers |
 | 0.1 | Lab environment setup | 340 | DONE | Ubuntu 22.04 + 3 modes (single-node / two-node chassis pair / kolla) |
 | 0.2 | End-to-end packet journey | 342 | DONE | Cross-cutting synthesis, anchor for every topic |
+| 0.3 | Master Keyword Index — Vietnamese DEEP adaptation của REF | 1153 | DONE (Phase J.2 v3.5) | NEW J.2.a/b/c (LAST per max-quality). Lookup spine giữa REF (offline EN) và curriculum (VN teaching). 5 phần: I OVS 80 entry, II OpenFlow 110 entry, III OVN 120+ entry, IV BANNED 10 entry, V cross-link map 50+. Mỗi entry 5-axis 1-line + status code (DEEP/BREADTH/SHALLOW/MISSING/BANNED) + cross-link Phần curriculum. |
 
 ## Block I, Why SDN was needed (3 files, 736 lines)
 

@@ -31,16 +31,18 @@
 | 9 | J.5.e 20.2 lflow-cache tunables | ✅ DONE | `e4b7d2d` | +104 | 5 external_ids tunable Anatomy |
 | — | J.3 EXPAND (9.4 + 9.11 + 9.27) | ⏸ DEFERRED | — | — | Marginal value low; existing files đã comprehensive (1406+1170+696 dòng); J.5.d đã làm pattern tương tự cho 13.14 |
 | 10 | J.5.b 13.x schema completeness (focused) | ✅ DONE | `9cc50dd` | +343 | 13.11 +167 (reside-on-redirect-chassis TRUE gap + Logical_Router_Policy + Static_Route ECMP/VRF/BFD) + 13.9 +176 (selection_fields + hairpin_snat_ip + Load_Balancer_Group + Health_Check). Audit-driven focused (5 true gap thay vì 50 column blanket) |
-| 11 | J.6 Distributed troubleshoot scenarios (focused cross-link) | ✅ DONE | (next commit) | +75 | Audit J.6: tất cả 14/14 scenario đã có coverage trong existing curriculum (20.0/20.2/20.5/9.26/13.x). Thay distribute 1200 dòng duplicate, tạo master cross-link table trong 20.0 §20.0.X mapping REF Section 4 → curriculum file:section (150 dòng). Pragmatic approach giữ no-bundling rule + tránh duplicate. |
-| 12 | J.2 Master index 0.3 (LAST per max-quality) | ⏳ TODO | — | est ~3000 | Vietnamese DEEP adaptation của REF, build với knowledge gained |
+| 11 | J.6 Distributed troubleshoot scenarios (focused cross-link) | ✅ DONE | `074a804` | +75 | Audit J.6: tất cả 14/14 scenario đã có coverage trong existing curriculum (20.0/20.2/20.5/9.26/13.x). Thay distribute 1200 dòng duplicate, tạo master cross-link table trong 20.0 §20.0.X mapping REF Section 4 → curriculum file:section. Pragmatic approach giữ no-bundling rule + tránh duplicate. |
+| 12 | J.2 Master index 0.3 Phần I OVS | ✅ DONE | `6da0d04` | +568 | NEW. 80 OVS keyword index 5-axis + cross-link |
+| 12.b | J.2 Master index 0.3 Phần II OpenFlow | ✅ DONE | `0b27737` | +361 | 110 OpenFlow keyword (10 pipeline + 60 match field + 40 action + 6 instruction + 19 message + 8 version diff) compact format |
+| 12.c | J.2 Master index 0.3 Phần III OVN + IV BANNED + V cross-link | ✅ DONE | (next commit) | +224 | 120+ OVN keyword + 10 BANNED + 50+ cross-link map. 0.3 file COMPLETE 1153 dòng total |
 | 13 | J.7 Validation + Release v3.5 | ⏳ TODO | — | est ~50 | Re-grep matrix, spot-check, tag + GitHub Release |
 
 ### Cumulative metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases done | 11/14 (79%) |
-| Phases active todo | 2 (J.2 + J.7) |
+| Phases done | 13/14 (93%) — chỉ còn J.7 release |
+| Phases active todo | 1 (J.7 release tag + GitHub Release) |
 | Phase deferred | 1 (J.3 EXPAND) |
 | Files NEW | 9 (13.17, 13.16, 9.28, 9.29, 9.30, 9.31, 3.3, 3.4, 13.15) |
 | Files EXPAND | 4 (4.8, 4.9, 13.14, 20.2) |
