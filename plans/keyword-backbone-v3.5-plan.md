@@ -35,14 +35,14 @@
 | 12 | J.2 Master index 0.3 Phần I OVS | ✅ DONE | `6da0d04` | +568 | NEW. 80 OVS keyword index 5-axis + cross-link |
 | 12.b | J.2 Master index 0.3 Phần II OpenFlow | ✅ DONE | `0b27737` | +361 | 110 OpenFlow keyword (10 pipeline + 60 match field + 40 action + 6 instruction + 19 message + 8 version diff) compact format |
 | 12.c | J.2 Master index 0.3 Phần III OVN + IV BANNED + V cross-link | ✅ DONE | (next commit) | +224 | 120+ OVN keyword + 10 BANNED + 50+ cross-link map. 0.3 file COMPLETE 1153 dòng total |
-| 13 | J.7 Validation + Release v3.5 | ⏳ TODO | — | est ~50 | Re-grep matrix, spot-check, tag + GitHub Release |
+| 13 | J.7 Validation + Release v3.5 | ✅ DONE | (this commit) | +50 | Final coverage matrix re-audit (Tier A 197→165, -16%), CHANGELOG.md +200 dòng v3.5 entry, tag `v3.5-KeywordBackbone`, GitHub Release published |
 
 ### Cumulative metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases done | 13/14 (93%) — chỉ còn J.7 release |
-| Phases active todo | 1 (J.7 release tag + GitHub Release) |
+| Phases done | **14/14 (100%) — v3.5 RELEASED** |
+| Phases active todo | 0 |
 | Phase deferred | 1 (J.3 EXPAND) |
 | Files NEW | 9 (13.17, 13.16, 9.28, 9.29, 9.30, 9.31, 3.3, 3.4, 13.15) |
 | Files EXPAND | 4 (4.8, 4.9, 13.14, 20.2) |

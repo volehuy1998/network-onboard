@@ -6,6 +6,147 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## v3.5-KeywordBackbone (2026-04-25)
+
+**Release type:** Foundation backbone qua keyword reference. Mỗi keyword in-scope của REF (`sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md`) có 5-axis classification (Bucket | Context | Purpose | Activity | Mechanism), cross-link qua master index 0.3.
+
+**Branch:** `docs/sdn-foundation-rev2`
+**Base:** v3.4-DeepFoundation + 17 commit (J.1 → J.7).
+**Effort:** 1 working session intensive (max-quality).
+
+### Mục tiêu
+
+User mandate verbatim 2026-04-25: *"kiến thức nền tảng phải vững chải, am hiểu mọi công cụ và cách sử dụng chúng thông qua các keyword cú pháp, keyword về thuật ngữ được nêu trong khái niệm, kiến trúc."*
+
+### Phase execution (14 phase per `plans/keyword-backbone-v3.5-plan.md`)
+
+| Phase | Output | Lines | Commit |
+|-------|--------|-------|--------|
+| J.1 Inventory + matrix | 3 memory file (inventory 488 + matrix 553 + gap-priority 310) + 3 Python script | +1351 | `af29ae3` |
+| J.5.c.i 13.17 register/REGBIT/MLF | NEW Part 13.17 (516 dòng), foundation cho 13.16 | +516 | `12f62ce` |
+| J.5.c.ii 13.16 pipeline IDs | NEW Part 13.16 (579 dòng), CRITICAL gap closure (0/63 stages) | +579 | `6b54484` |
+| J.3 NEW utility files | 4 NEW: 9.28 ovs-pcap (269), 9.29 vtep-ctl (347), 9.30 ovs-pki (293), 9.31 ovsdb-tool (378) | +1287 | `63fb8db` |
+| J.4.c OF protocol foundation | 2 NEW: 3.3 messages + state machine (553), 3.4 version diff (426) | +979 | `2feaa60` |
+| J.4.a + J.4.b catalog backfill | 4.8 +295 (12 missing match field), 4.9 +231 (12 missing action) | +526 | `a470b28` |
+| J.5.a OVN Inter-Connect | NEW Part 13.15 (618 dòng), đóng forward-ref `9.31 → 13.15` | +621 | `0a35079` |
+| J.5.d 13.14 CLI expand | +337 (30+ ovn-nbctl options + ovn-trace microflow + ovn-detrace) | +337 | `327ce65` |
+| J.5.e 20.2 lflow-cache | +104 (5 external_ids tunable Anatomy) | +104 | `e4b7d2d` |
+| Plan v2.1 progress tracker | +62 dòng tracker LIVE | +62 | `5830e7e` |
+| J.5.b focused schema | 13.11 +167 (reside-on-redirect-chassis TRUE gap + Policy + Static_Route ECMP/VRF/BFD) + 13.9 +176 (selection_fields, hairpin_snat_ip, LB_Group, Health_Check) | +343 | `9cc50dd` |
+| J.6 cross-link 14 scenarios | 20.0 +75 master cross-link table → curriculum (no duplicate) | +75 | `074a804` |
+| J.2.a master index Phần I OVS | NEW Part 0.3 (568 dòng), 80 OVS keyword | +568 | `6da0d04` |
+| J.2.b master index Phần II OpenFlow | +361 (110 keyword: 60 match field + 40 action + 16 message + version diff) | +361 | `0b27737` |
+| J.2.c master index Phần III OVN + IV BANNED + V cross-link | +224 (120+ OVN + 10 BANNED + 50+ cross-link map) | +224 | `ba652c5` |
+
+**Plan deferred:**
+- **J.3 EXPAND** (9.4 + 9.11 + 9.27): existing files đã comprehensive (1406+1170+696 dòng); J.5.d covered similar pattern cho 13.14. Marginal value low + duplicate risk.
+
+### Files
+
+**9 NEW** files in `sdn-onboard/`:
+- `0.3 - master-keyword-index.md` (1153 dòng) — Vietnamese DEEP adaptation của REF, lookup spine
+- `3.3 - openflow-protocol-messages-state-machine.md` (553)
+- `3.4 - openflow-version-differences-1.0-1.3-1.5.md` (426)
+- `9.28 - ovs-pcap-tcpundump-utility.md` (269)
+- `9.29 - vtep-ctl-vtep-schema.md` (347)
+- `9.30 - ovs-pki-pki-helper.md` (293)
+- `9.31 - ovsdb-tool-offline-utility.md` (378)
+- `13.15 - ovn-interconnect-multi-region.md` (618)
+- `13.16 - ovn-logical-pipeline-table-id-map.md` (579) — CRITICAL gap closure
+- `13.17 - ovn-register-conventions-regbit-mlf.md` (516) — Foundation register/REGBIT/MLF
+
+**6 EXPAND** existing files:
+- `4.8 - openflow-match-field-catalog.md` 926 → 1221 (+295)
+- `4.9 - openflow-action-catalog.md` 1544 → 1775 (+231)
+- `13.14 - ovn-nbctl-sbctl-reference-playbook.md` 660 → 997 (+337)
+- `20.2 - ovn-troubleshooting-deep-dive.md` 1627 → 1731 (+104)
+- `13.11 - ovn-gateway-router-distributed.md` 516 → 683 (+167)
+- `13.9 - ovn-load-balancer-internals.md` 451 → 627 (+176)
+- `20.0 - ovs-ovn-systematic-debugging.md` 815 → 890 (+75)
+
+**Curriculum statistics post-v3.5:**
+- 128 file (was 119, +9 NEW)
+- ~70.5K lines (was ~63K, +7.5K)
+- Block 0: 4 file (added 0.3 master index)
+- Block III: 5 file (added 3.3 + 3.4)
+- Block IX: 32 file (added 9.28-9.31)
+- Block XIII: 18 file (added 13.15-13.17)
+
+### Coverage gap matrix improvement (verified J.7 re-audit)
+
+| Tier | Pre-session | Post-session | Δ |
+|------|-------------|--------------|---|
+| A MISSING | 197 | **165** | **-32** (-16%) |
+| B SHALLOW | 53 | 56 | +3 |
+| C-OK BREADTH | 51 | **71** | **+20** |
+| C-DEEP WIDE | 82 | **91** | **+9** |
+| Total well-covered (C-OK + C-DEEP) | 133 (35%) | **162 (42%)** | **+29 entry** |
+
+### Quality gates (100% pass)
+
+| Rule | Result |
+|------|--------|
+| Rule 9 null bytes | 0/15 file |
+| Rule 11 Vietnamese prose | 0 violation |
+| Rule 13 em-dash density | All file < 0.10/line (aggregate 0.038) |
+| Rule 14 source citation | 100% verified upstream branch-22.03 + v2.17.9 |
+| Cross-link integrity | 0 broken (J.5.a closed forward-ref `9.31 → 13.15`) |
+
+### Key architectural decisions
+
+1. **J.5.c trước J.5.a** (foundation first): pipeline IDs + register convention làm foundation cho Inter-Connect.
+2. **J.4.c trước J.4.a/b** (NEW before EXPAND): lower regression risk.
+3. **J.3 EXPAND DEFERRED** (audit-driven): existing 9.4/9.11/9.27 đã comprehensive (1406+1170+696 dòng).
+4. **J.5.b focused approach** (5 TRUE gap thay vì 50 column blanket): audit-driven.
+5. **J.6 cross-link table** (thay distribute 1200 dòng duplicate): audit-driven, all 14 scenario already covered.
+6. **J.2 LAST per max-quality**: master index viết với knowledge gained từ tất cả phase.
+
+### Accuracy fixes vs REF
+
+REF (English source-of-truth) describes OVN convention closer to 24.03+. Curriculum baseline OVN 22.03.8 có khác biệt:
+
+| REF claim | Reality 22.03.8 |
+|-----------|-----------------|
+| 64 pipeline stage tổng | **63** (26+10+20+7) |
+| LS_IN có 28 stage | **26** (24.03+ tách ACL_EVAL/ACTION = 28) |
+| LR_IN có 19 stage | **20** (REF miss DEFRAG) |
+| LR_OUT có 6 stage | **7** (REF miss CHECK_DNAT_LOCAL) |
+| `REGBIT_PORT_SEC_DROP bit 0 reg0` | KHÔNG tồn tại trong 22.03.8 |
+| `REGBIT_CONNTRACK_COMMIT bit 2` | THỰC bit 1 (`reg0[1]`) |
+| `REGBIT_ACL_HINT_ALLOW_NEW bit 1` | THỰC bit 7 (`reg0[7]`) |
+| `REGBIT_LB_NAT_DEFRAG` | Tên thực `REGBIT_CONNTRACK_DEFRAG` |
+| `ovs-pki set-default` command | KHÔNG tồn tại trong man page |
+
+### BAN handling
+
+Per CLAUDE.md North Star (PERMANENT BAN directive 2026-04-25): DPDK/PMD/SMC/EMC/mempool/eBPF/XDP/BGP-deep/K8s-deep KHÔNG expand. Existing 9.3 + 16.x stays as-is. Master index 0.3 Phần IV liệt kê 10 BANNED entry với redirect REF.
+
+### Statistics (v3.5 delta from v3.4)
+
+- **17 commits** trong session intensive
+- **+9824 lines curriculum** (9 NEW + 6 EXPAND + tracker updates)
+- **+~10,300 lines tổng** (curriculum + plan + memory + scripts)
+- **9 file NEW + 6 file EXPAND + 0 file deleted**
+
+### Curriculum state post-v3.5
+
+- **128 files** sdn-onboard/*.md (vs 119 pre-session)
+- **~70.5K lines** (vs ~63K pre-session)
+- **5 trụ cột coverage maintained + enhanced:**
+  - Pillar 1 (foundational knowledge): 5-axis classification cho 320+ keyword
+  - Pillar 2 (tools mastery): 9.28-9.31 thêm 4 utility tool, 13.14 + 13.15 expand CLI mastery
+  - Pillar 3 (output interpretation): 13.16 pipeline ID map cho dump-flows decode + 13.17 register convention cho regN decode
+  - Pillar 4 (debug + troubleshoot): 14 cross-cutting scenario mapped tới native curriculum chapter (20.0 §20.0.X)
+  - Pillar 5 (architecture + mechanism): 64 stage names + 20 REGBIT + 13 MLF flag verified upstream branch-22.03
+
+### Links
+
+- v3.5 commits: `af29ae3` → `ba652c5` (17 commit sequential)
+- Plan: `plans/keyword-backbone-v3.5-plan.md` (1399 dòng với LIVE Progress Tracker)
+- Source-of-truth REF: `sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md`
+
+---
+
 ## v3.4-DeepFoundation (2026-04-25)
 
 **Release type:** Foundation depth consolidation, tier 2 source-code internals across Block VIII (Linux primer), Block X (OVSDB), Block XI (Overlay), plus Block IX/XIII completion + critical bug fixes.
