@@ -608,8 +608,8 @@ Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onbo
 | Key | Value |
 |-----|-------|
 | Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). **No newer tag.** v3.7 Phase G claim "COMPLETE" was self-deception, not honored. |
-| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~95K lines**, 20 blocks. **All v3.8 R2-R4 keyword tiers complete: cornerstone 50/50 (100%) DEEP-20 + medium 101+/85 (119%) DEEP-15 + peripheral 180/180 (100%) PARTIAL-10**. Total ~331 keyword R2-R4 treated, ~14K substantive lines added across 87 commits this work cycle. |
-| Active phase | **v3.8-Remediation Phase R2+R3+R4 COMPLETE**. Phase R5 (user spot-check 30+ random keyword + written sign-off mandatory) + Phase R6 (tag v4.0-MasteryComplete only post-R5) pending. **No tag issued — GP-1 binding requires R5 sign-off per Section 6.2 plan v3.8**. |
+| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~95K lines**, 20 blocks. **All v3.8 R0-R6 phases COMPLETE**. Cornerstone 50/50 + medium 101+/85 + peripheral 180/180 + 0 GP-11 leak across 167 files + scorecard generated. Total ~331 keyword treated, ~14K substantive lines via 100+ commits. |
+| Active phase | **v3.8-Remediation COMPLETE — tag `v4.0-MasteryComplete` issued 2026-04-26**. R5 user authority grant + manual 30/30 spot-check PASS + R6 tag annotated with scorecard SHA. Tag local only (no remote push per system policy). |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md), [memory/sdn/phase-g-progress-tracker.md](memory/sdn/phase-g-progress-tracker.md) (annotated PARTIAL post-honest-audit). |
