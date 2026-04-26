@@ -23,14 +23,40 @@
 - Tools mastery: `ovs-vsctl`, `ovs-ofctl`, `ovs-dpctl`, `ovs-appctl`, `ovn-nbctl`, `ovn-sbctl`, `ovn-trace`, `ofproto/trace`, `ovn-detrace`.
 - Debug + troubleshoot + forensic + daily operator playbook (incident decision tree, anatomy template, POE).
 
-**Out-of-scope (DO NOT DRIFT):**
+**PERMANENTLY BANNED FROM PLAN (since 2026-04-25 final consolidated directive):**
 
-- Kubernetes networking depth (kube-proxy, CNI plugin chain, OVN-Kubernetes K8S-specific control loop).
-- DPDK fast-path internals (PMD thread tuning, mempool, hugepage).
-- XDP / eBPF datapath as replacement for OVS kernel module.
-- Service mesh (Istio, Linkerd, Cilium control plane).
-- Pure cloud-native abstractions (CRD, operator pattern), except where directly relevant to OVN logical model.
-- Block XV (Cloud Native) was officially deprioritized by user on 2026-04-23. 15.1 + 15.2 are deferred indefinitely.
+User directive (verbatim, 2026-04-25 FINAL): *"hãy ghi nhớ vĩnh viễn rằng những thứ liên quan đến công nghệ nâng cao như DPDK, BPF, XDP, BGP, K8S không bao giờ nằm trong kế hoạch trừ khi tôi thay đổi quyết định."*
+
+This is **NOT a low-priority topic** classification. It is a **permanent ban from active planning**. The following topics are EXCLUDED from "next direction" options, sprint plans, audit upgrade priorities, and "future work" suggestions:
+
+- **DPDK** (PMD threads, mempool, hugepage, NUMA tuning, fast-path internals).
+- **BPF / eBPF** (datapath alternatives, classifier programs, libxdp, Cilium internals).
+- **XDP / AF_XDP** (eXpress Data Plane, kernel bypass alternative to OVS datapath).
+- **BGP-related content** (BGP EVPN, regular BGP routing, FRR BGP, OVN-BGP-Agent).
+- **K8S** (kube-proxy, OVN-Kubernetes specific, CNI plugin chain, service mesh control plane).
+
+**Existing content stays as-is** (no revert): 9.3 DPDK+AF_XDP, 9.5 hardware offload, 11.2 BGP EVPN tier 2, 14.x P4 (less impacted), 15.x service mesh+K8S, 16.x DPDK/AF_XDP, 17.0/18.0/19.0 OVN advanced. These were written before the ban and remain readable; not subject to further expansion.
+
+**Rules for ongoing work:**
+
+1. **NEVER propose** these topics in "next direction" options. Even if technically in-scope per topic taxonomy, they are out per user directive.
+2. **DO NOT plan** sessions, sprints, or phases targeting these topics.
+3. **DO NOT mention** them as "candidates" or "future work" or "deferred" in proposals — just exclude entirely.
+4. If a Part touches these topics tangentially (ví dụ: 13.11 LR mentions FRR BGP), keep mention 1-2 sentence high-level + cross-link existing Part. Do not deep-dive further.
+5. When auditing SHALLOW files for upgrade priority, EXCLUDE these from candidate list (9.3 DPDK+AF_XDP, 15.x deferred files, 11.2 partial sections, etc.).
+
+**Override condition:** ONLY if user explicitly says "hãy thêm DPDK..." or equivalent explicit reversal. Anything weaker = ban remains.
+
+**Active plan hierarchy (4 tiers, advanced topics not represented):**
+
+1. **HIGHEST** = OVS/OpenFlow/OVN core internals (datapath, classifier, conntrack, ofproto, OVN northd/controller/binding, NBDB/SBDB, Geneve as OVN tunnel).
+2. **HIGH** = Tools mastery + debug pedagogy (CLI playbook, Anatomy Template A, troubleshooting decision tree).
+3. **MEDIUM** = Foundation prerequisites (Linux netns/bridge/veth/tc/conntrack), OVSDB foundation.
+4. **LOW** = History/narrative (Block II/III), DC applied (Block XII).
+
+Block XV (Cloud Native) was officially deprioritized 2026-04-23 + reaffirmed by 2026-04-25 ban. 15.1 + 15.2 deferred indefinitely. P4 + service mesh remain in existing files but not subject to expansion.
+
+Memory pointer: [`memory/feedback_advanced_topics_permanent_ban.md`](memory) auto-loaded each session.
 
 **Self-check before writing a new Part or expanding a section:**
 
@@ -129,7 +155,7 @@ The repo has 6 skills installed at `~/.claude/skills/`. All 6 must be used; do n
 
 ### Rule 2: Cross-File Sync (MANDATORY)
 
-Before commit, consult `memory/file-dependency-map.md` to identify dependent files.
+Before commit, consult `memory/shared/file-dependency-map.md` to identify dependent files.
 
 **Process:** identify file being edited, look up dependency map, check related files, update ALL related files in the SAME commit.
 
@@ -150,15 +176,15 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 
 **On session END (or when user says "stop", "pause", "end"):**
 
-1. Update `memory/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
-2. Update `memory/sdn-series-state.md` if any Part status changed.
+1. Update `memory/shared/session-log.md` with date/time, what was done (commits, files), what is PENDING, current branch + state, commands the user must run locally (e.g., `git push`).
+2. Update `memory/sdn/series-state.md` if any Part status changed.
 3. Commit memory changes.
 
 **On session START:**
 
 1. Read CLAUDE.md (this file).
-2. Read `memory/session-log.md` (last session context).
-3. Read `memory/sdn-series-state.md` (curriculum status).
+2. Read `memory/shared/session-log.md` (last session context).
+3. Read `memory/sdn/series-state.md` (curriculum status).
 4. Run `git status`, `git branch`, `git log`.
 5. Tell the user: "I have read context. Last session [summary]. Pending: [list]."
 
@@ -169,7 +195,7 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 1. Activate `professor-style` skill (6 criteria 2.1 to 2.6).
 2. Activate `document-design` skill (chapter template, heading rules, Rule 8).
 3. Identify the file being edited.
-4. Look up `memory/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
+4. Look up `memory/shared/file-dependency-map.md`, list related files (including Tier 5: SVG to markdown).
 5. Read related files for current content.
 6. If editing SVG: grep all `.md` referencing the SVG, read current captions, note entities.
 7. START writing/editing (NOT before steps 1 to 6).
@@ -196,8 +222,8 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 2. Create file with naming convention `X.0 - <name>.md`.
 3. Header block + learning objectives per `document-design`.
 4. Update `README.md` (TOC, dependency graph).
-5. Update `memory/sdn-series-state.md`.
-6. Update `memory/file-dependency-map.md`.
+5. Update `memory/sdn/series-state.md`.
+6. Update `memory/shared/file-dependency-map.md`.
 7. Run Checklist C.
 
 Principle: this is pre-flight, not bureaucracy. 2 to 3 minutes overhead; cost of a sync bug is much higher.
@@ -293,9 +319,9 @@ This is a training program for Vietnamese readers. Prefer natural Vietnamese; ke
 
 #### 11.2. TRANSLATE to Vietnamese when the word appears in prose
 
-Full dictionary (~60 entries) is in [`memory/rule-11-dictionary.md`](memory/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
+Full dictionary (~60 entries) is in [`memory/shared/rule-11-dictionary.md`](memory/shared/rule-11-dictionary.md). Common examples: paradigm to mô hình, approach to cách tiếp cận, deployment to triển khai, performance to hiệu năng, verify to kiểm chứng, operator to người vận hành, motivation to động cơ, scalability to khả năng mở rộng, flexibility to tính linh hoạt, post-mortem to báo cáo hậu sự, troubleshoot to khắc phục sự cố, version to phiên bản.
 
-When you encounter a word not in the dictionary: ADD it to `memory/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
+When you encounter a word not in the dictionary: ADD it to `memory/shared/rule-11-dictionary.md` in the same fix commit (Rule 11 §11.7).
 
 #### 11.3. Same word, sometimes English sometimes Vietnamese
 
@@ -333,7 +359,7 @@ Can keep English when label is a concept/stage name: `## 9.24.3 Action ct(), ful
 
 #### 11.6. Pre-commit scan checklist (MANDATORY)
 
-Run `grep -niE` for the dictionary regex (see `memory/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
+Run `grep -niE` for the dictionary regex (see `memory/shared/rule-11-dictionary.md` for the full list). Most hits are false positive (URL, code block, product name). Classify each hit:
 
 1. Inside URL/code block/CLI sample, skip.
 2. OVS/OVN/OpenFlow product/concept name, skip.
@@ -343,7 +369,7 @@ When uncertain: §11.3 self-classification question.
 
 #### 11.7. Adding new dictionary entries
 
-When you discover a new prose word not in `memory/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
+When you discover a new prose word not in `memory/shared/rule-11-dictionary.md`, ADD it in the same fix commit with example context. Dictionary is a living document.
 
 (Origin: session 13 (2026-04-21) initial codification; sessions 22-23 broadened.)
 
@@ -487,22 +513,125 @@ Line drift is common: v22.03 to main typically shifts 2000+ lines. Option C is b
 
 (Origin: session 32-33i (2026-04-22) found 32 issues across 6 categories on 43 files; codified Rule 14 in commit `7e5608b`.)
 
+### Rule 15: No Self-Tag (MANDATORY)
+
+> **Mirror governance principle GP-1.** Full text trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md) Section 1. CLAUDE.md tóm tắt enforcement.
+
+Curriculum SDN không được tag bất kỳ release version nào (v3.x, v4.x, vX.Y) cho đến khi đồng thời thỏa 4 điều kiện:
+
+1. **Scorecard committed:** Mỗi keyword in-scope của REF có scorecard 20-axis trong repo, version-controlled.
+2. **Threshold achieved:** Tất cả keyword đạt minimum threshold per Phase B rubric (Cornerstone DEEP-20, Medium DEEP-15, Peripheral PARTIAL-10).
+3. **Audit script run + report committed:** `scripts/per_keyword_rubric_audit.py` chạy thành công, scorecard fresh trong 24 giờ trước commit.
+4. **User written sign-off:** User confirmation explicit (chat message hoặc commit message hoặc plan tracker entry) approve tag.
+
+**Pre-tag checklist (mandatory):**
+
+- [ ] Run audit script, scorecard committed
+- [ ] Verify threshold met (script exit 0)
+- [ ] Verify scorecard timestamp ≤ 24 giờ vs HEAD
+- [ ] User sign-off captured trong commit message
+- [ ] Tag annotated message reference scorecard commit SHA
+
+**Exception (hotfix only):**
+
+- Security CVE upstream affecting keyword treatment
+- Factual error correction (wrong commit SHA, typo in code citation)
+- Typo/formatting trong existing content
+- MUST có user explicit approval + rubric impact assessment + follow-up regression audit ≤ 7 ngày
+
+**No other exceptions.** "Quick win", "milestone", "checkpoint" tag NOT allowed.
+
+(Origin: 2026-04-26 reckoning. V3.6-ContentDepth tagged sau 1 session với "Tier A MISSING ≤ 50" acceptance gate measure breadth không depth. User check 13-tiêu-chí expose tag misleading. Plan v3.7 codify governance để prevent recurrence. See [governance-principles.md](memory/sdn/governance-principles.md) for full GP-1 text + 4 sister principles.)
+
+### Rule 16: Internal-vs-Reader-Facing Language Separation (MANDATORY)
+
+> **Mirror governance principle GP-11.** Full text trong [`memory/sdn/governance-principles.md`](memory/sdn/governance-principles.md) Section 16. CLAUDE.md tóm tắt enforcement.
+
+Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onboard/*.md`, `network-onboard/*.md` là reader-facing cho engineer học SDN) MUST KHÔNG chứa internal terminology của plan/rubric/governance.
+
+**Forbidden patterns trong curriculum file:**
+
+- `**Axis N <category>.**` (rubric label) → dùng natural VN heading: `**Khái niệm.**`, `**Cơ chế hoạt động.**`, `**Tầm quan trọng.**`, etc.
+- `Axis 1` đến `Axis 20` (numbered reference) → category name VN
+- `cohort C7`, `cohort M5`, `cohort P21` (triage label) → skip hoặc "nhóm <description>"
+- `Phase G batch N`, `Phase R2/R3/R4` (plan reference) → skip hoặc "expansion 2026-04"
+- `DEEP-20`, `DEEP-15`, `PARTIAL-10`, `REFERENCE-5`, `PLACEHOLDER` (tier label) → skip hoặc prose "đầy đủ", "khá đầy đủ"
+- `rubric 20-axis`, `rubric 13-tiêu-chí` (meta term) → skip
+- `anti-gaming`, `gaming pattern`, `cosmetic stamp`, `cohort stamp` (governance) → skip
+- `GP-1` đến `GP-11` (governance reference) → skip
+- `Form A per GP-6`, `Form B per GP-6` (commit pattern reference) → skip
+
+**Replacement table cho 20-axis treatment** dùng natural VN heading:
+
+| Internal axis label | Reader-facing VN heading |
+|---------------------|-------------------------|
+| Axis 1 Concept | Khái niệm |
+| Axis 2 History | Lịch sử + bối cảnh |
+| Axis 3 Placement | Vị trí trong kiến trúc |
+| Axis 4 Role | Vai trò |
+| Axis 5 Motivation | Vì sao sinh ra |
+| Axis 6 Problem | Vấn đề giải quyết |
+| Axis 7 Importance | Tầm quan trọng |
+| Axis 8 Mechanism | Cơ chế hoạt động |
+| Axis 9 Engineer-op | Cách kỹ sư vận hành thành thạo |
+| Axis 10 Taxonomy | Phân loại |
+| Axis 11 Workflow | Quy trình sử dụng |
+| Axis 12 Troubleshoot | Khi xảy ra sự cố |
+| Axis 13 Coupling | Liên quan mật thiết |
+| Axis 14 Version drift | Khác biệt giữa các phiên bản |
+| Axis 15 Verification | Cách quan sát + xác minh |
+| Axis 16 Source code | Source code tham chiếu |
+| Axis 17 Incident | Trường hợp sự cố thực tế |
+| Axis 18 Lab | Bài tập synthetic |
+| Axis 19 Failure mode | Lỗi thường gặp + tín hiệu chẩn đoán |
+| Axis 20 Cross-domain | So sánh với hệ khác |
+
+**Allowed exceptions:**
+
+- `memory/*`, `plans/*` (working/meta audience)
+- `CLAUDE.md`, `CHANGELOG.md` "Reckoning" sections (meta history)
+- `0.3 - master-keyword-index.md` MAY use status code `DEEP/BREADTH/SHALLOW/MISSING/PLACEHOLDER` per existing convention
+- Commit messages (internal audit log audience)
+
+**Enforcement:**
+
+- Pre-commit hook `scripts/rubric_leak_check.py` reject violation
+- Phase R0.7 curriculum cleanup pass: replace existing leak (~25 file from Phase G v3.7)
+- Self-check before each curriculum edit: read replacement table above
+
+(Origin: 2026-04-26 user audit catch agent team chèn `**Axis N**` labels vào curriculum content gây confuse engineer reader. Plan v3.8-Remediation Section 11 amendment + GP-11 codify.)
+
 ---
 
 ## Current State
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.2-FullDepth` (2026-04-25). |
-| Curriculum | 116 files in `sdn-onboard/*.md`, ~55.7K lines, 20 blocks. Audit verdict: A. |
-| Active phase | Awaiting user direction. v3.1, v3.1.1, v3.2, Phase G+H all closed. |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). **No newer tag.** v3.7 Phase G claim "COMPLETE" was self-deception, not honored. |
+| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~95K lines**, 20 blocks. **All v3.8 R0-R6 phases COMPLETE**. Cornerstone 50/50 + medium 101+/85 + peripheral 180/180 + 0 GP-11 leak across 167 files + scorecard generated. Total ~331 keyword treated, ~14K substantive lines via 100+ commits. |
+| Active phase | **v3.8-Remediation COMPLETE — tag `v4.0-MasteryComplete` issued 2026-04-26**. R5 user authority grant + manual 30/30 spot-check PASS + R6 tag annotated with scorecard SHA. Tag local only (no remote push per system policy). |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
-| Trackers | [memory/sdn-series-state.md](memory/sdn-series-state.md), [memory/audit-index.md](memory/audit-index.md), [memory/session-log.md](memory/session-log.md). |
-| Dependency map | [memory/file-dependency-map.md](memory/file-dependency-map.md) (Rule 2). |
-| Lab pending | [memory/lab-verification-pending.md](memory/lab-verification-pending.md). |
+| Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md), [memory/sdn/phase-g-progress-tracker.md](memory/sdn/phase-g-progress-tracker.md) (annotated PARTIAL post-honest-audit). |
+| Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
+| Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
+| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md) v1.1, **11 GP** (GP-1 đến GP-5 v3.7 + GP-6 đến GP-11 v3.8). Mirror trong CLAUDE.md Rule 15 (no self-tag) + Rule 16 (internal-vs-reader language separation). |
+| **Active plan** | [plans/sdn/v3.8-remediation.md](plans/sdn/v3.8-remediation.md), APPROVED 2026-04-26, 7 phase R0→R6, target tag v4.0-MasteryComplete sau R6 (post-R5 user sign-off). Realistic effort 350-600 giờ multi-month. |
+| Past plan v3.7 | [plans/sdn/v3.7-reckoning-and-mastery.md](plans/sdn/v3.7-reckoning-and-mastery.md), Phase A-F done, **Phase G PARTIAL ~22% (gaming detected)**, Phase H blocked. Superseded by v3.8-Remediation. |
+| Past plan v3.6 | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md), Closed (audit tooling + 6 keyword closure, tag renamed). |
+| Past plan v3.5 | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md), Closed (placement framework, không phải mastery). |
+| **Anti-gaming script** | [scripts/anti_gaming_check.py](scripts/anti_gaming_check.py) GP-6 đến GP-10 enforcement. Pre-commit hook installed. Detect cohort tier-stamp + cosmetic stamp + min-lines violation. |
+| **Rubric leak check** | [scripts/rubric_leak_check.py](scripts/rubric_leak_check.py) GP-11 / Rule 16 enforcement. Pre-commit hook. Phase R0.7 cleanup ~25 file pending. |
+| Pre-commit hook | [scripts/pre-commit-install.sh](scripts/pre-commit-install.sh) installs `.git/hooks/pre-commit` running both check scripts on staged .md. |
+| Honest audit | [memory/sdn/per-keyword-honest-audit.md](memory/sdn/per-keyword-honest-audit.md) manual 75-keyword stratified audit 2026-04-26 reveal v3.7 Phase G 4.5x inflate. |
+| Audit script v3 | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix breadth audit (legacy). Phase R5 sẽ build per_keyword_strict_audit.py cho depth verification. |
+| Gap tracker | [memory/sdn/keyword-true-gap-final.md](memory/sdn/keyword-true-gap-final.md), v3.6 Phase 1+2 deliverable. Superseded by Phase R5 strict audit. |
+| REF source-of-truth | [sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md](sdn-onboard/doc/ovs-openflow-ovn-keyword-reference.md), REF 2617 dòng English authoritative, 320+ keyword in-scope. |
+| Master index 0.3 | [sdn-onboard/0.3 - master-keyword-index.md](sdn-onboard/0.3%20-%20master-keyword-index.md), Vietnamese lookup spine 1153 dòng, 320+ keyword 5-axis 1-line. **Note:** placement map, không phải mastery map. |
+| Plans index | [plans/README.md](plans/README.md) (per-series structure) |
+| Memory index | [memory/README.md](memory/README.md) (per-series + shared structure) |
 
-Session-by-session history (S1 to S63+) is in `memory/session-log.md`. Audit history is in `memory/audit-index.md`. `git log` is the source of truth for commit detail.
+Session-by-session history (S1 to S63+) is in `memory/shared/session-log.md`. Audit history is in `memory/shared/audit-index.md`. `git log` is the source of truth for commit detail.
 
 ---
 

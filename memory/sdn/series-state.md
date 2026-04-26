@@ -2,7 +2,9 @@
 
 > Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
 
-**Current release:** `v3.2-FullDepth` (tag 2026-04-25). Verdict A. All CRITICAL + HIGH audit findings closed.
+**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80% well-covered (305/383), substantive 72% (275/383). Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S. Audit script v2 + v3 với 9 alias rule giảm false-positive 87%.
+
+**Previous releases:** `v3.5-KeywordBackbone` (2026-04-25, framework + master index 0.3 + 9 NEW + 4 EXPAND), `v3.4-DeepFoundation` (Sequence H+O CLOSE).
 
 **Baseline:** Ubuntu 22.04 LTS + OVS 2.17.9 (jammy-updates) + OVN 22.03.8 (LTS) + kernel 5.15 + Mininet 2.3.0. Upgrade path: Ubuntu 24.04 + OVS 3.3 + OVN 24.03.
 
@@ -31,6 +33,7 @@
 | 0.0 | How to read this series | 148 | DONE | Meta orientation + reading paths + convention markers |
 | 0.1 | Lab environment setup | 340 | DONE | Ubuntu 22.04 + 3 modes (single-node / two-node chassis pair / kolla) |
 | 0.2 | End-to-end packet journey | 342 | DONE | Cross-cutting synthesis, anchor for every topic |
+| 0.3 | Master Keyword Index — Vietnamese DEEP adaptation của REF | 1153 | DONE (Phase J.2 v3.5) | NEW J.2.a/b/c (LAST per max-quality). Lookup spine giữa REF (offline EN) và curriculum (VN teaching). 5 phần: I OVS 80 entry, II OpenFlow 110 entry, III OVN 120+ entry, IV BANNED 10 entry, V cross-link map 50+. Mỗi entry 5-axis 1-line + status code (DEEP/BREADTH/SHALLOW/MISSING/BANNED) + cross-link Phần curriculum. |
 
 ## Block I, Why SDN was needed (3 files, 736 lines)
 
@@ -50,13 +53,15 @@
 | 2.3 | ForCES + 4D Project | 219 | DONE | 4D paper analysis + Ethane lineage |
 | 2.4 | Ethane (direct ancestor) | 322 | DONE | Casado PhD 2007 + NOX + Nicira + Ethane to OpenFlow lineage |
 
-## Block III, OpenFlow birth (3 files, 973 lines)
+## Block III, OpenFlow birth (5 files, 1952 lines, v3.5 J.4.c added 3.3 + 3.4)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 3.0 | Stanford Clean Slate Program | 218 | DONE | NSF FIND + DARPA + McKeown/Shenker/Casado/Parulkar + Nicira 08/2007 |
 | 3.1 | OpenFlow 1.0 spec (31/12/2009) | 371 | DONE | 12-tuple match + 8 actions + spec evolution 0.8 to 1.0.1 |
 | 3.2 | ONF formation and governance | 384 | DONE | ONF press release 21/03/2011 + 6 founding operators + 2018 ON.Lab merger |
+| 3.3 | OpenFlow protocol messages + state machine | 553 | DONE (Phase J.4.c) | NEW. 16 OFPT_* messages chia 4 nhóm + state machine 4-stage + auxiliary connection. Verify ONF spec 1.3.5 + 1.4 + 1.5.1 + IANA port 6653. Bundle atomic vs sequential FLOW_MOD POE. Cross-link 3.1/4.0-4.5/9.16/9.30. |
+| 3.4 | OpenFlow version differences 1.0/1.3/1.5 | 426 | DONE (Phase J.4.c) | NEW. 8 version diff (single→multi-table, NXM→OXM, group, meter, bundle, egress, copy_field, packet_type). Migration matrix OF 1.0 → 1.3 → 1.5. Decision tree chọn version. Cross-link 4.0-4.5 + OVS NEWS. |
 
 ## Block IV, OpenFlow evolution (10 files, ~5756 lines)
 
@@ -70,8 +75,8 @@
 | 4.5 | TTP (Table Type Patterns) | 290 | DONE (v3.2 P3) | TTP capability discovery GE (+38) |
 | 4.6 | OpenFlow limitations + lessons | 416 | DONE | Google B4 SIGCOMM 2013 + P4 lineage + 2 Capstone POE |
 | 4.7 | OpenFlow programming with OVS | 764 | DONE | 2 GE + 1 Capstone POE + 8 actions + multi-table 3-stage |
-| 4.8 | OpenFlow match field catalog | 926 | DONE (Phase H S41) | Template B 9-attribute anatomy, 60+ match fields, 12 groups |
-| 4.9 | OpenFlow action catalog | 1544 | DONE (Phase H S42-S44) | Template C 8-attribute anatomy, 40+ actions across 3 tiers |
+| 4.8 | OpenFlow match field catalog | 1221 | DONE (Phase H S41 + J.4.a v3.5) | Template B 9-attribute anatomy, 60+ match fields, 12 groups + section 4.8.15-17 backfill 12 missing field (in_phy_port, ipv6_flabel, ipv6_exthdr, pbb_isid, mpls_tc/bos, sctp_src/dst, tunnel_id, xreg0-7, xxreg0-3, NSH spi/si/c1-c4, packet_type) |
+| 4.9 | OpenFlow action catalog | 1775 | DONE (Phase H S42-S44 + J.4.b v3.5) | Template C 8-attribute anatomy, 40+ actions across 3 tiers + section 4.9.29-30 backfill 12 missing action (copy_field, push/pop_pbb, set_mpls_ttl, dec_mpls_ttl, copy_ttl_in/out, set_nw_ttl, decap/encap NSH, controller userdata, note, sample, conjunction full) |
 
 ## Block V, Alternative SDN models (3 files, 983 lines)
 
@@ -99,14 +104,14 @@
 | 7.4 | Faucet pipeline + operations | 272 | DONE | 4 core tables + Prometheus via Gauge |
 | 7.5 | Ryu flow management | 419 | DONE | Event system + OFPFlowMod + REST API + traffic stats |
 
-## Block VIII, Linux networking primer (4 files, 837 lines)
+## Block VIII, Linux networking primer (4 files, ~1713 lines, Block VIII tier 2 expand 2026-04-25)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 8.0 | Linux namespaces + cgroups | 194 | DONE | 7 namespace types + ip netns + cgroup v1 vs v2 |
-| 8.1 | Linux bridge + veth + macvlan | 254 | DONE | brctl vs ip link + macvlan 4 modes + ipvlan L2/L3 + br-int pattern |
-| 8.2 | Linux VLAN + bonding + team | 182 | DONE | 802.1Q + bonding 7 modes + LACP + team deprecate RHEL 9 |
-| 8.3 | tc qdisc + conntrack | 207 | DONE | tc qdisc taxonomy + HTB/HFSC/fq_codel + conntrack + OVS ct() |
+| 8.0 | Linux namespaces + cgroups | 382 | DONE (Block VIII.1) | Tier 2: clone/unshare/setns syscall internals + lifecycle ref counting + OVS daemon namespace pattern + Anatomy lsns + Capstone POE refute per-container ovs-vswitchd |
+| 8.1 | Linux bridge + veth + macvlan | 430 | DONE (Block VIII.2) | Tier 2: drivers/net/veth.c veth_xmit + veth_xdp_xmit + bridge forwarding + so sánh OVS internal port + Anatomy bridge fdb + Capstone POE 1000 container scale |
+| 8.2 | Linux VLAN + bonding + team | 426 | DONE (Block VIII.3) | Tier 2: bonding driver bond_xmit_hash + LACP 4-substate state machine + xmit_hash_policy encap3+4 + so sánh OVS bond + Anatomy /proc/net/bonding + Capstone POE balance-rr vs LACP overlay |
+| 8.3 | tc qdisc + conntrack | 475 | DONE (Block VIII.4) | Tier 2: kernel queueing path sch_* modules + HTB token bucket source + nf_conntrack hash table + zone implementation + Anatomy tc -s + conntrack -S + Capstone POE nf_conntrack_max sizing |
 
 ## Block IX, Open vSwitch internals (28 files, ~15500 lines, strongest cluster)
 
@@ -153,25 +158,35 @@
 | 9.26 | OVS revalidator storm forensic | 1185 | DONE (Phase E.B + G.3.2) | 2 Anatomy + 3 case study + 4 GE + 1 Capstone + 5 POE |
 | 9.27 | OVS+OVN packet journey end-to-end | 696 | DONE (v3.2 P4) | 2 GE + 1 Capstone + Anatomy `tnl/ports/show` + `bfd/show` |
 
-## Block X, OVSDB management (7 files, 1995 lines)
+### CLI mastery utilities (9.28-9.31, Phase J.3 v3.5-KeywordBackbone)
+
+| Part | Title | Lines | Status | Notes |
+|------|-------|-------|--------|-------|
+| 9.28 | ovs-pcap + ovs-tcpundump utility | 269 | DONE (Phase J.3) | NEW. Pure pcap reformatter cho `ofproto/trace` workflow. Verify upstream `ovs-pcap(1)` + `ovs-tcpundump(1)` man page. Anatomy + GE replay packet ICMP qua trace. Anti-pattern `tcpdump -x` thiếu Ethernet header. |
+| 9.29 | vtep-ctl + VTEP schema | 347 | DONE (Phase J.3) | NEW. HW VXLAN gateway integration cho bare metal. 7 nhóm command (Physical_Switch/Port, Logical_Switch/Router, MAC binding local/remote, Manager, Database). Bind LSWITCH với physical port:VLAN. Lab synthetic dùng `ovs-vtep` simulator. Verify upstream `vtep-ctl(8)` + vtep.ovsschema. |
+| 9.30 | ovs-pki PKI helper | 293 | DONE (Phase J.3) | NEW. SSL/TLS bootstrap cho mTLS giữa chassis ↔ SB DB. 7 commands (init/req/sign/req+sign/verify/fingerprint/self-sign). Two-CA hierarchy (controllerca + switchca). Anti-pattern `req+sign` trên production chassis. Verify upstream `ovs-pki(8)`. |
+| 9.31 | ovsdb-tool offline utility | 378 | DONE (Phase J.3) | NEW. 15 commands chia 5 nhóm: creation (create/create-cluster/join-cluster), schema management (convert/needs-conversion/version), inspection (query/transact/show-log), cluster integrity (check-cluster/cluster-to-standalone), maintenance (compact). Anatomy bootstrap 3-node SB cluster from scratch. Verify upstream `ovsdb-tool(1)`. |
+
+## Block X, OVSDB management (8 files, ~2584 lines, Phase I.B2 added 10.7)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 10.0 | OVSDB RFC 7047 schema + transactions | 196 | DONE | 10 operations + monitor_cond |
-| 10.1 | OVSDB Raft clustering | 199 | DONE | 3-node bootstrap + cluster lifecycle |
+| 10.1 | OVSDB Raft clustering | 412 | DONE (Phase I.A3 S66') | Tier 2 raft.c source-code internals: raft_run + raft_become_leader/follower + raft_handle_append_request + log compaction + snapshot RPC + edge case bầu leader + Anatomy cluster/status 10-attribute |
 | 10.2 | OVSDB backup + restore + compact + RBAC | 231 | DONE | Compact + RBAC Manager.role |
 | 10.3 | OVSDB transaction ACID semantics | 321 | DONE | wait/assert/nb_cfg prerequisites + mutate conflict |
 | 10.4 | OVSDB IDL + monitor_cond client | 386 | DONE | Conditional replication + reconnect + performance |
 | 10.5 | OVSDB performance benchmarking | 297 | DONE | 5 sections + bottleneck detection |
 | 10.6 | OVSDB security mTLS + RBAC advanced | 365 | DONE | Cert rotation zero-downtime + multi-tenant RBAC + audit log |
+| 10.7 | ovsdb-client deep playbook | 589 | DONE (Phase I.B2 S68') | 7 nhóm chức năng (schema/dump/transact/monitor/wait+lock/backup/convert), 5 Anatomy + GE Port_Binding race + Capstone POE chọn tool đúng |
 
-## Block XI, Overlay encapsulation (5 files, 2196 lines)
+## Block XI, Overlay encapsulation (5 files, ~3088 lines, Block XI tier 2 expand 2026-04-25)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 11.0 | VXLAN + Geneve + STT | 213 | DONE | RFC 7348 + RFC 8926 + 3-protocol comparison |
-| 11.1 | Overlay MTU + PMTUD + offload | 213 | DONE | RFC 1191 PMTUD + tunnel MTU math + NIC offload |
-| 11.2 | BGP EVPN control plane overlay | 157 | DONE | RFC 7432 + 5 EVPN route types + leaf-spine DC |
+| 11.0 | VXLAN + Geneve + STT | 551 | DONE (Block XI.B1) | Tier 2: Geneve packet format byte-by-byte + IANA TLV class 0x0102 + put_encapsulation source + header math + Anatomy + Capstone VXLAN vs Geneve cho OVN |
+| 11.1 | Overlay MTU + PMTUD + offload | 517 | DONE (Block XI.B2) | Tier 2: PMTUD packet flow + black hole + TCP MSS clamp + OVN check_pkt_larger source + NIC offload tunnel-aware + Anatomy + Capstone shrink tenant vs bump underlay |
+| 11.2 | BGP EVPN control plane overlay | 408 | DONE (Block XI.B3) | Tier 2: Type 2 NLRI byte-by-byte + Type 3/4/5 deep + Symmetric vs Asymmetric IRB + OVN+BGP-EVPN integration use cases + Anatomy + Capstone BGP EVPN cho OVN intra-cluster |
 | 11.3 | GRE tunnel lab | 742 | DONE (Phase D S26) | Lab 14 USC + 3-node OSPF + Wireshark dissector |
 | 11.4 | IPsec tunnel lab | 871 | DONE (Phase D S27) | Lab 15 USC + strongSwan + GRE over IPsec |
 
@@ -183,7 +198,7 @@
 | 12.1 | DC overlay integration (VXLAN + EVPN) | 178 | SHALLOW | |
 | 12.2 | Micro-segmentation + service chaining | 162 | SHALLOW | |
 
-## Block XIII, OVN foundation (14 files, ~6028 lines, v3.2 closed CRITICAL gap)
+## Block XIII, OVN foundation (18 files, ~8401 lines, v3.5 J.5.a/c added 13.15 IC + 13.16 pipeline IDs + 13.17 register)
 
 ### Core (13.0-13.6, all v3.2 P1 expanded)
 
@@ -201,11 +216,11 @@
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 13.7 | ovn-controller internals | 491 | DONE (Phase H) | 2 Anatomy + 2 GE + main_loop + I-P engine |
-| 13.8 | ovn-northd translation | 260 | DONE | build_lflows step-by-step |
-| 13.9 | OVN Load_Balancer internals | 218 | DONE | ct_lb + VIP + Service_Monitor |
+| 13.7 | ovn-controller internals | 657 | DONE (Phase H + Phase I.A2 S65') | Tier 2 §13.7.8 controller/physical.c source: physical_run + consider_port_binding + put_encapsulation Geneve TLV class 0x0102 + Port_Binding claim race + Anatomy debug/dump-local-bindings + GE Geneve TLV trace 2-chassis |
+| 13.8 | ovn-northd translation | 465 | DONE (Phase I.A1 S64') | Tier 2 §13.8.5-8 source: northd.c + ovnnb_db_run + build_lflows + I-P engine 2-node + Anatomy inc-engine/show + parallel build_lflows_thread + Capstone POE n-threads |
+| 13.9 | OVN Load_Balancer internals | 627 | DONE (+ J.5.b v3.5) | ct_lb + VIP + Service_Monitor + section 13.9.X backfill J.5.b: selection_fields consistent hashing, hairpin_snat_ip, Load_Balancer_Group aggregation, Load_Balancer_Health_Check 4 options + Service_Monitor |
 | 13.10 | OVN DHCP + DNS native | 327 | DONE | DHCP options catalog |
-| 13.11 | OVN gateway router (distributed) | 516 | DONE (Phase H) | 1 Anatomy + 19-23 stages Template D |
+| 13.11 | OVN gateway router (distributed) | 683 | DONE (Phase H + J.5.b v3.5) | 1 Anatomy + 19-23 stages Template D + section 13.11.9 backfill J.5.b: reside-on-redirect-chassis distributed gateway option (TRUE GAP closure: 0→1 file), Logical_Router_Policy 4 action (allow/drop/reroute/jump), Logical_Router_Static_Route ECMP + route_table VRF + BFD fast failover |
 | 13.12 | OVN IPAM native (dynamic + static) | 254 | DONE | |
 
 ### Migration (13.13)
@@ -213,6 +228,15 @@
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
 | 13.13 | OVS to OVN migration guide | 403 | DONE | NB schema mapping + phase rollout + rollback |
+| 13.14 | ovn-nbctl + ovn-sbctl reference playbook | 997 | DONE (Phase I.B1 S67' + J.5.d v3.5) | Sister cho 9.11. 97 lệnh ovn-nbctl 12 nhóm + 15 lệnh ovn-sbctl. Daemon mode, 10 Anatomy, decision matrix 11 row, GE multi-tier tenant, Capstone POE Rule 5 trụ cột. + section 13.14.9 backfill J.5.d: exhaustive 30+ options chia 8 nhóm (DB connection, wait=sb/hv, idempotency guard, format, daemon mode), ovn-trace microflow expression syntax (24 field), ovn-detrace cookie→Logical_Flow mapping, 5-step debug workflow Anatomy combine ovn-trace + dump-flows + ovn-detrace |
+
+### Foundation depth (13.15 + 13.16 + 13.17, Phase J.5.a/c v3.5-KeywordBackbone)
+
+| Part | Title | Lines | Status | Notes |
+|------|-------|-------|--------|-------|
+| 13.15 | OVN Inter-Connect federated multi-region | 618 | DONE (Phase J.5.a) | NEW Phase J.5.a. Federated 4-database architecture (NB+SB local + IC_NB+IC_SB central), ovn-ic + ovn-ic-northd daemon, Transit Switch + Transit Router + AvailabilityZone, 2-region lab synthetic, 3-region capstone POE design. Đóng forward-ref 9.31→13.15. Source verified man page ovn-ic(8) + ovn-ic-nbctl(8) + ovn-ic-sbctl(8) + OVN architecture doc. BAN BGP-agent maintained: chỉ static route + link 11.2 cho overview. |
+| 13.16 | OVN logical pipeline, bản đồ table ID toàn bộ stage trên br-int | 579 | DONE (Phase J.5.c.ii) | NEW Phase J.5.c.ii. **CRITICAL gap closure** (0/63 stage được mention trước đây). Source verified branch-22.03: northd/northd.c PIPELINE_STAGES (26 LS_IN + 10 LS_OUT + 20 LR_IN + 7 LR_OUT = 63 stage thực, không phải 64 như REF claim), controller/lflow.h OFTABLE_* (table 0, 8-33, 37-39, 40-49, 64-72). Công thức ánh xạ logical→OF table. 3 Anatomy + 2 GE + 1 Capstone POE. Cross-link 11+ Phần. Version drift 22.03→24.03→24.09 documented. |
+| 13.17 | OVN register conventions, REGBIT và MLF flags | 516 | DONE (Phase J.5.c.i) | NEW Phase J.5.c.i. Foundation cho 13.16 pipeline IDs. Source verified branch-22.03: include/ovn/logical-fields.h (MFF_LOG_DATAPATH/FLAGS/INPORT/OUTPORT, 13 MLF flag, ct_label bit), northd/northd.c (15 REGBIT reg0 + 5 REGBIT reg9), Geneve TLV class 0x0102. 2 Anatomy + 1 GE + 1 Capstone POE. Cross-link tới 4.8/9.24/11.0/13.7/13.8/13.16/20.7. |
 
 ## Block XIV, P4 Programmable (Expert, 3 files, 1354 lines)
 
@@ -246,30 +270,32 @@
 | 18.0 | OVN ARP responder + BUM suppression | 499 | DONE | ARP responder + BUM suppress mechanism |
 | 19.0 | OVN multichassis binding + PMTUD | 1389 | DONE (production forensic) | FDP-620 root cause + RARP activation-strategy + 3 Labs |
 
-## Block XX, Operational Excellence (7 files, 7999 lines, Phase G)
+## Block XX, Operational Excellence (8 files, ~8690 lines, Phase G + Phase I.B3 added 20.7)
 
 | Part | Title | Lines | Status | Notes |
 |------|-------|-------|--------|-------|
-| 20.0 | OVS+OVN systematic debugging | 815 | DONE (Phase G.1.4 + v3.2 P4) | 5-layer model + 8 scenarios + 3 case studies + Anatomy `coverage/show` |
+| 20.0 | OVS+OVN systematic debugging | 890 | DONE (Phase G.1.4 + v3.2 P4 + J.6 v3.5) | 5-layer model + 8 scenarios + 3 case studies + Anatomy `coverage/show`. + section 20.0.X backfill J.6: master cross-link table mapping REF Section 4 14 production scenarios → existing curriculum file:section (lookup spine, no duplicate). Audit-driven decision: 14/14 scenario đã coverage substantial trong existing 20.0/20.2/20.5/9.26/13.x; cross-link table thay vì 1200 dòng duplicate. |
 | 20.1 | OVS+OVN security hardening | 1399 | DONE (Phase G.3.3 + v3.2 P4) | 4-layer audit trail + Anatomy ACL audit + port_security |
-| 20.2 | OVN troubleshooting deep-dive | 1627 | DONE (Phase G.3.1) | `ovn-trace` + 21 ovn-appctl + 16-symptom matrix + 3 GE + Capstone POE |
+| 20.2 | OVN troubleshooting deep-dive | 1731 | DONE (Phase G.3.1 + J.5.e v3.5) | `ovn-trace` + 21 ovn-appctl + 16-symptom matrix + 3 GE + Capstone POE. + section 20.2.15 backfill J.5.e: 5 lflow-cache external_ids tunable (ovn-enable-lflow-cache, ovn-limit-lflow-cache, ovn-memlimit-lflow-cache-kb, ovn-trim-limit-lflow-cache, ovn-trim-wmark-perc-lflow-cache) Anatomy + decision matrix tuning + anti-pattern. |
 | 20.3 | OVN daily operator playbook | 1554 | DONE (Phase G.5.1) | 10 task categories + 2 e2e workflows + 3 GE + Capstone POE |
 | 20.4 | OVS daily operator playbook | 1422 | DONE (Phase G.5.2) | Sister to 20.3 OVS pure + 4 CLI layer distinction |
 | 20.5 | OVN forensic case studies | 842 | DONE (Phase G.2.3) | 3 distributed control plane cases + 3 design lessons + Capstone POE |
 | 20.6 | OVS/OpenFlow/OVN retrospective 2007-2024 | 432 | DONE (Phase G.4) | 5 eras + 10 meta-lessons + 6 frontier trends |
+| 20.7 | Packet flow tracing tutorial gradient L1-L5 | 691 | DONE (Phase I.B3 S69') | Sư phạm gradient L1 hello-world to L5 production forensic. 5 level cross-link 9.25/9.27/13.7.8/13.8.5/20.2. ASCII decision tree workflow chọn level. Capstone POE sinh viên tự design trace scenario. |
 
 ---
 
-## Total statistics (post-v3.2)
+## Total statistics (post-v3.4-DeepFoundation)
 
-- **Total files:** 116
-- **Total lines:** ~55,700
+- **Total files:** 119 (3 NEW từ Phase I: 13.14, 10.7, 20.7; rest existing expanded)
+- **Total lines:** ~61,826 (verified `find sdn-onboard -name '*.md' | xargs wc -l`)
+- **Tier 2 coverage:** All HIGHEST + HIGH + MEDIUM tier files DONE. LOW tier (history + DC applied) stays at current depth per North Star relevance analysis.
 - **Total Blocks:** 20 (0 to XX)
-- **DONE:** ~107/116 (92%)
-- **PARTIAL:** 0/116 (all closed by v3.2)
-- **SHALLOW:** 5/116 (4%, Block XII 3 files + 2 minor)
-- **CRITICAL (audit flag):** 0/116 (Block XIII Core all closed)
-- **DEFERRED:** 2/116 (Block XV 15.1 + 15.2, K8S deprioritized)
+- **DONE:** ~110/119 (92%)
+- **PARTIAL:** 0/119
+- **SHALLOW:** 3/119 (2%, only Block XII)
+- **CRITICAL (audit flag):** 0/119
+- **DEFERRED:** 2/119 (Block XV 15.1 + 15.2, K8S deprioritized)
 
 ## Release roadmap
 
@@ -278,6 +304,10 @@
 | v3.1-OperatorMaster | RELEASED 2026-04-24 | Full Phase A to H + audit baseline. 116 files, 52.6K lines |
 | v3.1.1-OperatorMaster-patch | RELEASED 2026-04-25 | Dead URL + Rule 11 prose + dependency map + memory tracker. 7 commits |
 | v3.2-FullDepth | RELEASED 2026-04-25 | Block XIII Core +1584 + Block IX Ops +516 + Block IV GE +279 + CLI Anatomy +112 + Block II narrative +12 |
+| v3.3-ArchitectMaster | RELEASED 2026-04-25 | Phase I 6 sessions: Sequence A (3 expand) 13.8 northd source +205 + 13.7 physical.c +166 + 10.1 raft.c +213; Sequence B (3 NEW) 13.14 ovn-nbctl/sbctl 660 + 10.7 ovsdb-client 589 + 20.7 tracing gradient 691. Tier 2 source-code internals + tools mastery + debug pedagogical gradient. |
+| v3.3.1-OverlayMaster | UNRELEASED 2026-04-25 | 0.2 truncation fix (+404) + Block XI Overlay tier 2 (11.0/11.1/11.2 +1263). Foundation anchor 12-stage tour fully implemented + Geneve packet format byte-by-byte + PMTUD black hole + EVPN Type 2 NLRI deep + IRB modes + OVN integration use cases. |
+| v3.3.2-LinuxPrimer | UNRELEASED 2026-04-25 | Block VIII Linux primer tier 2 (8.0/8.1/8.2/8.3 +876). Kernel source-code level: clone/unshare/setns syscall + veth driver + bonding LACP state machine + nf_conntrack zones + 4 Anatomy + 4 Capstone POE. |
+| v3.4-DeepFoundation | RELEASED 2026-04-25 | Tag aggregate cho mọi tier 2 work post-v3.3. 23 commits, +4,577 net lines, 20 files. Block VIII (4 file) + Block X 10.0 + Block XI (3 file) + Block IX (9.0/9.13/9.17/9.18/9.19/9.20) + Block XIII (13.9/13.10/13.12) + 0.2 truncation fix. PERMANENT BAN directive codified for DPDK/BPF/XDP/BGP/K8S. |
 | v4.0 | Long-term | New Parts based on user feedback + production lab verify |
 
 ## Closed gaps (audit 2026-04-25)
