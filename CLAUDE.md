@@ -608,8 +608,8 @@ Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onbo
 | Key | Value |
 |-----|-------|
 | Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). **No newer tag.** v3.7 Phase G claim "COMPLETE" was self-deception, not honored. |
-| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~80K lines**, 20 blocks. Cornerstone **50/50 (100%) DEEP-20** complete (R2 phase done, evidence per-keyword commits 83274f4..dc45300, 28 commits, ~5800 substantive lines). Medium + peripheral pending R3+R4. |
-| Active phase | **v3.8-Remediation Phase R2 COMPLETE** (50/50 cornerstone DEEP-20). Phase R3 (~85 medium keyword DEEP-15), R4 (~180 peripheral keyword PARTIAL-10), R5 (user spot-check + sign-off), R6 (tag v4.0) pending. **No tag issued — GP-1 binding requires R5 sign-off**. |
+| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~95K lines**, 20 blocks. **All v3.8 R2-R4 keyword tiers complete: cornerstone 50/50 (100%) DEEP-20 + medium 101+/85 (119%) DEEP-15 + peripheral 180/180 (100%) PARTIAL-10**. Total ~331 keyword R2-R4 treated, ~14K substantive lines added across 87 commits this work cycle. |
+| Active phase | **v3.8-Remediation Phase R2+R3+R4 COMPLETE**. Phase R5 (user spot-check 30+ random keyword + written sign-off mandatory) + Phase R6 (tag v4.0-MasteryComplete only post-R5) pending. **No tag issued — GP-1 binding requires R5 sign-off per Section 6.2 plan v3.8**. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md), [memory/sdn/phase-g-progress-tracker.md](memory/sdn/phase-g-progress-tracker.md) (annotated PARTIAL post-honest-audit). |
