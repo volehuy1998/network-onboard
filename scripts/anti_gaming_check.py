@@ -424,53 +424,181 @@ def detect_cosmetic_stamp(file: Path, lines: list[str], ctx: CheckContext) -> No
     flush_table(len(lines))
 
 
+# Axis VN headings per Rule 16 / GP-11 Section 16.2 replacement table. Sections
+# whose header begins with one of these names are axis subsections WITHIN a
+# keyword treatment, not standalone keyword sections (per GP-6 Form A 20-axis
+# natural VN heading style).
+AXIS_VN_HEADERS = (
+    "khái niệm",
+    "lịch sử + bối cảnh",
+    "lịch sử và bối cảnh",
+    "lịch sử bối cảnh",
+    "vị trí trong kiến trúc",
+    "vai trò",
+    "vì sao sinh ra",
+    "vấn đề giải quyết",
+    "vấn đề mà nó giải quyết",
+    "tầm quan trọng",
+    "cơ chế hoạt động",
+    "cơ chế",
+    "cách kỹ sư vận hành thành thạo",
+    "cách vận hành thành thạo",
+    "phân loại",
+    "quy trình sử dụng",
+    "quy trình",
+    "khi xảy ra sự cố",
+    "liên quan mật thiết",
+    "khác biệt giữa các phiên bản",
+    "khác biệt phiên bản",
+    "cách quan sát + xác minh",
+    "cách quan sát và xác minh",
+    "source code tham chiếu",
+    "trường hợp sự cố thực tế",
+    "bài tập synthetic",
+    "bài tập",
+    "lỗi thường gặp + tín hiệu chẩn đoán",
+    "lỗi thường gặp",
+    "so sánh với hệ khác",
+    "so sánh cross-domain",
+    # English axis name leftovers from pre-Rule 16 cleanup (e.g., "18. Lab",
+    # "19. Failure mode", "20. Cross-domain" in numeric-prefix style).
+    "concept",
+    "history",
+    "placement",
+    "role",
+    "motivation",
+    "problem",
+    "problem solved",
+    "importance",
+    "mechanism",
+    "engineer-op",
+    "engineer operation",
+    "taxonomy",
+    "workflow",
+    "troubleshoot",
+    "coupling",
+    "version drift",
+    "verification",
+    "source code",
+    "incident",
+    "lab",
+    "failure mode",
+    "cross-domain",
+    "core schemas",
+    "offline sources",
+    "điểm cốt lõi cần nhớ",
+    "điểm cốt lõi",
+)
+
+GENERIC_NON_KEYWORD = (
+    "tổng quan",
+    "overview",
+    "lịch sử",  # generic "lịch sử" without "+ bối cảnh"
+    "introduction",
+    "tài liệu tham khảo",
+    "tham khảo",
+    "references",
+    "cross-link",
+    "summary",
+    "kết luận",
+    "bài học",
+    "key topic",
+    "hiểu sai",
+    "anatomy",
+    "capstone",
+    "guided exercise",
+    "lab synthetic",
+    "lab fault",
+)
+
+# Pattern for lab/workflow/anatomy step subsections (not standalone keywords).
+PROCEDURAL_PREFIX_RE = re.compile(
+    r"^(b[ưu]?[ớo]c\s+\d+|mode\s+[a-zA-Z]|method\s+\d+|ph[uư][oơ]ng\s+ph[áa]p\s+\d+|"
+    r"step\s+\d+|stage\s+\d+|phase\s+\d+|t[áa]c\s+v[ụu]\s+\d+|"
+    r"l[áa]b\s+[\w\d.\-]+|ge\s+\d+|capstone\s+(poe|\d+)|case\s+\d+|"
+    r"section\s+\d+|biến thể|variation\s+\d+)\b",
+    re.IGNORECASE,
+)
+
+# Section number with 4+ levels (X.Y.Z.W or deeper) is typically a sub-sub-block,
+# not a top-level keyword section.
+DEEP_SECTION_NUMBER_RE = re.compile(r"^\d+(?:\.\d+){3,}\b")
+
+
+def is_axis_subsection(header: str) -> bool:
+    """Header looks like one of the 20 axis VN names (per Rule 16)."""
+    h = header.lower().strip().lstrip("#").strip()
+    # Strip leading section number like "13.5.1.4 " or "9.2.X.7. ".
+    h = re.sub(r"^[\d.]+[\s.,]*", "", h)
+    h = h.rstrip(".,;:")
+    for axis in AXIS_VN_HEADERS:
+        if h == axis or h.startswith(axis + " ") or h.startswith(axis + ","):
+            return True
+    return False
+
+
 def looks_like_keyword_section(header: str) -> bool:
-    """Heuristic: section header dedicates to a single keyword/concept."""
-    # Skip generic headers that are not keyword sections.
-    generic = {
-        "tổng quan",
-        "overview",
-        "lịch sử",
-        "introduction",
-        "bài tập",
-        "tài liệu tham khảo",
-        "tham khảo",
-        "references",
-        "cross-link",
-        "summary",
-        "kết luận",
-    }
+    """Heuristic: section header dedicates to a single keyword/concept.
+
+    Returns False for:
+    - Generic headers (tổng quan, overview, references, ...)
+    - Axis subsections (Khái niệm, Cơ chế hoạt động, ...) per Rule 16
+    - Procedural subsections (Bước N, Mode A, Method N, Lab L*, GE N, ...)
+    - Deep section numbers (X.Y.Z.W with 4+ levels — typically sub-sub-block)
+    """
     h = header.lower().strip()
-    for g in generic:
+    for g in GENERIC_NON_KEYWORD:
         if g in h:
             return False
+    if is_axis_subsection(header):
+        return False
+    # Strip leading section number for procedural pattern check.
+    h_stripped = re.sub(r"^[\d.]+[\s.,]*", "", h).strip()
+    if PROCEDURAL_PREFIX_RE.match(h_stripped):
+        return False
+    if DEEP_SECTION_NUMBER_RE.match(h):
+        return False
     return True
 
 
 def detect_short_keyword_sections(
     file: Path, sections: list[Section], ctx: CheckContext, tier: str | None
 ) -> None:
-    """GP-9: per-keyword section min lines per tier."""
+    """GP-9: per-keyword section min lines per tier.
+
+    A keyword section is an H2 or H3 dedicated to a single keyword. Its line
+    count includes content of all nested sub-sections (axis-VN-heading H3/H4
+    underneath) until the next sibling at the same level.
+    """
     if tier is None:
-        # Without tier hint, only warn instead of fail.
         return
     min_lines = TIER_MIN_LINES.get(tier)
     if min_lines is None:
         return
-    for sec in sections:
-        if sec.level < 3:
-            # H2 typically Phần-level header, not per-keyword
+
+    n = len(sections)
+    for i, sec in enumerate(sections):
+        # Only H2/H3 are candidates for keyword sections. H4/H5 are subsections.
+        if sec.level not in (2, 3):
             continue
         if not looks_like_keyword_section(sec.header):
             continue
+        # Aggregate line count: this section + all following deeper sections
+        # until next sibling at the same or shallower level.
         count = sec.substantive_line_count()
+        for j in range(i + 1, n):
+            child = sections[j]
+            if child.level <= sec.level:
+                break
+            count += child.substantive_line_count()
         if count < min_lines:
             ctx.fail(
                 file,
                 sec.start,
                 "GP-9",
                 f"Keyword section '{sec.header}' tier={tier} has {count} substantive "
-                f"lines < min {min_lines}. Expand or downgrade tier classification.",
+                f"lines (incl. axis subsections) < min {min_lines}. Expand or "
+                "downgrade tier classification.",
             )
 
 
