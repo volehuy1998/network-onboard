@@ -1,6 +1,8 @@
 # Phase G v3.7 Progress Tracker
 
-> **Trạng thái 2026-04-26 (POST-RECKONING #2):** Phase G **PARTIAL ~22% reach tier target**, NOT 100% như earlier batch claim. User audit catch self-deception.
+> **Trạng thái 2026-04-26 (POST-R2-COMPLETION):** Phase G v3.7 **REPLACED by v3.8 Phase R2** which has shipped 50/50 cornerstone DEEP-20 with anti-gaming infrastructure enforcement. R2 evidence: 28 commits 83274f4..dc45300 (~5800 substantive lines, 9 files cleaned of GP-11 leak in parallel). See [series-state.md](series-state.md) for full state, [governance-principles.md](governance-principles.md) for GP-6 to GP-11 binding.
+>
+> **Phase G v3.7 honest status (BEFORE v3.8 remediation):** PARTIAL ~22% reach tier target.
 >
 > **Honest aggregate per manual audit 75-keyword stratified sample** ([`memory/sdn/per-keyword-honest-audit.md`](per-keyword-honest-audit.md)):
 > - Cornerstone DEEP-20 (≥18/20): **14/50 (28%)** — claim was 50/50, gaming 3.6x
