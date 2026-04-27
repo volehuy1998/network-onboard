@@ -599,7 +599,9 @@ Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onbo
 - Phase R0.7 curriculum cleanup pass: replace existing leak (~25 file from Phase G v3.7)
 - Self-check before each curriculum edit: read replacement table above
 
-(Origin: 2026-04-26 user audit catch agent team chèn `**Axis N**` labels vào curriculum content gây confuse engineer reader. Plan v3.8-Remediation Section 11 amendment + GP-11 codify.)
+**Pre-commit enforcement:** [`scripts/rubric_leak_check.py`](scripts/rubric_leak_check.py) v2.1 (22 patterns total = 13 v1 + 7 v2 + 2 v2.1 amendment) detects 6 v2 pattern families post audit 2026-04-27: axis-numbered VN heading (`### N. Khái niệm`), cohort cornerstone phrase, tier cornerstone informal/bold prose, Tier importance prose, Phase H session reference, cohort batch stamp leftover, stale Phase B compatibility note (em-dash variant). See plan v3.9-OVSBlockHotfix Phase S0 + S0.5 for full pattern list + test suite.
+
+(Origin: 2026-04-26 user audit catch agent team chèn `**Axis N**` labels vào curriculum content gây confuse engineer reader. Plan v3.8-Remediation Section 11 amendment + GP-11 codify. 2026-04-27 master audit OVS block expanded scope to 7 additional patterns post hook v2 → v2.1 amendment per plan v3.9.)
 
 ---
 
@@ -607,21 +609,24 @@ Curriculum content (file `sdn-onboard/*.md`, `haproxy-onboard/*.md`, `linux-onbo
 
 | Key | Value |
 |-----|-------|
-| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v3.6-AuditTooling` (2026-04-26, renamed from v3.6-ContentDepth per Phase A v3.7 reckoning). **No newer tag.** v3.7 Phase G claim "COMPLETE" was self-deception, not honored. |
-| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~95K lines**, 20 blocks. **All v3.8 R0-R6 phases COMPLETE**. Cornerstone 50/50 + medium 101+/85 + peripheral 180/180 + 0 GP-11 leak across 167 files + scorecard generated. Total ~331 keyword treated, ~14K substantive lines via 100+ commits. |
-| Active phase | **v3.8-Remediation COMPLETE — tag `v4.0-MasteryComplete` issued 2026-04-26**. R5 user authority grant + manual 30/30 spot-check PASS + R6 tag annotated with scorecard SHA. Tag local only (no remote push per system policy). |
+| Branch | `docs/sdn-foundation-rev2`. Latest tag: `v4.0-MasteryComplete` (2026-04-26 local) + optional `v4.0.1-OVSHotfix` (2026-04-27 local, plan v3.9 close). **No remote push per system policy.** |
+| Curriculum | **~128 files** in `sdn-onboard/*.md`, **~96K lines** (post v3.9 expansions), 20 blocks. **All v3.8 R0-R6 phases COMPLETE** + **v3.9 OVS block hotfix S0-S8 COMPLETE 2026-04-27**. OVS scope (Block 9 + 10 + 20.0/20.1): 0 rubric leak. Non-OVS scope (Block 13 + 3/4 + README): 74 leak deferred to v3.10/v3.11. |
+| Active phase | **v3.9-OVSBlockHotfix COMPLETE 2026-04-27** (24 commits across S0-S7, 2 commits S8). 6 categories of issues fixed: 5 factual errors cornerstone, ~17 GP-11 leaks, 2 GP-9 min-line violations, 2 sibling numbering collisions, 7+ editorial defects, 3 systemic gap backfills (axis 17/20 + SHA verify). See [`memory/sdn/post-tag-audit-v4.0-2026-04-27.md`](memory/sdn/post-tag-audit-v4.0-2026-04-27.md). Tag local only. |
 | Lab host | PENDING (waiting on user). 63 exercises pending verification. |
 | HAProxy series | 1/29 Parts. Linux FD doc 1265 lines. |
 | Trackers | [memory/sdn/series-state.md](memory/sdn/series-state.md), [memory/shared/audit-index.md](memory/shared/audit-index.md), [memory/shared/session-log.md](memory/shared/session-log.md), [memory/sdn/phase-g-progress-tracker.md](memory/sdn/phase-g-progress-tracker.md) (annotated PARTIAL post-honest-audit). |
 | Dependency map | [memory/shared/file-dependency-map.md](memory/shared/file-dependency-map.md) (Rule 2). |
 | Lab pending | [memory/sdn/lab-verification-pending.md](memory/sdn/lab-verification-pending.md). |
-| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md) v1.1, **11 GP** (GP-1 đến GP-5 v3.7 + GP-6 đến GP-11 v3.8). Mirror trong CLAUDE.md Rule 15 (no self-tag) + Rule 16 (internal-vs-reader language separation). |
-| **Active plan** | [plans/sdn/v3.8-remediation.md](plans/sdn/v3.8-remediation.md), APPROVED 2026-04-26, 7 phase R0→R6, target tag v4.0-MasteryComplete sau R6 (post-R5 user sign-off). Realistic effort 350-600 giờ multi-month. |
+| **Governance** | [memory/sdn/governance-principles.md](memory/sdn/governance-principles.md) v1.2 (post v3.9 S8.4), **12 GP** (GP-1 đến GP-5 v3.7 + GP-6 đến GP-11 v3.8 + GP-12 v3.9 Post-Tag Regression Audit Cadence). Mirror trong CLAUDE.md Rule 15/16. |
+| **Active plan** | None (v3.9-OVSBlockHotfix closed 2026-04-27). Future scheduled: v3.10 OVN block hotfix (per GP-12 cadence T+7 day from any v4.x tag), v3.11 OF block hotfix. |
+| Past plan v3.9 | [plans/sdn/v3.9-ovs-block-hotfix.md](plans/sdn/v3.9-ovs-block-hotfix.md), CLOSED 2026-04-27. 24 commits S0-S7 + 5 S8 commits. Effort actual ~27-39h vs plan estimate 60-84h. |
+| Past plan v3.8 | [plans/sdn/v3.8-remediation.md](plans/sdn/v3.8-remediation.md), CLOSED 2026-04-26 (R0-R6 self-claimed COMPLETE; subsequent v3.9 hotfix exposed 6 categories of issues per Reckoning #3). |
 | Past plan v3.7 | [plans/sdn/v3.7-reckoning-and-mastery.md](plans/sdn/v3.7-reckoning-and-mastery.md), Phase A-F done, **Phase G PARTIAL ~22% (gaming detected)**, Phase H blocked. Superseded by v3.8-Remediation. |
 | Past plan v3.6 | [plans/sdn/v3.6-content-depth.md](plans/sdn/v3.6-content-depth.md), Closed (audit tooling + 6 keyword closure, tag renamed). |
 | Past plan v3.5 | [plans/sdn/v3.5-keyword-backbone.md](plans/sdn/v3.5-keyword-backbone.md), Closed (placement framework, không phải mastery). |
 | **Anti-gaming script** | [scripts/anti_gaming_check.py](scripts/anti_gaming_check.py) GP-6 đến GP-10 enforcement. Pre-commit hook installed. Detect cohort tier-stamp + cosmetic stamp + min-lines violation. |
-| **Rubric leak check** | [scripts/rubric_leak_check.py](scripts/rubric_leak_check.py) GP-11 / Rule 16 enforcement. Pre-commit hook. Phase R0.7 cleanup ~25 file pending. |
+| **Rubric leak check** | [scripts/rubric_leak_check.py](scripts/rubric_leak_check.py) v2.1 (22 patterns post v3.9 S0+S0.5) GP-11 / Rule 16 enforcement. Pre-commit hook. OVS scope cleanup COMPLETE; Block 13/3/4 cleanup deferred to v3.10/v3.11. |
+| **Test suite** | [scripts/tests/test_rubric_leak_check.py](scripts/tests/test_rubric_leak_check.py) 18 tests (3 v1 regression + 7 v2 + 3 v2.1 + 3 negative + 2 integration). |
 | Pre-commit hook | [scripts/pre-commit-install.sh](scripts/pre-commit-install.sh) installs `.git/hooks/pre-commit` running both check scripts on staged .md. |
 | Honest audit | [memory/sdn/per-keyword-honest-audit.md](memory/sdn/per-keyword-honest-audit.md) manual 75-keyword stratified audit 2026-04-26 reveal v3.7 Phase G 4.5x inflate. |
 | Audit script v3 | [scripts/refine_coverage_matrix_v2.py](scripts/refine_coverage_matrix_v2.py), coverage matrix breadth audit (legacy). Phase R5 sẽ build per_keyword_strict_audit.py cho depth verification. |
