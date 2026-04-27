@@ -8,6 +8,68 @@
 
 ---
 
+## Session 71, 2026-04-29 (very long), v3.11 R1.B through R4 full closure
+
+**Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** TBD post session-log commit. **Tags created:** none (R5 pending user sign-off).
+
+### Work done
+
+Plan v3.11 closed in full. 6 new commits this session, completing every remaining phase from R1.B onward:
+
+| Phase | Commit | Form |
+|---|---|---|
+| R1.B audit + fix | `70e5bc9` | A+B |
+| R1.C audit + R2 (3.5) | `a75e96f` | A+B |
+| R1.D audit + R2 (4.8) | `47a6c0c` | A+B |
+| R1.E audit + R2 (4.9) | `339ffcb` | A+B |
+| R1.F audit + fix | `39d755c` | A+B |
+| R3 final audit | `0e4c912` | A |
+| R4 CHANGELOG | `1dbfe07` | A |
+
+R1.B: 14 fixes across 5 files (3.1, 3.3, 4.0, 4.5, 4.6). Same OF-version-prefix-drop pattern observed in R1.A recurred in 3.3 (13 fixes for OFPGT_*, OFPMF_*, OFPC_GROUP_STATS/PORT_BLOCKED, OFPFF_*). 1 master-branch URL fix in 3.1.
+
+R1.C: 6 source-verify fixes in 3.5 plus 9 GP-11 leaks closed (R2 work merged because the rubric_leak_check pre-commit scans whole staged file). The 9 GP-11 leaks: 1 tier-importance, 2 tier-cornerstone-informal, 6 axis-numbered VN headings (How it works / Source code reference / Comparison with other systems).
+
+R1.D: 18 v3.3.0 cross-baseline fixes in 4.8 plus 2 GP-11 leaks closed. Discovered that 4.8 was authored against OVS dev trunk near v3.3.0 with explicit "Branch baseline: OVS v3.3.0" annotations contradicting the v2.17.9 plan baseline. Function names persist unchanged at v2.17.9; only annotation needed correction.
+
+R1.E: 14 of 34 v3.3.0 cross-baseline fixes in 4.9 plus 1 GP-11 leak closed. 20 v3.3.0 mentions in dense Vietnamese prose deferred to v3.12 (GP-13 paragraph rewrite cost too high for this session). Plan §11 spot-check items (line 1751 OFPAT_COPY_FIELD enum reference, line 1752 OFPAT_PUSH_PBB / POP_PBB type-code attribution) also deferred.
+
+R1.F: 1 fix (master-branch URL in 4.1). Files 4.2, 4.3, 4.4, 4.7 are clean.
+
+R3: All 4 pre-commit hooks PASS for v3.11 scope. Repo-wide rubric leak count 15 to 3 (12 OF-block leaks closed exactly per plan §6 closure condition #5). Pytest 42/42 PASS. 8 of 8 spot-check re-verifications PASS. Repo em-dash count 4,246 (down 3 from v3.10 R4); Vietnamese chunks 18,262 (down 9). No new em-dashes or Vietnamese introduced.
+
+R4: CHANGELOG Reckoning #8 appended documenting 65 source-verify fixes plus 12 GP-11 leaks plus 6+ GP-13 rewrites = 77+ deliverables; aggregate error rate 2.5 percent across 2,504 candidates.
+
+### Patterns observed across v3.11
+
+1. **OF-version-prefix-drop (27 fixes):** curriculum dropped per-version OF prefixes from OVS enum names (`OFPGT_ALL` instead of `OFPGT11_ALL`, `OFPMF_KBPS` instead of `OFPMF13_KBPS`). Hit primarily in 3.3, 3.4, 3.5. Source: OF spec PDFs use bare names; OVS implementation prefixes with introduction version per Rule 14 §14.2.
+2. **Cross-baseline drift v3.3.0 to v2.17.9 (32 fixes; 20 deferred):** 4.8 and 4.9 were authored 2026-04-24 against OVS dev trunk. Explicit "Branch baseline:" annotations needed updating to plan baseline.
+3. **WRONG_BRANCH_URL master to v2.17.9 (2 fixes):** L363 of 3.1 and L363 of 4.1, both NXM extension references.
+
+### Files modified
+
+- `plans/sdn/v3.11-of-block-source-verify-and-cleanup.md` (em-dash + VN fixes during R0).
+- 6 new audit logs in `memory/sdn/v3.11-*-2026-04-29.md` (R0 baseline, R0.5 inventory, R1.A through R1.F, R3 final).
+- `scripts/v3_11_citation_inventory.py` (new).
+- 6 curriculum files modified: 3.1, 3.3, 3.4 (R1.A baseline), 3.5, 4.1, 4.8, 4.9.
+- `CHANGELOG.md` (Reckoning #8).
+- `CLAUDE.md` (Current State updated for v3.11 closure).
+
+### Pending next session
+
+| Task | Estimated effort |
+|---|---|
+| User sign-off and R5 optional tag `v4.2.0-OFBlockHotfix` | 30 min |
+| Cross-block plan: 3 GP-11 leaks in README.md and `_templates/template-d-per-table.md` | 5-10 hours |
+| Plan v3.12 (curriculum-wide English migration): 4,246 em-dashes, 18,262 VN chunks across 194 files | 80-120 hours |
+| Forward stub from v3.11: 20 deferred v3.3.0 mentions in 4.9, plan §11 spot-check items | embedded in v3.12 |
+
+### Push status
+
+No remote push per system policy. All work local on `docs/sdn-foundation-rev2`. R5 tag not yet created; awaits user explicit sign-off per Rule 15.
+
+---
+
 ## Session 70, 2026-04-29, v3.11 R0 + R0.5 + R1.A start
 
 **Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** `650600a`. **Tags created:** none.
