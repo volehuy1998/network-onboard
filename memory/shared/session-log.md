@@ -8,6 +8,100 @@
 
 ---
 
+## Session 69, 2026-04-28 (very long), v3.10 R1.B through R6 full closure
+
+**Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** TBD (post session-log commit). **Tags created:** `v4.1.0-OVNBlockHotfix` (annotated, plan v3.10 close).
+
+### Work done
+
+Plan v3.10 closed in full. 12 new commits this session, completing every remaining phase from R1.B onward:
+
+| Phase | Commit | Form |
+|---|---|---|
+| R1.B.1 audit | `5020f7f` | A |
+| R1.B.1 fixes | `ced3b51` | B |
+| R1.B.2 audit | `da5f8cd` | A |
+| R1.B.2 fixes | `a6a002f` | B |
+| R1.C.1 audit | `bcca78f` | A |
+| R1.C.1 fixes | `aeeb084` | B |
+| R1.C.2 audit | `bd5abd5` | A |
+| R1.C.2 fixes | `b5608fa` | B |
+| R1.C.3 combined | `b161ece` | A+B |
+| R1.D + R2 combined | `55dbdcb` | A+B |
+| R1.E combined | `c407133` | A+B |
+| R3 combined | `b3f321e` | A+B |
+| R4 final audit | `5ce7a5d` | A |
+| R5 CHANGELOG Reckoning #7 | `62dbfc9` | A |
+| R6 tag | (no commit; annotated tag `v4.1.0-OVNBlockHotfix`) | n/a |
+
+Plus this session-log close commit and a CLAUDE.md update.
+
+### Cumulative v3.10 statistics (sessions 68 and 69 combined)
+
+- Phases completed: R0, R0.5, v4 amendment, R1.A, R1.B.1, R1.B.2, R1.C.1, R1.C.2, R1.C.3, R1.D, R2, R1.E, R3, R4, R5, R6.
+- 17 commits on `docs/sdn-foundation-rev2` from `babd05b` (R0) to `62dbfc9` (R5).
+- 126 fixes applied across 13 files.
+- 30 OVN-block-scope files audited (24 OVN-only + 6 cross-cutting Block 20).
+- 4,038 inventory candidates triaged.
+- Combined error rate 3.1 percent.
+- Repo-wide rubric leak count dropped from 74 to 15 (59 leaks closed; remaining 15 are non-OVN scope).
+
+### Empirical observations recorded in Reckoning #7
+
+- Schema-anchored content runs at 0.2 to 2.0 percent error rate (near source-of-truth quality when authored using the offline OVN repo).
+- The 36 percent R1.A error rate was dominated by 18.0 (44 percent) which had been authored against OVN main branch. Once anchored to v22.03.8 the systematic table-number drift was closed.
+- The 16.5 percent R1.C.3 rate was driven entirely by 46 GP-11 axis-label leaks in 13.18 (a single repeated authoring choice across catalog sections).
+- Inventory had high recall but low precision: about 60 of 4,038 candidates were inventory false positives.
+
+### Notable findings preserved in Reckoning #7
+
+- 13.0 line 232: `mac_binding_age_threshold` cited as OVN 24.03; actual is OVN 22.09 commit `1a947dd3` dated 2022-08-17.
+- 13.0 line 240: I-P engine cited as OVN 22.09; actual is OVN 20.03 commit `5d1d606b` dated 2019-05-17.
+- 13.0 line 143 + 13.5 lines 20/1031/1150: Port_Binding "8 type" claim corrected to 12 types per `controller/binding.c:915` `get_lport_type()` at v22.03.8.
+- 13.5b line 149: `build_port_bindings` does not exist at v22.03.8; real function is `build_ports` at `northd/northd.c:4248`.
+- 13.5 lines 271-275: 5 binding.c function-line citations off by 200-700 lines, migrated to function-name anchors per Rule 14.4 Option C.
+- 13.7 line 88: `ls_in_l2_lkup` is logical table 24 (not 19) at v22.03.8.
+- 13.7 line 92: OF table range "8-30 / 32-55" wrong; actual ingress 8-onward, egress 40-onward.
+- 13.18: 46 axis-numbered Vietnamese headings closed via natural English mapping per Rule 16.
+- 13.19 PRE_HAIRPIN cluster (3 sections at lines 1453, 1565, 1675): table-number drift closed.
+- 13.19 lines 47, 103, 104, 3025, 3076: `build_lswitch_input/output_port_security_l2/_ip/_nd` family is FABRICATED at v22.03.8; real functions are `build_lswitch_input/output_port_sec_op` and `_od` at northd/northd.c:5615/5666 (input) and :5725/5770 (output).
+- 18.0 systematic table-number rewrite: 28 instances of "Table 26 / 27 / 29" rewritten to v22.03.8 actuals.
+- 19.0 line 10: URL ref changed from `main` to `branch-24.03` matching the file's stated v24.03+ baseline.
+
+### State at session close
+
+Working tree:
+
+```
+M memory/shared/session-log.md   (this file; will be staged in the close commit)
+M CLAUDE.md                       (Active plan and Branch lines updated)
+?? .github/commands/                     (out of v3.10 scope)
+?? .github/workflows/gemini-*.yml        (out of v3.10 scope)
+?? scripts/__pycache__/                  (out of v3.10 scope)
+?? scripts/cleanup_doubles.py            (out of v3.10 scope)
+?? scripts/final_semantic_audit.py       (out of v3.10 scope)
+?? scripts/fix_franglais.py              (out of v3.10 scope)
+?? scripts/mass_replace_sdn.py           (out of v3.10 scope)
+?? scripts/test_fix.py                   (out of v3.10 scope)
+?? scripts/tests/__pycache__/            (out of v3.10 scope)
+```
+
+### Pending for next session
+
+- **Plan v3.11 (OF block hotfix):** scope Block 3 (`3.5 - openflow-message-catalog.md` 9 leaks), Block 4 (`4.8` 2 leaks, `4.9` 1 leak). Plus Rule 14 source-verify against OVS upstream at v2.17.9. Estimated 20 to 30 hours.
+- **Cross-block plan (README + templates + backfill):** scope README (2 leaks), `_templates/template-d-per-table.md` (1 leak). Estimated 5 to 10 hours.
+- **Plan v3.12 (curriculum-wide English migration):** scope ~ 4,249 em-dashes plus 18,271 non-English chunks across 194 files. Estimated 80 to 120 hours.
+
+### Stats
+
+- Commits this session: 14 (12 phase commits + this session-log close + CLAUDE.md update).
+- Tags created: 1 (`v4.1.0-OVNBlockHotfix`, annotated, no remote push per system policy).
+- Curriculum files modified: 9 (13.0 from session 68; new this session: 13.1, 13.2, 13.3, 13.5, 13.6, 13.7, 13.8, 13.17, 13.18, 13.19, 19.0, 20.2; total v3.10: 13 files).
+- Memory files added: 7 (R1.B.1, R1.B.2, R1.C.1, R1.C.2, R1.C.3, R1.D+R2 combined, R1.E, R3, R4 final audit; eight files from this session plus 4 from session 68 = 12 total).
+- Pre-commit checks run: ~ 30 staged-mode runs, all PASS at the final commit time per phase.
+
+---
+
 ## Session 68, 2026-04-28 (long), v3.10 R0 through R1.A complete
 
 **Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** `cfe6167`. **Tags created:** none.
