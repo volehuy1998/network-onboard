@@ -9,12 +9,31 @@ Pre-commit hook enforcing GP-11 Internal-vs-Reader-Facing Language Separation
 Detects internal rubric/governance/plan terminology that has leaked into
 reader-facing curriculum content (sdn-onboard/, haproxy-onboard/, etc.).
 
+Version history:
+  v1 (2026-04-26): Initial 13 patterns (axis bold-label, axis-numbered-reference,
+                   cohort C/M/P, Phase G/R, Phase G/R batch, DEEP-N, PARTIAL-N,
+                   REFERENCE-N, PLACEHOLDER, rubric meta-term, anti-gaming-meta,
+                   GP-N reference, Form A/B per GP-).
+  v2 (2026-04-27): +7 patterns from master audit OVS block findings:
+                   axis-numbered-vn-heading, cohort-cornerstone-phrase,
+                   tier-cornerstone-informal, tier-importance-bold-label,
+                   phase-session-reference, cohort-batch-stamp-leftover,
+                   stale-phase-compat-note. Total 20 patterns.
+                   See plans/sdn/v3.9-ovs-block-hotfix.md Phase S0.
+  v2.1 (2026-04-27 S0.5): +2 patterns + broaden 1, post pre-S2 manual verify of
+                   actual 9.22 phrasings + 9.9:58 em-dash variant:
+                   - tier-importance-prose (catches 'Tier importance:' without **)
+                   - tier-cornerstone-bold-prose ('**tier cornerstone tuyệt đối**')
+                   - stale-phase-compat-note broadened to phrase fragment.
+                   Total 22 patterns.
+
 Usage:
   python scripts/rubric_leak_check.py --staged
   python scripts/rubric_leak_check.py --files A B C
   python scripts/rubric_leak_check.py --all
   python scripts/rubric_leak_check.py --allow-meta   # exempt memory/plan
   python scripts/rubric_leak_check.py --report       # full violation report
+  python scripts/rubric_leak_check.py --warn-only    # advisory mode, no block
 
 Exit codes:
   0 = PASS
@@ -147,6 +166,125 @@ LEAK_PATTERNS = [
         "form-ab-reference",
         "FAIL",
         "Replace 'Form A/B per GP-6' commit-pattern reference (internal only).",
+    ),
+    # ====================================================================
+    # V2 patterns (added 2026-04-27 per master audit OVS block findings)
+    # See plans/sdn/v3.9-ovs-block-hotfix.md Phase S0 for context.
+    # ====================================================================
+    # Axis-numbered VN heading (e.g., 9.32 §9.32.1/§9.32.2 pattern).
+    # Catches: ### 1. Khái niệm | ### 7. Tầm quan trọng | ### 20. So sánh
+    (
+        re.compile(
+            r"^#{2,4}\s+\d{1,2}\.\s+("
+            r"Khái\s*niệm|"
+            r"Lịch\s*sử|"
+            r"Vị\s*trí|"
+            r"Vai\s*trò|"
+            r"Vì\s*sao|"
+            r"Vấn\s*đề|"
+            r"Tầm\s*quan\s*trọng|"
+            r"Cơ\s*chế|"
+            r"Cách\s*kỹ\s*sư|"
+            r"Phân\s*loại|"
+            r"Quy\s*trình|"
+            r"Khi\s*xảy\s*ra|"
+            r"Liên\s*quan|"
+            r"Khác\s*biệt|"
+            r"Cách\s*quan\s*sát|"
+            r"Source\s*code|"
+            r"Trường\s*hợp|"
+            r"Bài\s*tập|"
+            r"Lỗi\s*thường|"
+            r"So\s*sánh|"
+            r"Cross[\s\-]?domain|"
+            r"Comparison"
+            r")\b",
+            re.IGNORECASE | re.MULTILINE,
+        ),
+        "axis-numbered-vn-heading",
+        "FAIL",
+        "Replace '### N. Khái niệm' với '### Khái niệm' (drop axis number per Rule 16 §16.2).",
+    ),
+    # Cohort + cornerstone phrase in body (not strict cohort C/M/P\d label).
+    # Catches: 'cohort cornerstone OVS datapath', 'cohort cornerstone classifier'
+    (
+        re.compile(r"\bcohort\s+cornerstone\b", re.IGNORECASE),
+        "cohort-cornerstone-phrase",
+        "FAIL",
+        "Drop 'cohort cornerstone' qualifier — engineer reader không cần meta-tier reference.",
+    ),
+    # Informal tier reference: 'Tier 1 cornerstone', 'cornerstone tier 1 tuyệt đối'
+    (
+        re.compile(
+            r"\b(?:[Tt]ier\s*\d+\s+cornerstone|cornerstone\s+tier\s*\d+(?:\s+tuyệt\s*đối)?)\b"
+        ),
+        "tier-cornerstone-informal",
+        "FAIL",
+        "Drop 'Tier N cornerstone' / 'cornerstone tier N tuyệt đối' phrasing — author tier-stamp leak.",
+    ),
+    # Tier importance bold label: '**Tier importance: cornerstone tuyệt đối**'
+    (
+        re.compile(
+            r"\*\*\s*[Tt]ier\s+importance\s*:\s*cornerstone(?:\s+tuyệt\s*đối)?\s*\*\*"
+        ),
+        "tier-importance-bold-label",
+        "FAIL",
+        "Drop '**Tier importance: cornerstone tuyệt đối**' label — meta-rubric reference.",
+    ),
+    # Tier importance prose (no markdown bold required): 'Tier importance: cornerstone'
+    # 'Tier importance: medium-high (cornerstone trong OVN context...)'
+    # Augmented S0.5 (2026-04-27) per master audit 9.22 actual phrasing finding.
+    (
+        re.compile(r"\b[Tt]ier\s+importance\s*:", re.IGNORECASE),
+        "tier-importance-prose",
+        "FAIL",
+        "Drop 'Tier importance:' prose framing — meta-rubric reference per Rule 16 §16.2.",
+    ),
+    # Tier cornerstone in markdown bold prose (different word order from informal):
+    # '**tier cornerstone tuyệt đối**', '**đỉnh tier cornerstone**'
+    # Augmented S0.5 (2026-04-27).
+    (
+        re.compile(
+            r"\*\*[^*]*\btier\s+cornerstone(?:\s+tuyệt\s*đối)?[^*]*\*\*",
+            re.IGNORECASE,
+        ),
+        "tier-cornerstone-bold-prose",
+        "FAIL",
+        "Drop '**tier cornerstone tuyệt đối**' bold prose framing — meta-rubric reference.",
+    ),
+    # Phase H/I/J/K/L/S session reference (V1 catches Phase G/R only).
+    # Catches: 'Phase H session S39', 'Phase H session', 'Phase S0 session'
+    (
+        re.compile(r"\bPhase\s+[HIJKLS]\d*\s+session\b", re.IGNORECASE),
+        "phase-session-reference",
+        "FAIL",
+        "Drop 'Phase H/S session SN' embedded reference — replace với '(mở rộng 2026-04)' nếu cần date.",
+    ),
+    # Cohort batch limit / compact treatment leftover (V3.7 Phase G gaming).
+    # Catches: '(compact treatment per cohort batch limit)'
+    (
+        re.compile(
+            r"\b(?:compact\s+treatment\s+per\s+cohort|cohort\s+batch\s+limit|per\s+cohort\s+batch)\b",
+            re.IGNORECASE,
+        ),
+        "cohort-batch-stamp-leftover",
+        "FAIL",
+        "Drop '(compact treatment per cohort batch limit)' — internal commit-pattern reference.",
+    ),
+    # Stale Phase A/B/C/D/E/F compatibility note.
+    # Catches phrase fragment regardless of comma vs em-dash separator and parens:
+    #   '(reference, giữ tương thích content Phase B)'
+    #   '(reference — giữ tương thích content Phase B)'
+    #   'reference - giữ tương thích content Phase D'
+    # Broadened S0.5 (2026-04-27) per master audit 9.9:58 em-dash variant finding.
+    (
+        re.compile(
+            r"\bgiữ\s+tương\s+thích\s+content\s+Phase\s+[A-Z]\b",
+            re.IGNORECASE,
+        ),
+        "stale-phase-compat-note",
+        "FAIL",
+        "Drop 'giữ tương thích content Phase B' phrase — stale plan compatibility marker.",
     ),
 ]
 

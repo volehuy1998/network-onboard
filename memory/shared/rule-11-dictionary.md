@@ -1,12 +1,18 @@
-# Rule 11 Vietnamese Prose Dictionary
+# Rule 11 Historical Vietnamese Prose Dictionary (frozen reference)
 
-> Extracted from `CLAUDE.md` Rule 11 §11.2 (2026-04-25 slim sweep). This is the living dictionary for Rule 11 Vietnamese Prose Discipline. When a Rule 11 fix commit encounters a word not yet listed, ADD it here (Rule 11 §11.7).
+> **Status: FROZEN since 2026-04-28.** This file is no longer authoritative for new writing. It is kept as a one-way English-to-Vietnamese translation reference for plan v3.12 (Curriculum-wide English Language Migration), where translators will need to recognize the original Vietnamese phrasing in legacy curriculum files and produce the canonical English rendering.
+>
+> **Why frozen.** CLAUDE.md Rule 17 (added by plan v3.9.1 Phase Q-1.C, 2026-04-28) makes English the mandatory explanation language across the SDN training program (`sdn-onboard/*.md` and `haproxy-onboard/*.md`), CLAUDE.md, all `memory/*` files, and all `plans/*` files. The Vietnamese prose policy that this dictionary supported (retired Rule 11) is no longer in force. New writing follows the English style guide at `memory/shared/english-style-guide.md` instead.
+>
+> **Scope of this file.** The body table below is preserved verbatim, in its original bilingual form, because plan v3.12 will need it during the legacy migration. CLAUDE.md Rule 17 grants this file a one-time narrow allowance to keep its Vietnamese content (the file lives in `memory/`, which is named in the allowance). The pre-commit `lang_check.py` allowlist exempts this exact path. Do not add new entries; do not rewrite existing entries.
+>
+> **For new writing, see:** `memory/shared/english-style-guide.md` rule 3.3 for the keep-as-is identifier list (the part of retired Rule 11 that survived the migration), and CLAUDE.md Rule 17 for the language policy.
 
-## Context
+## Historical context (preserved as it was written)
 
 Rule 11 applies the "translate at the right place" principle. Named identifiers (OVS/OVN/OpenFlow concept, CLI verbatim, protocol acronym) KEEP English; descriptive prose words MUST translate to Vietnamese. This table lists common prose words with their canonical Vietnamese translation, so curriculum stays consistent.
 
-Self-classification rule: see CLAUDE.md §11.1 (keep English) + §11.3 (same word, sometimes English sometimes Vietnamese, with examples).
+Self-classification rule: see CLAUDE.md §11.1 (keep English) + §11.3 (same word, sometimes English sometimes Vietnamese, with examples). Both sections were retired on 2026-04-28; the keep-as-is list was preserved verbatim in the English style guide.
 
 ---
 
