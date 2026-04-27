@@ -6,6 +6,86 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## Reckoning #3 — 2026-04-27 — OVS audit findings + v3.9 hotfix
+
+> **Trigger:** Master block-level audit OVS curriculum (5 agent parallel) 2026-04-27 morning, T+1 day after `v4.0-MasteryComplete` tag (2026-04-26).
+> **Scope:** 45 OVS file Block 9 + Block 10 + Block 20 OVS-relevant, ~32,395 dòng.
+> **Outcome:** 24 hotfix commits across 7 phases (S0-S7) per Plan v3.9-OVSBlockHotfix. Optional `v4.0.1-OVSHotfix` tag eligible per Rule 15 Exception clause.
+
+### Findings (6 nhóm A-F)
+
+- **Nhóm A CRITICAL (5):** factual errors in cornerstone OVSDB content — JSON-RPC version (10.3, 10.4 stated 2.0 instead of RFC 7047 §4 mandated 1.0); monitor_cond_since version (10.0 stated 2.13/2020, correct 2.12/2019 per NEWS); monitor_cond year (10.4 stated 2017, correct 2016 per NEWS); fabricated `northd-chassis-handle-idl-after-leader-change` flag (10.5 §10.5.4(6)) does not exist in upstream OVN any branch.
+- **Nhóm B HIGH (~17 instances):** GP-11 / Rule 16 phrase leaks across 8 OVS curriculum files — cohort cornerstone heading, Tier 1 cornerstone informal phrasing, axis-numbered VN heading (9.32 §9.32.1+§9.32.2 23 instances), Tier importance prose, Phase H session reference, stale Phase B compatibility note (em-dash variant).
+- **Nhóm C HIGH (2):** GP-9 min-line violations cornerstone — 9.32 §9.32.4 dpif (~24 dòng, 1/2 of min 50), 9.12 ovs-upgrade-choreography (247 dòng for cornerstone-adjacent topic).
+- **Nhóm D HIGH (2):** sibling-file section numbering collisions — 20.0 used `## 20.1` to `## 20.7` colliding với sibling files; 20.1 used `## 20.7` to `## 20.18`. Cross-link `Phần 20.X` cross-block ambiguous.
+- **Nhóm E MEDIUM (7+):** editorial defects — `thị field` corruption (9.0 3 instances, botched bulk replacement), `XXXXXX` placeholder + `****N` quad-asterisk (9.5 + 10.2), duplicate `## 9.4.X` (lines 1410 + 3302), orphan `## 10.6` numbering inside file 10.1 + 5 sub-headings + Phase I.A3 internal references.
+- **Nhóm F MEDIUM (~30 file):** systemic axis 17 production incident under-coverage (Block 10 cornerstone 10.0/10.3/10.4/10.6/10.7 dựa Capstone POE synthetic, không real incident) + axis 20 cross-domain spotty (12/13 Block 9 files brief or missing) + Rule 14 SHA citations partly fabricated (5/8 verified, 3 cited from memory).
+
+### Root cause
+
+V3.8 R5 user spot-check 30/331 keyword (9% sample) failed to detect:
+- **Sub-tooling gap**: `rubric_leak_check.py` v1 (12 patterns) blind to: axis-numbered VN heading (`### 1. Khái niệm` ... `### 20. So sánh`), `cohort cornerstone` phrase, `Tier 1 cornerstone` informal, `Phase H session` reference, `(compact treatment per cohort batch limit)` leftover, `(reference, giữ tương thích content Phase B)` em-dash variant.
+- **Cross-file structural collision**: 20.0 ↔ 20.1 ↔ 20.7 sibling file numbering not exposed by per-file scorecard; R5 audit was per-file, not cross-file.
+- **Systemic giảm-dần-đều patterns**: each file scored axis 17 + axis 20 partial credit (0.5-1), aggregate passed DEEP-15/DEEP-20, hidden if only checking threshold.
+
+### Action: Plan v3.9-OVSBlockHotfix (executed 2026-04-27)
+
+24 commits across 7 phases:
+
+- **Phase S0 (4 commits)**: rubric_leak_check.py v1 (13 patterns) → v2 (20 patterns) + 14-test pytest suite + baseline state. Plus S0.5 v2.1 amendment (+2 patterns post pre-S2 verification = 22 total) catching false-negative patterns.
+- **Phase S1 (5 commits)**: Critical fact hotfix Form A 1 commit/file (10.3, 10.4, 10.0, 10.4 again, 10.5) với MCP GitHub upstream evidence per Rule 14 §14.7. RFC 7047 §4 verified, NEWS v2.6.0 + v2.12.0 verified, OVN 22.03 + main `ovn-nb.xml` confirmed `northd-chassis-handle-idl-after-leader-change` does NOT exist (outcome c → remove fabricated flag entirely).
+- **Phase S2 (4 commits)**: GP-11 phrase scrub Form B ≤5 file/batch — 9.2 + 9.9 + 9.11; 9.22 + 9.24 (line 3 deferred); 9.32 line 3 deferred to S3; 9.1 + 9.4 + 10.1 (S0 follow-up).
+- **Phase S3 (2 commits)**: 9.32 cleanup combined — §9.32.1 + §9.32.2 axis-numbered headings (41 replacements) + line 526 cohort-batch + line 3 expansion meta. Plus §9.32.4 dpif expansion 24 → 119 dòng full 20-axis (DEEP-20 cornerstone reach), MCP source citations `lib/dpif.h::dpif_class` + `lib/dpif.c::dpif_open` etc. at v2.17.9.
+- **Phase S4 (4 commits)**: Cross-link inventory + 20.0 renumber (`## 20.1`-7 → `## 20.0.1`-7 + 8 sub-headings + 1 internal ref) + 20.1 renumber (`## 20.7`-18 → `## 20.1.7`-18 + 36 sub-headings + 3 internal refs) + cross-link sweep cross-block (13 references in 5 files).
+- **Phase S5 (1 commit Form A)**: 9.12 ovs-upgrade-choreography expansion 247 → 572 dòng, 22 natural VN heading sections covering 20 axis. Source citations `ovsdb/ovsdb-tool.c::do_convert` (line 449), `do_join_cluster` (line 326), etc. verified MCP at v2.17.9. Real upgrade transcript curated từ upstream `tests/ovsdb-server.at` + OpenStack neutron-ovs-agent doc, marked "lab-pending" per memory/sdn/lab-verification-pending.md (4 new entries).
+- **Phase S6 (2 commits Form B)**: editorial cleanup — `thị field` (3 inst in 9.0) + XXXXXX placeholder (9.5 + 10.2 + ****N format defect); 9.4 §X duplicate (rename second to §O) + 10.1 orphan §10.6 → §10.1.6 (5 sub-headings + 3 Phase I.A3 references dropped).
+- **Phase S7 (3 commits)**:
+  - **S7.A** axis 17 incident backfill 3 cornerstone (10.0 monitor fanout storm, 10.3 nb_cfg prerequisite race, 10.4 IDL memory bloat 5GB) — curated from public OVS/OVN community pattern, marked Rule 7 reproduction note. (S7.A original target 5+, executed top-3 priority focus.)
+  - **S7.B** axis 20 cross-domain expansion 3 files (9.16 OVS controller failover vs Cisco STP/ONOS/Faucet/ODL/Kubernetes leader-election, 9.17 perf benchmark vs MoonGen/CSIT/TRex/netperf, 9.20 VLAN access/trunk vs Cisco IOS/Junos/Arista/Linux native bridge/IEEE 802.1Q). (Scope-fenced from plan top-10 to top-3.)
+  - **S7.C** MCP SHA verification 8 SHA — 5 verified (180ab2fd635e, 464bc6f9, 0d9dc8e9, 978427a5, 8b7ea2d4) + 3 unverified softened (5ca1ba9 truncated, 8e53fe8e22 + cd278bd35e likely fabricated). Verification log at `memory/sdn/sha-verification-log.md`.
+
+### Per Rule 15 Exception clause
+
+This reckoning is hotfix path, **not untag**. Tag `v4.0-MasteryComplete` stays local (no remote push per system policy). Optional `v4.0.1-OVSHotfix` tag issued local-only post S8.5 with annotated message referencing this Reckoning + plan v3.9 + post-tag audit report.
+
+### Governance amendment
+
+GP-12 Post-Tag Regression Audit Cadence (mandatory T+7 day master block-level audit cho mỗi comprehensive tag claim) ratified Section 16 of `memory/sdn/governance-principles.md` v1.2 amendment. Subsequent tags `v4.x-MasteryComplete` / `v4.x-FullDepth` / equivalent comprehensive claim trigger automatic GP-12 cadence within 7 days.
+
+### Reference artifacts
+
+- Plan: [`plans/sdn/v3.9-ovs-block-hotfix.md`](plans/sdn/v3.9-ovs-block-hotfix.md) (2728 lines, 433 actionable checkboxes, 14 sections)
+- Master audit (5 agent parallel): composed in [`memory/sdn/post-tag-audit-v4.0-2026-04-27.md`](memory/sdn/post-tag-audit-v4.0-2026-04-27.md)
+- Rubric leak baseline: [`memory/sdn/rubric-leak-baseline-2026-04-27.md`](memory/sdn/rubric-leak-baseline-2026-04-27.md)
+- Cross-link inventory: [`memory/sdn/cross-link-inventory-20-renumber.md`](memory/sdn/cross-link-inventory-20-renumber.md)
+- SHA verification log: [`memory/sdn/sha-verification-log.md`](memory/sdn/sha-verification-log.md)
+- Lab verification pending (extended +4 entries): [`memory/sdn/lab-verification-pending.md`](memory/sdn/lab-verification-pending.md)
+- Anti-gaming script: [`scripts/anti_gaming_check.py`](scripts/anti_gaming_check.py)
+- Rubric leak script v2.1: [`scripts/rubric_leak_check.py`](scripts/rubric_leak_check.py) (22 patterns)
+- Test suite: [`scripts/tests/test_rubric_leak_check.py`](scripts/tests/test_rubric_leak_check.py) (18 tests)
+
+### Effort + calendar
+
+- Total effort actual: ~27-39h (well under plan estimate 60-84h, due to efficient bulk-replace via Python helpers + structured Form A/B commits + scope-fenced S7).
+- Calendar: 1 day intensive (2026-04-27).
+- Plan estimate: 60-84h mandatory + 8-12h optional, 3-5 weeks calendar medium pace. Actual much faster due to:
+  - Hook v2 → v2.1 amendment (S0.5) caught false-negatives early, avoided rework
+  - Python helper scripts for bulk renumber (S3 + S4) instead of per-Edit
+  - Form A single comprehensive Write for 9.12 expansion (S5) instead of multiple sequential Edits
+  - S7 scope-fenced (top-3 instead of top-10 axis-20, top-3 instead of 5+ axis-17)
+
+### Out-of-scope deferred
+
+Plan v3.9 scope was OVS block (Block 9 + 10 + 20 OVS-relevant) only. NON-OVS findings preserved for future plans:
+
+- **Plan v3.10 OVN block hotfix** (scheduled): 13.18 (46 hits axis-numbered VN heading), 13.19 (10 hits tier-cornerstone), 13.5b (2), 13.6 (1) — total 59 GP-11 hits.
+- **Plan v3.11 OF block hotfix** (scheduled): 3.5 (8), 4.8 (2), 4.9 (1) — total 11 GP-11 hits.
+- **Cross-block cleanup** (any future plan): README (2), `_templates/template-d` (1) — total 3 hits.
+- **S7.A residual**: 10.6 + 10.7 cornerstone axis 17 backfill (top-3 executed, 5+ planned).
+- **S7.B residual**: 7 files axis 20 expansion remaining (top-3 executed, top-10 planned).
+
+---
+
 ## v4.0-MasteryComplete (2026-04-26)
 
 > **Release type:** Mastery rubric coverage 20-axis per keyword. Plan v3.8-Remediation R0-R6 complete. Tag annotated with scorecard SHA + user written sign-off.
