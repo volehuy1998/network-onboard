@@ -6,6 +6,86 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## Reckoning #4, 2026-04-28, language pivot to English plus OVS source-verification hotfix
+
+> **Trigger.** Three consecutive owner directives on 2026-04-28: (1) every file modified by plan v3.9.1 must have its prose explanation rewritten in English; (2) no em-dash anywhere in the repository; (3) CLAUDE.md and every training document must be in English without Vietnamese. The fourth directive was a strict confidence threshold for the language-detection tool.
+> **Scope.** Plan v3.9.1 OVS-block source-verification hotfix plus the curriculum-wide language pivot infrastructure. Seven curriculum files modified (10.0, 10.1, 9.22, 9.32, 9.24, 9.26, 10.5). Working files (CLAUDE.md, governance-principles.md, dictionary header) fully migrated to English. Two enforcement scripts added (`em_dash_check.py`, `lang_check.py`). 17 commits.
+> **Outcome.** All 20 confirmed findings from plan v3.9.1 §0.3 are cleaned. The language pivot is enforced going forward through diff-only `--staged` pre-commit hooks. Mixed-language transition for the remaining roughly 120 legacy curriculum files is deferred to plan v3.12. Optional tag `v4.0.2-OVSSourceVerify` eligible per Rule 15 Exception clause, awaiting explicit user sign-off.
+
+### Findings (3 categories)
+
+- **Category G CRITICAL (8 findings, 4 BLOCKER + 4 BLOCKER):** function-name fabrications in OVS block cornerstone files. The pre-v3.9.1 curriculum cited `ovsdb_monitor_change_condition`, `ovsdb_idl_db_compose_cond_change`, `ovsdb_rbac_insert_check`, `ovsdb_rbac_update_check`, `decode_OFPIT11_GOTO_TABLE`, `oftable_set_default_eviction`, and `raft_log_length` as if they exist in OVS v2.17.9. None of them exist. Each fabrication was either a wrong suffix, a wrong prefix, or a wholly fabricated name. Verified by `grep -nE "^<fn>" <file>` against the local OVS repo at `git checkout v2.17.9`.
+- **Category H HIGH (8 findings):** axis-2 history and axis-14 version-difference inaccuracies. Examples: "ct() implementation Q1 2016" (real: 2015-08-11, commit `07659514c3c1e8998a4935a998b627d716c559f9`); "ct_zone introduced in OVS 2.6 (2016)" (real: OVS 2.5, MFF_CT_ZONE at `lib/meta-flow.h:804` in v2.5.0); "OVS 2.0 (2014) introduced TSS classifier" (real: TSS introduced 2009, `lib/classifier.c` added 2009-07-08, commit `064af42167bf4fc9`); "OVS 2.4 (2015) split `dpif-netdev.c` from `dpif-netlink.c`" (real: `dpif-netdev.c` existed from 2009-06-19; `dpif-linux.c` was renamed to `dpif-netlink.c` on 2014-09-18); plus 4 line-number-drift findings on Raft functions in `ovsdb/raft.c` (drifts from 24 to 1135 lines, indicating the citations were copied from a newer branch than the curriculum baseline).
+- **Category I MEDIUM (4 findings):** OVS backport version (`OVS < v3.3` should be `OVS < v3.5` because commit `180ab2fd635e` first appears in v3.5.0); SHA replacement for the v3.9 "softened" placeholders 8e53fe8e22 and cd278bd35e (replaced with the verified ct() commit `07659514c3c1e899`); the `cluster/change-election-timer` command was described under a "Raft snapshot frequency" heading (the command tunes election timeout, not snapshot frequency); the `dpif-dummy` filename was a fabrication (the real test infrastructure is `lib/netdev-dummy.c` plus `lib/dummy.c`).
+
+Three earlier findings (#1, #2, #15) were demoted to FALSE ALARM during the recheck recorded in plan v3.9.1 §0.3. The original audit method `git grep -l <fn> <ref> | head -1` returned call sites instead of definitions; the corrected method (`git checkout <baseline-tag>` then `grep -nE "^<fn>" <file>` to anchor at column-0 function definitions per OVS coding style) demoted the false alarms.
+
+### Root cause
+
+Plan v3.9 Phase S7.C scope-fenced verification to "approximately 10 SHAs cited cross-block", a single category. v3.9 had no phase that systematically audited axis-16 (function names plus file paths plus line numbers) across cornerstone files. Phase S3 verified the dpif §9.32.4 expansion citations rigorously (5 of 5 correct) and Phase S3 commit 1 for 9.12 ovs-upgrade (5 of 5 correct), but other cornerstone files were not held to the same standard.
+
+The owner provided a `--add-dir` to a local OVS clone with all release tags fetched, which made the verification reproducible offline.
+
+### Action: Plan v3.9.1 OVS-block source-verification hotfix (executed 2026-04-28)
+
+17 commits across the following phases:
+
+- **Q9 (1 commit `dfcfb6a`):** English style guide at `memory/shared/english-style-guide.md` (294 lines) covering audience, sentence structure, vocabulary policy, em-dash discipline, callout-label mapping, voice and tone, and pedagogy. Authoritative for every English rewrite produced by Phases Q10 to Q12 of plan v3.9.1, and for the curriculum-wide migration scheduled in plan v3.12.
+- **Q11.1 (1 commit `fc63bf4`):** Two enforcement scripts plus 20 pytest cases. `scripts/em_dash_check.py` rejects U+2014 em-dash. `scripts/lang_check.py` runs the lingua-language-detector binary classifier (English versus Vietnamese, strict mode). Both wired into the pre-commit hook installer at `scripts/pre-commit-install.sh`. Windows Python detection prefers `python` over `python3` because `python3` is often the Microsoft Store stub without third-party packages.
+- **Q-1 plan file (1 commit `26bfd49`):** plan v3.9.1 itself, 1811 lines.
+- **Q11.2 (1 commit `54fcd1d`):** CLAUDE.md fully rewritten in English with the new Rule 17 (English as the Mandatory Explanation Language). Retired Rules 8, 11, 13. Rule 6 Checklist C extended with new steps 9, 10, 11 (lang_check, language status callout, em-dash count). Verbatim Vietnamese owner directives translated to English with a one-line attribution; the Vietnamese source preserved in git history.
+- **Q11.3 (1 commit `5d5b12b`):** Rule 11 dictionary at `memory/shared/rule-11-dictionary.md` frozen with an English header. The bilingual body table preserved as a translation reference for plan v3.12. The lang_check ALLOWLIST exempts that exact path.
+- **Q0 (1 commit `53d2f7d`):** source-verify baseline log at `memory/sdn/source-verify-baseline-2026-04-28.md`. All 20 confirmed findings reproduced cleanly against the local OVS repo at v2.17.9 (commit `0bea06d9957e3966d94c48873cd9afefba1c2677`).
+- **Q-1.E architectural hotfix (1 commit `8e0f511`):** the Q11.1 scripts originally did whole-file `--staged` scanning, which conflicted with the §8.3 mixed-language transition policy. Q-1.E rewrote both scripts to do diff-only `--staged` scanning (parsing `git diff --cached --unified=0` to extract added lines only). 4 new pytest cases added; 24 tests total pass.
+- **Q1 (1 commit `246257c`):** 10.0 OVSDB four function-name fixes (BLOCKER findings #3 to #6) plus full English rewrite of §10.0.14.3 and §10.0.14.4 per Q10.
+- **Q2 (1 commit `bcec1b5`):** 10.1 Raft line-drift fix (HIGH findings #7 to #11) plus full English rewrite of §10.1.7 (215 lines). Dropped fabricated `raft_log_length`; added verified `raft_handle_append_reply`; switched to function-name anchors per Rule 14 §14.4 Option C.
+- **Q3.1 (1 commit `e1a7883`):** 9.22 axis 16 GOTO_TABLE decode plus oftable eviction fix (BLOCKER findings #12 to #13) plus Q10 English rewrite of §9.22.9 and §9.22.10 (about 350 lines).
+- **Q3.2 (1 commit `9d48f35`):** 9.32 cls_ prefix drop plus axis 14 TSS history correction (HIGH findings #14, #16) plus Q10 English rewrite of §9.32.1 (200 lines).
+- **Q4.1 (1 commit `c5cf264`):** 9.24 axis 2 ct() implementation date plus axis 14 ct_zone OVS version (HIGH findings #19 to #20 plus MEDIUM #23) plus Q10 English rewrite of three affected paragraphs.
+- **Q4.2 (1 commit `cabe85a`):** 9.32 axis 2 dpif history plus drop dpif-dummy fabrication (HIGH findings #17 to #18) plus Q10 English rewrite of two affected paragraphs.
+- **Q4.3 (1 commit `f1502f0`):** 10.5 cluster/change-election-timer purpose corrected (HIGH finding #22) plus new §10.5.4(1b) clarifying snapshot frequency.
+- **Q5 (1 commit `46a0bcb`):** 9.26 OVS backport version v3.3 corrected to v3.5 (HIGH finding #21) plus Q10 English rewrite of the affected paragraph.
+- **Q12 (1 commit `7a30c5e`):** governance-principles.md fully rewritten in English (722 lines). New GP-13 (English as the Mandatory Explanation Language) added as Section 18, mirroring CLAUDE.md Rule 17. Amendment log updated with v1.3 entry. Section 16.2 axis-mapping table updated to use English headings post-v3.9.1.
+- **Q8 (1 commit `81239b1`):** final regression audit at `memory/sdn/v3.9.1-final-audit-2026-04-28.md`. All 20 findings cleaned; 42 pytest cases pass; OVS-scope rubric_leak zero. One residual `raft_log_length` mention outside §10.1.7 cleaned in this commit. NON-OVS scope rubric_leak (74 leaks across 9 files) deferred per plan §0.6.
+- **Q13 (this commit):** CHANGELOG Reckoning #4 entry.
+
+Optional Phase Q6 (SHA replacement round for the residual `5ca1ba9`) and Phase Q7 (cornerstone axis-16 sweep of the remaining 14 files) were deferred to a future plan v3.9.2.
+
+### Per Rule 15 Exception clause
+
+This reckoning is the hotfix path, NOT untag. Tag `v4.0-MasteryComplete` (2026-04-26) and `v4.0.1-OVSHotfix` (2026-04-27) stay local (no remote push per system policy). The optional `v4.0.2-OVSSourceVerify` tag is eligible per Rule 15 Exception clause for factual-error correction, awaiting explicit user sign-off.
+
+### Lessons
+
+1. **Local source verification is faster than MCP GitHub.** Phase Q0 reproduced all 20 findings against `git checkout v2.17.9` in less than 30 minutes; the original Phase S7.C MCP-based verification of 8 SHAs took several hours and produced 3 false alarms.
+2. **Function-name anchors beat line numbers** (Rule 14 §14.4 Option C). Line numbers drift by 24 to 1135 lines across releases; function names rarely move within the same major version. Q2 dropped every inline line number from the §10.1.7 source-code reference and now reads as a stable citation across OVS 2.x to 3.x.
+3. **Diff-only enforcement is the right architecture for a transition.** A whole-file scan would have blocked every Q1 to Q5 commit because of legacy Vietnamese sections that the §8.3 transition policy explicitly allows. Q-1.E's diff-only scan respects the transition while still gating new content strictly. Plan §11.5 wording was right; the original Q11.1 script implementation was wrong.
+4. **GP-12 cadence catches the gap that spot-checks miss.** v3.9 closed with metrics that did not cover Rule 14.2 (function name) or 14.4 (line number) systematically. The post-tag audit T+1 day after v4.0.1 (2026-04-28) used a different verification method (local source) and exposed 20 findings. GP-12 codified this pattern as mandatory after v3.9; v3.9.1 is the first plan to validate the cadence works.
+5. **Plan-level enforcement closes the loop.** GP-13 §18.5 now requires every plan to include `em_dash_check.py` and `lang_check.py` in its acceptance gate. Future plans v3.10, v3.11, v3.12 inherit this gate by reference; the plan author cannot accidentally omit it.
+
+### Reading order for the reckoning
+
+For a reader catching up on what changed:
+
+1. CLAUDE.md (the main rules), specifically Rule 17 and the new Rule 6 Checklist C steps 9 to 11.
+2. `memory/shared/english-style-guide.md` (the authoritative style for any new prose).
+3. `memory/sdn/governance-principles.md` Section 18 (GP-13).
+4. `plans/sdn/v3.9.1-ovs-block-source-verify-hotfix.md` for the full plan including the §8 addendum.
+5. `memory/sdn/v3.9.1-final-audit-2026-04-28.md` for the closing audit and per-finding cleanup status.
+
+### Cross-references
+
+- Plan v3.9.1: `plans/sdn/v3.9.1-ovs-block-source-verify-hotfix.md`.
+- Plan v3.9 (predecessor): `plans/sdn/v3.9-ovs-block-hotfix.md`.
+- Final audit: `memory/sdn/v3.9.1-final-audit-2026-04-28.md`.
+- Source-verify baseline: `memory/sdn/source-verify-baseline-2026-04-28.md`.
+- English style guide: `memory/shared/english-style-guide.md`.
+- Governance principles v1.3: `memory/sdn/governance-principles.md`.
+- CLAUDE.md Rule 17 + Rule 6 Checklist C update.
+- Pre-commit scripts: `scripts/em_dash_check.py`, `scripts/lang_check.py`.
+
+---
+
 ## Reckoning #3 — 2026-04-27 — OVS audit findings + v3.9 hotfix
 
 > **Trigger:** Master block-level audit OVS curriculum (5 agent parallel) 2026-04-27 morning, T+1 day after `v4.0-MasteryComplete` tag (2026-04-26).
