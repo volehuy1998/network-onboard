@@ -20,6 +20,12 @@ Version history:
                    phase-session-reference, cohort-batch-stamp-leftover,
                    stale-phase-compat-note. Total 20 patterns.
                    See plans/sdn/v3.9-ovs-block-hotfix.md Phase S0.
+  v2.1 (2026-04-27 S0.5): +2 patterns + broaden 1, post pre-S2 manual verify of
+                   actual 9.22 phrasings + 9.9:58 em-dash variant:
+                   - tier-importance-prose (catches 'Tier importance:' without **)
+                   - tier-cornerstone-bold-prose ('**tier cornerstone tuyệt đối**')
+                   - stale-phase-compat-note broadened to phrase fragment.
+                   Total 22 patterns.
 
 Usage:
   python scripts/rubric_leak_check.py --staged
@@ -225,6 +231,27 @@ LEAK_PATTERNS = [
         "FAIL",
         "Drop '**Tier importance: cornerstone tuyệt đối**' label — meta-rubric reference.",
     ),
+    # Tier importance prose (no markdown bold required): 'Tier importance: cornerstone'
+    # 'Tier importance: medium-high (cornerstone trong OVN context...)'
+    # Augmented S0.5 (2026-04-27) per master audit 9.22 actual phrasing finding.
+    (
+        re.compile(r"\b[Tt]ier\s+importance\s*:", re.IGNORECASE),
+        "tier-importance-prose",
+        "FAIL",
+        "Drop 'Tier importance:' prose framing — meta-rubric reference per Rule 16 §16.2.",
+    ),
+    # Tier cornerstone in markdown bold prose (different word order from informal):
+    # '**tier cornerstone tuyệt đối**', '**đỉnh tier cornerstone**'
+    # Augmented S0.5 (2026-04-27).
+    (
+        re.compile(
+            r"\*\*[^*]*\btier\s+cornerstone(?:\s+tuyệt\s*đối)?[^*]*\*\*",
+            re.IGNORECASE,
+        ),
+        "tier-cornerstone-bold-prose",
+        "FAIL",
+        "Drop '**tier cornerstone tuyệt đối**' bold prose framing — meta-rubric reference.",
+    ),
     # Phase H/I/J/K/L/S session reference (V1 catches Phase G/R only).
     # Catches: 'Phase H session S39', 'Phase H session', 'Phase S0 session'
     (
@@ -245,15 +272,19 @@ LEAK_PATTERNS = [
         "Drop '(compact treatment per cohort batch limit)' — internal commit-pattern reference.",
     ),
     # Stale Phase A/B/C/D/E/F compatibility note.
-    # Catches: '(reference, giữ tương thích content Phase B)'
+    # Catches phrase fragment regardless of comma vs em-dash separator and parens:
+    #   '(reference, giữ tương thích content Phase B)'
+    #   '(reference — giữ tương thích content Phase B)'
+    #   'reference - giữ tương thích content Phase D'
+    # Broadened S0.5 (2026-04-27) per master audit 9.9:58 em-dash variant finding.
     (
         re.compile(
-            r"\(\s*reference\s*,\s*giữ\s+tương\s+thích\s+content\s+Phase\s+[A-Z]\s*\)",
+            r"\bgiữ\s+tương\s+thích\s+content\s+Phase\s+[A-Z]\b",
             re.IGNORECASE,
         ),
         "stale-phase-compat-note",
         "FAIL",
-        "Drop '(reference, giữ tương thích content Phase B)' parenthetical — stale plan compatibility.",
+        "Drop 'giữ tương thích content Phase B' phrase — stale plan compatibility marker.",
     ),
 ]
 

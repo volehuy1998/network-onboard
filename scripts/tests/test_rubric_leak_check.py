@@ -187,6 +187,47 @@ def test_v2_stale_phase_compat_note_caught(tmp_curriculum_file: Path) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# V2.1 patterns (S0.5 amendment 2026-04-27): broader Tier importance + em-dash
+# --------------------------------------------------------------------------- #
+
+
+def test_v21_tier_importance_prose_caught(tmp_curriculum_file: Path) -> None:
+    """Pattern catches 'Tier importance:' prose without markdown bold."""
+    tmp_curriculum_file.write_text(
+        "Tier importance: cornerstone tuyệt đối, không thể thiếu.\n"
+        "Tier importance: medium-high (cornerstone trong OVN context).\n",
+        encoding="utf-8",
+    )
+    leaks: list[rlc.Leak] = []
+    rlc.scan_file(tmp_curriculum_file, leaks)
+    matches = [v for v in leaks if v.pattern_name == "tier-importance-prose"]
+    assert len(matches) >= 2, \
+        f"Expected >=2 tier-importance-prose hits, got {len(matches)}"
+
+
+def test_v21_tier_cornerstone_bold_prose_caught(tmp_curriculum_file: Path) -> None:
+    """Pattern catches '**...tier cornerstone tuyệt đối...**' bold prose."""
+    tmp_curriculum_file.write_text(
+        "đứng ở **tier cornerstone tuyệt đối** of OpenFlow 1.1+.\n",
+        encoding="utf-8",
+    )
+    leaks: list[rlc.Leak] = []
+    rlc.scan_file(tmp_curriculum_file, leaks)
+    assert any(v.pattern_name == "tier-cornerstone-bold-prose" for v in leaks)
+
+
+def test_v21_stale_phase_compat_em_dash_caught(tmp_curriculum_file: Path) -> None:
+    """Pattern catches em-dash variant '(reference — giữ tương thích content Phase B)'."""
+    tmp_curriculum_file.write_text(
+        "## Mục tiêu bài học cũ (reference — giữ tương thích content Phase B)\n",
+        encoding="utf-8",
+    )
+    leaks: list[rlc.Leak] = []
+    rlc.scan_file(tmp_curriculum_file, leaks)
+    assert any(v.pattern_name == "stale-phase-compat-note" for v in leaks)
+
+
+# --------------------------------------------------------------------------- #
 # Negative tests (exempt / skip cases)
 # --------------------------------------------------------------------------- #
 
@@ -232,10 +273,10 @@ def test_negative_codeblock_skipped(tmp_curriculum_file: Path) -> None:
 # --------------------------------------------------------------------------- #
 
 
-def test_total_pattern_count_v2() -> None:
-    """V2 has 20 patterns total (13 v1 + 7 v2)."""
-    assert len(rlc.LEAK_PATTERNS) == 20, \
-        f"Expected 20 patterns, got {len(rlc.LEAK_PATTERNS)}"
+def test_total_pattern_count_v21() -> None:
+    """V2.1 has 22 patterns total (13 v1 + 7 v2 + 2 v2.1 amendment)."""
+    assert len(rlc.LEAK_PATTERNS) == 22, \
+        f"Expected 22 patterns, got {len(rlc.LEAK_PATTERNS)}"
 
 
 def test_clean_curriculum_file_no_leak(tmp_curriculum_file: Path) -> None:
