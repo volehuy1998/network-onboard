@@ -6,6 +6,71 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## Reckoning #5, 2026-04-28, OVS-block cornerstone-sweep partial closure
+
+> **Trigger.** Two carryover items from plan v3.9.1 §6 closure (Q6 residual SHA in 9.8, Q7 axis-16 sweep over 14 cornerstone files) plus the GP-12 T+7 day master block-level audit owed for the v4.0.1-OVSHotfix tag (deadline 2026-05-04).
+> **Scope.** Plan v3.9.2 OVS-block cornerstone sweep, which targeted 14 cornerstone files but closes in PARTIAL state at 3 files audited (9.1, 9.2, 9.27) plus the 9.8 SHA fix from R1.
+> **Outcome.** 6 commits landed. 22 axis-16 violations cleaned across 3 files (1 SHA fix in 9.8, 5 fabrications in 9.1, 16 line drifts plus value errors in 9.2). Mid-batch 50 percent escalation gate per plan v3.9.1 §Q7.3 NOT triggered (running error rate 30 percent, on par with the v3.9.1 prior of 31 percent). 12 files deferred to plan v3.9.3.
+
+### Findings (3 categories)
+
+- **Category J BLOCKER (5 fabrications in 9.1):** the §dpif-providers source-code reference paragraph at line 801 cited 4 fabricated function names (`dpif_netlink_flow_put`, `dpif_netdev_recv`, `ofproto_dpif_open`, `dpif_destroy`) plus 1 wrong-name (`dp_netdev_open`, real name is `dpif_netdev_open`). The pre-v3.9.2 paragraph implied that flow-mod and recv go through top-level `dpif_netlink_*` and `dpif_netdev_*` functions; in reality they go through the class vtable callbacks (`dpif_class->flow_put` and the recv path via PMD threads). Bridge teardown uses `dpif_close`, not a separate `dpif_destroy`.
+- **Category K HIGH (15 line drifts + 1 wrong path + 1 wrong value in 9.2):** the §recirc paragraph cited `ctx_trigger_recirculate_with_hash` at "approx. line 766" (real: `ofproto/ofproto-dpif-xlate.c:474`, drift about 290 lines). The §kernel-datapath paragraph cited mainline Linux v5.15 line numbers for `dp_init`, `do_execute_actions`, and several other functions; the user does not have the mainline kernel source on disk, so those line numbers are unverifiable. Per Rule 14 §14.4 Option C, all inline line numbers were dropped. The file path for `ovs_flow_alloc` and `ovs_flow_tbl_lookup_stats` was wrong (`flow.c` should be `flow_table.c`). The `OVS_RECURSION_LIMIT` value was cited as `5` in three places (the source-code reference paragraph plus the version-difference table plus the troubleshooting prose); the verified value at `datapath/actions.c:77` is `4`. The numeric error has known residual mentions in 4 legacy Vietnamese paragraphs (deferred to v3.9.3).
+- **Category L MEDIUM (1 SHA correction in 9.8):** the residual `5ca1ba9` SHA from plan v3.9 phase S7.C softening (Q6 carryover from v3.9.1) was resolved through a `git log --all -S "active_timeout = -1"` pickaxe search. The verified SHAs are `e9e2856e08` (2009-12-06, the code-side `active_timeout >= 0` change in `ofproto/netflow.c`) and `8936565369` (2010-03-03, the documentation that explicitly states `-1 disables active timeouts` in `vswitchd/vswitch.xml`). Both contained in v1.0.0. The previous curriculum claim "OVS 1.6 (~2011)" was off by both 1.5 years and six minor releases.
+
+### Root cause and method
+
+The audit method is the same one locked in by plan v3.9.1 Q-1.E: `git checkout v2.17.9` on the local OVS clone, then `grep -nE "^<fn>" <path>` to anchor at column-0 function definitions per OVS coding style. The corrected method continued to surface findings at a 30 percent rate, consistent with the v3.9.1 prior of 31 percent. No method change was needed.
+
+The PARTIAL closure is a session-time decision driven by SECOND NORTH STAR ("quality over speed; verify, never estimate"). Continuing the audit at the same level of rigor for 12 additional cornerstone files in the same session would not maintain quality. Plan v3.9.3 picks up exactly where v3.9.2 stopped, inheriting the corrected method, the source-verify baseline, the diff-only enforcement architecture, the Q10 in-commit English rewrite obligation, and the empirical priors.
+
+### Action: Plan v3.9.2 OVS-block cornerstone sweep (executed 2026-04-28)
+
+6 commits across the following phases:
+
+- **Plan-file save (1 commit `230357f`):** plan v3.9.2 itself, 1108 lines, in the same depth and style as plan v3.9.1.
+- **R0 (1 commit `448d27e`):** baseline reconfirmation. Three spot-check greps replayed against the OVS repo at v2.17.9; results match the v3.9.1 §0.3 expected output exactly. Pre-commit hook verified installed and functional.
+- **R1 (1 commit `d3ac28e`):** 9.8 SHA `5ca1ba9` resolution plus Q10 English rewrite of §9.8.9. Two verified SHAs replace the softened reference. The §9.8.9 paragraph (32 lines, NetFlow OVSDB schema row) is fully rewritten in English.
+- **R2.A (1 commit `eb78966`):** Block 9 foundation partial sweep (9.1 + 9.2 + 9.27). 9.27 verified clean (no axis-16 sections). 9.1 axis-16 #1 verified clean (19 of 19 citations correct). 9.1 axis-16 #2 (line 801) corrected (5 fabrications dropped or renamed). 9.2 axis-16 #1 (line 1039) and #2 (line 1254) corrected (15 line drifts dropped, 1 wrong path corrected, 1 wrong value corrected). Sweep log committed at `memory/sdn/v3.9.2-q7-axis16-sweep-2026-04-28.md`.
+- **R6 (1 commit `3041331`):** final audit at PARTIAL closure. Static checks pass. Per-finding cleanup verified for the 3 files modified. Known residual mentions in legacy Vietnamese sections of 9.1 and 9.2 are flagged for v3.9.3 cleanup.
+- **R7 (this commit):** CHANGELOG Reckoning #5 entry.
+
+The R2.B (9.4, 9.11), R3 (9.16 to 9.20), R4 (10.2 to 10.7), and R5 (Block 20) phases are formally deferred to plan v3.9.3, which is expected to take 5 to 8 hours over 1 to 2 sessions.
+
+### Per Rule 15 Exception clause
+
+This reckoning is a hotfix path, NOT a new tag. The `v4.0.3-OVSSweepAudit` tag eligibility is DEFERRED to v3.9.3 full closure, because the v3.9.2 PARTIAL coverage (3 of 14 cornerstone files audited) would overstate the audit scope if tagged now. Existing tags `v4.0-MasteryComplete`, `v4.0.1-OVSHotfix`, and the optional `v4.0.2-OVSSourceVerify` (if user issued at v3.9.1 close) all stay local per the system policy "no remote push".
+
+### Lessons
+
+1. **Pickaxe search beats `--grep` for legacy SHAs.** The `5ca1ba9` resolution required `git log -S "active_timeout = -1"` (pickaxe) because `--grep="active_timeout"` did not match the relevant commits in `ofproto/netflow.c`. Pickaxe search finds commits that introduced or removed a literal string, which is the right tool for finding the commit that introduced a specific code construct.
+2. **Verifiability gates the citation method.** The 9.2 §kernel-datapath paragraph cited mainline Linux v5.15 line numbers, but the user does not have the mainline kernel source on disk. Citations that cannot be verified by the reader against an available source are non-actionable. Rule 14 §14.4 Option C (function-name anchors, no inline line numbers) is the right method when the source spans multiple trees with different line numbering.
+3. **Numeric values are first-class citations.** The `OVS_RECURSION_LIMIT = 5` claim is wrong on a numeric value, not on a function name or path. Rule 14 covers function names, file paths, and line numbers; v3.9.2 confirmed that numeric-constant claims belong in the same verification class. Plan v3.9.3 should expand the Rule 14 §14.6 schema-claim subsection to explicitly include numeric-constant verification.
+4. **Partial closures are honest closures.** PARTIAL is not failure. v3.9.2 cleaned 22 axis-16 violations across 3 files at the same quality bar as v3.9.1, then deferred the rest with a clear handoff to v3.9.3. The alternative (rushing through 12 more files in the same session) would have produced lower-quality fixes and possibly missed findings, which is the failure mode that v3.9.1 §0.3 already documented (3 false alarms in the original audit before recheck). PARTIAL plus a complete audit log plus a deferred follow-up plan is the right shape.
+
+### Reading order
+
+For a reader catching up:
+
+1. `plans/sdn/v3.9.2-ovs-block-cornerstone-sweep.md` for the full plan.
+2. `memory/sdn/v3.9.2-q7-axis16-sweep-2026-04-28.md` for the per-citation audit findings.
+3. `memory/sdn/v3.9.2-final-audit-2026-04-28.md` for the closing audit at PARTIAL closure.
+4. The 3 fix commits: R1 (`d3ac28e`) for 9.8, R2.A (`eb78966`) for 9.1 plus 9.2.
+
+### Cross-references
+
+- Plan v3.9.2: `plans/sdn/v3.9.2-ovs-block-cornerstone-sweep.md`.
+- Plan v3.9.1 (predecessor): `plans/sdn/v3.9.1-ovs-block-source-verify-hotfix.md`.
+- Sweep audit log: `memory/sdn/v3.9.2-q7-axis16-sweep-2026-04-28.md`.
+- Final audit: `memory/sdn/v3.9.2-final-audit-2026-04-28.md`.
+- Source-verify baseline (inherited from v3.9.1): `memory/sdn/source-verify-baseline-2026-04-28.md`.
+- Baseline reconfirmation: `memory/sdn/v3.9.2-baseline-reconfirm-2026-04-28.md`.
+- Governance v1.3: `memory/sdn/governance-principles.md` (with GP-13 added in v3.9.1).
+- CLAUDE.md Rule 14, Rule 15, Rule 17.
+- English style guide: `memory/shared/english-style-guide.md`.
+
+---
+
 ## Reckoning #4, 2026-04-28, language pivot to English plus OVS source-verification hotfix
 
 > **Trigger.** Three consecutive owner directives on 2026-04-28: (1) every file modified by plan v3.9.1 must have its prose explanation rewritten in English; (2) no em-dash anywhere in the repository; (3) CLAUDE.md and every training document must be in English without Vietnamese. The fourth directive was a strict confidence threshold for the language-detection tool.
