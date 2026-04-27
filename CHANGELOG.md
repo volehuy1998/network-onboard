@@ -6,6 +6,56 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## Reckoning #8, 2026-04-29, OpenFlow-block source-verify and cleanup full closure
+
+> **Trigger.** GP-12 cadence make-good for the OF block. Forward stub in plan v3.10 §12 lists v3.11 as the next obligation in the per-block source-verify cadence: v3.9.x for OVS, v3.10 for OVN, v3.11 for OF.
+>
+> **Scope.** Plan v3.11 OF-block source-verify and cleanup: 17 files across Block 3 (7 files) plus Block 4 (10 files), totalling about 14,000 lines.
+>
+> **Outcome.** 9 commits across 9 phases (R0, R0.5, R1.A through R1.F, R3). 65 source-verify fixes plus 12 GP-11 leaks closed plus 6+ GP-13 in-commit English rewrites = 77+ deliverables. Repo-wide rubric leak count 15 to 3 (12 OF-block leaks closed exactly per plan §6 closure condition #5). Aggregate error rate 2.5 percent across 2,504 inventory candidates (or 3.3 percent net-of-deferred 20 v3.3.0 mentions in 4.9).
+
+### Findings (categories)
+
+- **OF-version-prefix-drop (WRONG_NAME): 27 fixes.** Curriculum citations dropped the per-version OF prefix from OVS enum names (for example, `OFPGT_ALL` instead of `OFPGT11_ALL`, `OFPMF_KBPS` instead of `OFPMF13_KBPS`, `OFPC_GROUP_STATS` instead of `OFPC11_GROUP_STATS`, `OFPFF_RESET_COUNTS` instead of `OFPFF12_RESET_COUNTS`). Hit primarily in 3.3, 3.4, and 3.5.
+- **Cross-baseline drift v3.3.0 to v2.17.9 (WRONG_BRANCH): 32 fixes (18 in 4.8, 14 in 4.9).** Curriculum was authored against OVS development trunk near v3.3.0 in the 2026-04-24 expansion; plan v3.11 baseline is v2.17.9. Function names persist unchanged at v2.17.9; only the explicit `Branch baseline:` annotation needed correction. 20 additional v3.3.0 mentions in 4.9 (high Vietnamese density, GP-13 paragraph rewrite cost too high) are deferred to plan v3.12.
+- **WRONG_BRANCH_URL master to v2.17.9: 2 fixes.** L363 of 3.1 and L363 of 4.1 (NXM extension reference) used `blob/master` ref rather than the v2.17.9 baseline.
+- **WRONG_VERSION_INTRO: 2 fixes.** 3.4 line 87 said `OXM_OF_PKT_REG` is "OF 1.5+" (OVS source comment says "since OF1.3 and v2.4"). 3.4 line 153 said OF 1.4 introduced the band-features query (OVS prefix `OFPMP13_` says OF 1.3).
+- **Other WRONG_NAME / WRONG_FACT: 2 fixes.** 3.4 line 86-88 OXM class enum names (`OXM_OF_BASIC` should be `OFPXMC_OPENFLOW_BASIC`; `OXM_NXM_NX` (0x8001) should be `OFPXMC_NXM_1` (0x0001) per `lib/meta-flow.xml:660`).
+- **GP-11 leaks closed: 12.** 3.5 had 9 leaks (1 tier-importance, 2 tier-cornerstone-informal, 6 axis-numbered VN headings). 4.8 had 2 (1 phase-session-reference, 1 tier-cornerstone). 4.9 had 1 (phase-session-reference).
+- **GP-13 in-commit English rewrites: 6+.** Triggered by lang_check on touched lines during R1.A through R1.E commits.
+
+### Sub-batch error rates
+
+| Sub-batch | Files | Candidates | Violations | Rate |
+|---|---|---|---|---|
+| R1.A (narrative warm-up) | 4 | 152 | 9 | 5.9 % |
+| R1.B (spec + protocol) | 5 | 239 | 14 | 5.9 % |
+| R1.C (3.5 catalog) | 1 | 472 | 6 | 1.3 % |
+| R1.D (4.8 catalog) | 1 | 825 | 18 | 2.2 % |
+| R1.E (4.9 catalog) | 1 | 602 | 14 | 2.3 % |
+| R1.F (block 4 remainder) | 5 | 214 | 1 | 0.5 % |
+| **Total** | **17** | **2,504** | **62** | **2.5 %** |
+
+The catalog files (3.5, 4.8, 4.9) ran at the lower end of the §0.4 prior of 2 to 6 percent. The narrative warm-up files (R1.A, R1.B) ran at the upper end. The Block 4 remainder (R1.F) was effectively clean.
+
+### Pattern observations
+
+The most pervasive issue across the OF block was the **OF-version-prefix-drop** pattern (27 fixes), where curriculum citations dropped the version prefix from OVS enum names. This pattern is consistent with the OF specification PDFs using bare names like `OFPGT_ALL` while OVS implementation headers prefix with the introduction version like `OFPGT11_ALL`. The fix preserves OVS source naming per Rule 14 §14.2 ("preserve the exact source spelling, even typos").
+
+The **cross-baseline drift** in 4.8 and 4.9 is a 2026-04-24 authoring artefact: the catalog files were written against OVS development trunk near v3.3.0 with explicit `Branch baseline: OVS v3.3.0` annotations. Plan v3.11 baseline is OVS v2.17.9. The fix updates the explicit annotation; the cited function names persist unchanged at v2.17.9 (verified spot-check against `lib/meta-flow.c`, `lib/ofp-actions.c`, `lib/flow.c`).
+
+### What remains
+
+- **Cross-block plan (README + templates):** 3 GP-11 leaks (`README.md` lines 155, 156; `_templates/template-d-per-table.md` line 172). Estimated 5 to 10 hours.
+- **Plan v3.12 (curriculum-wide English migration):** 4,246 em-dashes plus 18,262 non-English chunks across 194 files (down 3 em-dashes plus 9 chunks from v3.10 R4). Includes the 20 deferred v3.3.0 mentions in 4.9 plus the plan §11 spot-check items for OFPAT_COPY_FIELD enum and OFPAT_PUSH_PBB / POP_PBB type-code attribution.
+- **Optional v4.2.0-OFBlockHotfix tag (R5):** conditional on user sign-off per Rule 15 pre-tag checklist.
+
+### Tag
+
+R5 tag `v4.2.0-OFBlockHotfix` is eligible after this Reckoning entry merges, conditional on user explicit approval per Rule 15.
+
+---
+
 ## Reckoning #7, 2026-04-28, OVN-block source-verify and cleanup full closure
 
 > **Trigger.** GP-12 cadence make-good for the OVN block (deferred from the v3.9.x OVS-only chain). The v3.9 series consciously confined its scope to the OVS block; every plan in that chain (v3.9, v3.9.1 through v3.9.4) explicitly deferred the OVN block to plan v3.10.
