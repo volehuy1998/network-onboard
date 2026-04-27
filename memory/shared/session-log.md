@@ -8,6 +8,103 @@
 
 ---
 
+## Session 70, 2026-04-29, v3.11 R0 + R0.5 + R1.A start
+
+**Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** `650600a`. **Tags created:** none.
+
+### Work done
+
+Plan v3.11 (OpenFlow block source-verify and cleanup) opened. Three phases committed:
+
+| Phase | Commit | Form |
+|---|---|---|
+| R0 baseline | `288c365` | A |
+| R0.5 inventory | `8cc6512` | A |
+| R1.A audit + fix | `650600a` | A+B |
+
+R0: pinned offline OVS v2.17.9 (`0bea06d9`), OpenFlow spec1.6_rc1 (`66356f78`),
+OVN v22.03.8 (`35813e0b`). Captured OF version constants: OVS uses
+`OFP1X_VERSION` enum (0x01-0x06 for OF 1.0-1.5), spec repo declares
+`OFP_VERSION = 0x07` for OF 1.6-rc1. Confirmed 8 OF header files at OVS v2.17.9
+plus 3 vendor extensions. 4 anchor spot-checks PASS. Plan v3.11 draft committed
+(2 em-dashes fixed, 2 Vietnamese quotes translated to English).
+
+R0.5: adapted v3.10 inventory script for OF block scope. New script
+`scripts/v3_11_citation_inventory.py` runs 11 citation kinds across 17 files.
+Gross count 2,504 candidates (vs plan estimate 575-850). Wider regex than the
+plan anticipated, dominated by `OF_VERSION_MARKER` (1,104) and
+`INLINE_OF_CONST` (476). Per-phase distribution: R1.A 152, R1.B 239, R1.C 472,
+R1.D 825, R1.E 602, R1.F 214. Plan §9.1 corrected 6-sub-batch structure
+adopted (3.5 → R1.C alone, 4.8 → R1.D alone, 4.9 → R1.E alone).
+
+R1.A: audit of 4 narrative files (3.0, 3.2, 3.4, 3.6) over 152 inventory
+candidates. 9 violations on file 3.4, rate 5.9 percent. Findings:
+- L86-88: OXM class enum names wrong (`OXM_OF_BASIC` should be
+  `OFPXMC_OPENFLOW_BASIC`; `OXM_NXM_NX` (0x8001) should be `OFPXMC_NXM_1`
+  (0x0001) per `lib/meta-flow.xml:660`).
+- L87: `OXM_OF_PKT_REG` version intro "OF 1.5+" wrong; OVS source comment
+  attests "since OF1.3 and v2.4".
+- L112-115: 4 group types named `OFPGT_*` should be `OFPGT11_*` per
+  `include/openflow/openflow-1.1.h:353-356`.
+- L139: meter rate flags `OFPMF_KBPS/PKTPS` should be `OFPMF13_KBPS/PKTPS` per
+  `include/openflow/openflow-1.3.h:156-157`.
+- L153: `OFPMP_METER_FEATURES` should be `OFPMP13_METER_FEATURES_REQUEST`;
+  version intro "OF 1.4 thêm" wrong, OVS prefix says OF 1.3 per
+  `include/openflow/openflow-1.3.h:81-82`.
+
+GP-13 in-commit English rewrite applied to touched Vietnamese lines.
+
+### Pattern observed across R1.A
+
+Curriculum systematically drops the OF-version prefix from OVS enum names
+(e.g., `OFPGT_ALL` instead of `OFPGT11_ALL`, `OFPMF_KBPS` instead of
+`OFPMF13_KBPS`). Expect this pattern to recur in R1.B (`OFPT_*`, `OFPAT11_*`,
+`OFPIT_*`, `OFPHET_*`) and especially in R1.C catalog (3.5).
+
+### Files modified
+
+- `plans/sdn/v3.11-of-block-source-verify-and-cleanup.md` (new, plus 2 in-place fixes for em-dash and Vietnamese quotes).
+- `memory/sdn/v3.11-of-baseline-2026-04-29.md` (new).
+- `memory/sdn/v3.11-of-citation-inventory-2026-04-29.md` (new, 2,735 lines).
+- `memory/sdn/v3.11-r1a-audit-2026-04-29.md` (new).
+- `scripts/v3_11_citation_inventory.py` (new).
+- `sdn-onboard/3.4 - openflow-version-differences-1.0-1.3-1.5.md` (4 fix locations on group types, OXM class enum, meter flags, meter-features stat).
+
+### Pending next session
+
+| Phase | Files | Estimated effort |
+|---|---|---|
+| R1.B | 3.1, 3.3, 4.0, 4.5, 4.6 | 4-6 hours, ~239 candidates |
+| R1.C | 3.5 alone | 5-8 hours, ~472 candidates |
+| R1.D | 4.8 alone | 6-10 hours, ~825 candidates |
+| R1.E | 4.9 alone | 7-11 hours, ~602 candidates |
+| R1.F | 4.1, 4.2, 4.3, 4.4, 4.7 | 3-5 hours, ~214 candidates |
+| R2 | GP-11 cleanup in 3.5, 4.8, 4.9 (12 leaks) | 1-2 hours |
+| R3 | Final regression audit | 2-4 hours |
+| R4 | CHANGELOG Reckoning #8 | 1 hour |
+| R5 | Optional v4.2.0-OFBlockHotfix tag | 0.5 hour |
+
+Total remaining: 30-50 hours, 5-8 sessions.
+
+### Next session start commands
+
+```
+cd /c/Users/voleh/Documents/network-onboard
+git status --short
+git log --oneline -5
+cd /c/Users/voleh/Documents/ovs && git rev-parse HEAD  # expect 0bea06d9...
+cd /c/Users/voleh/Documents/openflow && git rev-parse HEAD  # expect 66356f78...
+cat memory/sdn/v3.11-r1a-audit-2026-04-29.md  # for the prefix-drop pattern context
+```
+
+Begin R1.B at file 3.1 (OF 1.0 specification, 73 candidates).
+
+### Push status
+
+No remote push per system policy. All work local on `docs/sdn-foundation-rev2`.
+
+---
+
 ## Session 69, 2026-04-28 (very long), v3.10 R1.B through R6 full closure
 
 **Branch:** `docs/sdn-foundation-rev2`. **HEAD at session close:** TBD (post session-log commit). **Tags created:** `v4.1.0-OVNBlockHotfix` (annotated, plan v3.10 close).
