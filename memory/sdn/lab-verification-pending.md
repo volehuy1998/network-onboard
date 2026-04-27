@@ -169,3 +169,49 @@ Minimum 3 VMs to test HA_Chassis_Group + BFD failover:
 - **Fabricated output ban.** Per CLAUDE.md Rule 7a, after C1b NO output may remain `doc-plausible` in file content. Anything that cannot be verified must be removed or replaced with `structural-only` placeholder.
 - **Version pinning.** OVS 2.17 and OVN 22.03 are LTS releases. If lab host runs a different version, note version delta in output annotation.
 - **Reproducibility target.** A reader running the same command on the same version must see the same output (ignoring UUIDs, timestamps).
+
+---
+
+## 2026-04-27 additions (Plan v3.9 Phase S5: 9.12 expansion)
+
+Phần 9.12 Upgrade choreography rewrite (247 → 572 lines, full 20-axis treatment).
+New lab-pending entries:
+
+### 9.12.11 Real upgrade transcript (curated)
+
+- **Status:** doc-plausible (curated from upstream `tests/ovsdb-server.at` + OpenStack neutron-ovs-agent doc pattern).
+- **Priority:** HIGH (cornerstone-adjacent procedure).
+- **Lab requirement:** OpenStack Yoga compute node + 50-host fleet simulation OR single-host minimal.
+- **Verification target:** capture verbatim output cho 5-step rolling restart sequence:
+  - `ovs-vsctl get Open_vSwitch . ovs-version` (pre + post)
+  - `ovsdb-client backup` size + timing
+  - `apt install openvswitch-switch=...` package install log
+  - `ovs-appctl -t ovsdb-server exit --cleanup` graceful exit log + downtime measurement
+  - `ovsdb-tool needs-conversion` decision output
+  - `systemctl reload-or-restart openvswitch-switch` restart log + ofproto state restore
+  - Total fleet upgrade time measurement
+- **Rule 7a target:** verbatim system log per Phần 9.12 §9.12.11 transcript window.
+
+### 9.12.18 Guided Exercise 1 (rolling restart không mất ping)
+
+- **Status:** doc-plausible.
+- **Priority:** HIGH.
+- **Setup:** test bridge `br-test` + 2 internal port `tap1`, `tap2`.
+- **Expected:** ping loss < 1% qua restart window.
+- **Verification target:** measure actual loss percentage on real lab.
+
+### 9.12.18 Guided Exercise 2 (schema convert dry-run)
+
+- **Status:** doc-plausible.
+- **Priority:** MEDIUM.
+- **Setup:** create test DB + test schema, run convert, verify show-log output.
+- **Verification target:** verbatim output of `ovsdb-tool show-log` post-convert.
+
+### 9.12.20 Cluster choreography 10-step procedure
+
+- **Status:** doc-plausible (compass Ch N pattern).
+- **Priority:** HIGH (production HA scenario).
+- **Setup:** 3-node OVSDB Raft cluster.
+- **Verification target:** full per-node leave-recreate-rejoin transcript với cluster/status output.
+
+Total new lab-pending entries: 4 (3 GE + 1 cluster procedure).
