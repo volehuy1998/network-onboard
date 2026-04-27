@@ -648,4 +648,75 @@ Forbidden patterns OK trong:
 
 ---
 
-> **Đơn giản:** 11 GP + 8 user gate + scorecard ground truth + no metric gaming + per-keyword granular commit + anti-gaming pre-commit verification + reader-vs-internal language separation + reckoning past errors. V3.8 plan không tái phạm v3.5/v3.6/v3.7 mistakes.
+## 17. Principle GP-12, Post-Tag Regression Audit Cadence
+
+### 17.1. Definition
+
+Sau mỗi tag `v4.x-MasteryComplete` hoặc `v4.x-FullDepth` hoặc tương đương "comprehensive" claim, **bắt buộc** chu kỳ audit:
+
+- **T+0 đến T+7 ngày:** Master block-level audit (multi-agent parallel) cho ≥1 block major (OVS hoặc OVN hoặc OF). Audit MUST cover:
+  - Per-file 20-axis tier verification (random subset 20-30% file/block)
+  - Cross-file structural integrity (numbering collision, broken cross-link)
+  - Systemic axis under-coverage detection (axis 17 incident, axis 20 cross-domain, axis 14 version drift across block)
+  - Editorial placeholder/botched-replacement scan (`XXXXXX`, `thị field`, `TODO`, `FIXME`)
+  - Rule 14 source citation verification (sample SHA via MCP GitHub/gh CLI)
+
+- **Findings categorize** theo severity: CRITICAL / HIGH / MEDIUM / LOW.
+
+- **CRITICAL/HIGH findings** trigger hotfix plan (như v3.9) within 14 ngày.
+
+- **MEDIUM/LOW findings** logged trong `memory/sdn/post-tag-audit-YYYY-MM-DD.md` cho future plan address.
+
+### 17.2. Rationale
+
+V3.8 R5 user spot-check 30/331 keyword (9% sample). Stratified random sampling không đủ catch:
+- Sub-tooling gap (regex pattern blind spot)
+- Cross-file structural collision
+- Systemic giảm-dần-đều patterns (axis 17, axis 20)
+
+Master block-level multi-agent audit có depth-per-file + breadth-cross-file + systemic-pattern detection mà spot-check không đạt được. Cadence T+7 ngày catch issues khi context còn fresh.
+
+V4.0-MasteryComplete tag (2026-04-26) demonstrated gap: T+1 day master audit (2026-04-27) phát hiện 6 nhóm vi phạm trong scope tag claim đã verify. GP-12 codifies this pattern as mandatory.
+
+### 17.3. Enforcement Mechanism
+
+- Plan tracker entry `memory/sdn/post-tag-audit-schedule.md` track cadence
+- Tag annotated message reference scheduled audit date
+- Audit findings file committed `memory/sdn/post-tag-audit-<tag>-<date>.md`
+- CRITICAL/HIGH findings → hotfix plan within 14 ngày OR explicit deferral with justification
+- Hook check (optional, future): `scripts/post_tag_audit_due.py` cảnh báo nếu tag > 7 ngày without audit file
+
+### 17.4. Exception Policy
+
+- **Pre-release tag (vX.Y-rcN):** không yêu cầu full block audit, chỉ spot-check
+- **Hotfix tag (vX.Y.Z):** không trigger thêm cadence (đã là result của audit cycle)
+- **Tag scope explicit limited** (e.g., `v3.6-AuditTooling` chỉ tooling): chỉ audit phạm vi tag claim
+- **No other exceptions.** Comprehensive tag = comprehensive audit follow-up.
+
+### 17.5. Compliance audit pattern
+
+Trước khi tag mới (post v4.0):
+
+- [ ] Pre-tag audit: GP-1 4-điều-kiện met
+- [ ] Tag annotated message: include scheduled GP-12 audit date (T+7 day)
+- [ ] Post-tag (T+0 to T+7): execute master block-level audit per GP-12 §17.1
+- [ ] CRITICAL/HIGH found: trigger hotfix plan within 14 ngày
+- [ ] Audit report committed under `memory/sdn/post-tag-audit-<tag>-<date>.md`
+
+### 17.6. Origin
+
+Plan v3.9-OVSBlockHotfix Section 3 proposed GP-12 pre-S0 (2026-04-27). Ratified Phase S8.4 với user approval implicit qua "hoàn thành S8 đi và kết thúc plan v3.9" instruction (2026-04-27). Effective immediately for v4.0+ tags.
+
+---
+
+## 8.2. Amendment log v1.2 update
+
+| Version | Date | Author | Change |
+|---------|------|--------|--------|
+| v1.0 | 2026-04-26 | Claude | Initial 5 GP per Phase A v3.7. User approve via /plan "ok" 2026-04-26 |
+| v1.1 | 2026-04-26 | Claude | GP-6 đến GP-11 added per Plan v3.8-Remediation Section 3 + Section 11.3. Anti-gaming infrastructure mandatory. User approve via /plan "tự đưa ra plan kỹ lưỡng + tự quyết" 2026-04-26 |
+| **v1.2** | **2026-04-27** | **Claude** | **GP-12 Post-Tag Regression Audit Cadence added per Plan v3.9-OVSBlockHotfix Section 3 + S8.4 ratification. T+7 day master block-level audit mandatory cho mỗi comprehensive tag. User approve via "hoàn thành S8 đi và kết thúc plan v3.9" instruction 2026-04-27.** |
+
+---
+
+> **Đơn giản:** 12 GP + 8 user gate + scorecard ground truth + no metric gaming + per-keyword granular commit + anti-gaming pre-commit verification + reader-vs-internal language separation + post-tag regression audit cadence + reckoning past errors. V3.9 hotfix exposed cần GP-12 to prevent recurrence cho future v4.x tags.
