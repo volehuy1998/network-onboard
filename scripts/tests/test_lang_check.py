@@ -280,3 +280,96 @@ def test_mixed_english_and_vietnamese_fails_on_vi_only(tmp_git_repo: Path) -> No
     assert "VIETNAMESE" in result.stdout
     # Make sure the English chunk is not in the failure block.
     assert "megaflow cache" not in result.stdout
+
+
+def test_staged_diff_only_flags_added_vietnamese(tmp_git_repo: Path) -> None:
+    """--staged scans only added or modified lines.
+
+    A pre-existing legacy Vietnamese paragraph that the staged change
+    does not touch must NOT be flagged. This is the diff-only behavior
+    required by plan v3.9.1 §11.5 and the §8.3 mixed-language transition
+    policy. The test commits a legacy Vietnamese paragraph, then stages
+    a small English-only change to a different section. The result must
+    PASS because the legacy Vietnamese was not added by this changeset.
+    """
+    f = tmp_git_repo / "legacy.md"
+    initial = (
+        "# Heading\n"
+        "\n"
+        "This English line is fine and stays in place.\n"
+        "\n"
+        "Phần này thuộc legacy curriculum và chưa được dịch sang tiếng Anh "
+        "trong plan v3.12.\n"
+        "\n"
+        "Last English line is also fine and stays in place.\n"
+    )
+    f.write_text(initial, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "initial"],
+        cwd=str(tmp_git_repo),
+        check=True,
+    )
+
+    # Modify only the first English line; do not touch the Vietnamese
+    # paragraph in the middle.
+    updated = (
+        "# Heading\n"
+        "\n"
+        "This English line is fine, slightly reworded but still English.\n"
+        "\n"
+        "Phần này thuộc legacy curriculum và chưa được dịch sang tiếng Anh "
+        "trong plan v3.12.\n"
+        "\n"
+        "Last English line is also fine and stays in place.\n"
+    )
+    f.write_text(updated, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+
+    result = run_script(["--staged"], cwd=tmp_git_repo)
+    # The legacy Vietnamese paragraph is not in the staged diff, so the
+    # result must PASS.
+    assert result.returncode == 0, result.stdout
+    assert "PASS" in result.stdout
+
+
+def test_staged_diff_flags_added_vietnamese_chunk(tmp_git_repo: Path) -> None:
+    """--staged flags Vietnamese prose on a newly added line."""
+    f = tmp_git_repo / "legacy.md"
+    initial = (
+        "# Heading\n"
+        "\n"
+        "This English line is fine and stays in place.\n"
+    )
+    f.write_text(initial, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "initial"],
+        cwd=str(tmp_git_repo),
+        check=True,
+    )
+
+    updated = (
+        "# Heading\n"
+        "\n"
+        "This English line is fine and stays in place.\n"
+        "\n"
+        "Đây là đoạn tiếng Việt mới được thêm vào curriculum và phải bị "
+        "lang_check từ chối ngay tại commit này.\n"
+    )
+    f.write_text(updated, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+
+    result = run_script(["--staged"], cwd=tmp_git_repo)
+    assert result.returncode == 1, result.stdout
+    assert "VIETNAMESE" in result.stdout
+    # The newly added line is line 5 in the post-edit file.
+    assert "L5" in result.stdout

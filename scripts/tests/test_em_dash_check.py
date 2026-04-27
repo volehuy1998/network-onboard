@@ -172,3 +172,90 @@ def test_hyphen_is_allowed(tmp_git_repo: Path) -> None:
     result = run_script(["--files", str(f)], cwd=tmp_git_repo)
     assert result.returncode == 0
     assert "PASS" in result.stdout
+
+
+def test_staged_diff_only_flags_added_em_dash(tmp_git_repo: Path) -> None:
+    """--staged scans only added or modified lines.
+
+    A pre-existing em-dash on a line that the staged changeset does not
+    touch must NOT be flagged. This is the diff-only behavior required by
+    plan v3.9.1 §11.5 ("rejects any staged file containing an em-dash in
+    newly added or modified lines") and the §8.3 mixed-language transition
+    policy.
+    """
+    f = tmp_git_repo / "legacy.md"
+    initial = (
+        "# Heading\n"
+        "\n"
+        "Legacy line one " + EM_DASH + " has a pre-existing em-dash.\n"
+        "Legacy line two is clean.\n"
+        "Legacy line three is also clean.\n"
+    )
+    f.write_text(initial, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "initial legacy"],
+        cwd=str(tmp_git_repo),
+        check=True,
+    )
+
+    # Modify only the second clean line (line 4); do not touch the legacy
+    # em-dash on line 3.
+    updated = (
+        "# Heading\n"
+        "\n"
+        "Legacy line one " + EM_DASH + " has a pre-existing em-dash.\n"
+        "Legacy line two stays clean (now reworded but still safe).\n"
+        "Legacy line three is also clean.\n"
+    )
+    f.write_text(updated, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+
+    result = run_script(["--staged"], cwd=tmp_git_repo)
+    # Pre-existing em-dash on legacy line 3 is NOT in the staged diff,
+    # so the result must PASS.
+    assert result.returncode == 0
+    assert "PASS" in result.stdout
+
+
+def test_staged_diff_flags_em_dash_only_on_added_line(tmp_git_repo: Path) -> None:
+    """--staged flags em-dash on a newly added line even if surrounding
+    legacy content has its own pre-existing em-dashes that we left alone."""
+    f = tmp_git_repo / "legacy.md"
+    initial = (
+        "# Heading\n"
+        "\n"
+        "Legacy line " + EM_DASH + " keeps its pre-existing em-dash.\n"
+    )
+    f.write_text(initial, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "initial legacy"],
+        cwd=str(tmp_git_repo),
+        check=True,
+    )
+
+    updated = (
+        "# Heading\n"
+        "\n"
+        "Legacy line " + EM_DASH + " keeps its pre-existing em-dash.\n"
+        "Newly added line " + EM_DASH + " has a new em-dash that must fail.\n"
+    )
+    f.write_text(updated, encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "legacy.md"], cwd=str(tmp_git_repo), check=True
+    )
+
+    result = run_script(["--staged"], cwd=tmp_git_repo)
+    assert result.returncode == 1
+    assert "FAIL" in result.stdout
+    # The new line is at line 4 in the post-edit file.
+    assert "L4" in result.stdout
+    # The pre-existing legacy line 3 must NOT appear in the failure list.
+    assert "L3" not in result.stdout

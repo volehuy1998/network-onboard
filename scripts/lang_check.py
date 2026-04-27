@@ -12,16 +12,21 @@ configured as a binary classifier between English and Vietnamese. The user
 directive (2026-04-28) requires "100% English, 0% other language" detection.
 
 Behaviour:
-- ``--staged``: scan only staged .md files (.md added or modified). This is
-  the mode used by the pre-commit hook.
-- ``--all``: scan every .md file tracked by git. Used for repository-wide
-  audit.
-- ``--files PATH [PATH ...]``: scan a specific list of files.
+- ``--staged``: scan only the lines added or modified by the staged
+  changeset. This is the mode used by the pre-commit hook. Pre-existing
+  legacy Vietnamese lines that the staged change does not touch are NOT
+  flagged. This matches plan v3.9.1 §11.5 ("rejects any staged file
+  containing [non-English prose] in newly added or modified lines") and
+  the §8.3 mixed-language transition policy. The full curriculum-wide
+  English audit happens at plan v3.12.
+- ``--all``: scan every line of every .md file tracked by git. Used for
+  repository-wide audit, including plan v3.12 final closure.
+- ``--files PATH [PATH ...]``: scan every line of the specified files.
 
-Exit code is 0 when every prose chunk in every scanned file is detected as
-English. Exit code is 1 when at least one prose chunk is detected as
-Vietnamese with a non-zero confidence (strict mode per user directive
-2026-04-28).
+Exit code is 0 when every prose chunk in every scanned file or scanned
+diff is detected as English. Exit code is 1 when at least one prose
+chunk is detected as Vietnamese with a non-zero confidence (strict mode
+per user directive 2026-04-28).
 
 The script does NOT scan:
 - Code blocks delimited by triple backticks.
@@ -39,7 +44,11 @@ Install with `pip install lingua-language-detector`.
 
 Authoring context: plan v3.9.1 Phase Q-1.B follow-up, 2026-04-28, in response
 to the user directive "use a Python language detection library, a document
-passes when the test reports 100% English and 0% other language".
+passes when the test reports 100 percent English and 0 percent other
+language". Rewritten in Phase Q-1.E (2026-04-28) so that ``--staged`` mode
+scans only added or modified lines per plan §11.5 intent. The original
+implementation did whole-file scanning, which conflicted with the §8.3
+mixed-language transition policy.
 """
 from __future__ import annotations
 
@@ -187,6 +196,106 @@ def get_staged_md_files() -> list[Path]:
     ]
 
 
+_HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+_FENCE_LINE_RE = re.compile(r"^\s*```")
+
+
+def scan_staged_diff(
+    file_rel_path: str,
+) -> tuple[list[tuple[int, str, float, float]], int]:
+    """Run the language detector on the lines added by the staged change to
+    ``file_rel_path``. Return ``(failures, scanned_chunk_count)`` with the
+    same shape as ``scan_file``.
+
+    Diff-only mode means: pre-existing legacy Vietnamese lines that the
+    staged change does not touch are NOT reported. This matches plan
+    v3.9.1 §11.5 ("rejects any staged file containing [non-English prose]
+    in newly added or modified lines") and the §8.3 mixed-language
+    transition policy.
+
+    The detector runs only on ``+`` lines emitted by ``git diff --cached
+    --unified=0``. Lines that match a fenced-code-block boundary
+    (``^\\s*```$``) are skipped. Lines that look like CLI commands, URLs,
+    or identifier-only content are filtered out by ``is_prose_chunk``
+    after inline-code, URL, and HTML stripping.
+
+    Note: this approximation does not track multi-line fenced-code
+    state across the diff. In practice, a code-block body line is
+    rejected by ``is_prose_chunk`` because it lacks four space-separated
+    words, so the simpler line-by-line filter is good enough for hook
+    use.
+    """
+    try:
+        out = subprocess.check_output(
+            [
+                "git",
+                "diff",
+                "--cached",
+                "--unified=0",
+                "--no-color",
+                "--no-renames",
+                "--",
+                file_rel_path,
+            ],
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except subprocess.CalledProcessError:
+        return [], 0
+
+    failures: list[tuple[int, str, float, float]] = []
+    scanned = 0
+    new_lineno = 0
+    in_hunk = False
+    for raw in out.splitlines():
+        if raw.startswith("+++") or raw.startswith("---"):
+            continue
+        m = _HUNK_HEADER_RE.match(raw)
+        if m:
+            new_lineno = int(m.group(1))
+            in_hunk = True
+            continue
+        if not in_hunk:
+            continue
+        if raw.startswith("\\"):
+            # "\ No newline at end of file" marker; skip.
+            continue
+        if raw.startswith("+"):
+            content = raw[1:]
+            advance_for = "+"
+        elif raw.startswith("-"):
+            advance_for = "-"
+        else:
+            content = raw
+            advance_for = " "
+        if advance_for == "-":
+            continue
+        if advance_for == "+":
+            # Skip fenced-code-block boundaries; the body lines inside a
+            # fenced block tend to be CLI commands which `is_prose_chunk`
+            # already filters by the minimum-word-count rule.
+            if _FENCE_LINE_RE.match(content):
+                new_lineno += 1
+                continue
+            stripped_inline = _INLINE_CODE_RE.sub("", content)
+            stripped_inline = _URL_RE.sub("", stripped_inline)
+            stripped_inline = _HTML_TAG_RE.sub("", stripped_inline)
+            if is_prose_chunk(stripped_inline):
+                top_name, en, vi = detect_chunk(stripped_inline.strip())
+                scanned += 1
+                if top_name == "VIETNAMESE" and vi > 0.0:
+                    failures.append(
+                        (new_lineno, stripped_inline.strip(), en, vi)
+                    )
+            new_lineno += 1
+        else:
+            # Context line under --unified=0 should not appear, but tolerate
+            # it.
+            new_lineno += 1
+    return failures, scanned
+
+
 def get_all_md_files(repo_root: Path) -> list[Path]:
     try:
         out = subprocess.check_output(
@@ -246,39 +355,69 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 2
 
-    files = [p for p in iter_files(args, repo_root) if p.is_file()]
-
     total_failures = 0
     failing_files = 0
     total_scanned_chunks = 0
     skipped_allowlisted = 0
-    for path in files:
-        rel = (
-            path.relative_to(repo_root)
-            if path.is_relative_to(repo_root)
-            else path
-        )
-        rel_str = str(rel).replace("\\", "/")
-        if rel_str in ALLOWLIST:
-            skipped_allowlisted += 1
-            continue
-        failures, scanned = scan_file(path)
-        total_scanned_chunks += scanned
-        if not failures:
-            continue
-        failing_files += 1
-        total_failures += len(failures)
-        print(f"--- {rel_str} ({len(failures)} non-English chunk) ---")
-        for lineno, line, en, vi in failures:
-            display = line if len(line) <= 200 else line[:200] + "..."
-            print(
-                f"  L{lineno}: VIETNAMESE EN={en:.3f} VI={vi:.3f}: {display}"
-            )
+    files_count = 0
 
+    if args.staged:
+        rel_paths = [
+            str(p).replace("\\", "/") for p in get_staged_md_files()
+        ]
+        for rel_str in rel_paths:
+            if rel_str in ALLOWLIST:
+                skipped_allowlisted += 1
+                continue
+            files_count += 1
+            failures, scanned = scan_staged_diff(rel_str)
+            total_scanned_chunks += scanned
+            if not failures:
+                continue
+            failing_files += 1
+            total_failures += len(failures)
+            print(
+                f"--- {rel_str} ({len(failures)} non-English chunk in "
+                f"staged diff) ---"
+            )
+            for lineno, line, en, vi in failures:
+                display = line if len(line) <= 200 else line[:200] + "..."
+                print(
+                    f"  L{lineno} (added): VIETNAMESE EN={en:.3f} "
+                    f"VI={vi:.3f}: {display}"
+                )
+    else:
+        files = [p for p in iter_files(args, repo_root) if p.is_file()]
+        files_count = len(files)
+        for path in files:
+            rel = (
+                path.relative_to(repo_root)
+                if path.is_relative_to(repo_root)
+                else path
+            )
+            rel_str = str(rel).replace("\\", "/")
+            if rel_str in ALLOWLIST:
+                skipped_allowlisted += 1
+                continue
+            failures, scanned = scan_file(path)
+            total_scanned_chunks += scanned
+            if not failures:
+                continue
+            failing_files += 1
+            total_failures += len(failures)
+            print(f"--- {rel_str} ({len(failures)} non-English chunk) ---")
+            for lineno, line, en, vi in failures:
+                display = line if len(line) <= 200 else line[:200] + "..."
+                print(
+                    f"  L{lineno}: VIETNAMESE EN={en:.3f} VI={vi:.3f}: {display}"
+                )
+
+    mode = "staged-diff" if args.staged else "whole-file"
     if total_failures == 0:
         print(
-            f"lang_check: PASS ({len(files)} file(s) scanned, "
-            f"{total_scanned_chunks} prose chunk(s), 0 non-English"
+            f"lang_check: PASS ({files_count} file(s) scanned, "
+            f"{total_scanned_chunks} prose chunk(s), 0 non-English, "
+            f"mode={mode}"
             + (f", {skipped_allowlisted} allowlisted" if skipped_allowlisted else "")
             + ")."
         )
@@ -286,9 +425,9 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"lang_check: FAIL ({total_failures} non-English chunk across "
-        f"{failing_files} file(s)). Per CLAUDE.md Rule 17, every prose chunk "
-        f"in this repository must be in English. Translate the flagged "
-        f"chunks to English."
+        f"{failing_files} file(s), mode={mode}). Per CLAUDE.md Rule 17, "
+        f"every newly written or modified prose chunk in this repository "
+        f"must be in English. Translate the flagged chunks to English."
     )
     return 1
 
