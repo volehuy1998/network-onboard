@@ -6,6 +6,57 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) adapted cho tra
 
 ---
 
+## Reckoning #7, 2026-04-28, OVN-block source-verify and cleanup full closure
+
+> **Trigger.** GP-12 cadence make-good for the OVN block (deferred from the v3.9.x OVS-only chain). The v3.9 series consciously confined its scope to the OVS block; every plan in that chain (v3.9, v3.9.1 through v3.9.4) explicitly deferred the OVN block to plan v3.10.
+> **Scope.** Plan v3.10 OVN-block source-verify and cleanup: 24 OVN-only files (Block 13 plus Block 17 plus Block 18 plus Block 19) plus 6 cross-cutting Block 20 files (OVN-relevant subsections of 20.0, 20.1, 20.2, 20.3, 20.5, 20.8). Total 30 files, ~ 31,000 lines.
+> **Outcome.** 17 commits landed (R0, R0.5, v4 amendment, R1.A, R1.B.1, R1.B.2, R1.C.1, R1.C.2, R1.C.3, R1.D + R2 combined, R1.E, R3, R4). 126 fixes applied across 13 files. Repo-wide rubric-leak count dropped from 74 to 15 (59 leaks closed; remaining 15 are non-OVN-scope, deferred to v3.11). Combined error rate 3.1 percent across 4,038 inventory candidates.
+
+### Authoring discipline
+
+Every fact verified against the offline OVN source repo at `C:\Users\voleh\Documents\ovn` checked out at tag `v22.03.8` (commit `35813e0ba94c2f88eeb9b75153dc028cf819d0cc`), with cross-baseline references to the offline OVS repo at `v2.17.9` for 19.0 cross-version cases. No GitHub web requests during verification; the curriculum's GitHub URLs were checked **against** the offline checkout.
+
+### Findings (4 categories)
+
+- **Category 1 (4 WRONG_BRANCH_URL) corrected:** GitHub URLs pinned to `main` instead of `branch-22.03`. Sample: 18.0 lines 12, 485, 486; 19.0 line 10; 20.2 line 1621 (URL path needed subdirectory fix). All 4 fixed in the same edit.
+- **Category 2 (51 WRONG_FACT) corrected:** free-standing facts about pipeline stage IDs, table numbers, version introductions, and structural claims. Dominant cluster: 18.0 systematic table-number drift (28 instances of "Table 26 / 27 / 29" rewritten to v22.03.8 actuals "Table 18 / 19 / 24"). Other notable: 13.0 line 143 Port_Binding "8 type" enumerated with 4 missing types (vif, container, patch, chassisredirect, l3gateway, localnet, localport, l2gateway, virtual, external, remote, vtep at v22.03.8 per `controller/binding.c:915` `get_lport_type()`); 13.0 line 232 `mac_binding_age_threshold` cited as OVN 24.03 but actual is OVN 22.09 commit `1a947dd3` dated 2022-08-17; 13.0 line 240 I-P engine cited as OVN 22.09 but actual is OVN 20.03 commit `5d1d606b` dated 2019-05-17; 13.1 line 62 plus 181 plus 1533 LS pipeline counts wrong (claimed 23 + 9 + 20 + 7; actual 26 + 10 + 20 + 7); 13.19 PRE_HAIRPIN cluster (3 sections) at logic 12 / 13 / 14 corrected to 13 / 14 / 15.
+- **Category 3 (8 WRONG_LINE / WRONG_PATH / WRONG_NAME / FABRICATED) corrected:** 13.5 lines 271 to 275 binding.c function lines off by 200 to 700 lines, migrated to function-name anchors per Rule 14.4 Option C; 13.5 line 572 typo `controller/ip_mcast.c` (underscore) corrected to `controller/ip-mcast.c` (hyphen); 13.5b line 149 `build_port_bindings` does not exist at v22.03.8, real function is `build_ports` at northd/northd.c:4248; 13.4 line 549 URL pointed at `datapath/datapath.c` for `ovs_execute_actions` but the function is at `datapath/actions.c:1541`; 13.19 lines 47, 103, 104, 3025, 3076 cite `build_lswitch_input/output_port_security_l2/_ip/_nd` family which does not exist at v22.03.8 (the L2/IP/ND suffix split landed in branch-24.03+); at v22.03.8 the family is `build_lswitch_input_port_sec_op` at northd/northd.c:5615 and `build_lswitch_input_port_sec_od` at :5666.
+- **Category 4 (59 GP-11 leaks closed):** the deferred OVN-block leak in 13.6 line 930 ("Tier 1 cornerstone") plus 2 incidental leaks in 13.5b lines 24 and 96 (R1.A) plus 10 "Tier 1 cornerstone" leaks in 13.19 (R1.C.1) plus 46 axis-numbered Vietnamese headings in 13.18 (R1.C.3). All replaced with natural English wording per CLAUDE.md Rule 16 Replacement table.
+
+### Sub-batch error rates
+
+| Sub-batch | Files | Candidates | Violations | Rate |
+|---|---|---|---|---|
+| R1.A (cite-light) | 5 | 92 | 33 | 36 % |
+| R1.B.1 (13.1) | 1 | 322 | 6 | 1.9 % |
+| R1.B.2 (13.2 plus 13.5) | 2 | 554 | 11 | 2.0 % |
+| R1.C.1 (13.19) | 1 | 942 | 19 | 2.0 % |
+| R1.C.2 (13.7 plus 13.8) | 2 | 315 | 3 | 1.0 % |
+| R1.C.3 (13.16 to 13.18) | 3 | 285 | 47 | 16.5 % (GP-11 axis labels) |
+| R1.D plus R2 (services) | 8 | 936 | 3 | 0.3 % |
+| R1.E (Block 17 plus 19) | 2 | 403 | 1 | 0.2 % |
+| R3 (Block 20) | 6 | 189 | 1 | 0.5 % |
+| **Total** | **30** | **4,038** | **124** | **3.1 %** |
+
+### Empirical observations vs prior
+
+- Plan §11 sample-audit predicted 30 to 45 percent error rate. Actual aggregate 3.1 percent. Schema-anchored content (Block 13 architecture, controller/northd, services, Block 20) runs at near-source-of-truth quality (0.2 to 2.0 percent rates) when the author used the offline OVN repo.
+- The 36 percent R1.A rate was dominated by 18.0 (44 percent) which had been authored against OVN main branch. Once anchored to v22.03.8 the systematic table-number drift was closed.
+- The 16.5 percent R1.C.3 rate was driven entirely by 46 GP-11 axis-label leaks in 13.18 (a single repeated authoring choice across catalog sections). The Rule-14-only rate excluding GP-11 was 0.4 percent.
+- Inventory had high recall but low precision: of 4,038 candidates flagged by R0.5, about 60 were inventory false positives (CLI output UUIDs caught by COMMIT_SHA regex; conceptual prose mentions of schema tables; pipeline stages quoted from CLI output blocks). Per-row inspection still completed in well under the budgeted 1.5 minutes per row average for these false positives.
+
+### What remains for v3.11 and beyond
+
+- **Plan v3.11 (OF block hotfix):** 12 GP-11 leaks remaining in `3.5 - openflow-message-catalog.md`, `4.8 - openflow-match-field-catalog.md`, `4.9 - openflow-action-catalog.md`. Plus any Rule 14 source-verify violations against OVS upstream at v2.17.9 in those files. Estimated 20 to 30 hours.
+- **Cross-block plan (README + templates + backfill):** 3 GP-11 leaks remaining in README and `_templates/template-d-per-table.md`. Estimated 5 to 10 hours.
+- **Plan v3.12 (curriculum-wide English migration):** 4,249 em-dashes plus 18,271 non-English chunks across the curriculum. Estimated 80 to 120 hours.
+
+### Tag
+
+Optional `v4.1.0-OVNBlockHotfix` issued at v3.10 closure (R6) conditional on user sign-off per Rule 15 pre-tag checklist.
+
+---
+
 ## Reckoning #6, 2026-04-28, OVS-block comprehensive resolution full closure
 
 > **Trigger.** Plan v3.9.3 closed in PARTIAL state at 50.3 percent error rate (79 violations in 157 citations) on 9.4 and 9.11, exceeding the §3.7 mid-batch escalation gate by 0.3 points. The user explicitly chose Option 1 (HALT and plan v3.9.4) with the directive: "ensure it resolves all issues with the best quality results."
