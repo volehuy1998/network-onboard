@@ -350,7 +350,7 @@
 | 3.5 openflow-message-catalog | DONE full English | Closed in commit a11c3b4. 1,219 lines, 271 prose chunks. All eight subsections translated end-to-end (§3.5.1 OFPT_HELLO, §3.5.2 FEATURES, §3.5.3 FLOW_MOD, §3.5.4 PACKET_IN, §3.5.5 BARRIER, §3.5.6 peripheral catalogue (5 sub-sections), §3.5.7 bundle and async (5 sub-sections), §3.5.8 OFPMP_* multipart catalogue (5 sub-sections plus 16-row table)). |
 | 13.19 ovn-pipeline-stage-catalog | NOT STARTED | About 1,408 Vietnamese-diacritic prose lines, the largest residual file. |
 | 4.8 openflow-match-field-catalog | NOT STARTED | About 1,101 Vietnamese-diacritic prose lines. |
-| 4.9 openflow-action-catalog | NOT STARTED | About 827 Vietnamese-diacritic prose lines. |
+| 4.9 openflow-action-catalog | PARTIAL | Header (state, block, part, ebook mapping, plan, prereqs, template, sources), learning objectives, context, seven-category overview table, progress list, and §4.9.1 (Action versus Instruction foundation, six-instruction table, Action Set versus Apply Actions) translated in commit 72ef39d. About 58 of 419 prose chunks now English, 14 percent migration progress. Remaining: §4.9.2 through §4.9.XX per-action anatomy walkthroughs across all seven categories (Output, Encap-Decap, Field-Modification, Metadata, Firewall-CT, Control-Pipeline, Miscellaneous). Honest "Language status: Mixed" callout in place. |
 
 ### Remaining v3.12 phases (not yet started)
 
