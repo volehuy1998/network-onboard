@@ -325,11 +325,75 @@
 | P1.D1 | HIGH | 44 files missing dependency map | v3.1.1 backfilled |
 | P6.U1 | LOW | Dead URLs (academic papers + product) | v3.1.1 fixed 6 URLs |
 
+## Plan v3.12 status (curriculum-wide English migration, as of 2026-04-29)
+
+> **Owner directive (2026-04-28).** Every explanatory prose text in the repository must be written in plain technical English per [`memory/shared/english-style-guide.md`](../shared/english-style-guide.md). Every file modified after 2026-04-28 must be all-English. Em-dash (U+2014) is forbidden anywhere in the repository (Rule 17). Pre-commit enforcement: `scripts/em_dash_check.py` and `scripts/lang_check.py` (lingua-py strict mode).
+
+### R1.M (13 OVN advanced + Block XX + README) status
+
+| File | State | Detail |
+|------|-------|--------|
+| 17.0 | DONE full English | Closed in commit ea200be (sweep "hàm") and earlier R1.M run. lang_check + em_dash_check PASS whole-file. |
+| 19.0 | DONE full English | Closed in commit 7e66e07. Lab 1 layer 6, Labs 2 and 3, Exam Prep table, 16-term ISO 10241-1 glossary, 6-category command reference, references list. Anchor link to 17.0 §17.6 updated to post-migration English slug. |
+| 20.2 | DONE full English | Closed in commit 4047a1e (already staged; full file English). |
+| 13.3 ovn-acl-lb-nat-port-groups | NOT STARTED | About 689 Vietnamese-diacritic prose lines. |
+| README.md | NOT STARTED | 213 Vietnamese-diacritic prose lines plus 3 GP-11 rubric leaks (`Phase G` once, `Phase H session` twice). Reverted to HEAD in 4047a1e because the prior automated run had stamped a false "full migration complete" header. Needs full rewrite + slug realignment with translated section titles + GP-11 cleanup. |
+| Other R1.M files (10 of 13) | DONE pre-session | The 13-file scope per the existing tracker has 10 files already DONE before this session; the 3 in-flight were 17.0, 19.0, 20.2, all closed this session. |
+
+### R1.N (7 heavy catalog files) status
+
+| File | State | Detail |
+|------|-------|--------|
+| 13.5 port-binding-types-ovn-native | DONE full English | Closed in commit 7e66e07. Sections §13.5.1 through §13.5.14, including Anatomy Template A, Guided Exercise, 5-step diagnostic, Key takeaways, References, 10-table SBDB quick reference. Em-dashes in section headings replaced. |
+| 13.14 ovn-nbctl-sbctl-reference-playbook | DONE full English | Closed in commit 4047a1e (already staged at session start; full file English). |
+| 10.1 ovsdb-raft-clustering | DONE full English (sweep) | Single residual fragment "Output mẫu" fixed in commit ea200be. |
+| 3.5 openflow-message-catalog | PARTIAL | Header (title, status, learning objectives, prerequisite knowledge) and §3.5.1 OFPT_HELLO (full 20-axis treatment) translated in commit dd8dcaa. About 179 Vietnamese-diacritic prose lines remain across §3.5.2 (FEATURES), §3.5.3 (FLOW_MOD), §3.5.4 (PACKET_IN), §3.5.5 (BARRIER), and the peripheral message catalogue (P6, P7, P8). Honest "Language status: Mixed" callout in place. |
+| 13.19 ovn-pipeline-stage-catalog | NOT STARTED | About 1,408 Vietnamese-diacritic prose lines, the largest residual file. |
+| 4.8 openflow-match-field-catalog | NOT STARTED | About 1,101 Vietnamese-diacritic prose lines. |
+| 4.9 openflow-action-catalog | NOT STARTED | About 827 Vietnamese-diacritic prose lines. |
+
+### Remaining v3.12 phases (not yet started)
+
+| Phase | Description | Blocker |
+|-------|-------------|---------|
+| R2 | Final regression audit (lang_check whole-repo, em_dash_check whole-repo, GP-11 leak scan) | Cannot run cleanly until R1.M and R1.N close. |
+| R3 | CHANGELOG Reckoning #9 entry | Pending R1 closure. |
+| R4 | Dictionary update (`memory/shared/rule-11-dictionary.md` final freeze note) | Pending R1 closure. |
+| R5 | Version tag (e.g. `v4.2-EnglishComplete`) | **BLOCKED by Rule 15.** Requires user written sign-off captured in the tag commit message, plus a fresh `per_keyword_rubric_audit.py` scorecard within 24 hours. Cannot be executed by the agent autonomously. |
+
+### Residual prose-line audit (post-2026-04-29 session)
+
+| File | Vietnamese prose lines (outside code blocks) |
+|------|---------------------------------------------|
+| 13.19 | 1,408 |
+| 4.8 | 1,101 |
+| 4.9 | 827 |
+| 13.3 | 689 |
+| README.md | 307 |
+| 3.5 | 179 (post-§3.5.1 sections only) |
+| **Total residual** | **~4,511** |
+
+Residual diacritic-bearing fragments outside the count above are non-Vietnamese proper nouns (`Università di Pisa` in 1.1, `Gísli Hjálmtýsson` and `Reykjavík` in 2.3) and pass `lang_check` cleanly.
+
+### Honest closure path (next sessions)
+
+1. One heavy file per session at quality (deepest first by line count, or smallest first by total budget). Each session ends with a `fix(sdn): R1.X v3.12 close <FILE> full English migration` commit and pre-commit checks PASS.
+2. After all six remaining files close (3.5 finish, 13.3, README, 4.9, 4.8, 13.19), run R2 regression audit.
+3. R3 CHANGELOG Reckoning #9 + R4 dictionary update in the same session.
+4. R5 tag requires the owner's explicit written sign-off per Rule 15.
+
+### Lessons captured this session (2026-04-29)
+
+- The previous automated run produced "Language status: full migration complete" callouts on three partially-translated files (13.5, 19.0, README). The user audit caught it; commit 4047a1e corrected the false claims to honest "Mixed" callouts, and 7e66e07 closed 13.5 and 19.0 honestly.
+- This is the same anti-pattern flagged by the v3.7 to v3.8 reckoning. Future automation runs must include a per-file diacritic line-count verification before stamping any "complete" callout.
+
 ## References
 
 - [`audit-2026-04-25-summary.md`](audit-2026-04-25-summary.md): consolidated audit summary
 - [`file-dependency-map.md`](file-dependency-map.md): file cross-reference map (Rule 2)
 - [`session-log.md`](session-log.md): session-by-session journal
-- [`sdn-onboard/README.md`](../sdn-onboard/README.md): TOC source of truth
-- [`CLAUDE.md`](../CLAUDE.md): project working memory + Rules
-- [`CHANGELOG.md`](../CHANGELOG.md): release history
+- [`sdn-onboard/README.md`](../../sdn-onboard/README.md): TOC source of truth
+- [`CLAUDE.md`](../../CLAUDE.md): project working memory + Rules
+- [`CHANGELOG.md`](../../CHANGELOG.md): release history
+- [`plans/sdn/v3.12-curriculum-wide-english-migration.md`](../../plans/sdn/v3.12-curriculum-wide-english-migration.md): v3.12 plan (R0 to R5 phases)
+- [`memory/shared/english-style-guide.md`](../shared/english-style-guide.md): English style policy
