@@ -336,7 +336,7 @@
 | 17.0 | DONE full English | Closed in commit ea200be (sweep "hàm") and earlier R1.M run. lang_check + em_dash_check PASS whole-file. |
 | 19.0 | DONE full English | Closed in commit 7e66e07. Lab 1 layer 6, Labs 2 and 3, Exam Prep table, 16-term ISO 10241-1 glossary, 6-category command reference, references list. Anchor link to 17.0 §17.6 updated to post-migration English slug. |
 | 20.2 | DONE full English | Closed in commit 4047a1e (already staged; full file English). |
-| 13.3 ovn-acl-lb-nat-port-groups | PARTIAL | Sections §13.3.1 through §13.3.Z (concept through real-world incident, including §13.3.X full ACL deep dive, §13.3.Y NBDB companion tables, §13.3.Z NAT deep dive concept-through-Lab-L13.3.Z-1-setup) translated in commits 0322340, 90a8f7e, 66e126d, 7d3f431, 9782662, 2f64387. About 244 of 374 prose chunks now English, 65 percent migration progress. Remaining: §13.3.Z lab steps and POE variants, §13.3.Z failure modes, §13.3.Z comparison with other systems, §13.3.W five companion NBDB tables (Address_Set, Port_Group, Logical_Router_Static_Route, Logical_Router_Policy, Forwarding_Group). About 130 Vietnamese chunks across roughly 600 lines. Honest "Language status: Mixed" callout in place. |
+| 13.3 ovn-acl-lb-nat-port-groups | DONE full English | Closed in commit 33065ba. 1,802 lines, 674 prose chunks. End-to-end translation across §13.3.1 through §13.3.10 (foundation, anatomy, callouts, workflow, deep dives, capstone POE), §13.3.X ACL-as-NBDB-table 17-axis deep dive, §13.3.Y NBDB companion tables quick reference, §13.3.Z NAT-as-NBDB-table 17-axis deep dive, and §13.3.W full block of five companion-table deep dives (Address_Set, Port_Group, Logical_Router_Static_Route, Logical_Router_Policy, Forwarding_Group). lang_check PASS whole-file, em_dash_check PASS whole-file. Language status callout: "English (full migration complete, 2026-04-29)". |
 | README.md | DONE full English | Closed in commit 977f48e. 558 lines, 323 prose chunks. All seven reading paths, all 20-block table of contents, conventions table, and three appendices (A version evolution, B RFC reference, C bibliography) translated. GP-11 leaks (`Phase G` line 5, `Phase H session` lines 155 and 156) removed. Language status callout: "English (full migration complete, 2026-04-29)". |
 | Other R1.M files (10 of 13) | DONE pre-session | The 13-file scope per the existing tracker has 10 files already DONE before this session; the 3 in-flight were 17.0, 19.0, 20.2, all closed this session. |
 
@@ -361,17 +361,17 @@
 | R4 | Dictionary update (`memory/shared/rule-11-dictionary.md` final freeze note) | Pending R1 closure. |
 | R5 | Version tag (e.g. `v4.2-EnglishComplete`) | **BLOCKED by Rule 15.** Requires user written sign-off captured in the tag commit message, plus a fresh `per_keyword_rubric_audit.py` scorecard within 24 hours. Cannot be executed by the agent autonomously. |
 
-### Residual prose-line audit (post-2026-04-29 session, after second pass)
+### Residual prose-line audit (post-2026-04-29 third pass)
 
 | File | Vietnamese prose chunks (lang_check whole-file) |
 |------|--------------------------------------------------|
 | 13.19 | About 1,408 lines (not yet measured per chunk) |
 | 4.8 | About 1,101 lines |
 | 4.9 | About 827 lines |
-| 13.3 | 341 chunks remaining (down from 374 before session) |
-| README.md | 0 (closed) |
-| 3.5 | 0 (closed) |
-| **Total residual chunks (estimate)** | **About 3,800 to 4,200 prose chunks across four heavy files** |
+| 13.3 | 0 (closed in commit 33065ba) |
+| README.md | 0 (closed in commit 977f48e) |
+| 3.5 | 0 (closed in commit a11c3b4) |
+| **Total residual chunks (estimate)** | **About 3,300 prose chunks across three remaining heavy files** |
 
 Residual diacritic-bearing fragments outside the count above are non-Vietnamese proper nouns (`Università di Pisa` in 1.1, `Gísli Hjálmtýsson` and `Reykjavík` in 2.3) and pass `lang_check` cleanly.
 
