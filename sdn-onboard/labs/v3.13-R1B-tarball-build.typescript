@@ -1,0 +1,303 @@
+Script started on 2026-04-29 18:05:35+00:00 [TERM="xterm-256color" TTY="/dev/pts/3" COLUMNS="169" LINES="38"]
+[?2004h]0;root@lab-openvswitch: ~/network-onboardroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lWed Apr 29 06:05:37 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ls -la /etc/openvswitch /var/lib/openvswitch /var/log/openvswitch 2>&1
+[?2004lls: cannot access '/etc/openvswitch': No such file or directory
+ls: cannot access '/var/log/openvswitch': No such file or directory
+/var/lib/openvswitch:
+total 28
+drwxr-xr-x  2 root root  4096 Apr 29 17:14 [0m[01;34m.[0m
+drwxr-xr-x 41 root root  4096 Apr 29 17:14 [01;34m..[0m
+-rw-r-----  1 root root 16564 Apr 29 17:14 conf.db
+-rw-------  1 root root     0 Apr 29 17:14 .conf.db.~lock~
+[?2004hroot@lab-openvswitch:~/network-onboard# lsmod | grep -E "^(openvswitch|nf_conntrack|nf_nat)" || echo "(no openvswitch module loaded)"
+[?2004l[01;31m[Knf_nat[m[K                 49152  0
+[01;31m[Knf_conntrack[m[K          172032  2 nf_nat,nf_conncount
+[?2004hroot@lab-openvswitch:~/network-onboard# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.0G  1.7G  78% /
+[?2004hroot@lab-openvswitch:~/network-onboard# which ovs-vsctl 2>&1 || echo '(ovs-vsctl not in PATH)'
+[?2004l(ovs-vsctl not in PATH)
+[?2004hroot@lab-openvswitch:~/network-onboard# apt-cache policy openvswitch-switch | head -5
+[?2004lopenvswitch-switch:
+  Installed: (none)
+  Candidate: 2.17.9-0ubuntu0.22.04.1
+  Version table:
+     2.17.9-0ubuntu0.22.04.1 500
+[?2004hroot@lab-openvswitch:~/network-onboard# apt-get update 2>&1 | tail -5
+[?2004lHit:1 http://vn.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://vn.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:3 http://vn.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Hit:4 http://vn.archive.ubuntu.com/ubuntu jammy-security InRelease
+Reading package lists...
+[?2004hroot@lab-openvswitch:~/network-onboard# apt-get install -y autoconf automake libtool pkg-config libcap-ng-dev python3-dev libunbound-dev 2>&1 | tail -25
+[?2004lReading package lists...
+Building dependency tree...
+Reading state information...
+autoconf is already the newest version (2.71-2).
+automake is already the newest version (1:1.16.5-1.3).
+libcap-ng-dev is already the newest version (0.7.9-2.2build3).
+libtool is already the newest version (2.4.6-15build2).
+pkg-config is already the newest version (0.29.2-1ubuntu3).
+libunbound-dev is already the newest version (1.13.1-1ubuntu5.14).
+python3-dev is already the newest version (3.10.6-1~22.04.1).
+The following package was automatically installed and is no longer required:
+  python3-sortedcontainers
+Use 'apt autoremove' to remove it.
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+[?2004hroot@lab-openvswitch:~/network-onboard# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.0G  1.7G  79% /
+[?2004hroot@lab-openvswitch:~/network-onboard# mkdir -p /root/ovs-r1b && cd /root/ovs-r1b && pwd
+[?2004l/root/ovs-r1b
+[?2004hroot@lab-openvswitch:~/ovs-r1b# cd /root/ovs-r1b && wget -nv -nc https://www.openvswitch.org/releases/openvswitch-2.17.9.tar.gz 2>&1
+[?2004l[?2004hroot@lab-openvswitch:~/ovs-r1b# ls -la /root/ovs-r1b/openvswitch-2.17.9.tar.gz
+[?2004l-rw-r--r-- 1 root root 8136490 Mar 31 21:42 [0m[01;31m/root/ovs-r1b/openvswitch-2.17.9.tar.gz[0m
+[?2004hroot@lab-openvswitch:~/ovs-r1b# cd /root/ovs-r1b && sha256sum openvswitch-2.17.9.tar.gz
+[?2004le1b3fa472676626853f22d63f959e5ad061e1bf57e1bbd444d0ed88f947ef8b1  openvswitch-2.17.9.tar.gz
+[?2004hroot@lab-openvswitch:~/ovs-r1b# cd /root/ovs-r1b && tar xzf openvswitch-2.17.9.tar.gz && cd openvswitch-2.17.9 && pwd
+[?2004l/root/ovs-r1b/openvswitch-2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ls -la /root/ovs-r1b/openvswitch-2.17.9 | head -25
+[?2004ltotal 1952
+drwxrwxr-x 27 engineer engineer    4096 Feb  8  2024 .
+drwxr-xr-x  3 root     root        4096 Apr 29 18:05 ..
+-rw-rw-r--  1 engineer engineer   67445 Feb  8  2024 acinclude.m4
+-rw-rw-r--  1 engineer engineer   42736 Feb  8  2024 aclocal.m4
+-rw-rw-r--  1 engineer engineer    2810 Feb  8  2024 appveyor.yml
+-rw-rw-r--  1 engineer engineer   38081 Feb  8  2024 AUTHORS.rst
+-rwxrwxr-x  1 engineer engineer      40 Feb  8  2024 boot.sh
+drwxrwxr-x  2 engineer engineer    4096 Feb  8  2024 build-aux
+drwxrwxr-x  2 engineer engineer    4096 Feb  8  2024 .ci
+-rw-rw-r--  1 engineer engineer     830 Feb  8  2024 .cirrus.yml
+-rw-rw-r--  1 engineer engineer   13327 Feb  8  2024 config.h.in
+-rwxrwxr-x  1 engineer engineer 1091118 Feb  8  2024 configure
+-rw-rw-r--  1 engineer engineer    7607 Feb  8  2024 configure.ac
+-rw-rw-r--  1 engineer engineer    1296 Feb  8  2024 CONTRIBUTING.rst
+drwxrwxr-x  3 engineer engineer    4096 Feb  8  2024 datapath
+drwxrwxr-x  6 engineer engineer    4096 Feb  8  2024 datapath-windows
+drwxrwxr-x  3 engineer engineer    4096 Feb  8  2024 debian
+drwxrwxr-x 10 engineer engineer    4096 Feb  8  2024 Documentation
+drwxrwxr-x  3 engineer engineer    4096 Feb  8  2024 .github
+drwxrwxr-x  7 engineer engineer    4096 Feb  8  2024 include
+drwxrwxr-x  2 engineer engineer    4096 Feb  8  2024 ipsec
+drwxrwxr-x  3 engineer engineer   20480 Feb  8  2024 lib
+-rw-rw-r--  1 engineer engineer   10767 Feb  8  2024 LICENSE
+drwxrwxr-x  2 engineer engineer    4096 Feb  8  2024 m4
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# du -sh /root/ovs-r1b/openvswitch-2.17.9
+[?2004l72M	/root/ovs-r1b/openvswitch-2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ls -d /lib/modules/$(uname -r)/build 2>&1
+[?2004l[0m[01;36m/lib/modules/5.15.0-173-generic/build[0m
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# uname -r
+[?2004l5.15.0-173-generic
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# cd /root/ovs-r1b/openvswitch-2.17.9 && ./configure --prefix=/usr/local --localstatedir=/usr/local/var --sysconfdir=/usr/local/etc --with-linux=/lib/modules/$(uname -r)/build 2>&1 | tail -10
+[?2004lchecking whether DPCLS Autovalidator is default implementation... no
+checking whether DPIF AVX512 is default implementation... no
+checking whether MFEX Autovalidator is default implementation... no
+checking binutils avx512 assembler checks passing... yes
+checking whether gcc accepts -mavx512f -mavx512vpopcntdq... yes
+configure: WARNING: --with-linux is deprecated and kernel support is limited to 5.8 and below
+checking for Linux build directory... /lib/modules/5.15.0-173-generic/build
+checking for Linux source directory... /lib/modules/5.15.0-173-generic/build
+checking for kernel version... 5.15.198
+configure: error: Linux kernel in /lib/modules/5.15.0-173-generic/build is version 5.15.198, but version newer than 5.8.x is not supported (please refer to the FAQ for advice)
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# modinfo openvswitch 2>&1 | head -8
+[?2004lfilename:       /lib/modules/5.15.0-173-generic/kernel/net/openvswitch/openvswitch.ko
+alias:          net-pf-16-proto-16-family-ovs_ct_limit
+alias:          net-pf-16-proto-16-family-ovs_meter
+alias:          net-pf-16-proto-16-family-ovs_packet
+alias:          net-pf-16-proto-16-family-ovs_flow
+alias:          net-pf-16-proto-16-family-ovs_vport
+alias:          net-pf-16-proto-16-family-ovs_datapath
+license:        GPL
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# cd /root/ovs-r1b/openvswitch-2.17.9 && ./configure --prefix=/usr/local --localstatedir=/usr/local/var --sysconfdir=/usr/local/etc 2>&1 | tail -45
+[?2004lchecking whether gcc accepts -Qunused-arguments... no
+checking whether gcc accepts -Wshadow... yes
+checking whether gcc accepts -Wmultistatement-macros... yes
+checking whether gcc accepts -Wcast-align=strict... yes
+checking whether gcc accepts -Wno-null-pointer-arithmetic... no
+checking whether gcc accepts -Warray-bounds-pointer-arithmetic... no
+checking whether gcc accepts -Wno-unused... yes
+checking whether gcc accepts -Wno-unused-parameter... yes
+checking target hint for cgcc... x86_64
+checking vector options for cgcc... -D__MMX__=1 -D__MMX_WITH_SSE__=1 -D__SSE2_MATH__=1 -D__SSE_MATH__=1 -D__SSE__=1 -D__SSE2__=1 
+checking whether DPCLS Autovalidator is default implementation... no
+checking whether DPIF AVX512 is default implementation... no
+checking whether MFEX Autovalidator is default implementation... no
+checking binutils avx512 assembler checks passing... yes
+checking whether gcc accepts -mavx512f -mavx512vpopcntdq... yes
+checking for struct tcf_t.firstuse... yes
+checking whether dpdk is enabled... no
+checking whether make supports nested variables... (cached) yes
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating lib/stdio.h
+config.status: creating lib/string.h
+config.status: creating ovsdb/libovsdb.sym
+config.status: creating ofproto/libofproto.sym
+config.status: creating lib/libsflow.sym
+config.status: creating lib/libopenvswitch.sym
+config.status: creating vtep/libvtep.sym
+config.status: creating Makefile
+config.status: creating datapath/Makefile
+config.status: creating datapath/linux/Kbuild
+config.status: creating datapath/linux/Makefile
+config.status: creating datapath/linux/Makefile.main
+config.status: creating tests/atlocal
+config.status: creating lib/libopenvswitch.pc
+config.status: creating lib/libsflow.pc
+config.status: creating ofproto/libofproto.pc
+config.status: creating ovsdb/libovsdb.pc
+config.status: creating include/openvswitch/version.h
+config.status: creating config.h
+config.status: executing tests/atconfig commands
+config.status: executing depfiles commands
+config.status: executing libtool commands
+config.status: executing include/openflow/openflow.h.stamp commands
+config.status: executing utilities/bugtool/dummy commands
+config.status: executing ipsec/dummy commands
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.1G  1.6G  80% /
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# cd /root/ovs-r1b/openvswitch-2.17.9 && (time make -j4) 2>&1 | tail -25
+[?2004l/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-appctl utilities/ovs-appctl.o lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o ovsdb/ovsdb-server ovsdb/ovsdb-server.o  ovsdb/.libs/libovsdb.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-testcontroller utilities/ovs-testcontroller.o lib/libopenvswitch.la -lssl -lcrypto -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-appctl utilities/ovs-appctl.o  lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-dpctl utilities/ovs-dpctl.o lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-testcontroller utilities/ovs-testcontroller.o  lib/.libs/libopenvswitch.a -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -lssl -lcrypto -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-ofctl utilities/ovs-ofctl.o ofproto/libofproto.la lib/libopenvswitch.la -latomic -lm  -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-vsctl utilities/ovs-vsctl.o lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-dpctl utilities/ovs-dpctl.o  lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-ofctl utilities/ovs-ofctl.o  ofproto/.libs/libofproto.a /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libsflow.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o ovsdb/ovsdb-tool ovsdb/ovsdb-tool.o ovsdb/libovsdb.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-vsctl utilities/ovs-vsctl.o  lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o ovsdb/ovsdb-client ovsdb/ovsdb-client.o ovsdb/libovsdb.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o ovsdb/ovsdb-tool ovsdb/ovsdb-tool.o  ovsdb/.libs/libovsdb.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o vtep/vtep-ctl vtep/vtep-ctl.o vtep/libvtep.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o ovsdb/ovsdb-client ovsdb/ovsdb-client.o  ovsdb/.libs/libovsdb.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2      -o vswitchd/ovs-vswitchd vswitchd/bridge.o vswitchd/ovs-vswitchd.o vswitchd/system-stats.o vswitchd/xenserver.o ofproto/libofproto.la lib/libsflow.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o vtep/vtep-ctl vtep/vtep-ctl.o  vtep/.libs/libvtep.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o vswitchd/ovs-vswitchd vswitchd/bridge.o vswitchd/ovs-vswitchd.o vswitchd/system-stats.o vswitchd/xenserver.o  ofproto/.libs/libofproto.a /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libsflow.a lib/.libs/libsflow.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1b/openvswitch-2.17.9/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+make[2]: Leaving directory '/root/ovs-r1b/openvswitch-2.17.9'
+make[1]: Leaving directory '/root/ovs-r1b/openvswitch-2.17.9'
+
+real	0m26.737s
+user	1m15.952s
+sys	0m15.237s
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.3G  1.4G  82% /
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# du -sh /root/ovs-r1b/openvswitch-2.17.9
+[?2004l265M	/root/ovs-r1b/openvswitch-2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# cd /root/ovs-r1b/openvswitch-2.17.9 && make install 2>&1 | tail -25
+[?2004l /usr/bin/install -c -m 644  python/ovs/compat/__init__.py '/usr/local/share/openvswitch/python/ovs/compat'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/python/ovs/db'
+ /usr/bin/install -c -m 644  python/ovs/db/__init__.py python/ovs/db/custom_index.py python/ovs/db/data.py python/ovs/db/error.py python/ovs/db/idl.py python/ovs/db/parser.py python/ovs/db/schema.py python/ovs/db/types.py '/usr/local/share/openvswitch/python/ovs/db'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/python/ovs'
+ /usr/bin/install -c -m 644  python/ovs/__init__.py python/ovs/daemon.py python/ovs/fcntl_win.py python/ovs/fatal_signal.py python/ovs/json.py python/ovs/jsonrpc.py python/ovs/ovsuuid.py python/ovs/poller.py python/ovs/process.py python/ovs/reconnect.py python/ovs/socket_util.py python/ovs/stream.py python/ovs/timeval.py python/ovs/util.py python/ovs/version.py python/ovs/vlog.py python/ovs/winutils.py '/usr/local/share/openvswitch/python/ovs'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/python/ovs/compat/sortedcontainers'
+ /usr/bin/install -c -m 644  python/ovs/compat/sortedcontainers/__init__.py python/ovs/compat/sortedcontainers/sortedlist.py python/ovs/compat/sortedcontainers/sorteddict.py python/ovs/compat/sortedcontainers/sortedset.py '/usr/local/share/openvswitch/python/ovs/compat/sortedcontainers'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/python/ovstest'
+ /usr/bin/install -c -m 644  python/ovstest/__init__.py python/ovstest/args.py python/ovstest/rpcserver.py python/ovstest/tcp.py python/ovstest/tests.py python/ovstest/udp.py python/ovstest/util.py python/ovstest/vswitch.py '/usr/local/share/openvswitch/python/ovstest'
+ /usr/bin/mkdir -p '/usr/local/include/openflow'
+ /usr/bin/install -c -m 644 include/openflow/intel-ext.h include/openflow/netronome-ext.h include/openflow/nicira-ext.h include/openflow/openflow-1.0.h include/openflow/openflow-1.1.h include/openflow/openflow-1.2.h include/openflow/openflow-1.3.h include/openflow/openflow-1.4.h include/openflow/openflow-1.5.h include/openflow/openflow-common.h include/openflow/openflow.h '/usr/local/include/openflow'
+ /usr/bin/mkdir -p '/usr/local/include/openvswitch'
+ /usr/bin/install -c -m 644 include/openvswitch/compiler.h include/openvswitch/dynamic-string.h include/openvswitch/hmap.h include/openvswitch/flow.h include/openvswitch/geneve.h include/openvswitch/json.h include/openvswitch/list.h include/openvswitch/netdev.h include/openvswitch/match.h include/openvswitch/meta-flow.h include/openvswitch/namemap.h include/openvswitch/ofpbuf.h include/openvswitch/ofp-actions.h include/openvswitch/ofp-bundle.h include/openvswitch/ofp-connection.h include/openvswitch/ofp-ed-props.h include/openvswitch/ofp-errors.h include/openvswitch/ofp-flow.h include/openvswitch/ofp-group.h include/openvswitch/ofp-ipfix.h include/openvswitch/ofp-match.h include/openvswitch/ofp-meter.h include/openvswitch/ofp-monitor.h include/openvswitch/ofp-msgs.h include/openvswitch/ofp-packet.h include/openvswitch/ofp-parse.h include/openvswitch/ofp-port.h include/openvswitch/ofp-print.h include/openvswitch/ofp-prop.h include/openvswitch/ofp-protocol.h include/openvswitch/ofp-queue.h include/openvswitch/ofp-switch.h include/openvswitch/ofp-table.h include/openvswitch/ofp-util.h include/openvswitch/packets.h include/openvswitch/poll-loop.h include/openvswitch/rconn.h include/openvswitch/shash.h include/openvswitch/thread.h include/openvswitch/token-bucket.h '/usr/local/include/openvswitch'
+ /usr/bin/install -c -m 644 include/openvswitch/tun-metadata.h include/openvswitch/type-props.h include/openvswitch/types.h include/openvswitch/usdt-probes.h include/openvswitch/util.h include/openvswitch/uuid.h include/openvswitch/version.h include/openvswitch/vconn.h include/openvswitch/vlog.h include/openvswitch/nsh.h '/usr/local/include/openvswitch'
+ /usr/bin/mkdir -p '/usr/local/lib/pkgconfig'
+ /usr/bin/install -c -m 644 lib/libopenvswitch.pc lib/libsflow.pc ofproto/libofproto.pc ovsdb/libovsdb.pc '/usr/local/lib/pkgconfig'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch'
+ /usr/bin/install -c -m 644 vswitchd/vswitch.ovsschema ovsdb/local-config.ovsschema vtep/vtep.ovsschema '/usr/local/share/openvswitch'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/scripts'
+ /usr/bin/install -c -m 644 utilities/ovs-lib '/usr/local/share/openvswitch/scripts'
+ /usr/bin/mkdir -p '/usr/local/share/openvswitch/scripts'
+ /usr/bin/install -c utilities/ovs-check-dead-ifs utilities/ovs-ctl utilities/ovs-kmod-ctl utilities/ovs-save utilities/bugtool/ovs-bugtool-fdb-show utilities/bugtool/ovs-bugtool-tc-class-show utilities/bugtool/ovs-bugtool-daemons-ver utilities/bugtool/ovs-bugtool-ovs-ofctl-loop-over-bridges utilities/bugtool/ovs-bugtool-ovs-appctl-dpif utilities/bugtool/ovs-bugtool-ovs-bridge-datapath-type utilities/bugtool/ovs-bugtool-ovs-vswitchd-threads-affinity utilities/bugtool/ovs-bugtool-qos-configs utilities/bugtool/ovs-bugtool-get-dpdk-nic-numa utilities/bugtool/ovs-bugtool-get-port-stats ipsec/ovs-monitor-ipsec vtep/ovs-vtep '/usr/local/share/openvswitch/scripts'
+make[3]: Leaving directory '/root/ovs-r1b/openvswitch-2.17.9'
+make[2]: Leaving directory '/root/ovs-r1b/openvswitch-2.17.9'
+make[1]: Leaving directory '/root/ovs-r1b/openvswitch-2.17.9'
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ls /usr/local/share/openvswitch/scripts/ 2>&1 | head
+[?2004lovs-bugtool-daemons-ver
+ovs-bugtool-fdb-show
+ovs-bugtool-get-dpdk-nic-numa
+ovs-bugtool-get-port-stats
+ovs-bugtool-ovs-appctl-dpif
+ovs-bugtool-ovs-bridge-datapath-type
+ovs-bugtool-ovs-ofctl-loop-over-bridges
+ovs-bugtool-ovs-vswitchd-threads-affinity
+ovs-bugtool-qos-configs
+ovs-bugtool-tc-class-show
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ls /usr/local/sbin/ 2>&1
+[?2004l[0m[01;32movs-bugtool[0m  [01;32movsdb-server[0m  [01;32movs-vswitchd[0m
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ls /usr/local/bin/ 2>&1 | grep -E '^ovs|^ovsdb'
+[?2004l[01;31m[Kovs[m[K-appctl
+[01;31m[Kovsdb[m[K-client
+[01;31m[Kovsdb[m[K-tool
+[01;31m[Kovs[m[K-docker
+[01;31m[Kovs[m[K-dpctl
+[01;31m[Kovs[m[K-dpctl-top
+[01;31m[Kovs[m[K-l3ping
+[01;31m[Kovs[m[K-ofctl
+[01;31m[Kovs[m[K-parse-backtrace
+[01;31m[Kovs[m[K-pcap
+[01;31m[Kovs[m[K-pki
+[01;31m[Kovs[m[K-tcpdump
+[01;31m[Kovs[m[K-tcpundump
+[01;31m[Kovs[m[K-test
+[01;31m[Kovs[m[K-testcontroller
+[01;31m[Kovs[m[K-vlan-test
+[01;31m[Kovs[m[K-vsctl
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# which ovs-vsctl ovsdb-server ovs-vswitchd 2>&1
+[?2004l/usr/local/bin/ovs-vsctl
+/usr/local/sbin/ovsdb-server
+/usr/local/sbin/ovs-vswitchd
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ovs-vswitchd --version 2>&1 | head -3
+[?2004lovs-vswitchd (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ovsdb-server --version 2>&1 | head -3
+[?2004lovsdb-server (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# find /lib/modules/$(uname -r) -name 'openvswitch*' 2>&1 | head -10
+[?2004l/lib/modules/5.15.0-173-generic/kernel/net/openvswitch
+/lib/modules/5.15.0-173-generic/kernel/net/openvswitch/openvswitch.ko
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# mkdir -p /usr/local/etc/openvswitch /usr/local/var/run/openvswitch /usr/local/var/log/openvswitch
+[?2004l[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/local/share/openvswitch/vswitch.ovsschema 2>&1
+[?2004l[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -25
+[?2004l * Starting ovsdb-server
+ * system ID not configured, please use --system-id
+ * Configuring Open vSwitch system IDs
+ * Inserting openvswitch module
+ * Starting ovs-vswitchd
+ * Enabling remote OVSDB managers
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ovs-vsctl show 2>&1
+[?2004l5f8e9a74-1559-4375-9b90-a7474ef58029
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# ovs-vsctl --version | head -3
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# lsmod | grep openvswitch | head -5
+[?2004lopenvswitch           176128  0
+nsh                    16384  1 openvswitch
+nf_conncount           24576  1 openvswitch
+nf_nat                 49152  1 openvswitch
+nf_conntrack          172032  3 nf_nat,openvswitch,nf_conncount
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -10
+[?2004l * Exiting ovs-vswitchd (139626)
+ * Exiting ovsdb-server (139607)
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.3G  1.4G  83% /
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# cd /root/ovs-r1b/openvswitch-2.17.9 && make distclean 2>&1 | tail -10
+[?2004lrm -f utilities/.deps/ovs-ofctl.Po
+rm -f utilities/.deps/ovs-testcontroller.Po
+rm -f utilities/.deps/ovs-vsctl.Po
+rm -f vswitchd/.deps/bridge.Po
+rm -f vswitchd/.deps/ovs-vswitchd.Po
+rm -f vswitchd/.deps/system-stats.Po
+rm -f vswitchd/.deps/xenserver.Po
+rm -f vtep/.deps/vtep-ctl.Po
+rm -f vtep/.deps/vtep-idl.Plo
+rm -f Makefile
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.1G  1.5G  81% /
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# du -sh /root/ovs-r1b 2>&1
+[?2004l80M	/root/ovs-r1b
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# date -u
+[?2004lWed Apr 29 06:06:52 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/ovs-r1b/openvswitch-2.17.9# exit
+[?2004lexit
+
+Script done on 2026-04-29 18:06:52+00:00 [COMMAND_EXIT_CODE="0"]
