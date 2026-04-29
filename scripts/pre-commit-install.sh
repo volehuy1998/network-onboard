@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # pre-commit-install.sh, install governance pre-commit hook.
 #
-# Hook runs four checks on staged Markdown files:
-#   1. anti_gaming_check.py (GP-6 to GP-10)
-#   2. rubric_leak_check.py (GP-11 / CLAUDE.md Rule 16)
-#   3. em_dash_check.py    (CLAUDE.md Rule 17, added by plan v3.9.1 Phase Q-1.B)
-#   4. lang_check.py       (CLAUDE.md Rule 17 language detection, added by plan v3.9.1 Phase Q-1.B)
+# Hook runs five checks on staged Markdown files:
+#   1. anti_gaming_check.py     (GP-6 to GP-10)
+#   2. rubric_leak_check.py     (GP-11 / CLAUDE.md Rule 16)
+#   3. em_dash_check.py         (CLAUDE.md Rule 17, plan v3.9.1 Phase Q-1.B)
+#   4. lang_check.py            (CLAUDE.md Rule 17 language, v3.9.1 Phase Q-1.B)
+#   5. lab_verbatim_check.py    (CLAUDE.md Rule 18, plan v3.13 R0a)
 #
 # Bypass with --no-verify is strictly discouraged (CLAUDE.md Rule 4 plus the
 # Quality over Speed mandate).
@@ -38,6 +39,8 @@ cat > "$HOOK_PATH" << 'HOOK'
 #   - GP-11 / Rule 16:  rubric leak check on staged curriculum .md
 #   - Rule 17 (em-dash): em-dash (U+2014) check on staged curriculum .md
 #   - Rule 17 (lang):    language detection check on staged curriculum .md
+#   - Rule 18 (verbatim): lab transcript verbatim integrity on staged
+#                         .md files under sdn-onboard/labs/
 #
 # Bypass with `git commit --no-verify` is recorded in commit history; do NOT
 # use without an explicit reason documented in the commit message.
@@ -65,6 +68,7 @@ ANTI="$REPO_ROOT/scripts/anti_gaming_check.py"
 LEAK="$REPO_ROOT/scripts/rubric_leak_check.py"
 EMDASH="$REPO_ROOT/scripts/em_dash_check.py"
 LANG="$REPO_ROOT/scripts/lang_check.py"
+VERBATIM="$REPO_ROOT/scripts/lab_verbatim_check.py"
 
 # Skip hook if no .md files staged.
 STAGED_MD="$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' || true)"
@@ -119,6 +123,20 @@ else
   echo "  (skip: $LANG not found)"
 fi
 
+echo "pre-commit: lab_verbatim_check on staged sdn-onboard/labs/*.md ..."
+if [ -f "$VERBATIM" ]; then
+  "$PYTHON" "$VERBATIM" --staged || {
+    echo "FAIL lab_verbatim_check, commit rejected per CLAUDE.md Rule 18."
+    echo "  Every line of every verbatim code block in a lab transcript"
+    echo "  must appear in the referenced typescript file. Do not anonymise"
+    echo "  IPs, MACs, hostnames, UUIDs, or timestamps."
+    echo "  Override with --no-verify is not recommended."
+    exit 1
+  }
+else
+  echo "  (skip: $VERBATIM not found)"
+fi
+
 echo "OK pre-commit governance checks PASS."
 exit 0
 HOOK
@@ -129,9 +147,10 @@ echo "Installed pre-commit hook at: $HOOK_PATH"
 echo
 echo "Test the hook by staging a curriculum .md file and running 'git commit'."
 echo "It runs:"
-echo "  - scripts/anti_gaming_check.py --staged   (GP-6 to GP-10)"
-echo "  - scripts/rubric_leak_check.py --staged   (GP-11 / Rule 16)"
-echo "  - scripts/em_dash_check.py --staged       (Rule 17, no em-dash)"
-echo "  - scripts/lang_check.py --staged          (Rule 17, English-only prose)"
+echo "  - scripts/anti_gaming_check.py --staged    (GP-6 to GP-10)"
+echo "  - scripts/rubric_leak_check.py --staged    (GP-11 / Rule 16)"
+echo "  - scripts/em_dash_check.py --staged        (Rule 17, no em-dash)"
+echo "  - scripts/lang_check.py --staged           (Rule 17, English-only prose)"
+echo "  - scripts/lab_verbatim_check.py --staged   (Rule 18, lab transcript verbatim)"
 echo
 echo "Bypass (not recommended): git commit --no-verify"
