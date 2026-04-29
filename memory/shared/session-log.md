@@ -8,6 +8,60 @@
 
 ---
 
+## Session 76, 2026-04-29, v3.13 R1.B tarball-build lab transcript and CLAUDE.md Rule 18 amendment
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 75). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
+
+### Owner direction received this session
+
+1. "Following your recommendation." (proceeded with R1.B tarball build per session-75 pending list, item 1).
+2. "Is tmux SSH? You're already on lab-openvswitch, so why would you need to SSH to localhost?" (clarified: tmux is local pseudo-terminal multiplexer, not SSH; the chain is `Bash tool to tmux send-keys to tmux pane (running script(1)) to bash to command`; no SSH anywhere; tmux is for byte-for-byte typescript fidelity matching R1.A).
+3. "Stop asking me questions and just follow the plan, and always remember to prioritize quality over speed." (stopped multi-option menus; one-shot decisions, always erring on quality).
+4. "Please also avoid this phrasing: `root@lab-openvswitch:~# echo --- post-uninstall state ---`" (correction 1 of 3 on transcript style).
+5. "I no longer like #comments within the quote block; use words to explain it. Putting them there makes it really difficult to follow the command and its output." (correction 2 of 3, stricter).
+6. "claude.md needs to update its rules to prohibit explanations using comments or echo within the quote block to avoid information overload, as readers only want to see the actual command and output of command." (correction 3 of 3, codify in CLAUDE.md).
+
+### Work done
+
+R1.B tarball-build lab capture and Rule 18 codification of the no-synthetic-structure invariant. Two artefact groups committed:
+
+- The R1.B lab transcript: three artefacts under `sdn-onboard/labs/v3.13-R1B-tarball-build.{md,typescript,timing}`. Captured 2026-04-29 18:05:37 UTC to 2026-04-29 18:06:52 UTC (1m 15s) by `script -f -q -T` inside `tmux new-session -s v3_13-r1b -x 200 -y 50` on lab-openvswitch (192.168.1.250). Driven by `/tmp/v3.13-r1b-orchestrator.py`, a one-off Python orchestrator that injects each command into the tmux pane via `tmux send-keys`, then watches the pane for the bash prompt to redraw before sending the next command. The orchestrator is throwaway tooling per session and is not committed; the pattern (tmux plus script plus send-keys plus capture-pane prompt-detection) is the right shape for any future sprint that needs to drive a long live capture.
+- CLAUDE.md Rule 18 amendment: practices 8 and 9 added to codify the no-synthetic-structure invariant the owner directed in chat. Practice 8 prohibits `echo` banners (any glyph), all comment-only lines whose only purpose is to label a section, and any synthetic decoration of the prompt line. Practice 9 grandfathers R1.A as the only transcript carrying the older banner / comment style; R1.B onward complies with the strict form. The owner directives of 2026-04-29 (Rule 18 origin) and 2026-04-29 (corrections 1, 2, 3) are quoted verbatim in the rule body.
+
+### R1.B captured pedagogical content
+
+- **Carry-forward state from R1.A.** Pre-build `ls /var/lib/openvswitch/` finds the residual `conf.db` from the apt purge of session 75. Pre-build `lsmod` finds `nf_nat` and `nf_conntrack` still resident. Apt reports "already the newest version" for every build dep because of an earlier preparation pass on this host. The transcript captures all three carry-forwards verbatim and the rendered `.md` calls them out as Rule 18 facts a learner must understand.
+- **Out-of-tree kernel module rejection.** First `./configure --with-linux=/lib/modules/5.15.0-173-generic/build` aborts with `kernel version 5.15.198, but version newer than 5.8.x is not supported`. The transcript shows the error verbatim and the recovery path (drop `--with-linux`, rely on the in-kernel `openvswitch.ko` Ubuntu 22.04 ships). This is the canonical lesson the plan §9 Risk 3 anticipated and the plan §R1 Path B specification is silent about.
+- **Userspace-only build numbers.** `make -j4` real 26.7 s, user 76.0 s, sys 15.2 s; ratio 2.84 cores effective. Source tree grows from 72 MiB to 265 MiB during build; root filesystem free space drops from 1.7 GiB to 1.4 GiB across the full configure plus build plus install. `make distclean` recovers about 100 MiB.
+- **Daemon start observable surface.** `ovs-ctl start` emits 6 lines including ` * Inserting openvswitch module`; `ovs-vsctl show` returns the `Open_vSwitch` row UUID `5f8e9a74-1559-4375-9b90-a7474ef58029` and `ovs_version: "2.17.9"`. After daemon start `lsmod` reports openvswitch loaded with refcount 0 plus four dependents (`nsh`, `nf_conncount`, `nf_nat`, `nf_conntrack`).
+
+### Iteration trail (for future-session forensics)
+
+The transcript was captured three times before the version that landed:
+
+- Attempt 1 (preserved at `/tmp/v3.13-r1b-attempt1.{script,timing}`): used `--with-linux` and aborted at the configure error, then proceeded through `make` / `make install` / etc which all then failed because no Makefile existed. Useful for understanding the first-encounter learner experience but not the version we kept.
+- Attempt 2: orchestrator used `echo === START R1.B TARBALL BUILD ===` and `echo === END R1.B TARBALL BUILD ===` start and end markers plus `# pre-build state`-style comment markers inside the typescript; render passed verbatim check but the owner rejected the style in chat (corrections 1, 2, 3 above).
+- Attempt 3 (the one that landed): orchestrator stripped of all banner and comment commands. Host state reset (userspace install removed, openvswitch module unloaded) so the rerun starts from a meaningful pre-install state.
+
+### Pre-commit hook tooling
+
+- `python3-pip` and the `lingua-language-detector` pip package were installed this session because the lab host had neither pre-installed and `lang_check.py` requires the latter. The install is permanent on this host; future sessions can run `lang_check.py` without setup.
+
+### Final state
+
+- Branch ahead of master by ~22 commits pending the closing commit (was 19 at session 75 close, plus this session's R1.B group).
+- All five pre-commit checks PASS on the staged R1.B artefacts plus CLAUDE.md amendment: em_dash 0, lang 0 non-English over 253 prose chunks, rubric leak 0, anti-gaming 0, lab_verbatim 0.
+- R1.B userspace install survives on disk under `/usr/local/`; the daemons are stopped; the kernel module is loaded but at refcount 0. The next sprint inherits this state.
+
+### Pending (next session, multiple options)
+
+- R1.C git checkout install path (`git clone https://github.com/openvswitch/ovs.git`, `git checkout v2.17.9`, `./boot.sh`, `./configure ...`, `make`, `make check`). The differentiating piece is `./boot.sh` (autotools regeneration from `configure.ac` plus `Makefile.am`) plus the in-tree `make check` test suite run.
+- Author `sdn-onboard/0.4 - ovs-installation-three-paths.md` curriculum integration file once R1.C closes; compares apt vs tarball vs git pedagogically.
+- E1 enrichment dossier authoring (still queued; not a hard prerequisite for R1.C since each path stands alone).
+- E-S0 enrichment dossier (companion to S0 build-system theory file authored in session 74).
+
+---
+
 ## Session 75, 2026-04-30, v3.13 R1.A first install lab transcript
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing). **HEAD at session close:** `4e0fc42` plus this session-log commit. **Tags created:** none.
