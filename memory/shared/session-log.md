@@ -8,6 +8,57 @@
 
 ---
 
+## Session 74, 2026-04-30, v3.13 E0 foundation dossier and S0 first curriculum file
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 73). **HEAD at session close:** `c2155da` plus the plan-amendment commit and this session-log commit. **Tags created:** none.
+
+### Owner direction received this session
+
+1. "I'm just preparing the practice environment; the exact time it's created doesn't matter." (skipped the cloned host inventory transcript)
+2. "We've only shown the IP and hostname, we haven't done anything yet." (turned attention from clone-fleet bookkeeping to actual sprint work)
+3. "Quality is more important than speed, so you should choose for yourself instead of constantly asking me." (stopped offering multi-option menus on every step)
+4. "I want to know when the practice will begin?" (answered: practice already started with R0; next concrete sprint output is S0 then R1 in plan-defined order)
+5. "I think the practical part should be to create a new *.md file in sdn-onboard/" (confirmed the plan's existing convention; led to S0 authoring)
+6. "That's right, everything related to practice should be kept separate from theory." (codified into plan v3.13 §11.6 as a mandatory separation, hooked enforcement on the lab side)
+7. "Remember to update your plan!" (this session-log entry plus §11.6 amendment)
+
+### Work done
+
+Three significant content commits plus governance amendments. Branch advances from `8270ff5` (R0 lab transcript) to the new HEAD with five additional commits:
+
+- `39d41cf`: E0 foundation dossier first cut at `memory/sdn/v3.13-enrichment/E0-foundation-dossier.md` (727 lines). Sections A through F per plan §4.0.2. Inventories the OVS source tree at `v2.17.9` (1199 files, 567,314 lines across 12 directories), the upstream documentation set (121 .rst files), the offline doc library, the canonical authors and ecosystem (top 25 contributors plus 17 active committers), 50 edge cases across 10 subsystems, and the foundational online research surfaces (mailing lists, OvSCON, vendor docs, RFCs).
+- `6ee5f07`: plan v3.13 DRAFT to ACTIVE status lift (one-line edit). The DRAFT label was stale since R0 execution started 2026-04-29.
+- `c2155da`: S0 build system and code map at `sdn-onboard/source/v3.13-S0-build-system-and-code-map.md` (326 lines). First curriculum file under `sdn-onboard/source/`. Walks `boot.sh`, `configure.ac`, `acinclude.m4`, the non-recursive `Makefile.am` pattern, `lib/automake.mk`, the per-binary stanza, the `.in` substitution pipeline, the OVSDB IDL header generation, the kernel module build, the install layout, the `config-h-check` invariant, the `dist` target, `pkg-config` files, and a numbers-on-a-fresh-machine reference. Theory file: pedagogical prose, no lab transcripts, references source by path and function name. Cross-references E0 Section A and the future E-S0 enrichment dossier.
+
+Plus this session also produced:
+
+- A plan amendment adding §11.6 "Practice versus theory separation (mandatory)". The new section codifies the directory structure: `sdn-onboard/labs/` is practice, `sdn-onboard/source/` is theory, `sdn-onboard/0.0`-`16.x` is conceptual theory, `memory/sdn/v3.13-enrichment/` is working artefacts. Three concrete consequences: theory files never embed verbatim host output, lab files never embed long-form essays, the lab side is hook-enforced.
+- This session-log entry.
+
+### Final state
+
+- pytest 55 of 55 PASS (unchanged from session 73 close).
+- All five pre-commit checks PASS on every staged commit this session.
+- Branch ahead of master by 15 commits (was 10 at session 73 close, +5 this session).
+- First file under `sdn-onboard/source/` exists.
+- E0 foundation dossier exists and is referenced by S0.
+
+### Pending (next session, multiple options)
+
+- E-S0 enrichment dossier at `memory/sdn/v3.13-enrichment/E-S0-build-system.md`. The companion to S0 holding the per-source-file research notes. S0 references E-S0 already; the dossier is queued for authoring.
+- E1 enrichment dossier at `memory/sdn/v3.13-enrichment/E1-install-three-ways.md` per plan §4.0.1. Required gate before R1 lab.
+- R1 lab capture: SSH to `lab-openvswitch`, take VMware snapshot `R1-clean`, capture all three install paths via `script -f -t`, render to `sdn-onboard/labs/v3.13-R1-install-three-ways.md`. Plus the new theory integration file `sdn-onboard/0.4 - ovs-installation-three-paths.md`.
+- E-S1 plus S1 (compile from source theory file). Per plan §15.5 sprint order, this falls between S0 and the install lab.
+- E-S2 plus S2 (daemon lifecycle theory file).
+
+The owner picks which sub-piece the next session opens with. Plan §15.6 says a session is "done" when one piece is committed and passes hooks; today's session closed three pieces (E0, S0, plan amendment).
+
+### Pedagogical note for future sessions
+
+The practice-theory separation per §11.6 is now mandatory. When authoring a new file, ask first: is this practice (a verbatim lab transcript) or theory (pedagogical prose)? File goes under `sdn-onboard/labs/` or `sdn-onboard/source/` accordingly. A file that mixes both should be split into two paired files cross-referenced at the same Rule 18 boundary the curriculum already enforces.
+
+---
+
 ## Session 73, 2026-04-29, v3.13 R0a governance scaffolding
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (new, off `master`). Single long-lived branch for the entire plan v3.13 lifecycle per owner direction. **HEAD at session close:** `cc8734f` (Tier 6 dependency map). **Tags created:** none (plan v3.13 sprints not yet at a tag-eligible checkpoint).
