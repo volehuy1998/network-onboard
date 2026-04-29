@@ -1,0 +1,204 @@
+Script started on 2026-04-29 17:13:07+00:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="200" LINES="50"]
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo === START R1.A APT DISTRO INSTALL ===
+[?2004l=== START R1.A APT DISTRO INSTALL ===
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# date -u
+[?2004lWed Apr 29 05:13:20 PM UTC 2026
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- pre-install state ---
+[?2004l--- pre-install state ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /etc/openvswitch /var/lib/openvswitch /var/log/openvswitch 2>&1
+[?2004lls: cannot access '/etc/openvswitch': No such file or directory
+ls: cannot access '/var/lib/openvswitch': No such file or directory
+ls: cannot access '/var/log/openvswitch': No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lsmod | grep -E "^(openvswitch|nf_conntrack|nf_nat)" || echo "(no openvswitch module loaded)"
+[?2004l(no openvswitch module loaded)
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  3.8G  3.9G  50% /
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- apt-get update ---
+[?2004l--- apt-get update ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# apt-get update 2>&1 | tail -10
+[?2004lHit:1 http://vn.archive.ubuntu.com/ubuntu jammy InRelease
+Get:2 http://vn.archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
+Hit:3 http://vn.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Get:4 http://vn.archive.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Get:5 http://vn.archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [3,440 kB]
+Get:6 http://vn.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1,268 kB]
+Get:7 http://vn.archive.ubuntu.com/ubuntu jammy-security/main amd64 Packages [3,174 kB]
+Get:8 http://vn.archive.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1,029 kB]
+Fetched 9,168 kB in 1s (6,158 kB/s)
+Reading package lists...
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- apt-get install openvswitch-switch ---
+[?2004l--- apt-get install openvswitch-switch ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# DEBIAN_FRONTEND=noninteractive apt-get install -y openvswitch-switch openvswitch-common 2>&1 | tail -25
+[?2004lUnpacking python3-openvswitch (2.17.9-0ubuntu0.22.04.1) ...
+Selecting previously unselected package openvswitch-switch.
+Preparing to unpack .../5-openvswitch-switch_2.17.9-0ubuntu0.22.04.1_amd64.deb ...
+Unpacking openvswitch-switch (2.17.9-0ubuntu0.22.04.1) ...
+Setting up python3-sortedcontainers (2.1.0-2) ...
+Setting up python3-openvswitch (2.17.9-0ubuntu0.22.04.1) ...
+Setting up libevent-2.1-7:amd64 (2.1.12-stable-1build3) ...
+Setting up libunbound8:amd64 (1.13.1-1ubuntu5.14) ...
+Setting up openvswitch-common (2.17.9-0ubuntu0.22.04.1) ...
+Setting up openvswitch-switch (2.17.9-0ubuntu0.22.04.1) ...
+update-alternatives: using /usr/lib/openvswitch-switch/ovs-vswitchd to provide /usr/sbin/ovs-vswitchd (ovs-vswitchd) in auto mode
+Created symlink /etc/systemd/system/multi-user.target.wants/openvswitch-switch.service → /lib/systemd/system/openvswitch-switch.service.
+Created symlink /etc/systemd/system/openvswitch-switch.service.requires/ovs-record-hostname.service → /lib/systemd/system/ovs-record-hostname.service.
+Processing triggers for man-db (2.10.2-1) ...
+Processing triggers for libc-bin (2.35-0ubuntu3.13) ...
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- post-install verification ---
+[?2004l--- post-install verification ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovs-vswitchd --version
+[?2004lovs-vswitchd (Open vSwitch) 2.17.9
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovs-vsctl --version
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovsdb-server --version
+[?2004lovsdb-server (Open vSwitch) 2.17.9
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovs-ofctl --version | head -5
+[?2004lovs-ofctl (Open vSwitch) 2.17.9
+OpenFlow versions 0x1:0x6
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- daemon services ---
+[?2004l--- daemon services ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# systemctl is-active openvswitch-switch ovs-vswitchd ovsdb-server
+[?2004lactive
+active
+active
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ps -ef | grep -E "ovs-vswitchd|ovsdb-server" | grep -v grep
+[?2004lroot        4860       1  0 17:14 ?        00:00:00 ovsdb-server /etc/openvswitch/conf.db -vconsole:emer -vsyslog:err -vfile:info --remote=punix:/var/run/openvswitch/db.sock --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --no-chdir --log-file=/var/log/openvswitch/ovsdb-server.log --pidfile=/var/run/openvswitch/ovsdb-server.pid --detach
+root        4914       1  0 17:14 ?        00:00:00 ovs-vswitchd unix:/var/run/openvswitch/db.sock -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir --log-file=/var/log/openvswitch/ovs-vswitchd.log --pidfile=/var/run/openvswitch/ovs-vswitchd.pid --detach
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- on-disk state ---
+[?2004l--- on-disk state ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /etc/openvswitch/
+[?2004ltotal 20
+drwxr-xr-x  2 root root  4096 Apr 29 17:14 [0m[01;34m.[0m
+drwxr-xr-x 99 root root 12288 Apr 29 17:14 [01;34m..[0m
+lrwxrwxrwx  1 root root    28 Apr 29 17:14 [01;36mconf.db[0m -> /var/lib/openvswitch/conf.db
+lrwxrwxrwx  1 root root    36 Apr 29 17:14 [01;36m.conf.db.~lock~[0m -> /var/lib/openvswitch/.conf.db.~lock~
+-rw-r--r--  1 root root    37 Apr 29 17:14 system-id.conf
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/lib/openvswitch/
+[?2004ltotal 28
+drwxr-xr-x  2 root root  4096 Apr 29 17:14 [0m[01;34m.[0m
+drwxr-xr-x 41 root root  4096 Apr 29 17:14 [01;34m..[0m
+-rw-r-----  1 root root 16564 Apr 29 17:14 conf.db
+-rw-------  1 root root     0 Apr 29 17:14 .conf.db.~lock~
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/log/openvswitch/
+[?2004ltotal 16
+drwxr-xr-x  2 root root   4096 Apr 29 17:14 [0m[01;34m.[0m
+drwxrwxr-x 11 root syslog 4096 Apr 29 17:14 [01;34m..[0m
+-rw-r-----  1 root root    355 Apr 29 17:14 ovsdb-server.log
+-rw-r-----  1 root root    527 Apr 29 17:14 ovs-vswitchd.log
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- kernel module state ---
+[?2004l--- kernel module state ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lsmod | grep -E "^(openvswitch|nf_conntrack|nf_nat)" || echo NONE
+[?2004l[01;31m[Kopenvswitch[m[K           176128  0
+[01;31m[Knf_nat[m[K                 49152  1 openvswitch
+[01;31m[Knf_conntrack[m[K          172032  3 nf_nat,openvswitch,nf_conncount
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovs-vsctl show
+[?2004l12015d1c-1d7c-4209-81b0-14406e1e3269
+    ovs_version: "2.17.9"
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- listing installed package files ---
+[?2004l--- listing installed package files ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# dpkg -L openvswitch-switch | head -30
+[?2004l/.
+/etc
+/etc/default
+/etc/default/openvswitch-switch
+/etc/init.d
+/etc/init.d/openvswitch-switch
+/etc/logrotate.d
+/etc/logrotate.d/openvswitch-switch
+/etc/network
+/etc/network/if-post-down.d
+/etc/network/if-pre-up.d
+/etc/openvswitch
+/lib
+/lib/systemd
+/lib/systemd/system
+/lib/systemd/system/openvswitch-switch.service
+/lib/systemd/system/ovs-record-hostname.service
+/lib/systemd/system/ovs-vswitchd.service
+/lib/systemd/system/ovsdb-server.service
+/usr
+/usr/bin
+/usr/bin/ovs-dpctl
+/usr/bin/ovs-dpctl-top
+/usr/bin/ovs-pcap
+/usr/bin/ovs-tcpdump
+/usr/bin/ovs-tcpundump
+/usr/bin/ovs-vlan-test
+/usr/bin/ovs-vsctl
+/usr/lib
+/usr/lib/openvswitch-switch
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# dpkg -L openvswitch-switch | wc -l
+[?2004l67
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- uninstall path A ---
+[?2004l--- uninstall path A ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# DEBIAN_FRONTEND=noninteractive apt-get purge -y openvswitch-switch openvswitch-common python3-openvswitch 2>&1 | tail -20
+[?2004lReading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  libevent-2.1-7 libunbound8 python3-sortedcontainers
+Use 'apt autoremove' to remove them.
+The following packages will be REMOVED:
+  openvswitch-common* openvswitch-switch* python3-openvswitch*
+0 upgraded, 0 newly installed, 3 to remove and 49 not upgraded.
+After this operation, 8,235 kB disk space will be freed.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 75166 files and directories currently installed.)
+Removing openvswitch-switch (2.17.9-0ubuntu0.22.04.1) ...
+Removing openvswitch-common (2.17.9-0ubuntu0.22.04.1) ...
+dpkg: warning: while removing openvswitch-common, directory '/var/log/openvswitch' not empty so not removed
+Removing python3-openvswitch (2.17.9-0ubuntu0.22.04.1) ...
+Processing triggers for man-db (2.10.2-1) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 75033 files and directories currently installed.)
+Purging configuration files for openvswitch-switch (2.17.9-0ubuntu0.22.04.1) ...
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- post-uninstall state ---
+[?2004l--- post-uninstall state ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /etc/openvswitch /var/lib/openvswitch /var/log/openvswitch 2>&1
+[?2004lls: cannot access '/etc/openvswitch': No such file or directory
+/var/lib/openvswitch:
+total 28
+drwxr-xr-x  2 root root  4096 Apr 29 17:14 [0m[01;34m.[0m
+drwxr-xr-x 41 root root  4096 Apr 29 17:14 [01;34m..[0m
+-rw-r-----  1 root root 16564 Apr 29 17:14 conf.db
+-rw-------  1 root root     0 Apr 29 17:14 .conf.db.~lock~
+
+/var/log/openvswitch:
+total 8
+drwxr-xr-x  2 root root   4096 Apr 29 17:15 [01;34m.[0m
+drwxrwxr-x 11 root syslog 4096 Apr 29 17:14 [01;34m..[0m
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ovs-vsctl --version 2>&1 || echo "(binary removed)"
+[?2004lbash: /usr/bin/ovs-vsctl: No such file or directory
+(binary removed)
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lsmod | grep -E "^openvswitch" || echo "(module unloaded)"
+[?2004l[01;31m[Kopenvswitch[m[K           176128  0
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# systemctl is-active openvswitch-switch 2>&1 || true
+[?2004linactive
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- residual files in /var/log/openvswitch ---
+[?2004l--- residual files in /var/log/openvswitch ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/log/openvswitch/ 2>&1
+[?2004ltotal 8
+drwxr-xr-x  2 root root   4096 Apr 29 17:15 [0m[01;34m.[0m
+drwxrwxr-x 11 root syslog 4096 Apr 29 17:14 [01;34m..[0m
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo --- final cleanup ---
+[?2004l--- final cleanup ---
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# rm -rf /var/log/openvswitch
+[?2004l[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/log/openvswitch 2>&1
+[?2004lls: cannot access '/var/log/openvswitch': No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo === END R1.A ===
+[?2004l=== END R1.A ===
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# date -u
+[?2004lWed Apr 29 05:16:08 PM UTC 2026
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# exit
+[?2004lexit
+
+Script done on 2026-04-29 17:16:09+00:00 [COMMAND_EXIT_CODE="0"]
