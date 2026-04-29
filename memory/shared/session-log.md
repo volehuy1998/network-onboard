@@ -8,6 +8,57 @@
 
 ---
 
+## Session 73, 2026-04-29, v3.13 R0a governance scaffolding
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (new, off `master`). Single long-lived branch for the entire plan v3.13 lifecycle per owner direction. **HEAD at session close:** `cc8734f` (Tier 6 dependency map). **Tags created:** none (plan v3.13 sprints not yet at a tag-eligible checkpoint).
+
+### Owner direction received this session
+
+1. "Please read about plan v3.13 and the necessary information (including the existing source code) before you start practicing." (de-facto plan v3.13 execution start signal)
+2. SSH to `lab-openvswitch` is permitted: "You have every right to access SSH to verify my results."
+3. "Use a single branch throughout this plan."
+4. "Don't try to explain why we're using ENS36 instead of the previously predicted ENS34. We don't need to explain that." (forced concise §2.5.4.1 in the plan amendment)
+5. "Following your recommendation" (twice: confirmed Path Z faithful-to-plan ordering, and confirmed continuing through R0a after the staged plan was presented)
+
+### Work done
+
+R0a, governance scaffolding for plan v3.13 verbatim-integrity policy. Eight commits on the new branch:
+
+- `2c1b843`: plan v3.13 file committed (1257 lines including 5 em-dash fixes for Rule 17). Defensive `.gitignore` entry for `sdn-onboard/doc/lab_private_key`.
+- `5697374`: plan amendment for `ens36` versus `ens34` reality (verbose first version).
+- `d780502`: tightened §2.5.4.1 to two-line statement of fact per owner direction.
+- `3ee4d6b`: `CLAUDE.md` Rule 18 (Lab Output Verbatim Integrity) inserted after Rule 17. Rule 6 Checklist C step 14 added.
+- `d9cb67f`: `scripts/lab_verbatim_check.py` (351 lines) plus `scripts/tests/test_lab_verbatim_check.py` (11 cases). Pragmatic structural-invariant version; strict full-replay deferred to a follow-on commit after R0b captures the first real typescript.
+- `542a347`: `scripts/pre-commit-install.sh` updated to install the fifth check. Hook reinstalled in `.git/hooks/pre-commit`.
+- `cc8734f`: `memory/shared/file-dependency-map.md` Tier 6 (lab transcript to typescript pairing).
+
+SSH connectivity to `lab-openvswitch` verified at session start: `ssh -i sdn-onboard/doc/lab_private_key root@192.168.1.250 hostname` returns `lab-openvswitch`. Owner had already added the second NIC; verbatim `ip a` shows `ens36` on `10.99.99.250` (kernel-named, not `ens34` as the original draft predicted).
+
+### Final state
+
+- pytest 53 of 53 PASS (was 42, added 11 lab_verbatim_check tests).
+- All four pre-existing pre-commit checks PASS on every commit.
+- The fifth check (lab_verbatim_check) PASS on the cc8734f commit (no labs/ files in scope, expected).
+- `.git/hooks/pre-commit` installed with all five stanzas.
+
+### Pending (R0b, separate session)
+
+- SSH to `lab-openvswitch` and run `script -f -t /tmp/timing.log /tmp/v3.13-R0-baseline.script` to capture the verbatim baseline transcript (every command from §R0 deliverable: `hostname`, `uname -a`, `lsb_release -a`, `free -h`, `df -h`, `lscpu`, `ip a`, `ip route`, `systemctl --type=service --state=running`, `apt-cache policy openvswitch-switch`, `ls -la /etc/openvswitch 2>&1`, `lsmod | grep open`, `dmesg | tail -50`).
+- Render the typescript into `sdn-onboard/labs/v3.13-R0-baseline.md` with the `> **Verbatim source:**` header pointing to `sdn-onboard/labs/v3.13-R0-baseline.typescript`.
+- Author `sdn-onboard/labs/README.md` and `sdn-onboard/labs/v3.13-provisioning/README.md`.
+- Author the §R0.1 pedagogical sidebar "Why most OVS labs use network namespaces instead of virtual machines" inside `sdn-onboard/labs/README.md` (target 400 to 600 lines per plan §R0.1 specification).
+- VMware snapshot `golden-image-baseline` plus full clone to `lab-openvswitch-template`. Owner-driven via VMware UI; transcript captured into `sdn-onboard/labs/v3.13-provisioning/golden-image.md`.
+
+### Pending (R0a closure ceremony, this session if owner approves)
+
+- Push `feat/sdn-v3.13-ovs-mastery` to `origin` and open PR to `master` for the eight R0a commits. Owner explicit consent required per "executing actions with care" guidance (master is protected; `git push` is shared state).
+
+### Strict lab_verbatim_check follow-on
+
+The pragmatic check authored in `d9cb67f` enforces structural invariants only. The strict version (full byte-stream replay of typescript versus rendered Markdown, handling line wrap, terminal width, partial prompt redraws, and embedded ANSI cursor moves) is queued as a follow-on commit after R0b produces a real `script -f -t` typescript to test against. The strict version is required for the R5.5 multi-host transcripts where transcript volume increases tenfold and corner cases multiply.
+
+---
+
 ## Session 72, 2026-04-29, v3.12 closure (R0 through R4)
 
 **Branch:** `docs/sdn-foundation-rev2`. **HEAD at close:** `1cf08eb` (R4.4 series-state update). **Tags created:** none (R5 conditional on user sign-off per Rule 15).
