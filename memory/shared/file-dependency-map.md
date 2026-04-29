@@ -230,6 +230,17 @@ For brevity, the following blocks have full per-file dependency entries in exten
 
 > **Lesson learned (2026-03-30):** `fd-kernel-3-table-model.svg` was rewritten from a combined diagram to pure TLPI model, but the caption still described `fork()` and `socket:443`. Cause: Tier 5 did not exist at the time; cross-file sync check missed it entirely.
 
+### Tier 6: Lab transcripts to raw typescript files (CLAUDE.md Rule 18)
+
+| File | Main content | Related Files |
+|------|--------------|---------------|
+| `sdn-onboard/labs/v3.13-RX-<topic>.md` (template) | Markdown lab transcript per plan v3.13. Contains a `> **Verbatim source:**` header naming the typescript, plus fenced code blocks of verbatim host output. | `sdn-onboard/labs/v3.13-RX-<topic>.typescript` (the raw `script -f -t` byte stream), `scripts/lab_verbatim_check.py` (enforces every line of every verbatim block is a substring of some typescript line) |
+| `sdn-onboard/labs/v3.13-RX-<topic>.typescript` (template) | Raw typescript captured by `script -f -t` on the lab host. Never edited by hand; never anonymised. Referenced by exactly one Markdown transcript. | The matching `.md` (must reference this file in its header), `scripts/lab_verbatim_check.py` (reads this file at commit time) |
+
+> **Tier 6 rule (CLAUDE.md Rule 18):** every Markdown transcript under `sdn-onboard/labs/` MUST reference its raw typescript via `> **Verbatim source:** \`<path>\`` within the first 60 lines, and the typescript file MUST exist on disk and be non-empty. Edits to either file MUST update the other in the same commit if they would otherwise diverge. The pre-commit hook `scripts/lab_verbatim_check.py` rejects commits that anonymise IPs, MACs, hostnames, UUIDs, or timestamps in the Markdown.
+
+> **Lesson learned (2026-04-29, plan v3.13 R0a):** Tier 6 was added before any lab transcript was written so the cross-file dependency is captured from day one and the pre-commit hook is in place when R0b runs. No retrofit needed.
+
 ---
 
 ## Specific sync rules
