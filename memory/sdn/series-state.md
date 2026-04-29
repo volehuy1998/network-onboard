@@ -1,8 +1,10 @@
 # SDN Onboard Series, State Tracker
 
-> Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
+> Status of every Part in the 20-Block / 136-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100 percent (the source of truth).**
 
-**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80% well-covered (305/383), substantive 72% (275/383). Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S. Audit script v2 + v3 với 9 alias rule giảm false-positive 87%.
+**Language: full English (sdn-onboard slice).** Plan v3.12 closed 2026-04-29; all 136 `sdn-onboard/*.md` files are full English (lang_check PASS, 30,265 prose chunks, zero non-English). Cross-block surface (`sdn-onboard/_templates/*.md` plus `haproxy-onboard/*.md`) remains legacy Vietnamese pending the cross-block follow-on plan.
+
+**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80 percent well-covered (305 of 383), substantive 72 percent (275 of 383). Comprehensive tier 2 source-code coverage for 5 mission-core pillars. Permanent ban directive established for DPDK, BPF, XDP, BGP, Kubernetes. Audit script v2 plus v3 with 9 alias rules reduced false positives by 87 percent.
 
 **Previous releases:** `v3.5-KeywordBackbone` (2026-04-25, framework + master index 0.3 + 9 NEW + 4 EXPAND), `v3.4-DeepFoundation` (Sequence H+O CLOSE).
 
@@ -325,11 +327,76 @@
 | P1.D1 | HIGH | 44 files missing dependency map | v3.1.1 backfilled |
 | P6.U1 | LOW | Dead URLs (academic papers + product) | v3.1.1 fixed 6 URLs |
 
+## Plan v3.12 status (curriculum-wide English migration, as of 2026-04-29)
+
+> **Owner directive (2026-04-28).** Every explanatory prose text in the repository must be written in plain technical English per [`memory/shared/english-style-guide.md`](../shared/english-style-guide.md). Every file modified after 2026-04-28 must be all-English. Em-dash (U+2014) is forbidden anywhere in the repository (Rule 17). Pre-commit enforcement: `scripts/em_dash_check.py` and `scripts/lang_check.py` (lingua-py strict mode).
+
+### R1.M (13 OVN advanced + Block XX + README) status
+
+| File | State | Detail |
+|------|-------|--------|
+| 17.0 | DONE full English | Closed in commit ea200be (sweep "hàm") and earlier R1.M run. lang_check + em_dash_check PASS whole-file. |
+| 19.0 | DONE full English | Closed in commit 7e66e07. Lab 1 layer 6, Labs 2 and 3, Exam Prep table, 16-term ISO 10241-1 glossary, 6-category command reference, references list. Anchor link to 17.0 §17.6 updated to post-migration English slug. |
+| 20.2 | DONE full English | Closed in commit 4047a1e (already staged; full file English). |
+| 13.3 ovn-acl-lb-nat-port-groups | DONE full English | Closed in commit 33065ba. 1,802 lines, 674 prose chunks. End-to-end translation across §13.3.1 through §13.3.10 (foundation, anatomy, callouts, workflow, deep dives, capstone POE), §13.3.X ACL-as-NBDB-table 17-axis deep dive, §13.3.Y NBDB companion tables quick reference, §13.3.Z NAT-as-NBDB-table 17-axis deep dive, and §13.3.W full block of five companion-table deep dives (Address_Set, Port_Group, Logical_Router_Static_Route, Logical_Router_Policy, Forwarding_Group). lang_check PASS whole-file, em_dash_check PASS whole-file. Language status callout: "English (full migration complete, 2026-04-29)". |
+| README.md | DONE full English | Closed in commit 977f48e. 558 lines, 323 prose chunks. All seven reading paths, all 20-block table of contents, conventions table, and three appendices (A version evolution, B RFC reference, C bibliography) translated. GP-11 leaks (`Phase G` line 5, `Phase H session` lines 155 and 156) removed. Language status callout: "English (full migration complete, 2026-04-29)". |
+| Other R1.M files (10 of 13) | DONE pre-session | The 13-file scope per the existing tracker has 10 files already DONE before this session; the 3 in-flight were 17.0, 19.0, 20.2, all closed this session. |
+
+### R1.N (7 heavy catalog files) status
+
+| File | State | Detail |
+|------|-------|--------|
+| 13.5 port-binding-types-ovn-native | DONE full English | Closed in commit 7e66e07. Sections §13.5.1 through §13.5.14, including Anatomy Template A, Guided Exercise, 5-step diagnostic, Key takeaways, References, 10-table SBDB quick reference. Em-dashes in section headings replaced. |
+| 13.14 ovn-nbctl-sbctl-reference-playbook | DONE full English | Closed in commit 4047a1e (already staged at session start; full file English). |
+| 10.1 ovsdb-raft-clustering | DONE full English (sweep) | Single residual fragment "Output mẫu" fixed in commit ea200be. |
+| 3.5 openflow-message-catalog | DONE full English | Closed in commit a11c3b4. 1,219 lines, 271 prose chunks. All eight subsections translated end-to-end (§3.5.1 OFPT_HELLO, §3.5.2 FEATURES, §3.5.3 FLOW_MOD, §3.5.4 PACKET_IN, §3.5.5 BARRIER, §3.5.6 peripheral catalogue (5 sub-sections), §3.5.7 bundle and async (5 sub-sections), §3.5.8 OFPMP_* multipart catalogue (5 sub-sections plus 16-row table)). |
+| 13.19 ovn-pipeline-stage-catalog | NOT STARTED | About 1,408 Vietnamese-diacritic prose lines, the largest residual file. |
+| 4.8 openflow-match-field-catalog | PARTIAL | Header (state, block, part, ebook mapping, plan, prereqs, template, sources), learning objectives, context (OF 1.0 12-tuple to 100+ fields evolution timeline), §4.8.1 9-attribute Template B, §4.8.2 Group A header, §4.8.2.1 in_port (full Template B with reserved-port table), §4.8.2.2 metadata header translated in commit b31654e. About 30 of 640 prose chunks now English, 5 percent migration progress. Remaining: §4.8.2.2 metadata use case onward, §4.8.3-§4.8.13 across 12 groups (Metadata, Register, Tunnel, L2, ARP, IPv4, IPv6, L4, ICMP, MPLS, Conntrack, Packet-type) plus appendix sections. Honest "Language status: Mixed" callout in place. |
+| 4.9 openflow-action-catalog | DONE full English | Closed in commit ed3aeae. 962 prose chunks, lang_check PASS whole-file, em_dash_check PASS whole-file. End-to-end translation across all 37 sections including foundation (§4.9.1), Category 1-7 catalog (§4.9.2-§4.9.21), aggregate table (§4.9.22), advanced primitives (§4.9.23-§4.9.28), three backfill blocks (§4.9.29 v3.5 12-action gap, §4.9.31 v3.6 NXM stack+timeout, §4.9.32 output cornerstone), all 14 cornerstone deep-dives (§4.9.33.1-14: drop, set_field, mod_dl_src/dst, dec_ttl, mod_nw_src/dst, mod_tp_src/dst, push_vlan, pop_vlan, learn, conjunction, ct), cross-reference (§4.9.34), and three peripheral treatment blocks (§4.9.35 MPLS+PBB 5 actions, §4.9.36 NSH+observability 5 actions, §4.9.37 NXM stack+register 5 actions plus source-code citation). Language status callout: "English (full migration complete, 2026-04-29)". |
+
+### Remaining v3.12 phases (not yet started)
+
+| Phase | Description | Blocker |
+|-------|-------------|---------|
+| R2 | Final regression audit (lang_check whole-repo, em_dash_check whole-repo, GP-11 leak scan) | Cannot run cleanly until R1.M and R1.N close. |
+| R3 | CHANGELOG Reckoning #9 entry | Pending R1 closure. |
+| R4 | Dictionary update (`memory/shared/rule-11-dictionary.md` final freeze note) | Pending R1 closure. |
+| R5 | Version tag (e.g. `v4.2-EnglishComplete`) | **BLOCKED by Rule 15.** Requires user written sign-off captured in the tag commit message, plus a fresh `per_keyword_rubric_audit.py` scorecard within 24 hours. Cannot be executed by the agent autonomously. |
+
+### Residual prose-line audit (post-2026-04-29 third pass)
+
+| File | Vietnamese prose chunks (lang_check whole-file) |
+|------|--------------------------------------------------|
+| 13.19 | About 1,408 lines (not yet measured per chunk) |
+| 4.8 | About 1,101 lines |
+| 4.9 | About 827 lines |
+| 13.3 | 0 (closed in commit 33065ba) |
+| README.md | 0 (closed in commit 977f48e) |
+| 3.5 | 0 (closed in commit a11c3b4) |
+| **Total residual chunks (estimate)** | **About 3,300 prose chunks across three remaining heavy files** |
+
+Residual diacritic-bearing fragments outside the count above are non-Vietnamese proper nouns (`Università di Pisa` in 1.1, `Gísli Hjálmtýsson` and `Reykjavík` in 2.3) and pass `lang_check` cleanly.
+
+### Honest closure path (next sessions)
+
+1. One heavy file per session at quality (deepest first by line count, or smallest first by total budget). Each session ends with a `fix(sdn): R1.X v3.12 close <FILE> full English migration` commit and pre-commit checks PASS.
+2. Remaining files in priority order: 13.3 (deep-dive sections only), then 4.9, 4.8, 13.19. After all four files close, run R2 regression audit.
+3. R3 CHANGELOG Reckoning #9 plus R4 dictionary update in the same session.
+4. R5 tag requires the owner's explicit written sign-off per Rule 15.
+
+### Lessons captured this session (2026-04-29)
+
+- The previous automated run produced "Language status: full migration complete" callouts on three partially-translated files (13.5, 19.0, README). The user audit caught it; commit 4047a1e corrected the false claims to honest "Mixed" callouts, and 7e66e07 closed 13.5 and 19.0 honestly. README and 3.5 closed honestly with full-English callouts in commits 977f48e and a11c3b4 after whole-file lang_check verification.
+- This is the same anti-pattern flagged by the v3.7 to v3.8 reckoning. Future automation runs must include a per-file diacritic chunk-count verification before stamping any "complete" callout.
+- Per-section batched Edit calls work well for files up to roughly 600 lines; for larger files (1,000 plus lines) the work splits naturally into multiple sessions with honest "Mixed" callouts marking the migration boundary.
+
 ## References
 
 - [`audit-2026-04-25-summary.md`](audit-2026-04-25-summary.md): consolidated audit summary
 - [`file-dependency-map.md`](file-dependency-map.md): file cross-reference map (Rule 2)
 - [`session-log.md`](session-log.md): session-by-session journal
-- [`sdn-onboard/README.md`](../sdn-onboard/README.md): TOC source of truth
-- [`CLAUDE.md`](../CLAUDE.md): project working memory + Rules
-- [`CHANGELOG.md`](../CHANGELOG.md): release history
+- [`sdn-onboard/README.md`](../../sdn-onboard/README.md): TOC source of truth
+- [`CLAUDE.md`](../../CLAUDE.md): project working memory + Rules
+- [`CHANGELOG.md`](../../CHANGELOG.md): release history
+- [`plans/sdn/v3.12-curriculum-wide-english-migration.md`](../../plans/sdn/v3.12-curriculum-wide-english-migration.md): v3.12 plan (R0 to R5 phases)
+- [`memory/shared/english-style-guide.md`](../shared/english-style-guide.md): English style policy
