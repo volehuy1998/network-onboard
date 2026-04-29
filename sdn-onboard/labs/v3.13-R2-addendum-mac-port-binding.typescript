@@ -1,0 +1,88 @@
+Script started on 2026-04-29 19:51:14+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lWed Apr 29 07:51:15 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# hostname; uname -r
+[?2004llab-openvswitch
+5.15.0-173-generic
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -1
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -10
+[?2004l * Starting ovsdb-server
+ * system ID not configured, please use --system-id
+ * Configuring Open vSwitch system IDs
+ * Starting ovs-vswitchd
+ * Enabling remote OVSDB managers
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_red
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_blue
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_red type veth peer name veth_red_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_blue type veth peer name veth_blue_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red netns ns_red
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue netns ns_blue
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_red_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_blue_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set veth_red up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip addr add 10.0.0.1/24 dev veth_red
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set veth_blue up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip addr add 10.0.0.2/24 dev veth_blue
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show veth_red_br
+[?2004lveth_red_br@if26 UP             76:49:2f:42:79:ca <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show veth_blue_br
+[?2004lveth_blue_br@if28 UP             7e:3a:00:75:07:a2 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip -br link show veth_red
+[?2004lveth_red@if25    UP             56:a6:87:c1:15:9c <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip -br link show veth_blue
+[?2004lveth_blue@if27   UP             e2:10:43:fa:d2:bd <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ofport,mac_in_use list interface veth_red_br veth_blue_br
+[?2004lname                : veth_red_br
+ofport              : 1
+mac_in_use          : "76:49:2f:42:79:ca"
+
+name                : veth_blue_br
+ofport              : 2
+mac_in_use          : "7e:3a:00:75:07:a2"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show 2>&1 | head -10
+[?2004lsystem@ovs-system: hit:8 missed:6
+  br0:
+    br0 65534/1: (internal)
+    veth_blue_br 2/3: (system)
+    veth_red_br 1/2: (system)
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 3 10.0.0.2 2>&1 | tail -5
+[?2004l64 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.114 ms
+
+--- 10.0.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2038ms
+rtt min/avg/max/mdev = 0.062/0.244/0.558/0.222 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    1     0  56:a6:87:c1:15:9c    1
+    2     0  e2:10:43:fa:d2:bd    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip -br link show veth_red
+[?2004lveth_red@if25    UP             56:a6:87:c1:15:9c <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip -br link show veth_blue
+[?2004lveth_blue@if27   UP             e2:10:43:fa:d2:bd <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ofport,mac_in_use list interface veth_red_br veth_blue_br
+[?2004lname                : veth_red_br
+ofport              : 1
+mac_in_use          : "76:49:2f:42:79:ca"
+
+name                : veth_blue_br
+ofport              : 2
+mac_in_use          : "7e:3a:00:75:07:a2"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_red
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_blue
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -5
+[?2004l * Exiting ovs-vswitchd (103982)
+ * Exiting ovsdb-server (103965)
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lWed Apr 29 07:51:47 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-29 19:51:47+00:00 [COMMAND_EXIT_CODE="0"]
