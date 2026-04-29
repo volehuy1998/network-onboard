@@ -217,6 +217,7 @@ When writing content with HAProxy version differences, use the callout `> **Vers
 11. Em-dash count: zero. The pre-commit hook `scripts/em_dash_check.py` enforces this. Replace any em-dash with a comma, a period, a colon, parentheses, or a bulleted list.
 12. Read the `git-workflow` skill before commit.
 13. Self-audit `professor-style` six criteria on new content.
+14. Lab verbatim check: if any staged file is under `sdn-onboard/labs/` or quotes lab output, run `python scripts/lab_verbatim_check.py --staged`. PASS required. See Rule 18.
 
 **Checklist E, when adding a new part:**
 
@@ -516,6 +517,24 @@ Every explanatory prose text written or modified in this repository, including c
 **Pedagogical requirement.** The English prose must remain accessible to Vietnamese network engineers reading at CEFR B2 to C1 level. Use short declarative sentences. Use plain vocabulary. Do not abbreviate (`for example`, not `e.g.`; `that is`, not `i.e.`; `and so on`, not `etc.`). Preserve the why-before-what pedagogy from the Second North Star. See `memory/shared/english-style-guide.md` for the full style policy.
 
 (Origin: 2026-04-28, three consecutive owner directives. First, "every file modified by v3.9.1 must have its prose explanation rewritten in English". Second, "no em-dash allowed". Third, "CLAUDE.md and all training documents must be written in English without Vietnamese". Codified by plan v3.9.1 Phase Q-1.C.)
+
+### Rule 18: Lab Output Verbatim Integrity (mandatory, extends Rule 7 and Rule 7a)
+
+When the curriculum includes the output of a hands-on lab session run on a real lab host (for example, `lab-openvswitch` at `192.168.1.250`), every artifact captured from the lab host appears in the documentation exactly as it appeared on the host. Not a single character is modified, omitted, or rewritten.
+
+Specific mandatory practices:
+
+1. The shell prompt is preserved exactly. `root@lab-openvswitch:~#` is not shortened to `# `, not anonymised to `root@<HOST>:~#`, not coloured.
+2. Lab IPs (`192.168.1.250` and so on), MAC addresses, hostnames, network device names (`ens33`, `ens36`, `br0`), UUIDs, and OVSDB row UUIDs are preserved character for character. Do not anonymise to `<LAB_IP>`, `<HOST>`, `<UUID>`. The lab is the lab; its identifiers are part of the historical record of the experiment.
+3. Log timestamps are preserved to the millisecond.
+4. Empty output is preserved as an empty line, with the explicit annotation `(no output)` only when the absence of output is itself the pedagogical point.
+5. If the output is too long to embed inline (more than approximately 200 lines), the curriculum file references the full transcript at `sdn-onboard/labs/v3.13-XN-<topic>.typescript` and embeds an annotated extract per Rule 7 with the line `[N other lines omitted, context: full log preserved at <path>]`.
+6. Transcripts are captured by `script -f -t` on the lab host and the typescript file is referenced from the curriculum. A diff between the human-readable rendering and the raw typescript must be empty.
+7. The pre-commit hook `scripts/lab_verbatim_check.py` (added by plan v3.13 R0) compares the rendered transcript against the referenced typescript and rejects the commit on any divergence.
+
+Scope: every lab transcript under `sdn-onboard/labs/`, every curriculum quote of lab output anywhere in `sdn-onboard/*.md`. The rule overrides any stylistic preference. Owner directive of 2026-04-29 (translated from Vietnamese original): "All operations, including commands, command outputs, hostnames, and logs, must be kept exactly as they are in the training documentation. No modifications, not even a single word, are allowed, in order to maintain integrity in the actual experiment."
+
+(Origin: 2026-04-29 owner directive, codified by plan v3.13 R0.)
 
 ---
 
