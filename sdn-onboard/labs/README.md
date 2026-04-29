@@ -28,11 +28,23 @@ Open the `.md` file. The header block names the typescript and timing files, the
 
 The fenced blocks use the `text` info string and contain only output that is byte-identical to the typescript. The surrounding prose is plain English and is the only place where the author has any editorial latitude. If you need the absolute byte stream (every CR, every escape, every interleaved prompt redraw), open the typescript directly in a hex viewer.
 
+## Capture conventions for new transcripts
+
+When capturing a new lab session under plan v3.13, follow these conventions so the verbatim record stays clean and an experienced operator could reproduce the session by retyping the commands:
+
+1. **Use `#` shell comments for in-session section breaks, not `echo` banners.** Bash treats `# pre-install state` at the prompt as a no-op; the line still appears in the typescript so a reader can find their place in the byte stream, but it does not produce synthetic output that pretends to be host output. Author commentary on the rendered `.md` belongs in H2 headings, never inside fenced code blocks.
+2. **Run only commands an operator would actually type.** If a step is just narration, write it as a `#` comment or skip it entirely. The typescript is supposed to be a real lab session, not a guided tour with banners.
+3. **Set `TERM=xterm-256color` and `tmux new-session -x 200 -y 50`** so output formatting (`lscpu`, `systemctl`, `dmesg`) does not wrap awkwardly and the typescript stays readable after `lab_verbatim_check.py` strips ANSI and OSC escapes.
+4. **Capture every command's exit status implicitly through the prompt.** If a command's exit status matters explicitly, follow it with `echo "rc=$?"` so the rendered `.md` can cite the status without recomputing.
+
+**Historical asymmetry, R1.A.** The R1.A transcript (`v3.13-R1A-apt-distro-install.{md,typescript}`) was captured before this convention was codified and uses `echo --- <section> ---` banners inside the typescript. Per Rule 18 the verbatim record is what was actually run; R1.A is left as-is. Subsequent transcripts (R1.B onward) follow the `#`-comment convention. The asymmetry is an auditable record of the convention shift.
+
 ## Available transcripts
 
 | Transcript | Sprint | Topic | Capture window |
 |------------|--------|-------|----------------|
 | [`v3.13-R0-baseline.md`](v3.13-R0-baseline.md) | R0 | Green-field baseline of `lab-openvswitch` (Ubuntu 22.04.5, kernel 5.15.0-173, two NICs, no Open vSwitch installed) | 2026-04-29 15:57 to 15:59 UTC |
+| [`v3.13-R1A-apt-distro-install.md`](v3.13-R1A-apt-distro-install.md) | R1.A | Open vSwitch install path A: Ubuntu distro package via `apt-get install openvswitch-switch`. Install, verify, purge, observe residual state. | 2026-04-29 17:13 to 17:16 UTC |
 
 Future R-sprints add their entries here as they close.
 
