@@ -83,8 +83,11 @@
 |------|--------------|---------------|
 | `sdn-onboard/0.0 - how-to-read-this-series.md` | Meta orientation: series positioning, 4 reading paths (linear/OVS-only/OVN-focused/incident-responder), convention markers (Key Topic, Guided Exercise, Lab, Trouble Ticket, version annotation), CCNA/RHCSA/CKA mapping (148 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/0.1` (lab modes A/B/C reference) |
 | `sdn-onboard/0.1 - lab-environment-setup.md` | Lab setup: 3 modes (single-node / two-node chassis pair / multi-node kolla), Ubuntu 22.04 baseline (kernel 5.15, OVS 2.17.9, OVN 22.03.8 jammy-updates), Mininet 2.3.0 from source, kolla-ansible version matrix, health check playbook, teardown/reset, Guided Exercise 1 (340 lines) | `sdn-onboard/README.md` (baseline OVS/OVN/Ubuntu must match), `plans/sdn-foundation-architecture.md` §3.3 Block 0 |
+| `sdn-onboard/0.4 - ovs-installation-three-paths.md` | NEW v3.13 R1 closure: pedagogical comparison of three Open vSwitch install paths captured on `lab-openvswitch` (path A apt distro, path B release tarball, path C git checkout), five-concern trade-off matrix (build flag control, source freshness, kernel-module strategy, install layout, operational overhead), three common failure modes plus recovery, decision tree (579 lines) | `sdn-onboard/README.md` (TOC), `sdn-onboard/0.1` (lab baseline assumed), `sdn-onboard/labs/v3.13-R1A-apt-distro-install.md`, `sdn-onboard/labs/v3.13-R1B-tarball-build.md`, `sdn-onboard/labs/v3.13-R1C-git-checkout-build.md`, `sdn-onboard/source/v3.13-S0-build-system-and-code-map.md` (autotools theory companion) |
 
 > **Version sync rule:** when editing baseline OVS/OVN/Ubuntu version in `sdn-onboard/README.md`, MUST update `0.1` §0.1.2 + §0.1.3 (package version block + version annotation) in parallel. Conversely, version mismatch in `0.1` requires checking `README.md` Appendix A Version Evolution Tracker.
+
+> **0.4 verbatim sync rule:** every fenced code block in `0.4` that quotes a `lab-openvswitch` command and its output is a verbatim excerpt from one of the three R1 lab `.md` files (which are themselves verbatim against the typescript per Rule 18). When R1 lab files are edited (which should not happen post-capture), the matching excerpt in 0.4 must be re-verified.
 
 ### Tier 2f: Block I, content written
 
