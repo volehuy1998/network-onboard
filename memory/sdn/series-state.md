@@ -1,8 +1,10 @@
 # SDN Onboard Series, State Tracker
 
-> Status of every Part in the 20-Block / 116-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100% (the source of truth).**
+> Status of every Part in the 20-Block / 136-file series. Read this to know which Parts are done, in progress, or below target depth. **Part names must match `sdn-onboard/README.md` 100 percent (the source of truth).**
 
-**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80% well-covered (305/383), substantive 72% (275/383). Comprehensive tier 2 source-code coverage cho 5 trụ cột mission core. Permanent ban directive established cho DPDK/BPF/XDP/BGP/K8S. Audit script v2 + v3 với 9 alias rule giảm false-positive 87%.
+**Language: full English (sdn-onboard slice).** Plan v3.12 closed 2026-04-29; all 136 `sdn-onboard/*.md` files are full English (lang_check PASS, 30,265 prose chunks, zero non-English). Cross-block surface (`sdn-onboard/_templates/*.md` plus `haproxy-onboard/*.md`) remains legacy Vietnamese pending the cross-block follow-on plan.
+
+**Current release:** `v3.6-ContentDepth` (tag 2026-04-26). Verdict A. Coverage strict 80 percent well-covered (305 of 383), substantive 72 percent (275 of 383). Comprehensive tier 2 source-code coverage for 5 mission-core pillars. Permanent ban directive established for DPDK, BPF, XDP, BGP, Kubernetes. Audit script v2 plus v3 with 9 alias rules reduced false positives by 87 percent.
 
 **Previous releases:** `v3.5-KeywordBackbone` (2026-04-25, framework + master index 0.3 + 9 NEW + 4 EXPAND), `v3.4-DeepFoundation` (Sequence H+O CLOSE).
 
