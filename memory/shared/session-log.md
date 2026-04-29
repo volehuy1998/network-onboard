@@ -2,9 +2,44 @@
 
 > Append-only journal of Claude work sessions on this repo. Read this file FIRST when resuming, to load prior context without asking the user to re-explain.
 >
-> **Language convention.** This file is English (working/meta memory). Curriculum content in `sdn-onboard/` etc. stays Vietnamese for learners (legacy sections), with English used for newly written or modified prose per Rule 17 (effective 2026-04-28).
+> **Language convention.** This file is English (working/meta memory). Curriculum content in `sdn-onboard/*.md` is **fully English** as of 2026-04-29 plan v3.12 closure (lang_check PASS across 136 files). Cross-block surface (`sdn-onboard/_templates/*.md`, `haproxy-onboard/*.md`) remains legacy Vietnamese pending the cross-block follow-on plan.
 >
 > **Slim sweep on 2026-04-25**: file rewritten in English, kept last ~10 sessions verbose, older sessions condensed to summary table. Pre-slim full Vietnamese log is preserved in git history (commit before `c070b3f`).
+
+---
+
+## Session 72, 2026-04-29, v3.12 closure (R0 through R4)
+
+**Branch:** `docs/sdn-foundation-rev2`. **HEAD at close:** `1cf08eb` (R4.4 series-state update). **Tags created:** none (R5 conditional on user sign-off per Rule 15).
+
+### Work done
+
+- Resumed plan v3.12 from the 87-of-136-files midpoint per `memory/sdn/v3.12-session-handoff-2026-04-29.md`.
+- R1.N closure on the final two heavy catalogs (`4.8 - openflow-match-field-catalog.md` 4332 lines, 622 vi chunks; `13.19 - ovn-pipeline-stage-catalog.md` 4310 lines, 829 vi chunks) via parallel-agent fan-out: 5 initial agents plus 2 follow-up gap closers, each ~150 to 280 chunks. The Edit-tool race condition during concurrent agent runs was mitigated by atomic Python script substitution (run 3b proven pattern; reused in runs 3c, 3d, 4b, 4c, 4d).
+- R2 final regression audit: all 9 checklist items PASS. Report at `memory/sdn/v3.12-final-audit-2026-04-29.md` (commit `93ff6f0`).
+- R3 CHANGELOG Reckoning #9 entry committed at `d29088b`.
+- R4 dictionary deprecation plus Rule 17 hardening: 4 commits (`b87ed88`, `e21a96f`, `ad81778`, `1cf08eb`) updated dictionary header, CLAUDE.md Rule 17 transition language, plan v3.9.1 §8.4 forward stub (marked DELIVERED for sdn-onboard slice), `memory/sdn/series-state.md`, and removed the stale Mixed callout in `13.14`.
+
+### Final state
+
+- lang_check PASS (136 files, 30,265 prose chunks, zero non-English).
+- em_dash_check PASS (136 files, zero em-dash).
+- rubric_leak_check PASS in sdn-onboard scope (1 deferred leak in `_templates/template-d-per-table.md`).
+- anti_gaming_check PASS (166 files, 0 warn).
+- pytest 42 of 42 PASS.
+- 14,523 Vietnamese chunks closed.
+- ~280 commits since plan v3.11 closure baseline `1dbfe07`.
+
+### Pending (cross-block follow-on plan)
+
+- 5 `sdn-onboard/_templates/*.md` files Vietnamese-to-English translation.
+- 2 `haproxy-onboard/*.md` files Vietnamese-to-English translation.
+- 1 GP-11 leak in `_templates/template-d-per-table.md` L172.
+- Estimated effort 5 to 10 hours when initiated.
+
+### R5 tag eligibility
+
+Tag `v4.3.0-EnglishMigration` is eligible per Rule 15 four-condition gate. Items 1, 2, 3 satisfied; item 4 (user written sign-off) pending. Per system policy, no tag is issued without explicit user approval.
 
 ---
 
