@@ -12,6 +12,10 @@ Thumbs.db
 *.skill
 pr-body.txt
 
+# Lab SSH keys (local-lab-only, never published, defensive ignore)
+sdn-onboard/doc/lab_private_key
+sdn-onboard/doc/lab_private_key.pub
+
 # Claude Desktop session files
 .claude/
 tmp-pdf-pages/
