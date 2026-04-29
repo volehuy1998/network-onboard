@@ -16,6 +16,10 @@ pr-body.txt
 sdn-onboard/doc/lab_private_key
 sdn-onboard/doc/lab_private_key.pub
 
+# Python bytecode caches (regeneratable)
+__pycache__/
+*.pyc
+
 # Claude Desktop session files
 .claude/
 tmp-pdf-pages/

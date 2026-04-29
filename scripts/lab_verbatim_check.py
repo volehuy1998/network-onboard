@@ -68,6 +68,12 @@ from pathlib import Path
 # Files in scope of the check.
 LABS_PREFIX = "sdn-onboard/labs/"
 
+# Filenames under LABS_PREFIX that are NOT lab transcripts and are
+# therefore exempt from the verbatim-source-header requirement. Index
+# and convention files only; every actual transcript still goes through
+# the full check.
+NON_TRANSCRIPT_BASENAMES: set[str] = {"README.md"}
+
 # The verbatim-source header pattern. Example match:
 #   > **Verbatim source:** `sdn-onboard/labs/v3.13-R0-baseline.typescript`
 VERBATIM_HEADER_RE = re.compile(
@@ -93,9 +99,16 @@ OMIT_MARKER_RE = re.compile(
     re.IGNORECASE,
 )
 
-# ANSI escape sequence pattern used to strip colour and cursor codes
-# from the raw typescript before matching.
+# ANSI CSI (Control Sequence Introducer) escape pattern used to strip
+# colour and cursor codes from the raw typescript before matching.
 ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;?]*[a-zA-Z]")
+
+# OSC (Operating System Command) escape pattern. bash and other shells
+# emit ``\x1b]0;<title>\x07`` to set the terminal title before each
+# prompt. The OSC sits on the same physical typescript line as the
+# prompt and would otherwise force the verbatim-check to leak the
+# escape into the rendered Markdown. Strip it before comparison.
+OSC_ESCAPE_RE = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
 
 # `script` command emits a leader and trailer line of the form
 # "Script started on ..." and "Script done on ...". These are not
@@ -115,13 +128,21 @@ def repo_root() -> Path:
 
 
 def is_in_scope(rel_path: str) -> bool:
-    """Return True iff the file is under ``sdn-onboard/labs/`` and ends
-    with ``.md``. Path is given relative to the repo root using forward
-    slashes (the form ``git diff`` reports).
+    """Return True iff the file is under ``sdn-onboard/labs/``, ends
+    with ``.md``, and is not in the non-transcript allowlist (README
+    files and other directory-index documents). Path is given relative
+    to the repo root using forward slashes (the form ``git diff``
+    reports).
     """
-    return rel_path.replace("\\", "/").startswith(LABS_PREFIX) and rel_path.endswith(
-        ".md"
-    )
+    norm = rel_path.replace("\\", "/")
+    if not norm.startswith(LABS_PREFIX) or not norm.endswith(".md"):
+        return False
+    # The basename test allows nested README files (every subdirectory
+    # under sdn-onboard/labs/ may have its own index README).
+    basename = norm.rsplit("/", 1)[-1]
+    if basename in NON_TRANSCRIPT_BASENAMES:
+        return False
+    return True
 
 
 def list_staged_md() -> list[str]:
@@ -207,6 +228,7 @@ def normalise_typescript(raw: str) -> list[str]:
     out: list[str] = []
     for raw_line in raw.split("\n"):
         line = raw_line.rstrip("\r")
+        line = OSC_ESCAPE_RE.sub("", line)
         line = ANSI_ESCAPE_RE.sub("", line)
         if SCRIPT_BANNER_RE.match(line):
             continue
@@ -373,10 +395,19 @@ def main() -> int:
             except (ValueError, OSError):
                 pass
             if not is_in_scope(rel):
-                print(
-                    f"SKIP {rel}: not under {LABS_PREFIX}",
-                    file=sys.stderr,
-                )
+                norm = rel.replace("\\", "/")
+                basename = norm.rsplit("/", 1)[-1]
+                if (
+                    norm.startswith(LABS_PREFIX)
+                    and basename in NON_TRANSCRIPT_BASENAMES
+                ):
+                    reason = (
+                        f"non-transcript index file ({basename}) "
+                        f"exempt from Rule 18"
+                    )
+                else:
+                    reason = f"not under {LABS_PREFIX}"
+                print(f"SKIP {rel}: {reason}", file=sys.stderr)
                 continue
             files.append(rel)
 

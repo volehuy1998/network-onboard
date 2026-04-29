@@ -252,6 +252,25 @@ def test_omitted_lines_marker_is_allowed(tmp_git_repo: Path) -> None:
     assert "PASS" in result.stdout
 
 
+def test_readme_under_labs_is_exempt(tmp_git_repo: Path) -> None:
+    """``sdn-onboard/labs/README.md`` (and any nested ``README.md``
+    under the labs directory) is a directory-index file, not a lab
+    transcript. The check exempts it from the verbatim-source-header
+    requirement.
+    """
+    write_md(
+        tmp_git_repo,
+        "README.md",
+        "# Open vSwitch lab transcripts\n\n"
+        "This is the directory index. No verbatim source needed.\n",
+    )
+    result = run_script(
+        ["--files", f"{LABS}/README.md"], cwd=tmp_git_repo
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "SKIP" in result.stderr or "PASS" in result.stdout
+
+
 def test_out_of_scope_file_is_skipped(tmp_git_repo: Path) -> None:
     """A file outside ``sdn-onboard/labs/`` is skipped (not in scope of
     Rule 18). The check passes because nothing was actually checked.
@@ -322,6 +341,36 @@ def test_staged_mode_only_checks_staged(tmp_git_repo: Path) -> None:
     result = run_script(["--staged"], cwd=tmp_git_repo)
     assert result.returncode == 1
     assert "DIFFERENT_HOST" in result.stdout
+
+
+def test_osc_title_escapes_in_typescript_are_stripped(
+    tmp_git_repo: Path,
+) -> None:
+    """bash emits ``\\x1b]0;<title>\\x07`` to set the terminal title
+    before each prompt. The OSC sits on the same typescript line as
+    the prompt, so the check must strip it before comparing.
+    """
+    title_then_prompt = (
+        "\x1b]0;root@lab-openvswitch: ~\x07"
+        "root@lab-openvswitch:~# hostname\n"
+        "lab-openvswitch\n"
+    )
+    write_typescript(tmp_git_repo, "v3.13-R0.typescript", title_then_prompt)
+    write_md(
+        tmp_git_repo,
+        "v3.13-R0.md",
+        "# R0\n\n"
+        "> **Verbatim source:** `sdn-onboard/labs/v3.13-R0.typescript`\n\n"
+        "```text\n"
+        "root@lab-openvswitch:~# hostname\n"
+        "lab-openvswitch\n"
+        "```\n",
+    )
+    result = run_script(
+        ["--files", f"{LABS}/v3.13-R0.md"], cwd=tmp_git_repo
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "PASS" in result.stdout
 
 
 def test_ansi_escapes_in_typescript_are_stripped(tmp_git_repo: Path) -> None:
