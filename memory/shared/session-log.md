@@ -71,10 +71,55 @@ Null-byte check on 0.4: 0.
 - The OpenFlow version range supported by `ovs-ofctl` 2.17.9 on Ubuntu 22.04: protocol numbers 1 through 6 (OpenFlow 1.0 through 1.5), pinned in 0.4 §0.4.2.
 - The OVSDB schema version: `8.3.0`, pinned in 0.4 §0.4.2 and §0.4.8.
 
-### Pending for next session
+### Continuation, same session, v3.13 E2 dossier and R2 lab capture
 
-1. E2 enrichment dossier at `memory/sdn/v3.13-enrichment/E2-bridge-port-primitives.md` per plan §4.0.3 (50+ source files, full upstream `.rst` mandatory list plus depth-2, 30+ online sources, 25+ edge cases, 15+ exercise upgrades). Time estimate per §4.0.4: 3 to 8 hours. Hard-block: R2 lab capture cannot begin until E2 is committed.
-2. R2 lab transcript capture on `lab-openvswitch` once E2 lands. Sub-tasks per plan §R2: `add-br`, `add-port`, port types (`internal`, `patch`, `tap`, `veth`), `fail-mode=secure` versus `standalone`, `datapath_type=system` versus `netdev`, MTU/MAC controls, OVSDB write inspection per command, two-namespace ping with `ofproto/trace`. Source anchors expected: `vswitchd/bridge.c`, `lib/netdev*.c`, `ofproto/ofproto-dpif-xlate.c:xlate_normal()`.
+After 0.4 closed R1, the owner said "go ahead", then gave a hard direction to stop asking questions and follow the plan. Session 78 continued into the §4.0.3 E2 hard-block precondition for R2 and the R2 lab capture itself.
+
+**E2 enrichment dossier (commit `2bcf4b7`).** `memory/sdn/v3.13-enrichment/E2-bridge-port-primitives.md`, 1212 lines. Six sections per §4.0.1, every minimum threshold in §4.0.3 met or exceeded:
+
+- §A source-tree scan: 68 files (≥50 floor) across 10 R2 sub-topics. Per-file keyword count, line count, top R2-relevant function names, paragraph of context. Sub-topics: bridge lifecycle (5 files), ofproto-dpif provider (5 files), translation engine (2 files), datapath provider abstraction (6 files), netdev abstraction (12 files), kernel-side datapath (8 files), L2 learning plus protocol helpers (8 files), bond/mirror/in-band (3 files), OpenFlow port plus flow encoding (8 files), CLI plus dpctl (7 files).
+- §B upstream `.rst` plus depth-2: 15 documents. Mandatory three (`integration.rst`, `networking-namespaces.rst`, `vlan.rst`) plus depth-2 (`faq/vlan.rst`, `faq/configuration.rst`, `faq/issues.rst`, `design.rst`, `tracing.rst`, `kvm.rst`, `libvirt.rst`, `vtep.rst`, `ref/ovs-actions.7.rst`, `ref/ovsdb.5.rst`, `ref/ovsdb.7.rst`, `ref/ovs-ctl.8.rst`).
+- §C offline doc scan: 8 files (PDFs, PPTX, REF, R2-relevant entries).
+- §D online research: 32 sources (≥30 floor) across the six required categories. About a third are deferred-verification URLs (mailing-list and GitHub issue search results).
+- §E edge cases: 26 entries (≥25 floor).
+- §F exercise upgrades: 17 entries (≥15 floor). Each has pedagogical justification, verbatim commands, expected output prediction, source annotation, expert challenge.
+
+Pre-commit checks PASS: em_dash 0, rubric_leak 0, lang_check 543 prose chunks 0 non-English, anti_gaming 0 warn.
+
+**R2 lab capture (commit `576ae81`).** `sdn-onboard/labs/v3.13-R2-bridge-port-primitives.{md,typescript,timing}`. Captured 19:27:41 UTC to 19:29:24 UTC (1m 43s) inside `tmux new-session -s v3_13-r2 -x 200 -y 50` by `script -f -q -T` driven by an orchestrator at `/tmp/v3.13-r2-orchestrator.py` (throwaway tooling). 100 commands across the 17 E2 §F exercises plus opening state recapture and complete teardown. The .md is 684 lines; the typescript is 305 lines; the timing file is 372 lines.
+
+Three pedagogical findings from the live capture not predicted by E2 (preserved verbatim per Rule 18):
+
+1. The `Open_vSwitch` table has no `name` column. F.2's first attempted query failed with `ovs-vsctl: Open_vSwitch does not contain a column whose name matches "name"`. The table is a singleton; singletons are not named in the OVSDB schema convention.
+2. `ip -br link show int0 tap0` is rejected by iproute2 with `Error: either "dev" is duplicate, or "tap0" is a garbage.`. The `ip link show` sub-command does not accept multiple netdev names as positional arguments.
+3. MAC aging is best-effort, not a hard timer. With `mac-aging-time=10` plus a 12-second sleep, one entry in the MAC table survived at age 14 seconds because the eviction sweep is periodic and not synchronous with the timer. The other entry was evicted in the same window.
+
+**Key facts pinned by R2 for later sprints:**
+
+- `Bridge` row UUID for `br0` during R2: `420e4ca7-d757-442f-907e-706c3cabf354` (per-creation; future sessions get different UUIDs).
+- `Open_vSwitch` row UUID stable across R1.B → R1.C → R2: `5f8e9a74-1559-4375-9b90-a7474ef58029`.
+- `OFPP_LOCAL` reserved port number is 65534 (visible via `ovs-vsctl --columns=ofport list interface <bridge_name>`).
+- `datapath_id` is derived from the bridge local-port MAC plus a 16-bit zero pad. Setting `other_config:hwaddr=02:0a:0b:0c:0d:0e` produced `datapath_id=0000020a0b0c0d0e`.
+- `dpif/show` shows two backers when both `datapath_type=system` and `datapath_type=netdev` bridges exist: `system@ovs-system` (kernel) and `netdev@ovs-netdev` (userspace).
+- A patch port pair appears as `<name> 1/none: (patch: peer=<peer>)` in dpif/show. The kernel datapath port number is `none`; patch ports are pure userspace.
+
+Pre-commit checks PASS on R2 lab artefacts: em_dash 0, rubric_leak 0, lang_check 272 prose chunks 0 non-English, anti_gaming 0 warn, **lab_verbatim_check all invariants satisfied** (every fenced block line confirmed as a substring of the typescript).
+
+### Plan v3.13 status after R2 closure
+
+- R0: complete (`8270ff5`).
+- R1.A through R1.C plus R1 curriculum integration (0.4): complete.
+- E2 enrichment dossier: complete (`2bcf4b7`).
+- R2 lab capture: complete (`576ae81`).
+- **Plan §6 sprint 3 R-track work fully closed.**
+
+### Pending for the next session
+
+1. **R2.5 enrichment dossier** at `memory/sdn/v3.13-enrichment/E2.5-traditional-vs-ovs.md` per plan §4.0.3. R2.5 thresholds are higher than the default R-sprint per §4.0.3 (80 files Section A, depth-3 recursion Section B, 50 sources Section D, 35 edge cases Section E, 25 exercises Section F) because the comparative surface is broad.
+2. **R2.5 lab capture** at `sdn-onboard/labs/v3.13-R2.5-traditional-network-models-vs-ovs.md` once E2.5 lands. Sub-tasks per plan §R2.5: L2 learning switch comparative, VLAN trunking comparative (Cisco mode access plus mode trunk versus OVS `tag` plus `trunks`), STP/RSTP comparative, LACP comparative, port mirroring comparative, L3 routing comparative (no-OVN approaches), ACL comparative, NAT comparative, QoS comparative, DHCP/DNS/ARP-responder comparative, routing-protocols mention (BGP/OSPF/IS-IS one-paragraph only per the permanent ban), final SVG diagram comparing forwarding plane / control plane / management plane / data plane operations / failure isolation / observability.
+3. **R2.5 curriculum integration file** at `sdn-onboard/7.1 - traditional-network-models-vs-ovs-comparative-architecture.md` (target 800 to 1200 lines) plus the SVG diagram.
+
+Per §15.2 the R2.5 lab requires the R2 carry-forward state, which after the R2 teardown is the same as the post-R1.C state: userspace install at `/usr/local/`, kernel module loaded at refcount 0, daemons stopped. R2.5 begins from this state.
 
 ---
 
