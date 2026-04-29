@@ -1,0 +1,219 @@
+Script started on 2026-04-29 18:20:26+00:00 [TERM="xterm-256color" TTY="/dev/pts/3" COLUMNS="169" LINES="38"]
+[?2004h]0;root@lab-openvswitch: ~/network-onboardroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lWed Apr 29 06:20:28 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.1G  1.6G  81% /
+[?2004hroot@lab-openvswitch:~/network-onboard# which git ovs-vsctl 2>&1
+[?2004l/usr/bin/git
+/usr/local/bin/ovs-vsctl
+[?2004hroot@lab-openvswitch:~/network-onboard# ls /usr/local/sbin/ovsdb-server /usr/local/sbin/ovs-vswitchd 2>&1
+[?2004l[0m[01;32m/usr/local/sbin/ovsdb-server[0m  [01;32m/usr/local/sbin/ovs-vswitchd[0m
+[?2004hroot@lab-openvswitch:~/network-onboard# lsmod | grep openvswitch | head -5
+[?2004lopenvswitch           176128  0
+nsh                    16384  1 openvswitch
+nf_conncount           24576  1 openvswitch
+nf_nat                 49152  1 openvswitch
+nf_conntrack          172032  3 nf_nat,openvswitch,nf_conncount
+[?2004hroot@lab-openvswitch:~/network-onboard# mkdir -p /root/ovs-r1c && cd /root/ovs-r1c && pwd
+[?2004l/root/ovs-r1c
+[?2004hroot@lab-openvswitch:~/ovs-r1c# cd /root/ovs-r1c && git clone --depth 50 --branch v2.17.9 https://github.com/openvswitch/ovs.git ovs 2>&1 | tail -10
+[?2004ldo so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+[?2004hroot@lab-openvswitch:~/ovs-r1c# cd /root/ovs-r1c/ovs && git rev-parse HEAD
+[?2004l0bea06d9957e3966d94c48873cd9afefba1c2677
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && git describe --tags HEAD
+[?2004lv2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && git log -1 --format='%h %s'
+[?2004l[?1h=0bea06d Set release date for 2.17.9.[m
+[K[?1l>[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# ls /root/ovs-r1c/ovs/configure 2>&1 || echo '(configure not present, expected for git checkout)'
+[?2004lls: cannot access '/root/ovs-r1c/ovs/configure': No such file or directory
+(configure not present, expected for git checkout)
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# ls /root/ovs-r1c/ovs/boot.sh /root/ovs-r1c/ovs/configure.ac /root/ovs-r1c/ovs/Makefile.am 2>&1
+[?2004l[0m[01;32m/root/ovs-r1c/ovs/boot.sh[0m  /root/ovs-r1c/ovs/configure.ac  /root/ovs-r1c/ovs/Makefile.am
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# du -sh /root/ovs-r1c/ovs
+[?2004l34M	/root/ovs-r1c/ovs
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && cat boot.sh
+[?2004l#! /bin/sh
+autoreconf --install --force
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && ./boot.sh 2>&1
+[?2004llibtoolize: putting auxiliary files in AC_CONFIG_AUX_DIR, 'build-aux'.
+libtoolize: copying file 'build-aux/ltmain.sh'
+libtoolize: putting macros in AC_CONFIG_MACRO_DIRS, 'm4'.
+libtoolize: copying file 'm4/libtool.m4'
+libtoolize: copying file 'm4/ltoptions.m4'
+libtoolize: copying file 'm4/ltsugar.m4'
+libtoolize: copying file 'm4/ltversion.m4'
+libtoolize: copying file 'm4/lt~obsolete.m4'
+configure.ac:197: warning: The macro `AC_ERROR' is obsolete.
+configure.ac:197: You should run autoupdate.
+./lib/autoconf/oldnames.m4:34: AC_ERROR is expanded from...
+acinclude.m4:119: OVS_CHECK_LINUX is expanded from...
+configure.ac:197: the top level
+configure.ac:27: installing 'build-aux/compile'
+configure.ac:43: installing 'build-aux/config.guess'
+configure.ac:43: installing 'build-aux/config.sub'
+configure.ac:22: installing 'build-aux/install-sh'
+configure.ac:22: installing 'build-aux/missing'
+Makefile.am: installing 'build-aux/depcomp'
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# ls /root/ovs-r1c/ovs/configure 2>&1
+[?2004l[0m[01;32m/root/ovs-r1c/ovs/configure[0m
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && ./configure --prefix=/usr/local --localstatedir=/usr/local/var --sysconfdir=/usr/local/etc 2>&1 | tail -25
+[?2004lconfig.status: creating lib/stdio.h
+config.status: creating lib/string.h
+config.status: creating ovsdb/libovsdb.sym
+config.status: creating ofproto/libofproto.sym
+config.status: creating lib/libsflow.sym
+config.status: creating lib/libopenvswitch.sym
+config.status: creating vtep/libvtep.sym
+config.status: creating Makefile
+config.status: creating datapath/Makefile
+config.status: creating datapath/linux/Kbuild
+config.status: creating datapath/linux/Makefile
+config.status: creating datapath/linux/Makefile.main
+config.status: creating tests/atlocal
+config.status: creating lib/libopenvswitch.pc
+config.status: creating lib/libsflow.pc
+config.status: creating ofproto/libofproto.pc
+config.status: creating ovsdb/libovsdb.pc
+config.status: creating include/openvswitch/version.h
+config.status: creating config.h
+config.status: executing tests/atconfig commands
+config.status: executing depfiles commands
+config.status: executing libtool commands
+config.status: executing include/openflow/openflow.h.stamp commands
+config.status: executing utilities/bugtool/dummy commands
+config.status: executing ipsec/dummy commands
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.2G  1.5G  81% /
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && (time make -j4) 2>&1 | tail -15
+[?2004l/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o utilities/ovs-vsctl utilities/ovs-vsctl.o lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o utilities/ovs-vsctl utilities/ovs-vsctl.o  lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1c/ovs/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o ovsdb/ovsdb-tool ovsdb/ovsdb-tool.o ovsdb/libovsdb.la lib/libopenvswitch.la -latomic -lm  -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o ovsdb/ovsdb-client ovsdb/ovsdb-client.o ovsdb/libovsdb.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o ovsdb/ovsdb-tool ovsdb/ovsdb-tool.o  ovsdb/.libs/libovsdb.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1c/ovs/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o ovsdb/ovsdb-client ovsdb/ovsdb-client.o  ovsdb/.libs/libovsdb.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1c/ovs/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+/bin/bash ./libtool  --tag=CC   --mode=link gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict    -g -O2     -o vtep/vtep-ctl vtep/vtep-ctl.o vtep/libvtep.la lib/libopenvswitch.la -latomic -lm  -lunbound
+libtool: link: gcc -Wstrict-prototypes -Wall -Wextra -Wno-sign-compare -Wpointer-arith -Wformat -Wformat-security -Wswitch-enum -Wunused-parameter -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -fno-strict-aliasing -Wswitch-bool -Wlogical-not-parentheses -Wsizeof-array-argument -Wbool-compare -Wshift-negative-value -Wduplicated-cond -Wshadow -Wmultistatement-macros -Wcast-align=strict -g -O2 -o vtep/vtep-ctl vtep/vtep-ctl.o  vtep/.libs/libvtep.a lib/.libs/libopenvswitch.a -lssl -lcrypto -lcap-ng /root/ovs-r1c/ovs/lib/.libs/libopenvswitchavx512.a -latomic -lm -lunbound
+mv tests/testsuite.tmp tests/testsuite
+make[2]: Leaving directory '/root/ovs-r1c/ovs'
+make[1]: Leaving directory '/root/ovs-r1c/ovs'
+
+real	0m31.618s
+user	1m41.348s
+sys	0m12.613s
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.4G  1.3G  84% /
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# du -sh /root/ovs-r1c/ovs
+[?2004l277M	/root/ovs-r1c/ovs
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && diff <(/root/ovs-r1c/ovs/utilities/ovs-vsctl --version) <(/usr/local/bin/ovs-vsctl --version) 2>&1 | head -5
+[?2004l[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && /root/ovs-r1c/ovs/utilities/ovs-vsctl --version | head -3
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && /root/ovs-r1c/ovs/vswitchd/ovs-vswitchd --version 2>&1 | head -3
+[?2004lovs-vswitchd (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && ls tests/*.at | head -15
+[?2004ltests/aes128.at
+tests/alb.at
+tests/auto-attach.at
+tests/bfd.at
+tests/bridge.at
+tests/bundle.at
+tests/cfm.at
+tests/checkpatch.at
+tests/check-structs.at
+tests/classifier.at
+tests/completion.at
+tests/daemon.at
+tests/daemon-py.at
+tests/dpctl.at
+tests/dpif-netdev.at
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && wc -l tests/*.at | tail -1
+[?2004l  77826 total
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && grep -c '^AT_SETUP' tests/ovs-vsctl.at tests/ovs-ofctl.at tests/classifier.at 2>&1 | head
+[?2004ltests/ovs-vsctl.at:44
+tests/ovs-ofctl.at:40
+tests/classifier.at:9
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.4G  1.3G  84% /
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && (time make check TESTSUITEFLAGS='-k ovs-vsctl --jobs=4') 2>&1 | tail -30
+[?2004l2325: fake bridge on bond                             ok
+2327: fake bridge on bond + del-br real bridge        ok
+2328: managers                                        ok
+2326: fake bridge on bond + del-br fake bridge        ok
+2329: database commands -- positive checks            ok
+2332: database commands -- wait-until immediately true ok
+2330: database commands -- negative checks            ok
+2334: --id option on create, get commands             ok
+2296: ovs-vsctl connection retry                      ok
+2335: unreferenced record warnings                    ok
+2336: created row UUID is wrong in same execution     ok
+2340: naming in db commands                           ok
+2337: --all option on destroy command                 ok
+2331: database commands -- conditions                 ok
+2333: database commands -- wait-until must wait       ok
+2341: bootstrap ca cert                               ok
+2342: peer ca cert                                    ok
+
+## ------------- ##
+## Test results. ##
+## ------------- ##
+
+All 45 tests were successful.
+make[3]: Leaving directory '/root/ovs-r1c/ovs'
+make[2]: Leaving directory '/root/ovs-r1c/ovs'
+make[1]: Leaving directory '/root/ovs-r1c/ovs'
+
+real	0m5.544s
+user	0m7.844s
+sys	0m2.822s
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.4G  1.3G  84% /
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && ls tests/testsuite.log 2>&1 && wc -l tests/testsuite.log 2>&1
+[?2004ltests/testsuite.log
+365 tests/testsuite.log
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && head -20 tests/testsuite.log 2>&1
+[?2004l## ------------------------------ ##
+## openvswitch 2.17.9 test suite. ##
+## ------------------------------ ##
+
+testsuite: command line was:
+  $ ./tests/testsuite -C tests AUTOTEST_PATH=utilities:vswitchd:ovsdb:vtep:tests:ipsec:: -k ovs-vsctl --jobs=4
+
+## --------- ##
+## Platform. ##
+## --------- ##
+
+hostname = lab-openvswitch
+uname -m = x86_64
+uname -r = 5.15.0-173-generic
+uname -s = Linux
+uname -v = #183-Ubuntu SMP Fri Mar 6 13:29:34 UTC 2026
+
+/usr/bin/uname -p = x86_64
+/bin/uname -X     = unknown
+
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# cd /root/ovs-r1c/ovs && make distclean 2>&1 | tail -5
+[?2004lrm -f vswitchd/.deps/system-stats.Po
+rm -f vswitchd/.deps/xenserver.Po
+rm -f vtep/.deps/vtep-ctl.Po
+rm -f vtep/.deps/vtep-idl.Plo
+rm -f Makefile
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# df -h / | tail -1
+[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.2G  1.5G  82% /
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# du -sh /root/ovs-r1c
+[?2004l83M	/root/ovs-r1c
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# date -u
+[?2004lWed Apr 29 06:21:45 PM UTC 2026
+[?2004hroot@lab-openvswitch:~/ovs-r1c/ovs# exit
+[?2004lexit
+
+Script done on 2026-04-29 18:21:45+00:00 [COMMAND_EXIT_CODE="0"]
