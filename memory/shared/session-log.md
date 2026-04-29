@@ -8,6 +8,58 @@
 
 ---
 
+## Session 77, 2026-04-29, v3.13 R1.C git-checkout-build lab transcript
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 76). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
+
+### Owner direction received this session
+
+1. "Go ahead." (proceed with R1.C per session 76 pending list).
+
+### Work done
+
+R1.C git-checkout-build lab capture. Three artefacts under `sdn-onboard/labs/v3.13-R1C-git-checkout-build.{md,typescript,timing}`. Captured 2026-04-29 18:20:28 UTC to 2026-04-29 18:21:45 UTC (1m 17s) by `script -f -q -T` inside `tmux new-session -s v3_13-r1c -x 200 -y 50` on lab-openvswitch (192.168.1.250). Driven by the same orchestrator pattern as R1.B (Python `tmux send-keys` plus prompt-detection via `tmux capture-pane`). The orchestrator at `/tmp/v3.13-r1c-orchestrator.py` is throwaway tooling.
+
+### R1.C captured pedagogical content
+
+- **Carry-forward state from R1.B.** The userspace install at `/usr/local/` (`ovsdb-server`, `ovs-vswitchd`, `ovs-vsctl` at version 2.17.9) and the kernel module loaded at refcount 0 plus four conntrack-related dependents are all observed at session start before any R1.C work happens. The transcript captures all three carry-forwards verbatim.
+- **Shallow git clone**: `git clone --depth 50 --branch v2.17.9 https://github.com/openvswitch/ovs.git ovs`. HEAD SHA `0bea06d9957e3966d94c48873cd9afefba1c2677` matches v2.17.9 tag, matches the read-only theory worktree at `/root/ovs/`, matches the plan baseline. Tarball one-line summary: `Set release date for 2.17.9.`
+- **`configure` script absent in git checkout.** The `ls /root/ovs-r1c/ovs/configure` returns `No such file or directory` while `boot.sh`, `configure.ac`, and `Makefile.am` are present.
+- **`./boot.sh` is two lines: shebang plus `autoreconf --install --force`.** Output captures `libtoolize` copying 5 m4 macros and `ltmain.sh` into `build-aux/`, then `automake --add-missing` populating `build-aux/` with helper scripts (`compile`, `config.guess`, `config.sub`, `install-sh`, `missing`, `depcomp`).
+- **Upstream warning surfaced.** `configure.ac:197: warning: The macro 'AC_ERROR' is obsolete.` traced through `OVS_CHECK_LINUX` macro in `acinclude.m4:119`. Harmless; would benefit from a one-line patch swapping `AC_ERROR` for `AC_MSG_ERROR`.
+- **Userspace-only build.** `make -j4` real 31.6 s, user 1m41.3 s, sys 12.6 s. Effective parallelism 3.21 cores. The autotest binary `tests/testsuite` is built (`mv tests/testsuite.tmp tests/testsuite` is the visible last step), accounting for the 5-second delta vs R1.B's 26.7 s build.
+- **Binary identity check.** `diff <(/root/ovs-r1c/ovs/utilities/ovs-vsctl --version) <(/usr/local/bin/ovs-vsctl --version)` returns empty. The R1.B and R1.C builds produce identical version strings.
+- **Selective `make check`.** `TESTSUITEFLAGS='-k ovs-vsctl --jobs=4'` selected 45 tests (slight overcount vs the 44 `^AT_SETUP` count in `tests/ovs-vsctl.at` because `-k` matches name OR `AT_KEYWORDS` list). All 45 passed in real 5.5 s. Per-test ordinals 2 296 to 2 342 (autotest assigns global ordinals across all `.at` files).
+- **`tests/testsuite.log` is 365 lines on a 45-test pass.** Header records platform identity: `hostname = lab-openvswitch`, `uname -m = x86_64`, `uname -r = 5.15.0-173-generic`, `uname -v = #183-Ubuntu SMP Fri Mar 6 13:29:34 UTC 2026`.
+- **`make distclean` reclaimed 200 MiB**, leaving `/root/ovs-r1c/` at 83 MiB (34 MiB git checkout plus 35 MiB `.git` plus 14 MiB `boot.sh` regeneration outputs that `make distclean` does not undo; `git clean -fdx` would clear those too).
+
+### Key facts pinned by R1.C
+
+- v2.17.9 SHA: `0bea06d9957e3966d94c48873cd9afefba1c2677` (canonical reference for Rule 14 source citations going forward).
+- Test suite scale: 27 `.at` source files, 77 826 lines total. `tests/ovs-vsctl.at` 44 tests, `tests/ovs-ofctl.at` 40 tests, `tests/classifier.at` 9 tests.
+- `boot.sh` body verbatim: `autoreconf --install --force`.
+- The autotest binary `tests/testsuite` is a Bourne-shell script, not an ELF. Built from concatenated `.at` sources via `autom4te`.
+- Selective test ordinal range observed: 2 296 to 2 342 (the suite's `ovs-vsctl`-keyword tests).
+
+### One verbatim-check finding during rendering
+
+The first-pass rendering quoted the `git log -1 --format='%h %s'` output as `=0bea06d Set release date for 2.17.9.` because my stripped-typescript view added a `=` prefix from a leading `^[=` ANSI keypad-application-mode escape that I misread as part of the data. The verbatim check rejected the commit; fix was to drop the leading `=` (which the production hook strips correctly) and remove the prose paragraph that had explained the (spurious) prefix. Useful reminder: always trust the verbatim check, never trust my view of the stripped typescript when there is an ANSI-related ambiguity.
+
+### Final state
+
+- Branch ahead of master by ~24 commits pending the closing commit.
+- All five pre-commit checks PASS on the staged R1.C artefact set: em_dash 0, lang 0 non-English over 155 prose chunks, rubric leak 0, anti_gaming 0, lab_verbatim 0.
+- R1.C source tree at `/root/ovs-r1c/ovs/` is post-distclean (83 MiB on disk; `make distclean` ran). The userspace install at `/usr/local/` is unchanged from R1.B.
+
+### Pending (next session)
+
+- Author `sdn-onboard/0.4 - ovs-installation-three-paths.md` curriculum integration file. Compares apt vs tarball vs git pedagogically. R1.A, R1.B, and R1.C are all on disk, so this is the natural next step.
+- E1 enrichment dossier (still queued; not blocking 0.4).
+- E-S0 enrichment dossier (companion to S0 build-system theory file).
+- R2 bridge and port primitives lab.
+
+---
+
 ## Session 76, 2026-04-29, v3.13 R1.B tarball-build lab transcript and CLAUDE.md Rule 18 amendment
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 75). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
