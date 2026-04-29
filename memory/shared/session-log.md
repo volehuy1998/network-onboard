@@ -8,6 +8,76 @@
 
 ---
 
+## Session 78, 2026-04-29, v3.13 R1 closure with curriculum file 0.4
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 77). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
+
+### Owner direction received this session
+
+1. "scan repo and read plan v3.13, go ahead with sdn-onboard/labs/*"
+2. Mid-session interjection quoting the R1.C closing line: "The next step, once R1.A, R1.B, and R1.C are all on disk, is the curriculum integration file `sdn-onboard/0.4 - ovs-installation-three-paths.md` that compares the three install paths pedagogically. R1.C is the last of the three install transcripts."
+3. "Stop asking me questions; you must remember the guiding principle: Quality over speed. Based on this, choose the best path for yourself. Work according to the plan."
+
+### Path correction
+
+Initial agent proposal was to author the E2 enrichment dossier as the §4.0.3 hard-block precondition for R2. The owner's mid-session quote redirected the work to plan §R1's still-pending curriculum integration deliverable: `sdn-onboard/0.4 - ovs-installation-three-paths.md`. R1 is the last sprint with an unfinished deliverable; closing it before E2/R2 respects the plan §6 sequencing (R0 → R1 → R2 ...) and the owner's "work according to the plan" directive.
+
+### Work done
+
+Authored `sdn-onboard/0.4 - ovs-installation-three-paths.md` (579 lines). The file is the curriculum-side wrap of the three R1 lab transcripts captured 2026-04-29 on `lab-openvswitch` (`192.168.1.250`). Every fenced code block in 0.4 that quotes a host command and its output is a verbatim excerpt from R1.A, R1.B, or R1.C (which are themselves verbatim against the typescript per Rule 18); no host output is paraphrased.
+
+Structure of 0.4:
+
+- §0.4.1: framing (the question the three paths answer, captured 2026-04-29 in the order A → B → C from the same green-field baseline).
+- §0.4.2: path A (apt distro). Verbatim install transcript, file inventory, kernel module state, the `apt-get purge` residual finding (database file at `/var/lib/openvswitch/conf.db` survives the purge; kernel module survives with refcount 0). Manual cleanup recipe.
+- §0.4.3: path B (release tarball). Build prerequisites, SHA-256 verification, the `--with-linux` rejection on 5.15 kernel ("kernel support is limited to 5.8 and below"), the recovery (drop `--with-linux`), the userspace-only configure-make-install cycle, `ovs-ctl start` orchestration walkthrough.
+- §0.4.4: path C (git checkout). What `boot.sh` does (one-line wrapper for `autoreconf --install --force`), the `AC_ERROR is obsolete` upstream warning at `configure.ac:197`, byte-equivalence check between R1.B and R1.C builds (empty diff between `--version` outputs), `make check` selective run on `-k ovs-vsctl --jobs=4` (45 tests in 5.5 seconds), what path C exposes that path B hides (autotools, autotest source, full git log).
+- §0.4.5: side-by-side comparison along five concerns (build flag control, source freshness, kernel-module strategy, install layout, operational overhead) plus a summary table.
+- §0.4.6: five-step decision tree for picking a path (production vs learning, build-system depth, patching, custom packaging).
+- §0.4.7: three common failure modes with verbatim recovery commands.
+- §0.4.8: the invariants 0.4 pins for the rest of the series (canonical SHA `0bea06d9957e3966d94c48873cd9afefba1c2677`, OVSDB schema `8.3.0`, `OpenFlow versions 0x1:0x6`).
+- §0.4.9: references to upstream docs, the three R1 lab transcripts, the S0 theory companion, and the existing 0.x series files.
+
+Cross-file sync per Rule 2:
+
+- `sdn-onboard/README.md`: Block 0 TOC entry added for 0.4.
+- `memory/shared/file-dependency-map.md`: Tier 2d Block 0 entry added for 0.4 with cross-references to the three lab files plus S0; the "0.4 verbatim sync rule" callout codifies that the fenced excerpts are tied to R1 lab .md files.
+- `memory/sdn/series-state.md`: Block 0 header bumped from "3 files, 830 lines" (stale; the table already had 4 entries) to "5 files, ~2,560 lines"; row added for 0.4.
+
+### Pre-commit checks
+
+All five checks PASS in staged-diff mode against the four staged files (`0.4`, `README.md`, `file-dependency-map.md`, `series-state.md`):
+
+- `em_dash_check`: 0 em-dash.
+- `rubric_leak_check`: 0 leak (one false start with "Axis 1" through "Axis 5" as section labels was caught and renamed to natural English headings; "axes" likewise replaced with "concerns" throughout).
+- `lang_check`: 261 prose chunks, 0 non-English.
+- `anti_gaming_check`: 0 warn.
+- `lab_verbatim_check`: 0 files in scope (0.4 is curriculum, not under `sdn-onboard/labs/`); however, every fenced excerpt in 0.4 was sourced directly from the R1.A/B/C lab `.md` files via Read, which are themselves verbatim against the typescript.
+
+Null-byte check on 0.4: 0.
+
+### Plan v3.13 status after this session
+
+- R0: complete (commit `8270ff5`).
+- R1.A: complete (commit `4e0fc42`).
+- R1.B: complete (commit `a322f19`).
+- R1.C: complete (commit `8e7db05`).
+- R1 curriculum integration (0.4): complete (this session).
+- **R1 fully closed.** Next is plan §6 sprint 3 per §11: E2 enrichment dossier (mandatory §4.0.3 hard-block before R2) plus R2 (bridge and port primitives) plus E-S3a plus S3 first half. Per §4.0.3 R2 cannot start until E2 is committed; per §15.2 R2 is preceded by `Documentation/topics/integration.rst`, `Documentation/topics/networking-namespaces.rst`, `Documentation/howto/vlan.rst`, plus depth-2 cross-refs.
+
+### Key facts pinned by 0.4 for later sprints
+
+- The canonical commit SHA for source citations against Open vSwitch 2.17.9, surfaced and pinned in 0.4 §0.4.8: `0bea06d9957e3966d94c48873cd9afefba1c2677`.
+- The OpenFlow version range supported by `ovs-ofctl` 2.17.9 on Ubuntu 22.04: protocol numbers 1 through 6 (OpenFlow 1.0 through 1.5), pinned in 0.4 §0.4.2.
+- The OVSDB schema version: `8.3.0`, pinned in 0.4 §0.4.2 and §0.4.8.
+
+### Pending for next session
+
+1. E2 enrichment dossier at `memory/sdn/v3.13-enrichment/E2-bridge-port-primitives.md` per plan §4.0.3 (50+ source files, full upstream `.rst` mandatory list plus depth-2, 30+ online sources, 25+ edge cases, 15+ exercise upgrades). Time estimate per §4.0.4: 3 to 8 hours. Hard-block: R2 lab capture cannot begin until E2 is committed.
+2. R2 lab transcript capture on `lab-openvswitch` once E2 lands. Sub-tasks per plan §R2: `add-br`, `add-port`, port types (`internal`, `patch`, `tap`, `veth`), `fail-mode=secure` versus `standalone`, `datapath_type=system` versus `netdev`, MTU/MAC controls, OVSDB write inspection per command, two-namespace ping with `ofproto/trace`. Source anchors expected: `vswitchd/bridge.c`, `lib/netdev*.c`, `ofproto/ofproto-dpif-xlate.c:xlate_normal()`.
+
+---
+
 ## Session 77, 2026-04-29, v3.13 R1.C git-checkout-build lab transcript
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 76). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
