@@ -1,0 +1,312 @@
+Script started on 2026-04-29 15:57:24+00:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="200" LINES="50"]
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo === START R0 BASELINE ===
+[?2004l=== START R0 BASELINE ===
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# date -u
+[?2004lWed Apr 29 03:57:52 PM UTC 2026
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# hostname
+[?2004llab-openvswitch
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# uname -a
+[?2004lLinux lab-openvswitch 5.15.0-173-generic #183-Ubuntu SMP Fri Mar 6 13:29:34 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lsb_release -a
+[?2004lNo LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 22.04.5 LTS
+Release:	22.04
+Codename:	jammy
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# cat /etc/os-release
+[?2004lPRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# uptime
+[?2004l 15:57:58 up 16 min,  2 users,  load average: 0.00, 0.00, 0.00
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# free -h
+[?2004l               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       335Mi       7.1Gi       1.0Mi       340Mi       7.1Gi
+Swap:             0B          0B          0B
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# df -h
+[?2004lFilesystem                       Size  Used Avail Use% Mounted on
+tmpfs                            791M  1.5M  789M   1% /run
+/dev/mapper/ubuntu--vg-root--lv  8.1G  3.8G  3.9G  50% /
+tmpfs                            3.9G     0  3.9G   0% /dev/shm
+tmpfs                            5.0M     0  5.0M   0% /run/lock
+/dev/sda2                        1.7G  233M  1.4G  15% /boot
+tmpfs                            791M  4.0K  791M   1% /run/user/0
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lscpu
+[?2004lArchitecture:                x86_64
+  CPU op-mode(s):            32-bit, 64-bit
+  Address sizes:             45 bits physical, 48 bits virtual
+  Byte Order:                Little Endian
+CPU(s):                      4
+  On-line CPU(s) list:       0-3
+Vendor ID:                   GenuineIntel
+  Model name:                11th Gen Intel(R) Core(TM) i9-11900K @ 3.50GHz
+    CPU family:              6
+    Model:                   167
+    Thread(s) per core:      1
+    Core(s) per socket:      4
+    Socket(s):               1
+    Stepping:                1
+    BogoMIPS:                7007.99
+    Flags:                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nop
+                             l xtopology tsc_reliable nonstop_tsc cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdr
+                             and hypervisor lahf_lm abm 3dnowprefetch invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms inv
+                             pcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat avx512vbmi umip pku ospke avx512_vbmi2 gf
+                             ni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+Virtualization features:     
+  Virtualization:            VT-x
+  Hypervisor vendor:         VMware
+  Virtualization type:       full
+Caches (sum of all):         
+  L1d:                       192 KiB (4 instances)
+  L1i:                       128 KiB (4 instances)
+  L2:                        2 MiB (4 instances)
+  L3:                        16 MiB (1 instance)
+NUMA:                        
+  NUMA node(s):              1
+  NUMA node0 CPU(s):         0-3
+Vulnerabilities:             
+  Gather data sampling:      Unknown: Dependent on hypervisor status
+  Indirect target selection: Mitigation; Aligned branch/return thunks
+  Itlb multihit:             KVM: Mitigation: VMX disabled
+  L1tf:                      Not affected
+  Mds:                       Not affected
+  Meltdown:                  Not affected
+  Mmio stale data:           Vulnerable: Clear CPU buffers attempted, no microcode; SMT Host state unknown
+  Reg file data sampling:    Not affected
+  Retbleed:                  Mitigation; Enhanced IBRS
+  Spec rstack overflow:      Not affected
+  Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+  Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+  Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+  Srbds:                     Not affected
+  Tsa:                       Not affected
+  Tsx async abort:           Not affected
+  Vmscape:                   Not affected
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# cat /etc/network/interfaces 2>&1 || true
+[?2004lcat: /etc/network/interfaces: No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /etc/netplan/
+[?2004ltotal 20
+drwxr-xr-x  2 root root  4096 Apr 29 15:25 [0m[01;34m.[0m
+drwxr-xr-x 98 root root 12288 Apr 29 06:13 [01;34m..[0m
+-rw-r--r--  1 root root   331 Apr 29 15:25 00-installer-config.yaml
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# cat /etc/netplan/*.yaml 2>&1
+[?2004l# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    ens33:
+      addresses:
+      - 192.168.1.250/24
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses:
+        - 1.1.1.1
+        - 8.8.8.8
+        - 8.8.4.4
+        search: []
+    ens36:
+      addresses:
+      - 10.99.99.250/24
+  version: 2
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ip -br link
+[?2004llo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+ens33            UP             00:0c:29:9d:fe:15 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens36            UP             00:0c:29:9d:fe:1f <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ip -br addr
+[?2004llo               UNKNOWN        127.0.0.1/8 ::1/128 
+ens33            UP             192.168.1.250/24 fe80::20c:29ff:fe9d:fe15/64 
+ens36            UP             10.99.99.250/24 fe80::20c:29ff:fe9d:fe1f/64 
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ip a
+[?2004l1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 00:0c:29:9d:fe:15 brd ff:ff:ff:ff:ff:ff
+    altname enp2s1
+    inet 192.168.1.250/24 brd 192.168.1.255 scope global ens33
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe9d:fe15/64 scope link 
+       valid_lft forever preferred_lft forever
+3: ens36: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 00:0c:29:9d:fe:1f brd ff:ff:ff:ff:ff:ff
+    altname enp2s4
+    inet 10.99.99.250/24 brd 10.99.99.255 scope global ens36
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe9d:fe1f/64 scope link 
+       valid_lft forever preferred_lft forever
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ip route
+[?2004ldefault via 192.168.1.1 dev ens33 proto static 
+10.99.99.0/24 dev ens36 proto kernel scope link src 10.99.99.250 
+192.168.1.0/24 dev ens33 proto kernel scope link src 192.168.1.250 
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ip -6 route
+[?2004l::1 dev lo proto kernel metric 256 pref medium
+fe80::/64 dev ens36 proto kernel metric 256 pref medium
+fe80::/64 dev ens33 proto kernel metric 256 pref medium
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# systemctl --type=service --state=running --no-pager
+[?2004l[0m[0;4m [0m[0m[0;4m UNIT                       [0m[0m[0;4m LOAD  [0m[0m[0;4m ACTIVE[0m[0m[0;4m SUB    [0m[0m[0;4m DESCRIPTION                                                 [0m
+  cron.service                loaded active running Regular background program processing daemon
+  dbus.service                loaded active running D-Bus System Message Bus
+  getty@tty1.service          loaded active running Getty on tty1
+  irqbalance.service          loaded active running irqbalance daemon
+  ModemManager.service        loaded active running Modem Manager
+  multipathd.service          loaded active running Device-Mapper Multipath Device Controller
+  networkd-dispatcher.service loaded active running Dispatcher daemon for systemd-networkd
+  open-vm-tools.service       loaded active running Service for virtual machines hosted on VMware
+  polkit.service              loaded active running Authorization Manager
+  rsyslog.service             loaded active running System Logging Service
+  snapd.service               loaded active running Snap Daemon
+  ssh.service                 loaded active running OpenBSD Secure Shell server
+  systemd-journald.service    loaded active running Journal Service
+  systemd-logind.service      loaded active running User Login Management
+  systemd-networkd.service    loaded active running Network Configuration
+  systemd-resolved.service    loaded active running Network Name Resolution
+  systemd-timesyncd.service   loaded active running Network Time Synchronization
+  systemd-udevd.service       loaded active running Rule-based Manager for Device Events and Files
+  udisks2.service             loaded active running Disk Manager
+  unattended-upgrades.service loaded active running Unattended Upgrades Shutdown
+  user@0.service              loaded active running User Manager for UID 0
+  vgauth.service              loaded active running Authentication service for virtual machines hosted on VMware
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+22 loaded units listed.
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# apt-cache policy openvswitch-switch
+[?2004lopenvswitch-switch:
+  Installed: (none)
+  Candidate: 2.17.9-0ubuntu0.22.04.1
+  Version table:
+     2.17.9-0ubuntu0.22.04.1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-security/main amd64 Packages
+     2.17.0-0ubuntu1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy/main amd64 Packages
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# apt-cache policy openvswitch-common openvswitch-doc openvswitch-test
+[?2004lopenvswitch-common:
+  Installed: (none)
+  Candidate: 2.17.9-0ubuntu0.22.04.1
+  Version table:
+     2.17.9-0ubuntu0.22.04.1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-security/main amd64 Packages
+     2.17.0-0ubuntu1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy/main amd64 Packages
+openvswitch-doc:
+  Installed: (none)
+  Candidate: 2.17.9-0ubuntu0.22.04.1
+  Version table:
+     2.17.9-0ubuntu0.22.04.1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-security/main amd64 Packages
+     2.17.0-0ubuntu1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy/main amd64 Packages
+openvswitch-test:
+  Installed: (none)
+  Candidate: 2.17.9-0ubuntu0.22.04.1
+  Version table:
+     2.17.9-0ubuntu0.22.04.1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages
+        500 http://vn.archive.ubuntu.com/ubuntu jammy-security/universe amd64 Packages
+     2.17.0-0ubuntu1 500
+        500 http://vn.archive.ubuntu.com/ubuntu jammy/universe amd64 Packages
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /etc/openvswitch 2>&1
+[?2004lls: cannot access '/etc/openvswitch': No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/lib/openvswitch 2>&1
+[?2004lls: cannot access '/var/lib/openvswitch': No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# ls -la /var/log/openvswitch 2>&1
+[?2004lls: cannot access '/var/log/openvswitch': No such file or directory
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# lsmod | grep -E "^(openvswitch|nf_conntrack|nf_nat)" || echo NONE
+[?2004lNONE
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# find /lib/modules/$(uname -r) -name openvswitch.ko\* 2>&1
+[?2004l/lib/modules/5.15.0-173-generic/kernel/net/openvswitch/openvswitch.ko
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# modinfo openvswitch 2>&1 | head -20
+[?2004lfilename:       /lib/modules/5.15.0-173-generic/kernel/net/openvswitch/openvswitch.ko
+alias:          net-pf-16-proto-16-family-ovs_ct_limit
+alias:          net-pf-16-proto-16-family-ovs_meter
+alias:          net-pf-16-proto-16-family-ovs_packet
+alias:          net-pf-16-proto-16-family-ovs_flow
+alias:          net-pf-16-proto-16-family-ovs_vport
+alias:          net-pf-16-proto-16-family-ovs_datapath
+license:        GPL
+description:    Open vSwitch switching datapath
+srcversion:     573DE95255C6140CD2046E8
+depends:        nf_conntrack,nf_nat,nf_conncount,libcrc32c,nf_defrag_ipv6,nsh
+retpoline:      Y
+intree:         Y
+name:           openvswitch
+vermagic:       5.15.0-173-generic SMP mod_unload modversions 
+sig_id:         PKCS#7
+signer:         Build time autogenerated kernel key
+sig_key:        60:B1:B9:F3:4B:32:5E:B7:9F:FC:05:FD:B7:1F:0B:1F:6B:4A:A6:48
+sig_hashalgo:   sha512
+signature:      98:47:2B:42:2F:E0:31:0C:A0:8F:07:04:8B:6C:55:55:E5:90:E6:62:
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# dmesg --notime | tail -50
+[?2004lsystemd[1]: Finished Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling.
+systemd[1]: Mounted FUSE Control File System.
+systemd[1]: Mounted Kernel Configuration File System.
+systemd[1]: Finished Load/Save Random Seed.
+systemd[1]: Condition check resulted in First Boot Complete being skipped.
+systemd[1]: Finished Apply Kernel Variables.
+systemd[1]: Finished Create System Users.
+systemd[1]: Starting Create Static Device Nodes in /dev...
+systemd[1]: Finished Create Static Device Nodes in /dev.
+systemd[1]: Starting Rule-based Manager for Device Events and Files...
+systemd[1]: Started Journal Service.
+systemd-journald[542]: Received client request to flush runtime journal.
+loop0: detected capacity change from 0 to 129608
+loop1: detected capacity change from 0 to 130616
+loop2: detected capacity change from 0 to 188200
+loop3: detected capacity change from 0 to 188208
+loop4: detected capacity change from 0 to 100888
+loop5: detected capacity change from 0 to 102072
+vmw_vmci 0000:00:07.7: MMIO register access is available
+vmw_vmci 0000:00:07.7: Using capabilities 0x3c
+Guest personality initialized and is active
+VMCI host device registered (name=vmci, major=10, minor=123)
+Initialized host personality
+EXT4-fs (sda2): mounted filesystem with ordered data mode. Opts: (null). Quota mode: none.
+audit: type=1400 audit(1777477285.687:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe" pid=685 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.687:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe//kmod" pid=685 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.691:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="lsb_release" pid=684 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.707:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/NetworkManager/nm-dhcp-client.action" pid=687 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.707:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/NetworkManager/nm-dhcp-helper" pid=687 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.707:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/connman/scripts/dhclient-script" pid=687 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.707:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/{,usr/}sbin/dhclient" pid=687 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.707:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="ubuntu_pro_apt_news" pid=689 comm="apparmor_parser"
+audit: type=1400 audit(1777477285.727:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/bin/man" pid=695 comm="apparmor_parser"
+e1000: ens36 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: None
+IPv6: ADDRCONF(NETDEV_CHANGE): ens36: link becomes ready
+NET: Registered PF_VSOCK protocol family
+kauditd_printk_skb: 14 callbacks suppressed
+audit: type=1400 audit(1777477288.329:25): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap-update-ns.lxd" pid=798 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.333:26): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/snap/snapd/18357/usr/lib/snapd/snap-confine" pid=796 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.333:27): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/snap/snapd/18357/usr/lib/snapd/snap-confine//mount-namespace-capture-helper" pid=796 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.333:28): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/snap/snapd/26865/usr/lib/snapd/snap-confine" pid=797 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.333:29): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.activate" pid=799 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.341:30): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.benchmark" pid=800 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.345:31): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.buginfo" pid=801 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.345:32): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.check-kernel" pid=802 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.345:33): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.hook.install" pid=805 comm="apparmor_parser"
+audit: type=1400 audit(1777477288.353:34): apparmor="STATUS" operation="profile_load" profile="unconfined" name="snap.lxd.hook.configure" pid=804 comm="apparmor_parser"
+loop6: detected capacity change from 0 to 8
+e1000: ens33 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: None
+IPv6: ADDRCONF(NETDEV_CHANGE): ens33: link becomes ready
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# echo === END R0 BASELINE ===
+[?2004l=== END R0 BASELINE ===
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# date -u
+[?2004lWed Apr 29 03:59:18 PM UTC 2026
+[?2004h]0;root@lab-openvswitch: ~root@lab-openvswitch:~# exit
+[?2004lexit
+
+Script done on 2026-04-29 15:59:19+00:00 [COMMAND_EXIT_CODE="0"]
