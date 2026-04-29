@@ -8,6 +8,57 @@
 
 ---
 
+## Session 75, 2026-04-30, v3.13 R1.A first install lab transcript
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing). **HEAD at session close:** `4e0fc42` plus this session-log commit. **Tags created:** none.
+
+### Owner direction received this session
+
+1. "Local source is theory only, the hosts are practice." (codified into plan v3.13 §11.6 Checklist 11.6.A in session 74; reinforced this session by running every command on `lab-openvswitch` and never on the local source tree)
+2. "The §11.6 update was crude; please create a clearer and more concise checklist." (rewrote §11.6 as three short tables, committed `29ec6cb`)
+3. "Go ahead." (proceeded into R1)
+
+### Work done
+
+R1.A apt distro install lab capture. Three commits:
+
+- `29ec6cb`: §11.6 rewrite as three concise checklists (A: where work happens, B: where files go, C: three rules a file must follow). Replaces the prior 16-line prose essay.
+- `4fb24bb`: S0 header clarification, single sentence stating the local OVS source is read-only and every command runs on the lab host.
+- `4e0fc42`: R1.A apt distro install lab transcript. Three artefacts under `sdn-onboard/labs/v3.13-R1A-apt-distro-install.{md,typescript,timing}`. Captured 2026-04-29 17:13:07 UTC to 17:16:09 UTC (2m 49s) by `script -f -q -t` inside `tmux new-session -s v3_13-r1a -x 200 -y 50` on lab-openvswitch (192.168.1.250).
+
+R1.A scope split per session-74 option β: paths B (source tarball) and C (git checkout + make check) deferred to separate future sessions.
+
+### Key facts pinned by R1.A
+
+- Ubuntu archive candidate version on jammy: `2.17.9-0ubuntu0.22.04.1`.
+- OVSDB schema: `8.3.0`.
+- `ovs-ofctl` supports OpenFlow 1 through 6 (`OpenFlow versions 0x1:0x6`).
+- Four systemd units installed: umbrella `openvswitch-switch.service`, per-daemon `ovsdb-server.service` and `ovs-vswitchd.service`, one-shot `ovs-record-hostname.service`.
+- `Open_vSwitch` row UUID on `lab-openvswitch`: `12015d1c-1d7c-4209-81b0-14406e1e3269`. Future R-sprints reference.
+- Two Rule 18 findings: `apt-get purge` does NOT remove `/var/lib/openvswitch/` (`conf.db` survives), and `apt-get purge` does NOT unload the `openvswitch` kernel module (refcount 0 but loaded).
+
+### Pre-commit hook earned its keep
+
+The `lab_verbatim_check.py` hook (authored in session 73) caught a real violation during R1.A rendering: I quoted a line from the R0 transcript inside a fenced `text` block in the R1.A `.md`, which violates Rule 18 (the line is not in the R1.A typescript). The hook rejected the commit with a precise error message naming the line and the file. Fix was to move the quote out of the fenced block and into prose. The hook performed its design role on the first real opportunity.
+
+### Final state
+
+- Branch ahead of master by 19 commits (was 16 at session 74 close, +3 this session).
+- pytest 55 of 55 PASS (unchanged).
+- All five pre-commit checks PASS on every staged commit.
+- Three new commits this session: §11.6 rewrite, S0 header tweak, R1.A lab transcript.
+
+### Pending (next session, multiple options)
+
+- R1.B source tarball install path. SSH to `lab-openvswitch`, take VMware snapshot `R1B-clean`, download `openvswitch-2.17.9.tar.gz` from `https://www.openvswitch.org/releases/`, verify SHA256, `tar xzf`, `./configure --prefix=/usr/local --localstatedir=/usr/local/var --sysconfdir=/usr/local/etc --with-linux=/lib/modules/$(uname -r)/build`, `make -j4`, capture full build log as referenced text artefact, `sudo make install`, verify, `sudo make modules_install`, observe the kernel-module conflict with the in-tree module per plan §S1 risk note.
+- R1.C git checkout install path plus `make check` integration. Lighter than R1.B since the build is similar; the differentiating piece is the test suite run.
+- Once both R1.B and R1.C are captured, author `sdn-onboard/0.4 - ovs-installation-three-paths.md` curriculum integration file that compares all three paths pedagogically.
+- E1 enrichment dossier authoring (queued; not yet a hard prerequisite for the R1 paths since each path stands alone).
+
+The owner picks which sub-piece the next session opens with. Today's session closed three pieces; per plan §15.6 the session is done.
+
+---
+
 ## Session 74, 2026-04-30, v3.13 E0 foundation dossier and S0 first curriculum file
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 73). **HEAD at session close:** `c2155da` plus the plan-amendment commit and this session-log commit. **Tags created:** none.
