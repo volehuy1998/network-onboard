@@ -531,10 +531,25 @@ Specific mandatory practices:
 5. If the output is too long to embed inline (more than approximately 200 lines), the curriculum file references the full transcript at `sdn-onboard/labs/v3.13-XN-<topic>.typescript` and embeds an annotated extract per Rule 7 with the line `[N other lines omitted, context: full log preserved at <path>]`.
 6. Transcripts are captured by `script -f -t` on the lab host and the typescript file is referenced from the curriculum. A diff between the human-readable rendering and the raw typescript must be empty.
 7. The pre-commit hook `scripts/lab_verbatim_check.py` (added by plan v3.13 R0) compares the rendered transcript against the referenced typescript and rejects the commit on any divergence.
+8. **No synthetic structure inside fenced code blocks.** A fenced code block in a lab transcript contains only real operator commands and the real host output those commands produce. The following are forbidden inside any fenced block under `sdn-onboard/labs/` and inside any curriculum quote of lab output:
+   - `echo === ... ===` start-of-session and end-of-session banner markers.
+   - `echo --- ... ---` mid-session section banner markers.
+   - Any `echo` invocation whose only purpose is to print a section title or scene transition (regardless of the surrounding glyphs).
+   - Shell-comment lines such as `# pre-build state on lab-openvswitch` or `# fetch tarball` whose only purpose is to label a section. Even though bash treats them as no-ops, they create visual noise inside the fenced block and force a reader to skip past them to find the next command.
+   All structural and pedagogical commentary (section titles, scene-setting paragraphs, "what just happened" wrap-ups) lives outside the fenced block, in the surrounding `.md` prose: H2 / H3 headings introduce each phase, plain paragraphs explain the why and the what. The wall-clock window of the session is captured by `date -u` invocations at session start and end, both of which are real commands producing real host output. Orchestrator scripts that drive lab capture must not send any such banner or comment line; the COMMANDS list contains only real operator commands.
+9. **R1.A grandfather clause.** The R1.A apt-distro-install transcript (`v3.13-R1A-apt-distro-install.{md,typescript,timing}`) was captured before this no-synthetic-structure rule was codified and uses both `echo === ... ===` start-end markers and `echo --- ... ---` section banners. Per Rule 18 the R1.A verbatim record is what was actually run; R1.A is left as-is and is the only transcript with this asymmetry. Every transcript from R1.B onward complies with the strict no-synthetic-structure form.
 
-Scope: every lab transcript under `sdn-onboard/labs/`, every curriculum quote of lab output anywhere in `sdn-onboard/*.md`. The rule overrides any stylistic preference. Owner directive of 2026-04-29 (translated from Vietnamese original): "All operations, including commands, command outputs, hostnames, and logs, must be kept exactly as they are in the training documentation. No modifications, not even a single word, are allowed, in order to maintain integrity in the actual experiment."
+Scope: every lab transcript under `sdn-onboard/labs/`, every curriculum quote of lab output anywhere in `sdn-onboard/*.md`. The rule overrides any stylistic preference. Owner directives of 2026-04-29 and 2026-04-30 (translated from Vietnamese originals):
 
-(Origin: 2026-04-29 owner directive, codified by plan v3.13 R0.)
+> 2026-04-29: "All operations, including commands, command outputs, hostnames, and logs, must be kept exactly as they are in the training documentation. No modifications, not even a single word, are allowed, in order to maintain integrity in the actual experiment."
+>
+> 2026-04-30 (first message): "Please also avoid this phrasing: `root@lab-openvswitch:~# echo --- post-uninstall state ---` ... Instead, use words to explain or comments within the block for easier understanding."
+>
+> 2026-04-30 (second message): "I no longer like #comments within the quote block; use words to explain it. Putting them there makes it really difficult to follow the command and its output."
+>
+> 2026-04-30 (third message): "claude.md needs to update its rules to prohibit explanations using comments or echo within the quote block to avoid information overload, as readers only want to see the actual command and output of command."
+
+(Origin: 2026-04-29 owner directive, codified by plan v3.13 R0. Practice 8 and 9 added 2026-04-30 after R1.B's first capture surfaced the no-synthetic-structure rule.)
 
 ---
 
