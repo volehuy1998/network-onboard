@@ -8,6 +8,79 @@
 
 ---
 
+## Session 79, 2026-04-30, v3.13 R2.5.1 L2 learning switch comparative lab
+
+**Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 78). **HEAD at session close:** `66b57b9` ("labs(sdn): v3.13 R2.5.1 L2 learning OVS vs Linux bridge (initial redo)"). **Tags created:** none.
+
+### Owner direction received this session
+
+1. "continue R2.5 following the plan v3.13"
+2. "Try again with 'Guided Exercise 5' with multiple sleep cycles to see when the FDB entry expires."
+3. "are your running?" (status check while background process was active)
+4. "Did the experiment with 'Guided Exercise 5' not match your expectations?"
+
+### Work done
+
+**R2.5.1 comparative lab: OVS MAC learning versus Linux bridge FDB** (commit `66b57b9`).
+
+Seven artefacts committed together:
+
+- `sdn-onboard/labs/v3.13-R2.5.1-l2-learning.md` (1,135 lines): the curriculum-side lab document with 11 guided exercises across 9 sections (R2.5.1.1 through R2.5.1.9). Prose-to-verbatim ratio: 629 prose lines versus 298 verbatim lines = 2.11:1 (satisfying Rule 19 >= 2:1). The primary typescript was captured 2026-04-30 06:03:32 UTC to 06:05:44 UTC; the supplementary aging-cycles typescript was captured 2026-04-30 06:36:16 UTC to 06:36:54 UTC.
+- `sdn-onboard/labs/v3.13-R2.5.1-l2-learning.typescript` (247 lines): primary verbatim capture. Contains the topology build (br0 plus veth_red/veth_blue netns), pre-ping FDB (already populated from NDP), ping, megaflow dump, aging experiment, Linux bridge topology (lbr0), FDB analysis, comparison, teardown.
+- `sdn-onboard/labs/v3.13-R2.5.1-l2-learning.timing` (timing file for primary capture).
+- `sdn-onboard/labs/v3.13-R2.5.1-aging-cycles.typescript` (63 lines): supplementary capture for GE5 multi-cycle aging experiment. IPv6 disabled on veths before capture to isolate aging from NDP background traffic. Key result: with `mac-aging-time=15`, entries survive cycle 6 (18s, age 14/13), evicted by cycle 7 (21s). No shell prompts in this capture (batch execution via `script bash -c '...'`).
+- `sdn-onboard/labs/v3.13-R2.5.1-aging-cycles.timing` (timing file for supplementary capture).
+- `scripts/lab_verbatim_check.py` (modified): added `SUPPLEMENTARY_VERBATIM_HEADER_RE` pattern to parse `> **Supplementary verbatim source ...:**` headers and merge the secondary typescript lines into the matching pool for verbatim block verification.
+- `plans/sdn/v3.13-ovs-hands-on-mastery-and-source-deep-dive.md` (modified): R2.5.1 status updated from `DELETED-pending-redo` to `DONE`.
+
+### Key technical findings from R2.5.1
+
+**OVS MAC aging mechanics.** `normalize_idle_time` in `lib/mac-learning.c:194` (OVS v2.17.9, commit `0bea06d9957e3966d94c48873cd9afefba1c2677`) clamps values below 15s up to 15 silently. With `mac-aging-time=15`, entries survive until `mac_learning_run` sweeps them in its best-effort main-loop pass, producing an observed eviction window of 18 to 21 seconds (entries present at age 14/13 at the 18s mark, absent by 21s). This is consistent with the 15s floor plus the sweep-timing jitter of `mac_learning_run`.
+
+**IPv6 NDP as a confounding factor.** The original capture (primary typescript) showed entries surviving past 18s because NDP background traffic refreshed them silently. The supplementary capture disabled IPv6 on the namespace veths (`sysctl -w net.ipv6.conf.veth_red.disable_ipv6=1` and `net.ipv6.conf.veth_blue.disable_ipv6=1`) before the experiment, isolating aging from NDP. This is the key methodological lesson of GE5.
+
+**Linux bridge FDB three-category structure.** The `bridge fdb show dev lbr0` output showed three categories: (1) permanent multicast entries (33:33:*, 01:00:5e:*) present from kernel startup; (2) permanent static unicast entries for the bridge-side veth MACs added automatically by the kernel when a port joins the bridge; (3) dynamic learned unicast entries (the only category subject to aging). The `ageing_time` sysfs parameter is in centiseconds, while OVS `other_config:mac-aging-time` is in seconds.
+
+**Megaflow two-layer model.** The megaflow dump showed `actions:2` (forward to port 2) for the known-destination flow, while an unknown-destination flow goes to NORMAL action for another `xlate_normal` upcall. The seventh megaflow rule (`in_port(3)` for the reverse direction) correctly used `actions:2` (not `actions:3`), which was a verbatim correction made during review.
+
+### Corrections made during authoring
+
+1. **Verbatim typo in md**: `a2:8c:e2.6f:26:0c` (dot instead of colon at position 8). Typescript had `a2:8c:e2:6f:26:0c` everywhere. Fixed with Edit tool.
+2. **Missing `nf_call_ip6tables 0` field** in the `ip -d link show lbr0` output block. Added to match the typescript verbatim.
+3. **`actions:3` instead of `actions:2`** for the 7th megaflow rule. Fixed with Edit tool.
+4. **34 verbatim violations in GE5** (initial version): GE5 blocks had shell prompts (`root@lab-openvswitch:~# ...`) but the aging-cycles typescript (batch execution) had no prompts. Fixed by removing prompts from GE5 verbatim blocks and merging the output into a single output-only block.
+5. **`lab_verbatim_check.py` did not handle supplementary typescript**: added `SUPPLEMENTARY_VERBATIM_HEADER_RE` and merged the secondary corpus into the matching pool.
+
+### Pre-commit checks on R2.5.1 commit
+
+All five checks PASS:
+
+- `em_dash_check`: 0 em-dash.
+- `rubric_leak_check`: 0 leak.
+- `lang_check`: PASS (prose chunks fully English).
+- `anti_gaming_check`: 0 warn.
+- `lab_verbatim_check`: 0 violations (primary + supplementary typescripts combined).
+
+Null-byte check: 0 on all seven staged files.
+
+### Plan v3.13 status after this session
+
+- R0: complete (`8270ff5`).
+- R1.A through R1.C plus R1 curriculum integration (0.4): complete.
+- E2 enrichment dossier: complete (`2bcf4b7`).
+- R2 lab capture: complete (`576ae81`). R2 main curriculum doc: complete (committed later sessions, audit commits through `c497bc5`).
+- R2.5.1 (L2 learning OVS vs Linux bridge): complete (`66b57b9`).
+- **Next active deliverable: R2.5.2 (VLAN access and trunk comparative lab).**
+
+### Pending for the next session
+
+1. **R2.5.2 VLAN access and trunk** at `sdn-onboard/labs/v3.13-R2.5.2-vlan-access-trunk.{md,typescript,timing}`. Source references: `Documentation/howto/vlan.rst` (offline), `lib/vlan-bitmap.c`, `vswitchd/bridge.c` `Port.tag` handling, `ofproto/ofproto.c` `bundle_set`. Traditional analogue: Cisco IOS `switchport mode access/trunk`, 802.1Q frame tagging, `Port.tag` versus `Port.trunks` in OVSDB.
+2. **R2.5.3 STP/RSTP comparative** (status: DELETED-pending-redo).
+3. **Cross-file sync**: verify whether `sdn-onboard/README.md` needs a labs index entry for R2.5.1 (not yet checked this session).
+4. **`memory/shared/file-dependency-map.md`**: may need updating for the new R2.5.1 artefacts.
+
+---
+
 ## Session 78, 2026-04-29, v3.13 R1 closure with curriculum file 0.4
 
 **Branch:** `feat/sdn-v3.13-ovs-mastery` (continuing from session 77). **HEAD at session close:** to be set by the closing commit. **Tags created:** none.
