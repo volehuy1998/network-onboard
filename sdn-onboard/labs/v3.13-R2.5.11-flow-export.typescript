@@ -1,0 +1,116 @@
+Script started on 2026-04-30 08:25:19+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:25:20 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_a type veth peer name veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_b type veth peer name veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a netns ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b netns ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set veth_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a addr add 10.0.0.1/24 dev veth_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set veth_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b addr add 10.0.0.2/24 dev veth_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=1.03 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.041 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.041/0.533/1.025/0.492 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- --id=@s create sFlow agent=lo target=\"127.0.0.1:6343\" sampling=64 polling=10 -- set bridge br0 sflow=@s
+[?2004l123c7e16-83e8-49ce-b7ef-a3c26cd79ef8
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,sflow list bridge br0
+[?2004lname                : br0
+sflow               : 123c7e16-83e8-49ce-b7ef-a3c26cd79ef8
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=agent,target,sampling,polling list sflow
+[?2004lagent               : lo
+targets             : ["127.0.0.1:6343"]
+sampling            : 64
+polling             : 10
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 tcpdump -i lo -n -c 4 udp port 6343 >/tmp/r2.5.11-sflow.pcap 2>&1 &
+[?2004l[1] 1348097
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 5 -W 1 -i 0.1 10.0.0.2 >/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.11-sflow.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+08:25:32.307391 IP 127.0.0.1.37961 > 127.0.0.1.6343: sFlowv5, IPv4 agent 127.0.0.1, agent-id 0, length 128
+
+1 packet captured
+2 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear bridge br0 sflow
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- --id=@nf create NetFlow targets=\"127.0.0.1:2055\" active_timeout=10 -- set bridge br0 netflow=@nf
+[?2004lc19366d6-c7e5-4565-aafd-7da3ef71825f
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,netflow list bridge br0
+[?2004lname                : br0
+netflow             : c19366d6-c7e5-4565-aafd-7da3ef71825f
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=targets,active_timeout list netflow
+[?2004ltargets             : ["127.0.0.1:2055"]
+active_timeout      : 10
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 tcpdump -i lo -n -c 4 udp port 2055 >/tmp/r2.5.11-netflow.pcap 2>&1 &
+[?2004l[1] 1348325
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 5 -W 1 -i 0.1 10.0.0.2 >/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.11-netflow.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear bridge br0 netflow
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- --id=@ix create IPFIX targets=\"127.0.0.1:4739\" obs_domain_id=42 obs_point_id=1 -- set bridge br0 ipfix=@ix
+[?2004lb262f89b-410a-4c30-b47a-cbcefa94dbc3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ipfix list bridge br0
+[?2004lname                : br0
+ipfix               : b262f89b-410a-4c30-b47a-cbcefa94dbc3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=targets,obs_domain_id,obs_point_id list ipfix
+[?2004ltargets             : ["127.0.0.1:4739"]
+obs_domain_id       : 42
+obs_point_id        : 1
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 tcpdump -i lo -n -c 4 udp port 4739 >/tmp/r2.5.11-ipfix.pcap 2>&1 &
+[?2004l[1] 1348496
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 5 -W 1 -i 0.1 10.0.0.2 >/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.11-ipfix.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear bridge br0 ipfix
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl list-commands | grep -iE 'sflow|netflow|ipfix' | head
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --no-wait -- --all destroy sflow -- --all destroy netflow -- --all destroy ipfix
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# rm -f /tmp/r2.5.11-*
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:25:50 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 08:25:50+00:00 [COMMAND_EXIT_CODE="0"]
