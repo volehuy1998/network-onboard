@@ -1,0 +1,266 @@
+Script started on 2026-04-30 07:47:02+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:47:03 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_src
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_dst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_mon
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_src type veth peer name veth_src_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_dst type veth peer name veth_dst_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_mon type veth peer name veth_mon_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_src netns ns_src
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_dst netns ns_dst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_mon netns ns_mon
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_src_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_dst_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_mon_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_src_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_dst_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_mon_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_src link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_src link set veth_src up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_src addr add 10.0.0.1/24 dev veth_src
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dst link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dst link set veth_dst up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dst addr add 10.0.0.2/24 dev veth_dst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_mon link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_mon link set veth_mon up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br0
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000d20356a9034e
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(veth_src_br): addr:22:94:28:f5:5b:7e
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(veth_dst_br): addr:ca:35:91:09:e9:18
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 3(veth_mon_br): addr:ca:0f:18:30:a4:10
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br0): addr:d2:03:56:a9:03:4e
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.652 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.044 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1024ms
+rtt min/avg/max/mdev = 0.044/0.348/0.652/0.304 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 ip netns exec ns_mon tcpdump -i veth_mon -n -c 4 -Q in icmp >/tmp/r2.5.5-mon-pre.pcap 2>&1 &
+[?2004l[1] 1280365
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.042 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.046 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.042/0.044/0.046/0.002 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.5-mon-pre.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on veth_mon, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- --id=@vsrc get Port veth_src_br -- --id=@vmon get Port veth_mon_br -- --id=@m create Mirror name=mirror1 select_src_port=@vsrc output_port=@vmon -- set Bridge br0 mirrors=@m
+[?2004l708e1dff-c293-40c6-b016-104f6038e885
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,select_src_port,select_dst_port,output_port,output_vlan list mirror mirror1
+[?2004lname                : mirror1
+select_src_port     : [32868a80-3727-47d2-963f-7646039ee5a5]
+select_dst_port     : []
+output_port         : 973179b3-2e3c-47c3-bb32-61df6de8a9cf
+output_vlan         : []
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,mirrors list bridge br0
+[?2004lname                : br0
+mirrors             : [708e1dff-c293-40c6-b016-104f6038e885]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl list-commands | grep -i mirror | head -5
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/del-flows
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.657 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.476 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1022ms
+rtt min/avg/max/mdev = 0.476/0.566/0.657/0.090 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 ip netns exec ns_mon tcpdump -i veth_mon -n -e -c 6 -Q in icmp >/tmp/r2.5.5-mon-post.pcap 2>&1 &
+[?2004l[1] 1280627
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.297 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.400 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1008ms
+rtt min/avg/max/mdev = 0.297/0.348/0.400/0.051 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.5-mon-post.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on veth_mon, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+07:47:22.992928 26:39:fe:7a:ef:b3 > 4e:fd:6e:41:bf:1b, ethertype IPv4 (0x0800), length 98: 10.0.0.1 > 10.0.0.2: ICMP echo request, id 27042, seq 1, length 64
+07:47:24.000552 26:39:fe:7a:ef:b3 > 4e:fd:6e:41:bf:1b, ethertype IPv4 (0x0800), length 98: 10.0.0.1 > 10.0.0.2: ICMP echo request, id 27042, seq 2, length 64
+
+2 packets captured
+2 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows --names | head -10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set mirror mirror1 select_all=true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,select_all,select_src_port,select_dst_port,output_port list mirror mirror1
+[?2004lname                : mirror1
+select_all          : true
+select_src_port     : [32868a80-3727-47d2-963f-7646039ee5a5]
+select_dst_port     : []
+output_port         : 973179b3-2e3c-47c3-bb32-61df6de8a9cf
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/del-flows
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.581 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.691 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1010ms
+rtt min/avg/max/mdev = 0.581/0.636/0.691/0.055 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 ip netns exec ns_mon tcpdump -i veth_mon -n -e -c 8 -Q in icmp >/tmp/r2.5.5-mon-all.pcap 2>&1 &
+[?2004l[1] 1280916
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_src ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.302 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.332 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.302/0.317/0.332/0.015 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.5-mon-all.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on veth_mon, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+07:47:32.118810 26:39:fe:7a:ef:b3 > 4e:fd:6e:41:bf:1b, ethertype IPv4 (0x0800), length 98: 10.0.0.1 > 10.0.0.2: ICMP echo request, id 16167, seq 1, length 64
+07:47:32.118890 4e:fd:6e:41:bf:1b > 26:39:fe:7a:ef:b3, ethertype IPv4 (0x0800), length 98: 10.0.0.2 > 10.0.0.1: ICMP echo reply, id 16167, seq 1, length 64
+07:47:33.119752 26:39:fe:7a:ef:b3 > 4e:fd:6e:41:bf:1b, ethertype IPv4 (0x0800), length 98: 10.0.0.1 > 10.0.0.2: ICMP echo request, id 16167, seq 2, length 64
+07:47:33.119870 4e:fd:6e:41:bf:1b > 26:39:fe:7a:ef:b3, ethertype IPv4 (0x0800), length 98: 10.0.0.2 > 10.0.0.1: ICMP echo reply, id 16167, seq 2, length 64
+
+4 packets captured
+4 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,statistics list mirror mirror1
+[?2004lname                : mirror1
+statistics          : {tx_bytes=1246, tx_packets=13}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear bridge br0 mirrors
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl destroy mirror mirror1 2>&1 | head -5 || true
+[?2004lovs-vsctl: no row "mirror1" in table Mirror
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,mirrors list bridge br0
+[?2004lname                : br0
+mirrors             : []
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_src 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_dst 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_mon 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lbr0 type bridge
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_lsrc
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_ldst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_lmon
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_lsrc type veth peer name veth_lsrc_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_ldst type veth peer name veth_ldst_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_lmon type veth peer name veth_lmon_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lsrc netns ns_lsrc
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_ldst netns ns_ldst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lmon netns ns_lmon
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lsrc_br master lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_ldst_br master lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lmon_br master lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lsrc_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_ldst_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_lmon_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_lsrc link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_lsrc link set veth_lsrc up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_lsrc addr add 10.1.0.1/24 dev veth_lsrc
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_ldst link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_ldst link set veth_ldst up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_ldst addr add 10.1.0.2/24 dev veth_ldst
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_lmon link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_lmon link set veth_lmon up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# tc qdisc add dev veth_lsrc_br ingress
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# tc filter add dev veth_lsrc_br parent ffff: protocol all u32 match u32 0 0 action mirred egress mirror dev veth_lmon_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# tc qdisc show dev veth_lsrc_br
+[?2004lqdisc noqueue 0: root refcnt 2 
+qdisc ingress ffff: parent ffff:fff1 ---------------- 
+[?2004hroot@lab-openvswitch:~/network-onboard# tc filter show dev veth_lsrc_br parent ffff:
+[?2004lfilter protocol all pref 49152 u32 chain 0 
+filter protocol all pref 49152 u32 chain 0 fh 800: ht divisor 1 
+filter protocol all pref 49152 u32 chain 0 fh 800::800 order 2048 key ht 800 bkt 0 terminal flowid ??? not_in_hw 
+  match 00000000/00000000 at 0
+	action order 1: mirred (Egress Mirror to device veth_lmon_br) pipe
+	index 1 ref 1 bind 1
+
+[?2004hroot@lab-openvswitch:~/network-onboard# timeout 5 ip netns exec ns_lmon tcpdump -i veth_lmon -n -e -c 4 -Q in icmp >/tmp/r2.5.5-lmon.pcap 2>&1 &
+[?2004l[1] 1281588
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_lsrc ping -c 2 -W 2 10.1.0.2
+[?2004lPING 10.1.0.2 (10.1.0.2) 56(84) bytes of data.
+64 bytes from 10.1.0.2: icmp_seq=1 ttl=64 time=0.052 ms
+64 bytes from 10.1.0.2: icmp_seq=2 ttl=64 time=0.041 ms
+
+--- 10.1.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1014ms
+rtt min/avg/max/mdev = 0.041/0.046/0.052/0.005 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# wait 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.5-lmon.pcap
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on veth_lmon, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+07:47:49.193673 2e:26:85:12:90:75 > 42:2a:52:26:bf:26, ethertype IPv4 (0x0800), length 98: 10.1.0.1 > 10.1.0.2: ICMP echo request, id 44256, seq 1, length 64
+07:47:50.207148 2e:26:85:12:90:75 > 42:2a:52:26:bf:26, ethertype IPv4 (0x0800), length 98: 10.1.0.1 > 10.1.0.2: ICMP echo request, id 44256, seq 2, length 64
+
+2 packets captured
+2 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# tc -s filter show dev veth_lsrc_br parent ffff:
+[?2004lfilter protocol all pref 49152 u32 chain 0 
+filter protocol all pref 49152 u32 chain 0 fh 800: ht divisor 1 
+filter protocol all pref 49152 u32 chain 0 fh 800::800 order 2048 key ht 800 bkt 0 terminal flowid ??? not_in_hw 
+  match 00000000/00000000 at 0
+	action order 1: mirred (Egress Mirror to device veth_lmon_br) pipe
+	index 1 ref 1 bind 1 installed 6 sec used 2 sec firstused 3 sec
+	Action statistics:
+	Sent 252 bytes 4 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+
+[?2004hroot@lab-openvswitch:~/network-onboard# tc qdisc del dev veth_lsrc_br ingress
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# rm -f /tmp/r2.5.5-*.pcap
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:47:54 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 07:47:55+00:00 [COMMAND_EXIT_CODE="0"]
