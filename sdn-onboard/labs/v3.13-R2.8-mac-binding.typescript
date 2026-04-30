@@ -1,0 +1,148 @@
+Script started on 2026-04-30 05:22:58+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 05:23:00 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-a type veth peer name br-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-b type veth peer name br-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set dev veth-a address 02:00:00:00:0a:0a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set dev br-a address 02:00:00:00:0a:0b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set dev veth-b address 02:00:00:00:0b:0a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set dev br-b address 02:00:00:00:0b:0b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-a netns ns-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-b netns ns-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ip addr add 10.50.0.10/24 dev veth-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-b ip addr add 10.50.0.20/24 dev veth-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-b ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ip link set veth-a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-b ip link set veth-b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 br-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 br-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ip link show veth-a
+[?2004l161: veth-a@if160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 02:00:00:00:0a:0a brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-b ip link show veth-b
+[?2004l163: veth-b@if162: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 02:00:00:00:0b:0a brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show br-a
+[?2004l160: br-a@if161: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master ovs-system state UP mode DEFAULT group default qlen 1000
+    link/ether 02:00:00:00:0a:0b brd ff:ff:ff:ff:ff:ff link-netns ns-a
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show br-b
+[?2004l162: br-b@if163: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master ovs-system state UP mode DEFAULT group default qlen 1000
+    link/ether 02:00:00:00:0b:0b brd ff:ff:ff:ff:ff:ff link-netns ns-b
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ofport,mac_in_use list Interface br-a br-b br0
+[?2004lname                : br-a
+ofport              : 1
+mac_in_use          : "02:00:00:00:0a:0b"
+
+name                : br-b
+ofport              : 2
+mac_in_use          : "02:00:00:00:0b:0b"
+
+name                : br0
+ofport              : 65534
+mac_in_use          : "b6:06:b1:ca:d3:44"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:9 missed:9
+  br0:
+    br-a 1/2: (system)
+    br-b 2/3: (system)
+    br0 65534/1: (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    1     0  02:00:00:00:0a:0a    2
+LOCAL     0  b6:06:b1:ca:d3:44    1
+    2     0  02:00:00:00:0b:0a    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ping -c 3 -W 2 10.50.0.20
+[?2004lPING 10.50.0.20 (10.50.0.20) 56(84) bytes of data.
+64 bytes from 10.50.0.20: icmp_seq=1 ttl=64 time=1.87 ms
+64 bytes from 10.50.0.20: icmp_seq=2 ttl=64 time=0.049 ms
+ovs-appctl fdb/show br0
+64 bytes from 10.50.0.20: icmp_seq=3 ttl=64 time=0.052 ms
+
+--- 10.50.0.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2033ms
+rtt min/avg/max/mdev = 0.049/0.655/1.865/0.855 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    2     0  02:00:00:00:0b:0a    1
+    1     0  02:00:00:00:0a:0a    1
+LOCAL     0  b6:06:b1:ca:d3:44    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0 | grep -E '02:00:00:00:0a:0b|02:00:00:00:0b:0b' || echo '(neither bridge-side MAC is in FDB; the bridge does not learn bridge-side veth MACs because they never appear as a frame source)'
+[?2004l(neither bridge-side MAC is in FDB; the bridge does not learn bridge-side veth MACs because they never appear as a frame source)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=1,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:0b:0a,dl_type=0x0800,nw_src=10.50.0.10,nw_dst=10.50.0.20,nw_proto=1'
+[?2004lFlow: icmp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:0b:0a,nw_src=10.50.0.10,nw_dst=10.50.0.20,nw_tos=0,nw_ecn=0,nw_ttl=0,nw_frag=no,icmp_type=0,icmp_code=0
+
+bridge("br0")
+-------------
+ 0. priority 0
+    NORMAL
+     -> forwarding to learned port
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,ip,in_port=1,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:0b:0a,nw_frag=no
+Datapath actions: 3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=1,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:de:ad,dl_type=0x0800'
+[?2004lFlow: ip,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:de:ad,nw_src=0.0.0.0,nw_dst=0.0.0.0,nw_proto=0,nw_tos=0,nw_ecn=0,nw_ttl=0,nw_frag=no
+
+bridge("br0")
+-------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,ip,in_port=1,dl_src=02:00:00:00:0a:0a,dl_dst=02:00:00:00:de:ad,nw_frag=no
+Datapath actions: 1,3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows | grep -c 'eth_type(0x0800)'
+[?2004l2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/flush br0
+[?2004ltable successfully flushed
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows | grep -c 'eth_type(0x0800)'
+[?2004l2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    1     0  02:00:00:00:0a:0a    0
+    2     0  02:00:00:00:0b:0a    0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-b python3 /tmp/inject.py veth-b 02:00:00:00:0a:0a ff:ff:ff:ff:ff:ff
+[?2004lsent ARP from veth-b src=02:00:00:00:0a:0a dst=ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 0.5
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    2     0  02:00:00:00:0b:0a    2
+    2     0  02:00:00:00:0a:0a    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-a ping -c 1 -W 2 10.50.0.20
+[?2004lPING 10.50.0.20 (10.50.0.20) 56(84) bytes of data.
+ovs-appctl fdb/show br0
+
+--- 10.50.0.20 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    2     0  02:00:00:00:0b:0a    1
+    1     0  02:00:00:00:0a:0a    1
+LOCAL     0  b6:06:b1:ca:d3:44    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 br-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 br-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-a 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-b 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 05:23:29 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 05:23:30+00:00 [COMMAND_EXIT_CODE="0"]
