@@ -1,0 +1,457 @@
+Script started on 2026-04-30 07:16:33+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:16:34 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v12a type veth peer name v12b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v23a type veth peer name v23b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v13a type veth peer name v13b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br1 v12a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br2 v12b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br2 v23a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br3 v23b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br1 v13a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br3 v13b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br1
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000028ce7df7b46
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(v12a): addr:6e:6c:3f:ba:16:84
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(v13a): addr:9e:39:a4:fc:f2:f4
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br1): addr:02:8c:e7:df:7b:46
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br2
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000121cd0f31d4e
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(v12b): addr:92:2b:50:42:c8:a5
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(v23a): addr:e6:78:17:65:8f:0e
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br2): addr:12:1c:d0:f3:1d:4e
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br3
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000826cc70a584b
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(v23b): addr:5e:7e:09:59:98:a2
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(v13b): addr:32:42:0f:af:25:dc
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br3): addr:82:6c:c7:0a:58:4b
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 rstp_enable=true other_config:rstp-priority=4096
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 rstp_enable=true other_config:rstp-priority=8192
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 rstp_enable=true other_config:rstp-priority=12288
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br1
+[?2004l---- br1 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  This bridge is the root
+
+Bridge ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v12a       Designated Forwarding 2000     128.1
+  v13a       Designated Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br2
+[?2004l---- br2 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v12b
+  root-path-cost  2000
+
+Bridge ID:
+  stp-priority    8192
+  stp-system-id   12:1c:d0:f3:1d:4e
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v12b       Root       Forwarding 2000     128.1
+  v23a       Designated Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br3
+[?2004l---- br3 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v13b
+  root-path-cost  2000
+
+Bridge ID:
+  stp-priority    12288
+  stp-system-id   82:6c:c7:0a:58:4b
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v23b       Alternate  Discarding 2000     128.1
+  v13b       Root       Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge br1 rstp_status
+[?2004l{rstp_bridge_id="1.000.028ce7df7b46", rstp_bridge_port_id="0000", rstp_designated_id="1.000.028ce7df7b46", rstp_designated_port_id="0000", rstp_root_id="1.000.028ce7df7b46", rstp_root_path_cost="0"}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge br2 rstp_status
+[?2004l{rstp_bridge_id="2.000.121cd0f31d4e", rstp_bridge_port_id="8001", rstp_designated_id="1.000.028ce7df7b46", rstp_designated_port_id="8001", rstp_root_id="1.000.028ce7df7b46", rstp_root_path_cost="2000"}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge br3 rstp_status
+[?2004l{rstp_bridge_id="3.000.826cc70a584b", rstp_bridge_port_id="8002", rstp_designated_id="1.000.028ce7df7b46", rstp_designated_port_id="8002", rstp_root_id="1.000.028ce7df7b46", rstp_root_path_cost="2000"}
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:16:57 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23b down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 8
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br1
+[?2004l---- br1 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  This bridge is the root
+
+Bridge ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v12a       Designated Forwarding 2000     128.1
+  v13a       Designated Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br2
+[?2004l---- br2 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v12b
+  root-path-cost  2000
+
+Bridge ID:
+  stp-priority    8192
+  stp-system-id   12:1c:d0:f3:1d:4e
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v12b       Root       Forwarding 2000     128.1
+  v23a       Disabled   Discarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br3
+[?2004l---- br3 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v13b
+  root-path-cost  2000
+
+Bridge ID:
+  stp-priority    12288
+  stp-system-id   82:6c:c7:0a:58:4b
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v23b       Disabled   Discarding 2000     128.1
+  v13b       Root       Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:17:07 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br1
+[?2004l---- br1 ----
+Root ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  This bridge is the root
+
+Bridge ID:
+  stp-priority    4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost     Pri.Nbr 
+  ---------- ---------- ---------- -------- -------
+  v12a       Designated Forwarding 2000     128.1
+  v13a       Designated Forwarding 2000     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl remove bridge br1 other_config rstp-priority
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl remove bridge br2 other_config rstp-priority
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl remove bridge br3 other_config rstp-priority
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 rstp_enable=false stp_enable=true other_config:stp-priority=4096
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 rstp_enable=false stp_enable=true other_config:stp-priority=8192
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 rstp_enable=false stp_enable=true other_config:stp-priority=12288
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 35
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl stp/show br1
+[?2004l---- br1 ----
+Root ID:
+  stp-priority  4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  This bridge is the root
+
+Bridge ID:
+  stp-priority  4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost  Pri.Nbr 
+  ---------- ---------- ---------- ----- -------
+  v12a       designated forwarding 2     128.1
+  v13a       designated forwarding 2     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl stp/show br2
+[?2004l---- br2 ----
+Root ID:
+  stp-priority  4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v12b
+  root-path-cost  2
+
+Bridge ID:
+  stp-priority  8192
+  stp-system-id   12:1c:d0:f3:1d:4e
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost  Pri.Nbr 
+  ---------- ---------- ---------- ----- -------
+  v12b       root       forwarding 2     128.1
+  v23a       designated forwarding 2     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl stp/show br3
+[?2004l---- br3 ----
+Root ID:
+  stp-priority  4096
+  stp-system-id   02:8c:e7:df:7b:46
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+  root-port       v13b
+  root-path-cost  2
+
+Bridge ID:
+  stp-priority  12288
+  stp-system-id   82:6c:c7:0a:58:4b
+  stp-hello-time  2s
+  stp-max-age     20s
+  stp-fwd-delay   15s
+
+  Interface  Role       State      Cost  Pri.Nbr 
+  ---------- ---------- ---------- ----- -------
+  v23b       alternate  blocking   2     128.1
+  v13b       root       forwarding 2     128.2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 rstp_enable=true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge br1 stp_enable rstp_enable
+[?2004ltrue
+true
+[?2004hroot@lab-openvswitch:~/network-onboard# tail -3 /usr/local/var/log/openvswitch/ovs-vswitchd.log | grep -iE 'stp|rstp' || true
+[?2004l2026-04-30T07:17:59.041Z|00002|[01;31m[Kstp[m[K(handler294)|WARN|br3: received BPDU of unexpected type 2
+2026-04-30T07:18:01.051Z|00003|[01;31m[Kstp[m[K(handler294)|WARN|br2: received BPDU of unexpected type 2
+2026-04-30T07:18:01.051Z|00004|[01;31m[Kstp[m[K(handler294)|WARN|br3: received BPDU of unexpected type 2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 rstp_enable=false
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 stp_enable=false
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 stp_enable=false
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 stp_enable=false
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12b down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13b down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lbr1 type bridge
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lbr2 type bridge
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lbr3 type bridge
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr3 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v12l type veth peer name v12m
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v23l type veth peer name v23m
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v13l type veth peer name v13m
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12l master lbr1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12m master lbr2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23l master lbr2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23m master lbr3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13l master lbr1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13m master lbr3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12l up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12m up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23l up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v23m up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13l up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v13m up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr1 type bridge stp_state 1 priority 4096
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr2 type bridge stp_state 1 priority 8192
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr3 type bridge stp_state 1 priority 12288
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 35
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge -d link show
+[?2004l237: lbr1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr1 
+238: lbr2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr2 
+239: lbr3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr3 
+240: v12m@v12l: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr2 state forwarding priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+241: v12l@v12m: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr1 state forwarding priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+242: v23m@v23l: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr3 state blocking priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+243: v23l@v23m: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr2 state forwarding priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+244: v13m@v13l: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr3 state forwarding priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+245: v13l@v13m: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master lbr1 state forwarding priority 32 cost 2 
+    hairpin off guard off root_block off fastleave off learning on flood on mcast_flood on mcast_to_unicast off neigh_suppress off vlan_tunnel off isolated off 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -d link show lbr1 | head -10
+[?2004l237: lbr1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 0e:41:21:47:91:dc brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 65535 
+    bridge forward_delay 1500 hello_time 200 max_age 2000 ageing_time 3000 stp_state 1 priority 4096 vlan_filtering 0 vlan_protocol 802.1Q bridge_id 1000.e:41:21:47:91:dc designated_root 1000.e:41:21:47:91:dc root_port 0 root_path_cost 0 topology_change 1 topology_change_detected 1 hello_timer    1.50 tcn_timer    0.00 topology_change_timer    0.54 gc_timer  258.14 vlan_default_pvid 1 vlan_stats_enabled 0 vlan_stats_per_port 0 group_fwd_mask 0 group_address 01:80:c2:00:00:00 mcast_snooping 1 mcast_router 1 mcast_query_use_ifaddr 0 mcast_querier 0 mcast_hash_elasticity 16 mcast_hash_max 4096 mcast_last_member_count 2 mcast_startup_query_count 2 mcast_last_member_interval 100 mcast_membership_interval 26000 mcast_querier_interval 25500 mcast_query_interval 12500 mcast_query_response_interval 1000 mcast_startup_query_interval 3124 mcast_stats_enabled 0 mcast_igmp_version 2 mcast_mld_version 1 nf_call_iptables 0 nf_call_ip6tables 0 nf_call_arptables 0 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -d link show lbr2 | head -10
+[?2004l238: lbr2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether f6:d2:87:ca:f7:5a brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 65535 
+    bridge forward_delay 1500 hello_time 200 max_age 2000 ageing_time 3000 stp_state 1 priority 8192 vlan_filtering 0 vlan_protocol 802.1Q bridge_id 2000.f6:d2:87:ca:f7:5a designated_root 2000.f6:d2:87:ca:f7:5a root_port 1 root_path_cost 2 topology_change 1 topology_change_detected 0 hello_timer    0.00 tcn_timer    0.00 topology_change_timer    0.00 gc_timer  258.14 vlan_default_pvid 1 vlan_stats_enabled 0 vlan_stats_per_port 0 group_fwd_mask 0 group_address 01:80:c2:00:00:00 mcast_snooping 1 mcast_router 1 mcast_query_use_ifaddr 0 mcast_querier 0 mcast_hash_elasticity 16 mcast_hash_max 4096 mcast_last_member_count 2 mcast_startup_query_count 2 mcast_last_member_interval 100 mcast_membership_interval 26000 mcast_querier_interval 25500 mcast_query_interval 12500 mcast_query_response_interval 1000 mcast_startup_query_interval 3124 mcast_stats_enabled 0 mcast_igmp_version 2 mcast_mld_version 1 nf_call_iptables 0 nf_call_ip6tables 0 nf_call_arptables 0 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -d link show lbr3 | head -10
+[?2004l239: lbr3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether e2:3f:22:3d:73:ca brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 65535 
+    bridge forward_delay 1500 hello_time 200 max_age 2000 ageing_time 3000 stp_state 1 priority 12288 vlan_filtering 0 vlan_protocol 802.1Q bridge_id 3000.e2:3f:22:3d:73:ca designated_root 3000.e2:3f:22:3d:73:ca root_port 2 root_path_cost 2 topology_change 1 topology_change_detected 0 hello_timer    0.00 tcn_timer    0.00 topology_change_timer    0.00 gc_timer  258.14 vlan_default_pvid 1 vlan_stats_enabled 0 vlan_stats_per_port 0 group_fwd_mask 0 group_address 01:80:c2:00:00:00 mcast_snooping 1 mcast_router 1 mcast_query_use_ifaddr 0 mcast_querier 0 mcast_hash_elasticity 16 mcast_hash_max 4096 mcast_last_member_count 2 mcast_startup_query_count 2 mcast_last_member_interval 100 mcast_membership_interval 26000 mcast_querier_interval 25500 mcast_query_interval 12500 mcast_query_response_interval 1000 mcast_startup_query_interval 3124 mcast_stats_enabled 0 mcast_igmp_version 2 mcast_mld_version 1 nf_call_iptables 0 nf_call_ip6tables 0 nf_call_arptables 0 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 
+[?2004hroot@lab-openvswitch:~/network-onboard# for p in v12l v23l v13l v12m v23m v13m; do printf '%s state=' $p; cat /sys/class/net/$p/brport/state 2>/dev/null || printf 'N/A'; echo; done
+[?2004lv12l state=3
+
+v23l state=3
+
+v13l state=3
+
+v12m state=3
+
+v23m state=4
+
+v13m state=3
+
+[?2004hroot@lab-openvswitch:~/network-onboard# for b in lbr1 lbr2 lbr3; do printf '%s root_id=' $b; cat /sys/class/net/$b/bridge/root_id 2>/dev/null; printf ' %s root_path_cost=' $b; cat /sys/class/net/$b/bridge/root_path_cost 2>/dev/null; echo; done
+[?2004llbr1 root_id=1000.0e41214791dc
+ lbr1 root_path_cost=0
+
+lbr2 root_id=1000.0e41214791dc
+ lbr2 root_path_cost=2
+
+lbr3 root_id=1000.0e41214791dc
+ lbr3 root_path_cost=2
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v12a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v23a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v13a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v12l 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v23l 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v13l 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:18:52 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 07:18:53+00:00 [COMMAND_EXIT_CODE="0"]
