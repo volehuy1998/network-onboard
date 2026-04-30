@@ -1,182 +1,0 @@
-Script started on 2026-04-29 20:51:37+00:00 [TERM="screen-256color" TTY="/dev/pts/4" COLUMNS="127" LINES="35"]
-[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lWed Apr 29 08:51:39 PM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -1
-[?2004lovs-vsctl (Open vSwitch) 2.17.9
-[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -10
-[?2004l * Starting ovsdb-server
- * system ID not configured, please use --system-id
- * Configuring Open vSwitch system IDs
- * Starting ovs-vswitchd
- * Enabling remote OVSDB managers
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_red type veth peer name veth_red_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_blue type veth peer name veth_blue_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red netns ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue netns ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_red_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_blue_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set veth_red up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip addr add 10.0.0.1/24 dev veth_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set veth_blue up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip addr add 10.0.0.2/24 dev veth_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
-[?2004l port  VLAN  MAC                Age
-    1     0  56:a6:87:c1:15:9c    2
-    2     0  e2:10:43:fa:d2:bd    1
-[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 3 10.0.0.2 2>&1 | tail -5
-[?2004l64 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.038 ms
-
---- 10.0.0.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2057ms
-rtt min/avg/max/mdev = 0.038/0.211/0.549/0.238 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
-[?2004l port  VLAN  MAC                Age
-    2     0  e2:10:43:fa:d2:bd    0
-    1     0  56:a6:87:c1:15:9c    0
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 other_config:mac-aging-time=10
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 1 10.0.0.2 2>&1 | tail -3
-[?2004l--- 10.0.0.2 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.033/0.033/0.033/0.000 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
-[?2004l port  VLAN  MAC                Age
-    2     0  e2:10:43:fa:d2:bd    1
-    1     0  56:a6:87:c1:15:9c    0
-[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
-[?2004l port  VLAN  MAC                Age
-    1     0  56:a6:87:c1:15:9c   10
-    2     0  e2:10:43:fa:d2:bd    7
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add name lbr0 type bridge
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr0 up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_l1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_l2
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_l1 type veth peer name veth_l1_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_l2 type veth peer name veth_l2_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l1 netns ns_l1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l2 netns ns_l2
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l1_br master lbr0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l2_br master lbr0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l1_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_l2_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l1 ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l1 ip link set veth_l1 up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l1 ip addr add 10.0.0.3/24 dev veth_l1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l2 ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l2 ip link set veth_l2 up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l2 ip addr add 10.0.0.4/24 dev veth_l2
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge fdb show br lbr0
-[?2004l33:33:00:00:00:01 dev lbr0 self permanent
-01:00:5e:00:00:6a dev lbr0 self permanent
-33:33:00:00:00:6a dev lbr0 self permanent
-01:00:5e:00:00:01 dev lbr0 self permanent
-33:33:ff:29:92:ac dev lbr0 self permanent
-ca:2d:00:29:92:ac dev lbr0 vlan 1 master lbr0 permanent
-ca:2d:00:29:92:ac dev lbr0 master lbr0 permanent
-d2:7f:2f:01:d3:b6 dev veth_l1_br master lbr0 
-a2:8c:e2:6f:26:0c dev veth_l1_br vlan 1 master lbr0 permanent
-a2:8c:e2:6f:26:0c dev veth_l1_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l1_br self permanent
-01:00:5e:00:00:01 dev veth_l1_br self permanent
-33:33:ff:6f:26:0c dev veth_l1_br self permanent
-d6:6a:ff:88:00:d7 dev veth_l2_br master lbr0 
-f2:ed:e9:36:32:79 dev veth_l2_br vlan 1 master lbr0 permanent
-f2:ed:e9:36:32:79 dev veth_l2_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l2_br self permanent
-01:00:5e:00:00:01 dev veth_l2_br self permanent
-33:33:ff:36:32:79 dev veth_l2_br self permanent
-[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l1 ping -c 3 10.0.0.4 2>&1 | tail -5
-[?2004l64 bytes from 10.0.0.4: icmp_seq=3 ttl=64 time=0.056 ms
-
---- 10.0.0.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2042ms
-rtt min/avg/max/mdev = 0.043/0.049/0.056/0.005 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# bridge fdb show br lbr0
-[?2004l33:33:00:00:00:01 dev lbr0 self permanent
-01:00:5e:00:00:6a dev lbr0 self permanent
-33:33:00:00:00:6a dev lbr0 self permanent
-01:00:5e:00:00:01 dev lbr0 self permanent
-33:33:ff:29:92:ac dev lbr0 self permanent
-ca:2d:00:29:92:ac dev lbr0 vlan 1 master lbr0 permanent
-ca:2d:00:29:92:ac dev lbr0 master lbr0 permanent
-d2:7f:2f:01:d3:b6 dev veth_l1_br master lbr0 
-a2:8c:e2:6f:26:0c dev veth_l1_br vlan 1 master lbr0 permanent
-a2:8c:e2:6f:26:0c dev veth_l1_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l1_br self permanent
-01:00:5e:00:00:01 dev veth_l1_br self permanent
-33:33:ff:6f:26:0c dev veth_l1_br self permanent
-d6:6a:ff:88:00:d7 dev veth_l2_br master lbr0 
-f2:ed:e9:36:32:79 dev veth_l2_br vlan 1 master lbr0 permanent
-f2:ed:e9:36:32:79 dev veth_l2_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l2_br self permanent
-01:00:5e:00:00:01 dev veth_l2_br self permanent
-33:33:ff:36:32:79 dev veth_l2_br self permanent
-[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr0 type bridge ageing_time 1000
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_l1 ping -c 1 10.0.0.4 2>&1 | tail -3
-[?2004l--- 10.0.0.4 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.030/0.030/0.030/0.000 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# bridge fdb show br lbr0
-[?2004l33:33:00:00:00:01 dev lbr0 self permanent
-01:00:5e:00:00:6a dev lbr0 self permanent
-33:33:00:00:00:6a dev lbr0 self permanent
-01:00:5e:00:00:01 dev lbr0 self permanent
-33:33:ff:29:92:ac dev lbr0 self permanent
-ca:2d:00:29:92:ac dev lbr0 vlan 1 master lbr0 permanent
-ca:2d:00:29:92:ac dev lbr0 master lbr0 permanent
-d2:7f:2f:01:d3:b6 dev veth_l1_br master lbr0 
-a2:8c:e2:6f:26:0c dev veth_l1_br vlan 1 master lbr0 permanent
-a2:8c:e2:6f:26:0c dev veth_l1_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l1_br self permanent
-01:00:5e:00:00:01 dev veth_l1_br self permanent
-33:33:ff:6f:26:0c dev veth_l1_br self permanent
-d6:6a:ff:88:00:d7 dev veth_l2_br master lbr0 
-f2:ed:e9:36:32:79 dev veth_l2_br vlan 1 master lbr0 permanent
-f2:ed:e9:36:32:79 dev veth_l2_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l2_br self permanent
-01:00:5e:00:00:01 dev veth_l2_br self permanent
-33:33:ff:36:32:79 dev veth_l2_br self permanent
-[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge fdb show br lbr0
-[?2004l33:33:00:00:00:01 dev lbr0 self permanent
-01:00:5e:00:00:6a dev lbr0 self permanent
-33:33:00:00:00:6a dev lbr0 self permanent
-01:00:5e:00:00:01 dev lbr0 self permanent
-33:33:ff:29:92:ac dev lbr0 self permanent
-ca:2d:00:29:92:ac dev lbr0 vlan 1 master lbr0 permanent
-ca:2d:00:29:92:ac dev lbr0 master lbr0 permanent
-d2:7f:2f:01:d3:b6 dev veth_l1_br master lbr0 
-a2:8c:e2:6f:26:0c dev veth_l1_br vlan 1 master lbr0 permanent
-a2:8c:e2:6f:26:0c dev veth_l1_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l1_br self permanent
-01:00:5e:00:00:01 dev veth_l1_br self permanent
-33:33:ff:6f:26:0c dev veth_l1_br self permanent
-d6:6a:ff:88:00:d7 dev veth_l2_br master lbr0 
-f2:ed:e9:36:32:79 dev veth_l2_br vlan 1 master lbr0 permanent
-f2:ed:e9:36:32:79 dev veth_l2_br master lbr0 permanent
-33:33:00:00:00:01 dev veth_l2_br self permanent
-01:00:5e:00:00:01 dev veth_l2_br self permanent
-33:33:ff:36:32:79 dev veth_l2_br self permanent
-[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_l1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_l2
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -5
-[?2004l * Exiting ovs-vswitchd (206322)
- * Exiting ovsdb-server (206305)
-[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lWed Apr 29 08:52:55 PM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# exit
-[?2004lexit
-
-Script done on 2026-04-29 20:52:56+00:00 [COMMAND_EXIT_CODE="0"]

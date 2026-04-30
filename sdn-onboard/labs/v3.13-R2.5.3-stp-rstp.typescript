@@ -1,149 +1,0 @@
-Script started on 2026-04-30 02:17:28+00:00 [TERM="screen-256color" TTY="/dev/pts/4" COLUMNS="127" LINES="35"]
-[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lThu Apr 30 02:17:30 AM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -1
-[?2004lovs-vsctl (Open vSwitch) 2.17.9
-[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -5
-[?2004l * Starting ovsdb-server
- * system ID not configured, please use --system-id
- * Configuring Open vSwitch system IDs
- * Starting ovs-vswitchd
- * Enabling remote OVSDB managers
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br1; ovs-vsctl add-br br2; ovs-vsctl add-br br3
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v12a type veth peer name v12b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v23a type veth peer name v23b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v13a type veth peer name v13b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v12a up; ip link set v12b up; ip link set v23a up; ip link set v23b up; ip link set v13a up; ip link set v13b up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br1 v12a; ovs-vsctl add-port br2 v12b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br2 v23a; ovs-vsctl add-port br3 v23b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br1 v13a; ovs-vsctl add-port br3 v13b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 other_config:rstp-priority=4096
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 other_config:rstp-priority=8192
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 other_config:rstp-priority=12288
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br1 rstp_enable=true
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br2 rstp_enable=true
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br3 rstp_enable=true
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 8
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br1
-[?2004l---- br1 ----
-Root ID:
-  stp-priority    4096
-  stp-system-id   b6:ea:e1:fe:dd:48
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-  This bridge is the root
-
-Bridge ID:
-  stp-priority    4096
-  stp-system-id   b6:ea:e1:fe:dd:48
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-
-  Interface  Role       State      Cost     Pri.Nbr 
-  ---------- ---------- ---------- -------- -------
-  v12a       Designated Forwarding 2000     128.1
-  v13a       Designated Forwarding 2000     128.2
-
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br2
-[?2004l---- br2 ----
-Root ID:
-  stp-priority    4096
-  stp-system-id   b6:ea:e1:fe:dd:48
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-  root-port       v12b
-  root-path-cost  2000
-
-Bridge ID:
-  stp-priority    8192
-  stp-system-id   66:03:42:85:7d:45
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-
-  Interface  Role       State      Cost     Pri.Nbr 
-  ---------- ---------- ---------- -------- -------
-  v12b       Root       Forwarding 2000     128.1
-  v23a       Designated Forwarding 2000     128.2
-
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl rstp/show br3
-[?2004l---- br3 ----
-Root ID:
-  stp-priority    4096
-  stp-system-id   b6:ea:e1:fe:dd:48
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-  root-port       v13b
-  root-path-cost  2000
-
-Bridge ID:
-  stp-priority    12288
-  stp-system-id   92:96:f5:97:51:4c
-  stp-hello-time  2s
-  stp-max-age     20s
-  stp-fwd-delay   15s
-
-  Interface  Role       State      Cost     Pri.Nbr 
-  ---------- ---------- ---------- -------- -------
-  v23b       Alternate  Discarding 2000     128.1
-  v13b       Root       Forwarding 2000     128.2
-
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,rstp_enable list bridge
-[?2004lname                : br2
-rstp_enable         : true
-
-name                : br3
-rstp_enable         : true
-
-name                : br1
-rstp_enable         : true
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br1; ovs-vsctl del-br br2; ovs-vsctl del-br br3
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v12a; ip link del v23a; ip link del v13a
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add name lbr1 type bridge stp_state 1 priority 4096 forward_delay 400 hello_time 100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add name lbr2 type bridge stp_state 1 priority 8192 forward_delay 400 hello_time 100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add name lbr3 type bridge stp_state 1 priority 12288 forward_delay 400 hello_time 100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr1 up; ip link set lbr2 up; ip link set lbr3 up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lv12a type veth peer name lv12b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lv23a type veth peer name lv23b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add lv13a type veth peer name lv13b
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lv12a master lbr1; ip link set lv12b master lbr2
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lv23a master lbr2; ip link set lv23b master lbr3
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lv13a master lbr1; ip link set lv13b master lbr3
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lv12a up; ip link set lv12b up; ip link set lv23a up; ip link set lv23b up; ip link set lv13a up; ip link set lv13b up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# for b in lbr1 lbr2 lbr3; do echo == $b ==; cat /sys/class/net/$b/bridge/root_id; cat /sys/class/net/$b/bridge/bridge_id; cat /sys/class/net/$b/bridge/topology_change; done
-[?2004l== lbr1 ==
-1000.0e41214791dc
-1000.0e41214791dc
-1
-== lbr2 ==
-1000.0e41214791dc
-2000.f6d287caf75a
-1
-== lbr3 ==
-1000.0e41214791dc
-3000.e23f223d73ca
-1
-[?2004hroot@lab-openvswitch:~/network-onboard# for p in lv12a lv12b lv23a lv23b lv13a lv13b; do echo $p state=$(cat /sys/class/net/$p/brport/state 2>/dev/null); done
-[?2004llv12a state=3
-lv12b state=3
-lv23a state=3
-lv23b state=4
-lv13a state=3
-lv13b state=3
-[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr1; ip link del lbr2; ip link del lbr3
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lv12a 2>/dev/null; ip link del lv23a 2>/dev/null; ip link del lv13a 2>/dev/null; true
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -3
-[?2004l * Exiting ovs-vswitchd (693166)
- * Exiting ovsdb-server (693145)
-[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lThu Apr 30 02:18:23 AM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# exit
-[?2004lexit
-
-Script done on 2026-04-30 02:18:24+00:00 [COMMAND_EXIT_CODE="0"]

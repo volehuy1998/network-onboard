@@ -1,305 +1,0 @@
-Script started on 2026-04-29 19:27:41+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
-[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lWed Apr 29 07:27:42 PM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# hostname; uname -r
-[?2004llab-openvswitch
-5.15.0-173-generic
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -3
-[?2004lovs-vsctl (Open vSwitch) 2.17.9
-DB Schema 8.3.0
-[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl status 2>&1 | head -5
-[?2004lovsdb-server is not running
-ovs-vswitchd is not running
-[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -10
-[?2004l * Starting ovsdb-server
- * system ID not configured, please use --system-id
- * Configuring Open vSwitch system IDs
- * Starting ovs-vswitchd
- * Enabling remote OVSDB managers
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show 2>&1 | head -5
-[?2004l5f8e9a74-1559-4375-9b90-a7474ef58029
-    ovs_version: "2.17.9"
-[?2004hroot@lab-openvswitch:~/network-onboard# lsmod | grep -E '^(openvswitch|nf_conntrack|nf_nat|nf_conncount|nsh)\b' || echo '(no openvswitch modules)'
-[?2004l[01;31m[Kopenvswitch[m[K           176128  0
-[01;31m[Knsh[m[K                    16384  1 openvswitch
-[01;31m[Knf_conncount[m[K           24576  1 openvswitch
-[01;31m[Knf_nat[m[K                 49152  1 openvswitch
-[01;31m[Knf_conntrack[m[K          172032  3 nf_nat,openvswitch,nf_conncount
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name,bridges list open_vswitch | head -10
-[?2004lovs-vsctl: Open_vSwitch does not contain a column whose name matches "name"
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name,ports,fail_mode,datapath_type list bridge br0
-[?2004l_uuid               : 420e4ca7-d757-442f-907e-706c3cabf354
-name                : br0
-ports               : [1a25f9b3-5b5c-4a5f-8e31-eb1332c3bc00]
-fail_mode           : []
-datapath_type       : ""
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name,interfaces,tag,trunks,vlan_mode list port br0
-[?2004l_uuid               : 1a25f9b3-5b5c-4a5f-8e31-eb1332c3bc00
-name                : br0
-interfaces          : [b9832d48-630b-417a-a93b-5a0540079158]
-tag                 : []
-trunks              : []
-vlan_mode           : []
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name,type,ofport,mac_in_use,mtu list interface br0
-[?2004l_uuid               : b9832d48-630b-417a-a93b-5a0540079158
-name                : br0
-type                : internal
-ofport              : 65534
-mac_in_use          : "a6:4c:0e:42:2f:44"
-mtu                 : 1500
-[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show br0
-[?2004lbr0              DOWN           a6:4c:0e:42:2f:44 <BROADCAST,MULTICAST> 
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
-[?2004l cookie=0x0, duration=4.927s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 fail-mode=secure
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 fail-mode=standalone
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
-[?2004l cookie=0x0, duration=0.820s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=LOCAL,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806' 2>&1 | tail -25
-[?2004lFlow: arp,in_port=LOCAL,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
-
-bridge("br0")
--------------
- 0. priority 0
-    NORMAL
-     -> no learned MAC for destination, flooding
-
-Final flow: unchanged
-Megaflow: recirc_id=0,eth,arp,in_port=LOCAL,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
-Datapath actions: drop
-[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_red type veth peer name veth_red_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_blue type veth peer name veth_blue_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red netns ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue netns ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_red_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_blue_br up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_red_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_blue_br
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip link set veth_red up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ip addr add 10.0.0.1/24 dev veth_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set lo up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip link set veth_blue up
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_blue ip addr add 10.0.0.2/24 dev veth_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 3 10.0.0.2 2>&1 | tail -10
-[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
-64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.368 ms
-64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.042 ms
-64 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.040 ms
-
---- 10.0.0.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2050ms
-rtt min/avg/max/mdev = 0.040/0.150/0.368/0.154 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0 2>&1 | head -10
-[?2004l port  VLAN  MAC                Age
-    1     0  56:a6:87:c1:15:9c    1
-    2     0  e2:10:43:fa:d2:bd    1
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 int0 -- set interface int0 type=internal
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 tap0 -- set interface tap0 type=tap
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use list interface int0 tap0
-[?2004lname                : int0
-type                : internal
-ofport              : 3
-mac_in_use          : "b2:fb:2c:fe:12:ac"
-
-name                : tap0
-type                : tap
-ofport              : 4
-mac_in_use          : "5a:4a:dd:48:3b:3d"
-[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show int0 tap0 2>&1 | head -5
-[?2004lError: either "dev" is duplicate, or "tap0" is a garbage.
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br-int
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br-tun
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-int patch-int -- set interface patch-int type=patch options:peer=patch-tun
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-tun patch-tun -- set interface patch-tun type=patch options:peer=patch-int
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,options list interface patch-int patch-tun
-[?2004lname                : patch-int
-type                : patch
-options             : {peer=patch-tun}
-
-name                : patch-tun
-type                : patch
-options             : {peer=patch-int}
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show 2>&1 | head -30
-[?2004lsystem@ovs-system: hit:14 missed:11
-  br-int:
-    br-int 65534/6: (internal)
-    patch-int 1/none: (patch: peer=patch-tun)
-  br-tun:
-    br-tun 65534/7: (internal)
-    patch-tun 1/none: (patch: peer=patch-int)
-  br0:
-    br0 65534/1: (internal)
-    int0 3/4: (internal)
-    tap0 4/5: (tap)
-    veth_blue_br 2/3: (system)
-    veth_red_br 1/2: (system)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set interface int0 mtu_request=9000
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,mtu,mtu_request list interface int0
-[?2004lname                : int0
-mtu                 : 9000
-mtu_request         : 9000
-[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show int0
-[?2004lint0             DOWN           b2:fb:2c:fe:12:ac <BROADCAST,MULTICAST> 
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 other_config:hwaddr="02:0a:0b:0c:0d:0e"
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link show br0
-[?2004lbr0              DOWN           02:0a:0b:0c:0d:0e <BROADCAST,MULTICAST> 
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=other_config list bridge br0
-[?2004lother_config        : {hwaddr="02:0a:0b:0c:0d:0e"}
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br-user -- set bridge br-user datapath_type=netdev
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,datapath_type list bridge
-[?2004lname                : br-tun
-datapath_type       : ""
-
-name                : br-int
-datapath_type       : ""
-
-name                : br-user
-datapath_type       : netdev
-
-name                : br0
-datapath_type       : ""
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show 2>&1 | head -40
-[?2004lnetdev@ovs-netdev: hit:0 missed:0
-  br-user:
-    br-user 65534/1: (tap)
-system@ovs-system: hit:15 missed:11
-  br-int:
-    br-int 65534/6: (internal)
-    patch-int 1/none: (patch: peer=patch-tun)
-  br-tun:
-    br-tun 65534/7: (internal)
-    patch-tun 1/none: (patch: peer=patch-int)
-  br0:
-    br0 65534/1: (internal)
-    int0 3/4: (internal)
-    tap0 4/5: (tap)
-    veth_blue_br 2/3: (system)
-    veth_red_br 1/2: (system)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port veth_red_br tag=100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port veth_blue_br tag=100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 2 10.0.0.2 2>&1 | tail -6
-[?2004l64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.339 ms
-64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.092 ms
-
---- 10.0.0.2 ping statistics ---
-2 packets transmitted, 2 received, 0% packet loss, time 1001ms
-rtt min/avg/max/mdev = 0.092/0.215/0.339/0.123 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port veth_blue_br tag=200
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 2 -W 1 10.0.0.2 2>&1 | tail -6 || echo '(blocked by VLAN)'
-[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
-
---- 10.0.0.2 ping statistics ---
-2 packets transmitted, 0 received, 100% packet loss, time 1031ms
-
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear port veth_blue_br tag
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port veth_blue_br trunks=100,200
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 2 -W 1 10.0.0.2 2>&1 | tail -6 || echo '(no reply, expected: blue is trunk)'
-[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
-
---- 10.0.0.2 ping statistics ---
-2 packets transmitted, 0 received, 100% packet loss, time 1004ms
-
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear port veth_blue_br trunks
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port veth_blue_br tag=100
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 other_config:mac-aging-time=10
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_red ping -c 1 10.0.0.2 2>&1 | tail -3
-[?2004l--- 10.0.0.2 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.232/0.232/0.232/0.000 ms
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0 2>&1 | head -5
-[?2004l port  VLAN  MAC                Age
-    2   100  e2:10:43:fa:d2:bd    1
-    1   100  56:a6:87:c1:15:9c    0
-[?2004hroot@lab-openvswitch:~/network-onboard# sleep 12
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0 2>&1 | head -5
-[?2004l port  VLAN  MAC                Age
-    1   100  56:a6:87:c1:15:9c   14
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name list bridge br0
-[?2004l_uuid               : 420e4ca7-d757-442f-907e-706c3cabf354
-name                : br0
-[?2004hroot@lab-openvswitch:~/network-onboard# BRUUID=$(ovs-vsctl --columns=_uuid --bare list bridge br0); echo $BRUUID
-[?2004l420e4ca7-d757-442f-907e-706c3cabf354
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge $BRUUID name
-[?2004lbr0
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name list bridge $BRUUID
-[?2004l_uuid               : 420e4ca7-d757-442f-907e-706c3cabf354
-name                : br0
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br-test
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br-test 2>&1 || echo '(expected error, bridge exists)'
-[?2004lovs-vsctl: cannot create a bridge named br-test because a bridge named br-test already exists
-(expected error, bridge exists)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br-test && echo '(no-op accepted)'
-[?2004l(no-op accepted)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br-test
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=LOCAL,dl_src=02:00:00:00:00:aa,dl_dst=02:00:00:00:00:bb,dl_type=0x0800,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_proto=6,tp_src=12345,tp_dst=80' 2>&1 | tail -30
-[?2004lFlow: tcp,in_port=LOCAL,vlan_tci=0x0000,dl_src=02:00:00:00:00:aa,dl_dst=02:00:00:00:00:bb,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_tos=0,nw_ecn=0,nw_ttl=0,nw_frag=no,tp_src=12345,tp_dst=80,tcp_flags=0
-
-bridge("br0")
--------------
- 0. priority 0
-    NORMAL
-     -> no learned MAC for destination, flooding
-
-Final flow: unchanged
-Megaflow: recirc_id=0,eth,ip,in_port=LOCAL,dl_src=02:00:00:00:00:aa,dl_dst=02:00:00:00:00:bb,nw_frag=no
-Datapath actions: 4,5
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=LOCAL' 2>&1 | tail -15
-[?2004lFlow: in_port=LOCAL,vlan_tci=0x0000,dl_src=00:00:00:00:00:00,dl_dst=00:00:00:00:00:00,dl_type=0x0000
-
-bridge("br0")
--------------
- 0. priority 0
-    NORMAL
-     -> no learned MAC for destination, flooding
-
-Final flow: unchanged
-Megaflow: recirc_id=0,eth,in_port=LOCAL,dl_src=00:00:00:00:00:00,dl_dst=00:00:00:00:00:00,dl_type=0x0000
-Datapath actions: 4,5
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set-manager ptcp:6640
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ss -tlnp 2>&1 | grep 6640 || echo '(no listener)'
-[?2004lLISTEN 0      10           0.0.0.0:[01;31m[K6640[m[K       0.0.0.0:*    users:(("ovsdb-server",pid=64813,fd=24)) 
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --db=tcp:127.0.0.1:6640 list bridge br0 2>&1 | head -10
-[?2004l_uuid               : 420e4ca7-d757-442f-907e-706c3cabf354
-auto_attach         : []
-controller          : []
-datapath_id         : "0000020a0b0c0d0e"
-datapath_type       : ""
-datapath_version    : "<unknown>"
-external_ids        : {}
-fail_mode           : standalone
-flood_vlans         : []
-flow_tables         : {}
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-manager
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br-int
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br-tun
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br-user
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_red
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_blue
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_red_br 2>&1 || true
-[?2004lCannot find device "veth_red_br"
-[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_blue_br 2>&1 || true
-[?2004lCannot find device "veth_blue_br"
-[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -5
-[?2004l * Exiting ovs-vswitchd (64830)
- * Exiting ovsdb-server (64813)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version 2>&1 | head -1
-[?2004lovs-vsctl (Open vSwitch) 2.17.9
-[?2004hroot@lab-openvswitch:~/network-onboard# lsmod | grep -E '^openvswitch\b' || echo '(module unloaded or refcount-0 only)'
-[?2004l[01;31m[Kopenvswitch[m[K           176128  0
-[?2004hroot@lab-openvswitch:~/network-onboard# df -h / | tail -1
-[?2004l/dev/mapper/ubuntu--vg-root--lv  8.1G  6.2G  1.5G  82% /
-[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lWed Apr 29 07:29:23 PM UTC 2026
-[?2004hroot@lab-openvswitch:~/network-onboard# exit
-[?2004lexit
-
-Script done on 2026-04-29 19:29:24+00:00 [COMMAND_EXIT_CODE="0"]
