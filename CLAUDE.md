@@ -551,6 +551,36 @@ Scope: every lab transcript under `sdn-onboard/labs/`, every curriculum quote of
 
 (Origin: 2026-04-29 owner directive, codified by plan v3.13 R0. Practice 8 and 9 added 2026-04-30 after R1.B's first capture surfaced the no-synthetic-structure rule.)
 
+### Rule 19: Audience-Centred Pedagogy for the Onboard Curriculum (mandatory)
+
+> **Owner directive of 2026-04-30:** *"The target audience consists of traditional computer network engineers learning OpenvSwitch/OpenFlow/OVN for the first time, so the plans in sdn-onboard/* need to be explained in a way that engineers can easily understand. The exercises in sdn-onboard/labs/v3.13-R2-* are too concise, making them incomprehensible to a traditional computer network engineer."*
+
+The target audience for every `sdn-onboard/*.md` file (curriculum, lab, source-track) is a **traditional computer-network engineer learning Open vSwitch, OpenFlow, and OVN for the first time**. Concretely, the assumed reader is CCNA-trained or Juniper-trained at minimum, has 2 to 10 years of experience operating real switches and routers, knows Cisco IOS or Junos CLI in muscle memory, has built campus VLANs and trunks and STP topologies, and treats Linux as familiar but not as a first-class networking platform. The reader does not yet have a mental model for "a switch implemented as a userspace daemon", "a flow table programmed by a controller", or "a virtual switch managed by a database". Those are exactly the conceptual jumps the curriculum is responsible for teaching.
+
+**Concrete writing rules that follow from the audience.**
+
+First, every concept that has a traditional-network analogue **must be introduced through that analogue**. Open vSwitch's bridge primitive maps to a Cisco switch's chassis. OVS's `Port.tag` maps to Cisco's `switchport access vlan N`. OVS's `Port.trunks` maps to Cisco's `switchport trunk allowed vlan`. OVS's RSTP role names (Root, Designated, Alternate) map to the same names in 802.1D-2004. The reader's existing vocabulary is the bridge into the new vocabulary; do not introduce a new term as if it had no antecedent.
+
+Second, every non-obvious data path, state machine, or internal switch behaviour **must include an ASCII model diagram inside the curriculum prose**. The diagram is not optional decoration; it is the cognitive scaffold that lets a traditional-network engineer visualise what the switch is doing internally versus on the wire. Mandatory diagram subjects include (but are not limited to): the in-the-switch-versus-on-the-wire VLAN tag distinction, the patch-port-as-internal-wire abstraction, the access-port-versus-trunk-port frame-format transformation, the kernel-datapath-versus-userspace-datapath dispatch, the OpenFlow-port-number-versus-datapath-port-number mapping, the upcall-and-megaflow translation cycle, the OVSDB-IDL-and-bridge-reconfigure loop, the `xlate_normal` learning behaviour, the conntrack zone scoping, and any tunnel encapsulation chain. ASCII diagrams are written in fenced code blocks with the info string `ascii` (which is exempt from `lab_verbatim_check.py`).
+
+Third, **density is not depth**. A page with 30 fenced verbatim command blocks and 10 sentences of prose is not denser than a page with 15 verbatim blocks and 60 sentences of prose; it is shallower, because the reader cannot bridge from each block to the next without prose carrying them across. Every fenced verbatim block must be preceded by at least one paragraph of prose that (a) states the question the upcoming command answers, (b) explains why the answer matters in the traditional-network mental model, and (c) predicts what the output should look like. Every fenced verbatim block must be followed by at least one paragraph that interprets the actual output line by line and links it back to the prediction. The professor-style skill section 2.7 (Predict-Observe-Explain) formalises this; Rule 19 makes the application of POE mandatory for every property-proving lab exercise rather than recommended.
+
+Fourth, **misconceptions a Cisco/Juniper-trained engineer is likely to carry must be explicitly named and refuted**. Examples: "OVS is just the Linux bridge with a different name" (refuted by R2.5.2's per-VLAN configuration-surface divergence), "an access port carries the VLAN tag on the wire" (refuted by the metadata-vs-wire model in R2.5.2's discussion of `tcpdump -e -i tap0`), "Open vSwitch implements a router" (refuted in R2.5.6 by showing OVS has no built-in IP routing), "the implicit `NORMAL` action is a stored OpenFlow flow" (refuted in R2 by showing the rule is synthesised at runtime by `connmgr`). The professor-style skill section 2.3 mandates a Misconception/Reality block for every important concept; Rule 19 raises the bar by listing specific misconceptions the audience is likely to bring and requiring them to be addressed in the relevant lab.
+
+Fifth, **command output is evidence, not pedagogy**. A fenced verbatim block tells the reader what happened on the lab host; it does not tell the reader why the result matters or what model produced it. The pedagogical content lives in the prose surrounding the block. A lab .md whose prose-to-fenced-block ratio is below roughly 2:1 (twice as many lines of prose as lines of fenced output) is too terse for this audience. The R2 transcripts as captured before this rule was codified ran roughly 1:2 (more fenced blocks than prose) and were rejected by the owner on 2026-04-30 for exactly this reason.
+
+Sixth, **the language convention applies in full**. CEFR B2-C1 plain technical English per Rule 17. No em-dash. No AI sentence patterns ("let's dive in", "in summary", "below is...") per professor-style §1.3. No release-note voice ("the orchestrator no longer issues..."). No plan-internal terms in body prose ("Rule 18 finding", "the orchestrator captured them") per Rule 16.
+
+**Enforcement.**
+
+Audience-and-pedagogy compliance is verified at three points. First, before authoring a curriculum or lab .md, the author re-reads Rule 19 and the professor-style skill (the skill is now installed at `~/.claude/skills/professor-style/`). Second, after authoring, the author self-audits the file against the six writing rules above. Third, the owner reads the file and either accepts or rejects it; rejection on Rule-19 grounds (as happened to the original R2 artefacts on 2026-04-30) requires a full rewrite. There is no automated check for Rule 19 because the rule is qualitative; the gating mechanism is the owner's review.
+
+**Scope of retroactive application.**
+
+Rule 19 was authored 2026-04-30 in response to the owner's review of the R2 captures. Files written before this date may not satisfy Rule 19. The plan v3.13 §R2-redo amendment (in `plans/sdn/v3.13-ovs-hands-on-mastery-and-source-deep-dive.md`) records which files are scheduled for rewrite under the new rule. Files outside the §R2-redo scope are evaluated case by case as they are touched in normal sprint work; a full retroactive sweep across all 136 sdn-onboard files is out of scope for v3.13 and would be a separate plan if and when the owner asks for it.
+
+(Origin: owner directive 2026-04-30 after reviewing the R2 main and R2-addendum captures. The directive applies to plan v3.13 work going forward and to the R2-* rewrite specifically.)
+
 ---
 
 ## Current State
