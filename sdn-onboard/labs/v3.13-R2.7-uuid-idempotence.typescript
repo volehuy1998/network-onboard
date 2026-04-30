@@ -1,91 +1,69 @@
-Script started on 2026-04-30 05:05:16+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+Script started on 2026-04-30 05:44:20+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
 [?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
 [?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lThu Apr 30 05:05:17 AM UTC 2026
+[?2004lThu Apr 30 05:44:22 AM UTC 2026
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# B1=$(ovs-vsctl get Bridge br0 _uuid); echo "Bridge UUID 1: $B1"
-[?2004lBridge UUID 1: 61c1593f-e1ee-434f-9c13-91cb2b0be46e
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 _uuid
+[?2004l31281ccc-2688-4e38-8605-fcd9522b0553
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# B2=$(ovs-vsctl get Bridge br0 _uuid); echo "Bridge UUID 2: $B2"
-[?2004lBridge UUID 2: 61c1593f-e1ee-434f-9c13-91cb2b0be46e
-[?2004hroot@lab-openvswitch:~/network-onboard# [ "$B1" = "$B2" ] && echo "UUIDs match (--may-exist is idempotent)" || echo "UUIDs differ"
-[?2004lUUIDs match (--may-exist is idempotent)
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 _uuid
+[?2004l31281ccc-2688-4e38-8605-fcd9522b0553
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "del with --if-exists idempotent: succeeded twice"
-[?2004ldel with --if-exists idempotent: succeeded twice
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# B3=$(ovs-vsctl get Bridge br0 _uuid); echo "Bridge UUID 3 (after del+re-add): $B3"
-[?2004lBridge UUID 3 (after del+re-add): 2af118ca-1f23-4f02-86ed-64f7318ecd48
-[?2004hroot@lab-openvswitch:~/network-onboard# [ "$B1" = "$B3" ] && echo "UUID preserved across delete-recreate (UNEXPECTED)" || echo "UUID is fresh after delete-recreate (expected)"
-[?2004lUUID is fresh after delete-recreate (expected)
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 _uuid
+[?2004l6dcc69ed-fa4c-4b1b-8257-72bac46ebab7
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name list Bridge
-[?2004l_uuid               : 2af118ca-1f23-4f02-86ed-64f7318ecd48
+[?2004l_uuid               : 6dcc69ed-fa4c-4b1b-8257-72bac46ebab7
 name                : br0
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name list Port
-[?2004l_uuid               : e970c0a4-0c27-4053-a7ff-9e9a914c2770
+[?2004l_uuid               : 838ca8e1-9a16-42a2-83fd-b4e02f123457
 name                : br0
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=_uuid,name,type list Interface
-[?2004l_uuid               : 58ced32d-2136-450e-aee7-4f8096a3c07f
+[?2004l_uuid               : 29d823a1-82f7-4595-9ccb-598c365ef016
 name                : br0
 type                : internal
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid find Bridge name=br0
-[?2004l2af118ca-1f23-4f02-86ed-64f7318ecd48
+[?2004l6dcc69ed-fa4c-4b1b-8257-72bac46ebab7
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid find Port name=br0
-[?2004le970c0a4-0c27-4053-a7ff-9e9a914c2770
+[?2004l838ca8e1-9a16-42a2-83fd-b4e02f123457
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid find Interface name=br0
-[?2004l58ced32d-2136-450e-aee7-4f8096a3c07f
+[?2004l29d823a1-82f7-4595-9ccb-598c365ef016
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . bridges
-[?2004l[2af118ca-1f23-4f02-86ed-64f7318ecd48]
+[?2004l[6dcc69ed-fa4c-4b1b-8257-72bac46ebab7]
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --no-wait set Open_vSwitch . external_ids:lab-marker=R2.7
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . external_ids
 [?2004l{hostname=lab-openvswitch, lab-marker=R2.7, rundir="/usr/local/var/run/openvswitch", system-id="23e4c0ac-b74b-48f8-912f-a4020fa89883"}
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Bridge br0 external_ids:owner=R2.7-lab external_ids:notes='created at $(date -u)'
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Bridge br0 external_ids:owner=R2.7-lab
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 external_ids
-[?2004l{notes="created at $(date -u)", owner=R2.7-lab}
+[?2004l{owner=R2.7-lab}
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-port br0 dummy0 -- set Interface dummy0 type=internal
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# P1=$(ovs-vsctl get Port dummy0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# I1=$(ovs-vsctl get Interface dummy0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "Port UUID 1: $P1"
-[?2004lPort UUID 1: 652f7c02-f6cd-4484-b180-7258f3317009
-[?2004hroot@lab-openvswitch:~/network-onboard# echo "Interface UUID 1: $I1"
-[?2004lInterface UUID 1: ca5948c3-d489-419f-9bff-a2b35394b079
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port dummy0 _uuid
+[?2004l75d7e728-066f-4d84-b9fd-3802a677ed5e
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface dummy0 _uuid
+[?2004l44df838f-f95a-4417-8e1b-ddc5ce3cf3e2
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-port br0 dummy0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# P2=$(ovs-vsctl get Port dummy0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# I2=$(ovs-vsctl get Interface dummy0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "Port UUID 2: $P2"
-[?2004lPort UUID 2: 652f7c02-f6cd-4484-b180-7258f3317009
-[?2004hroot@lab-openvswitch:~/network-onboard# echo "Interface UUID 2: $I2"
-[?2004lInterface UUID 2: ca5948c3-d489-419f-9bff-a2b35394b079
-[?2004hroot@lab-openvswitch:~/network-onboard# [ "$P1" = "$P2" ] && [ "$I1" = "$I2" ] && echo "All UUIDs preserved by --may-exist" || echo "UUIDs differed (UNEXPECTED)"
-[?2004lAll UUIDs preserved by --may-exist
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port dummy0 _uuid
+[?2004l75d7e728-066f-4d84-b9fd-3802a677ed5e
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface dummy0 _uuid
+[?2004l44df838f-f95a-4417-8e1b-ddc5ce3cf3e2
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-port br0 dummy0
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-port br0 dummy0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "del-port --if-exists idempotent: succeeded twice"
-[?2004ldel-port --if-exists idempotent: succeeded twice
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid find Port name=dummy0
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "(empty find: garbage-collected)"
-[?2004l(empty find: garbage-collected)
-[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 dummy0 -- set Interface dummy0 type=internal
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# P3=$(ovs-vsctl get Port dummy0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# echo "Port UUID 3 (after del+re-add): $P3"
-[?2004lPort UUID 3 (after del+re-add): 50712123-44dd-46a0-8d7c-d5aeab09fcf6
-[?2004hroot@lab-openvswitch:~/network-onboard# [ "$P1" = "$P3" ] && echo "Port UUID preserved across del+re-add (UNEXPECTED)" || echo "Port UUID is fresh after del+re-add (expected)"
-[?2004lPort UUID is fresh after del+re-add (expected)
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid find Port name=dummy0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 dummy0 -- set Interface dummy0 type=internal
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port dummy0 _uuid
+[?2004la936c344-9fa5-417d-b325-18a442cf82b6
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --no-wait set Bridge br0 fail_mode=secure
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
 [?2004lsecure
-[?2004hroot@lab-openvswitch:~/network-onboard# B4=$(ovs-vsctl get Bridge br0 _uuid)
-[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# [ "$B3" = "$B4" ] && echo "Bridge UUID preserved across column update (expected)" || echo "Bridge UUID changed (UNEXPECTED)"
-[?2004lBridge UUID preserved across column update (expected)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 _uuid
+[?2004l6dcc69ed-fa4c-4b1b-8257-72bac46ebab7
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . _uuid
 [?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --bare --columns=_uuid list Open_vSwitch
 [?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
-[?2004hroot@lab-openvswitch:~/network-onboard# echo "(Open_vSwitch is singleton; one UUID, persists for db lifetime)"
-[?2004l(Open_vSwitch is singleton; one UUID, persists for db lifetime)
 [?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-port br0 dummy0
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
@@ -93,8 +71,8 @@ type                : internal
 [?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . external_ids
 [?2004l{hostname=lab-openvswitch, rundir="/usr/local/var/run/openvswitch", system-id="23e4c0ac-b74b-48f8-912f-a4020fa89883"}
 [?2004hroot@lab-openvswitch:~/network-onboard# date -u
-[?2004lThu Apr 30 05:05:46 AM UTC 2026
+[?2004lThu Apr 30 05:44:43 AM UTC 2026
 [?2004hroot@lab-openvswitch:~/network-onboard# exit
 [?2004lexit
 
-Script done on 2026-04-30 05:05:46+00:00 [COMMAND_EXIT_CODE="0"]
+Script done on 2026-04-30 05:44:43+00:00 [COMMAND_EXIT_CODE="0"]
