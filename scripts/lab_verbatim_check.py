@@ -81,6 +81,15 @@ VERBATIM_HEADER_RE = re.compile(
     re.MULTILINE,
 )
 
+# Supplementary verbatim source header pattern for documents that need
+# a second typescript corpus (for example, a separate capture for one
+# exercise). Example match:
+#   > **Supplementary verbatim source (Guided Exercise 5 only):** `sdn-onboard/labs/v3.13-R2.5.1-aging-cycles.typescript`
+SUPPLEMENTARY_VERBATIM_HEADER_RE = re.compile(
+    r"^>\s+\*\*Supplementary verbatim source[^:]*:\*\*\s+`([^`]+)`",
+    re.MULTILINE,
+)
+
 # Header search depth, in lines from the top of the Markdown file.
 HEADER_SEARCH_LINES = 60
 
@@ -336,8 +345,20 @@ def check_file(rel_path: str, root: Path) -> list[str]:
         return failures
 
     # Invariant 5 and 6: every verbatim line is a substring of some
-    # typescript line.
+    # typescript line. When a supplementary verbatim source is declared,
+    # its lines are merged into the corpus so that blocks from either
+    # capture pass the check.
     typescript_lines = normalise_typescript(raw)
+    head = "\n".join(md_text.splitlines()[:HEADER_SEARCH_LINES])
+    for sup_m in SUPPLEMENTARY_VERBATIM_HEADER_RE.finditer(head):
+        sup_rel = sup_m.group(1).strip()
+        sup_path = root / sup_rel
+        if sup_path.is_file():
+            try:
+                sup_raw = sup_path.read_text(encoding="utf-8", errors="replace")
+                typescript_lines = typescript_lines + normalise_typescript(sup_raw)
+            except OSError:
+                pass
     for block_start, block_lines in blocks:
         block_failures = check_verbatim_block_against_typescript(
             block_lines, typescript_lines, block_start

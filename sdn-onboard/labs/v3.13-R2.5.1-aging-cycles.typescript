@@ -1,0 +1,63 @@
+Script started on 2026-04-30 06:36:16+00:00 [<not executed on terminal>]
+Thu Apr 30 06:36:16 AM UTC 2026
+15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+RTNETLINK answers: File exists
+net.ipv6.conf.veth_red.disable_ipv6 = 1
+net.ipv6.conf.veth_blue.disable_ipv6 = 1
+PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.462 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.052 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1024ms
+rtt min/avg/max/mdev = 0.052/0.257/0.462/0.205 ms
+FDB after ping:
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    1
+    2     0  e2:10:43:fa:d2:bd    1
+aging-time=15 set
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    1
+    2     0  e2:10:43:fa:d2:bd    1
+cycle 1 (3s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    2
+    2     0  e2:10:43:fa:d2:bd    2
+cycle 2 (6s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    2
+    2     0  e2:10:43:fa:d2:bd    1
+cycle 3 (9s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    5
+    2     0  e2:10:43:fa:d2:bd    4
+cycle 4 (12s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca    8
+    2     0  e2:10:43:fa:d2:bd    7
+cycle 5 (15s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca   11
+    2     0  e2:10:43:fa:d2:bd   10
+cycle 6 (18s):
+ port  VLAN  MAC                Age
+    1     0  f6:26:ae:6c:1a:ca   14
+    2     0  e2:10:43:fa:d2:bd   13
+cycle 7 (21s):
+ port  VLAN  MAC                Age
+cycle 8 (24s):
+ port  VLAN  MAC                Age
+cycle 9 (27s):
+ port  VLAN  MAC                Age
+cycle 10 (30s):
+ port  VLAN  MAC                Age
+cycle 11 (33s):
+ port  VLAN  MAC                Age
+cycle 12 (36s):
+ port  VLAN  MAC                Age
+15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+Thu Apr 30 06:36:54 AM UTC 2026
+
+Script done on 2026-04-30 06:36:54+00:00 [COMMAND_EXIT_CODE="0"]
