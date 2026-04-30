@@ -1,0 +1,150 @@
+Script started on 2026-04-30 00:51:18+00:00 [TERM="screen-256color" TTY="/dev/pts/4" COLUMNS="127" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 12:51:20 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -1
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl start 2>&1 | tail -10
+[?2004l * Starting ovsdb-server
+ * system ID not configured, please use --system-id
+ * Configuring Open vSwitch system IDs
+ * Starting ovs-vswitchd
+ * Enabling remote OVSDB managers
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_a; ip netns add ns_b; ip netns add ns_c; ip netns add ns_d
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_a type veth peer name veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_b type veth peer name veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_c type veth peer name veth_c_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_d type veth peer name veth_d_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a netns ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b netns ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_c netns ns_c
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_d netns ns_d
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a_br up; ip link set veth_b_br up; ip link set veth_c_br up; ip link set veth_d_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_a_br tag=10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_b_br tag=10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_c_br tag=20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_d_br tag=20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 tap0 -- set interface tap0 type=internal -- set port tap0 trunks=10,20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set tap0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- --id=@p get port tap0 -- --id=@m create mirror name=m0 select-all=true output-port=@p -- set bridge br0 mirrors=@m
+[?2004la055821b-d5f3-40e7-a9cb-8f8d8254055e
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ip link set lo up; ip netns exec ns_a ip link set veth_a up; ip netns exec ns_a ip addr add 10.0.0.1/24 dev veth_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b ip link set lo up; ip netns exec ns_b ip link set veth_b up; ip netns exec ns_b ip addr add 10.0.0.2/24 dev veth_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_c ip link set lo up; ip netns exec ns_c ip link set veth_c up; ip netns exec ns_c ip addr add 10.0.0.3/24 dev veth_c
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_d ip link set lo up; ip netns exec ns_d ip link set veth_d up; ip netns exec ns_d ip addr add 10.0.0.4/24 dev veth_d
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,tag,trunks,vlan_mode list port veth_a_br veth_b_br veth_c_br veth_d_br tap0
+[?2004lname                : veth_a_br
+tag                 : 10
+trunks              : []
+vlan_mode           : []
+
+name                : veth_b_br
+tag                 : 10
+trunks              : []
+vlan_mode           : []
+
+name                : veth_c_br
+tag                 : 20
+trunks              : []
+vlan_mode           : []
+
+name                : veth_d_br
+tag                 : 20
+trunks              : []
+vlan_mode           : []
+
+name                : tap0
+tag                 : []
+trunks              : [10, 20]
+vlan_mode           : []
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 10.0.0.2 2>&1 | tail -5
+[?2004l64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.040 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1023ms
+rtt min/avg/max/mdev = 0.040/0.295/0.550/0.255 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_c ping -c 2 10.0.0.4 2>&1 | tail -5
+[?2004l64 bytes from 10.0.0.4: icmp_seq=2 ttl=64 time=0.038 ms
+
+--- 10.0.0.4 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.038/0.324/0.611/0.286 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 1 10.0.0.3 2>&1 | tail -5 || echo '(blocked, different VLANs)'
+[?2004lPING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+
+--- 10.0.0.3 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1007ms
+
+[?2004hroot@lab-openvswitch:~/network-onboard# (timeout 5 tcpdump -e -i tap0 -c 4 -nn 2>&1 & TPID=$!; sleep 0.5; ip netns exec ns_a ip neigh flush all; ip netns exec ns_a ping -c 1 -W 1 10.0.0.2 >/dev/null 2>&1; ip netns exec ns_c ip neigh flush all; ip netns exec ns_c ping -c 1 -W 1 10.0.0.4 >/dev/null 2>&1; wait $TPID)
+[?2004ltcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on tap0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+00:51:48.331093 52:e9:ed:12:02:c4 > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 10.0.0.2 tell 10.0.0.1, length 28
+00:51:48.331106 6a:9b:f6:b2:d8:1d > 52:e9:ed:12:02:c4, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Reply 10.0.0.2 is-at 6a:9b:f6:b2:d8:1d, length 28
+00:51:48.331112 52:e9:ed:12:02:c4 > 6a:9b:f6:b2:d8:1d, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 10.0.0.1 > 10.0.0.2: ICMP echo request, id 19830, seq 1, length 64
+00:51:48.331124 6a:9b:f6:b2:d8:1d > 52:e9:ed:12:02:c4, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 10.0.0.2 > 10.0.0.1: ICMP echo reply, id 19830, seq 1, length 64
+4 packets captured
+8 packets received by filter
+0 packets dropped by kernel
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0 | head -15
+[?2004l port  VLAN  MAC                Age
+    3    20  f6:09:b7:61:62:82    0
+    4    20  82:b9:25:44:b5:2d    0
+    1    10  52:e9:ed:12:02:c4    0
+    2    10  6a:9b:f6:b2:d8:1d    0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_a; ip netns del ns_b; ip netns del ns_c; ip netns del ns_d
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add name lbr0 type bridge vlan_filtering 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set lbr0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_la; ip netns add ns_lb; ip netns add ns_lc; ip netns add ns_ld
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_la type veth peer name veth_la_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_lb type veth peer name veth_lb_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_lc type veth peer name veth_lc_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_ld type veth peer name veth_ld_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_la netns ns_la; ip link set veth_lb netns ns_lb; ip link set veth_lc netns ns_lc; ip link set veth_ld netns ns_ld
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_la_br master lbr0; ip link set veth_lb_br master lbr0; ip link set veth_lc_br master lbr0; ip link set veth_ld_br master lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_la_br up; ip link set veth_lb_br up; ip link set veth_lc_br up; ip link set veth_ld_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge vlan del dev veth_la_br vid 1; bridge vlan add dev veth_la_br vid 10 pvid untagged
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge vlan del dev veth_lb_br vid 1; bridge vlan add dev veth_lb_br vid 10 pvid untagged
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge vlan del dev veth_lc_br vid 1; bridge vlan add dev veth_lc_br vid 20 pvid untagged
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge vlan del dev veth_ld_br vid 1; bridge vlan add dev veth_ld_br vid 20 pvid untagged
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# bridge vlan show
+[?2004lport              vlan-id  
+lbr0              1 PVID Egress Untagged
+veth_la_br        10 PVID Egress Untagged
+veth_lb_br        10 PVID Egress Untagged
+veth_lc_br        20 PVID Egress Untagged
+veth_ld_br        20 PVID Egress Untagged
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_la ip link set lo up; ip netns exec ns_la ip link set veth_la up; ip netns exec ns_la ip addr add 10.0.0.1/24 dev veth_la
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_lb ip link set lo up; ip netns exec ns_lb ip link set veth_lb up; ip netns exec ns_lb ip addr add 10.0.0.2/24 dev veth_lb
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_lc ip link set lo up; ip netns exec ns_lc ip link set veth_lc up; ip netns exec ns_lc ip addr add 10.0.0.3/24 dev veth_lc
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_ld ip link set lo up; ip netns exec ns_ld ip link set veth_ld up; ip netns exec ns_ld ip addr add 10.0.0.4/24 dev veth_ld
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_la ping -c 2 10.0.0.2 2>&1 | tail -5
+[?2004l64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.038 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1028ms
+rtt min/avg/max/mdev = 0.038/0.041/0.044/0.003 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_lc ping -c 2 10.0.0.4 2>&1 | tail -5
+[?2004l64 bytes from 10.0.0.4: icmp_seq=2 ttl=64 time=0.031 ms
+
+--- 10.0.0.4 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.031/0.040/0.050/0.009 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_la ping -c 2 -W 1 10.0.0.3 2>&1 | tail -5 || echo '(blocked, different VLANs)'
+[?2004lPING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+
+--- 10.0.0.3 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1004ms
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link del lbr0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns_la; ip netns del ns_lb; ip netns del ns_lc; ip netns del ns_ld
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# /usr/local/share/openvswitch/scripts/ovs-ctl stop 2>&1 | tail -5
+[?2004l * Exiting ovs-vswitchd (563827)
+ * Exiting ovsdb-server (563810)
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 12:52:16 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 00:52:16+00:00 [COMMAND_EXIT_CODE="0"]
