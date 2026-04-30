@@ -1,0 +1,165 @@
+Script started on 2026-04-30 04:59:45+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:59:46 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . datapath_types
+[?2004l[netdev, system]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br-sys
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br-sys datapath_type
+[?2004l""
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br-usp -- set Bridge br-usp datapath_type=netdev
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br-usp datapath_type
+[?2004lnetdev
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br-usp
+        datapath_type: netdev
+        Port br-usp
+            Interface br-usp
+                type: internal
+    Bridge br-sys
+        Port br-sys
+            Interface br-sys
+                type: internal
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lnetdev@ovs-netdev: hit:0 missed:0
+  br-usp:
+    br-usp 65534/1: (tap)
+system@ovs-system: hit:0 missed:0
+  br-sys:
+    br-sys 65534/1: (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-sys port-sys -- set Interface port-sys type=internal
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-usp port-usp -- set Interface port-usp type=internal
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use list Interface port-sys port-usp
+[?2004lname                : port-sys
+type                : internal
+ofport              : 1
+mac_in_use          : "ee:b8:55:82:19:c0"
+
+name                : port-usp
+type                : internal
+ofport              : 1
+mac_in_use          : "f6:ca:dc:49:f1:a7"
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show port-sys
+[?2004l136: port-sys: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether ee:b8:55:82:19:c0 brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show port-usp
+[?2004l137: port-usp: <BROADCAST,MULTICAST,PROMISC> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether f6:ca:dc:49:f1:a7 brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lnetdev@ovs-netdev: hit:0 missed:0
+  br-usp:
+    br-usp 65534/1: (tap)
+    port-usp 1/2: (tap)
+system@ovs-system: hit:0 missed:0
+  br-sys:
+    br-sys 65534/1: (internal)
+    port-sys 1/2: (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-dpctl show
+[?2004lsystem@ovs-system:
+  lookups: hit:0 missed:0 lost:0
+  flows: 0
+  masks: hit:0 total:0 hit/pkt:0.00
+  caches:
+    masks-cache: size:256
+  port 0: ovs-system (internal)
+  port 1: br-sys (internal)
+  port 2: port-sys (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ls /sys/class/net/ 2>&1 | grep -E 'br-sys|br-usp|port-sys|port-usp|ovs'
+[?2004l[01;31m[Kbr-sys[m[K
+[01;31m[Kbr-usp[m[K
+[01;31m[Kovs[m[K-netdev
+[01;31m[Kovs[m[K-system
+[01;31m[Kport-sys[m[K
+[01;31m[Kport-usp[m[K
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/show 2>&1 | head -30
+[?2004lnetdev@ovs-netdev:
+  lookups: hit:0 missed:0 lost:0
+  flows: 0
+  port 0: ovs-netdev (tap)
+  port 1: br-usp (tap)
+  port 2: port-usp (tap)
+system@ovs-system:
+  lookups: hit:0 missed:0 lost:0
+  flows: 0
+  masks: hit:0 total:0 hit/pkt:0.00
+  caches:
+    masks-cache: size:256
+  port 0: ovs-system (internal)
+  port 1: br-sys (internal)
+  port 2: port-sys (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,datapath_type,datapath_id,datapath_version list Bridge
+[?2004lname                : br-sys
+datapath_type       : ""
+datapath_id         : "00005ea5c3fb0642"
+datapath_version    : "<unknown>"
+
+name                : br-usp
+datapath_type       : netdev
+datapath_id         : "00007686b1244d45"
+datapath_version    : "<built-in>"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/list
+[?2004lbr-usp
+br-sys
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/list-tunnels br-sys 2>&1 || true
+[?2004l"ofproto/list-tunnels" command takes at most 0 arguments
+ovs-appctl: ovs-vswitchd: server returned an error
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/list-tunnels br-usp 2>&1 || true
+[?2004l"ofproto/list-tunnels" command takes at most 0 arguments
+ovs-appctl: ovs-vswitchd: server returned an error
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set port-sys up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set port-usp up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip addr add 10.30.0.1/24 dev port-sys
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip addr add 10.40.0.1/24 dev port-usp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip addr show port-sys
+[?2004l136: port-sys: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether ee:b8:55:82:19:c0 brd ff:ff:ff:ff:ff:ff
+    inet 10.30.0.1/24 scope global port-sys
+       valid_lft forever preferred_lft forever
+    inet6 fe80::ecb8:55ff:fe82:19c0/64 scope link 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ip addr show port-usp
+[?2004l137: port-usp: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 1000
+    link/ether f6:ca:dc:49:f1:a7 brd ff:ff:ff:ff:ff:ff
+    inet 10.40.0.1/24 scope global port-usp
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f4ca:dcff:fe49:f1a7/64 scope link 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-sys 'in_port=port-sys,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-sys")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=1,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-usp 'in_port=port-usp,dl_src=02:00:00:00:00:02,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:02,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-usp")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=1,dl_src=02:00:00:00:00:02,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br-sys port-sys
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br-usp port-usp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br-sys
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br-usp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 05:00:08 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 05:00:08+00:00 [COMMAND_EXIT_CODE="0"]
