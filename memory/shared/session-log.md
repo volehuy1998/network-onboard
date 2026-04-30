@@ -1267,3 +1267,38 @@ For exhaustive detail, run `git log --before=2026-04-12 -- memory/session-log.md
 | Latest tag | `v3.2-FullDepth` (2026-04-25) |
 | Verdict | A (post-v3.2 audit closure) |
 | Lab verification | 63 exercises pending lab host (user notification awaited) |
+
+## 2026-04-30, Session: v3.13 R2 redo plus curriculum wrap (Rule 19 plus empirical-proof directive)
+
+### Completed deliverables (eight lab triplets + one curriculum wrap)
+- `labs/v3.13-R2.0-orientation.{md,typescript,timing}` (commit `39550e8`)
+- `labs/v3.13-R2.1-fail-mode.{md,typescript,timing}` (commit `117ba71`)
+- `labs/v3.13-R2.2-l2-trace.{md,typescript,timing}` (commit `30f889b`)
+- `labs/v3.13-R2.3-port-types.{md,typescript,timing}` (commit `1b5ff8f`)
+- `labs/v3.13-R2.4-patch-ports.{md,typescript,timing}` (commit `2231a30`)
+- `labs/v3.13-R2.6-datapath-choice.{md,typescript,timing}` (commit `20038fc`)
+- `labs/v3.13-R2.7-uuid-idempotence.{md,typescript,timing}` (commit `1098a82`)
+- `labs/v3.13-R2.8-mac-binding.{md,typescript,timing}` (commit `82a9793`, merged with empirical proofs)
+- `0.5 - ovs-bridge-and-port-primitives.md` curriculum wrap (commit `8190b6f`)
+
+### Owner directives encoded this session
+- 2026-04-30 audience-centred pedagogy (CLAUDE.md Rule 19): every R2 lab follows the Cisco-analogue framing, ASCII model diagrams, ≥2:1 prose:verbatim ratio, Misconception/Reality blocks.
+- 2026-04-30 "every conjecture proven by practice": R2.8 expanded from a single binding proof to a five-claim transcript with Python AF_PACKET injector for the MAC-move proof.
+- 2026-04-30 "do not split files": the original R2.8b separate addendum was merged into R2.8 as one continuous capture.
+- 2026-04-30 "no size limits": R2.4, R2.8, 0.5 all run long where the material warrants.
+
+### R2 acceptance gate compliance
+- All 8 lab .md files: lab_verbatim_check PASS, em_dash_check PASS, rubric_leak_check PASS, lang_check PASS (zero non-English), anti_gaming_check PASS.
+- Prose:verbatim ratio per file: R2.0=2.62, R2.1=4.26, R2.2=2.01, R2.3=2.01, R2.4=2.00, R2.6=2.00, R2.7=2.52, R2.8=2.36 (all ≥ 2.00 per Rule 19).
+- Source anchors verified at /root/ovs commit 0bea06d99 (tag v2.17.9). One audit-found error corrected: `mac_learning_lookup` cited at line 433 in R2.2, R2.8, 0.5 was wrong (line 433 is a call-site; the function definition is at line 597). Fix committed in audit cleanup.
+- Open_vSwitch singleton UUID `15b3fd6f-e30f-4ae3-b8ca-4531189afee5` verified consistent across the six R2 typescripts that ran `ovs-vsctl show` (R2.0, R2.2, R2.3, R2.4, R2.6, R2.7); R2.1 and R2.8 do not run that command.
+
+### Pending after this session
+- R2.5.* sub-captures: R2.5.1, R2.5.2, R2.5.3 are DELETED-pending-redo per plan v3.13 rev-2; R2.5.4 through R2.5.12 are PENDING. R2.5 sits between R2 (now closed) and R3 in the plan ordering.
+- R3 (OpenFlow programming sprint), R4 onwards: not started.
+- S1-S10 source-deep-dive sprints: not started (S0 partial, audit deferred).
+
+### Rule 5 handoff state
+- Branch: `feat/sdn-v3.13-ovs-mastery`. No remote push per system policy.
+- Lab host `lab-openvswitch` (192.168.1.250) is in clean state: zero bridges, zero namespaces, ovsdb-server and ovs-vswitchd running. Operator can `ovs-vsctl --if-exists del-br ...` defensively before any new lab.
+- /tmp/inject.py (10-line AF_PACKET frame injector, used by R2.8 Claim 5) lives on the lab host; reusable for R3+ experiments.
