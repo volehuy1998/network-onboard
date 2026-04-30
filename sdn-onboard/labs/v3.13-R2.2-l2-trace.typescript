@@ -1,0 +1,200 @@
+Script started on 2026-04-30 04:34:17+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:34:19 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns list
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-ns1 type veth peer name br-ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-ns2 type veth peer name br-ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-ns1 netns ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-ns2 netns ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ip addr add 10.0.0.1/24 dev veth-ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns2 ip addr add 10.0.0.2/24 dev veth-ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ip link set veth-ns1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns2 ip link set veth-ns2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns2 ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 br-ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 br-ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-ns1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-ns2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br0
+        Port br0
+            Interface br0
+                type: internal
+        Port br-ns1
+            Interface br-ns1
+        Port br-ns2
+            Interface br-ns2
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ofport,mac_in_use,type list Interface br-ns1 br-ns2 br0
+[?2004lname                : br-ns1
+ofport              : 1
+mac_in_use          : "b2:69:97:ec:71:f1"
+type                : ""
+
+name                : br-ns2
+ofport              : 2
+mac_in_use          : "be:05:37:3f:59:c9"
+type                : ""
+
+name                : br0
+ofport              : 65534
+mac_in_use          : "b2:41:ae:5a:58:4d"
+type                : internal
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ip link show veth-ns1
+[?2004l116: veth-ns1@if115: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 2e:56:2c:85:7d:c1 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns2 ip link show veth-ns2
+[?2004l118: veth-ns2@if117: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 2e:65:29:51:d1:e7 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:9 missed:9
+  br0:
+    br-ns1 1/2: (system)
+    br-ns2 2/3: (system)
+    br0 65534/1: (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    1     0  2e:56:2c:85:7d:c1    4
+    2     0  2e:65:29:51:d1:e7    3
+LOCAL     0  b2:41:ae:5a:58:4d    2
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.693 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.057 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1005ms
+rtt min/avg/max/mdev = 0.057/0.375/0.693/0.318 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+LOCAL     0  b2:41:ae:5a:58:4d    1
+    1     0  2e:56:2c:85:7d:c1    0
+    2     0  2e:65:29:51:d1:e7    0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=21.087s, table=0, n_packets=27, n_bytes=2234, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows
+[?2004lrecirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=33:33:ff:51:d1:e7),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:1,2
+recirc_id(0),in_port(1),eth(src=b2:41:ae:5a:58:4d,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:1.852s, actions:2,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=2e:65:29:51:d1:e7),eth_type(0x0800),ipv4(frag=no), packets:1, bytes:98, used:1.404s, actions:3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:3.132s, actions:1,3
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=2e:56:2c:85:7d:c1),eth_type(0x0800),ipv4(frag=no), packets:1, bytes:98, used:1.404s, actions:2
+recirc_id(0),in_port(1),eth(src=b2:41:ae:5a:58:4d,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:5.180s, actions:2,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=ff:ff:ff:ff:ff:ff),eth_type(0x0806),arp(sip=10.0.0.1,tip=10.0.0.2,op=1/0xff), packets:0, bytes:0, used:never, actions:1,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=33:33:ff:85:7d:c1),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:1,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:7.684s, actions:1,3
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:6.588s, actions:1,2
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=2e:56:2c:85:7d:c1),eth_type(0x0806), packets:0, bytes:0, used:never, actions:2
+recirc_id(0),in_port(1),eth(src=b2:41:ae:5a:58:4d,dst=33:33:ff:5a:58:4d),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:2,3
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:2.876s, actions:1,2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=1,dl_src=ee:ee:ee:ee:01:01,dl_dst=ee:ee:ee:ee:02:02,dl_type=0x0800,nw_src=10.0.0.1,nw_dst=10.0.0.2'
+[?2004lFlow: ip,in_port=1,vlan_tci=0x0000,dl_src=ee:ee:ee:ee:01:01,dl_dst=ee:ee:ee:ee:02:02,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_proto=0,nw_tos=0,nw_ecn=0,nw_ttl=0,nw_frag=no
+
+bridge("br0")
+-------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,ip,in_port=1,dl_src=ee:ee:ee:ee:01:01,dl_dst=ee:ee:ee:ee:02:02,nw_frag=no
+Datapath actions: 1,3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=1,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br0")
+-------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=1,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 1,3
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=2,dl_dst=02:00:00:00:00:01' --names
+[?2004l--names: unknown option
+ovs-appctl: ovs-vswitchd: server returned an error
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl coverage/show 2>&1 | head -40
+[?2004lEvent coverage, avg rate over last: 5 seconds, last minute, last hour,  hash=64d2dba7:
+bridge_reconfigure         0.0/sec     0.417/sec        0.0142/sec   total: 51
+ofproto_flush              0.0/sec     0.033/sec        0.0028/sec   total: 10
+ofproto_recv_openflow      0.0/sec     0.117/sec        0.0208/sec   total: 80
+ofproto_update_port        0.4/sec     0.200/sec        0.0067/sec   total: 24
+rev_reconfigure            0.0/sec     0.033/sec        0.0006/sec   total: 2
+rev_port_toggled           0.0/sec     0.050/sec        0.0008/sec   total: 3
+rev_flow_table             0.0/sec     0.050/sec        0.0036/sec   total: 13
+rev_mac_learning           0.0/sec     0.050/sec        0.0008/sec   total: 3
+xlate_actions              1.4/sec     0.533/sec        0.0089/sec   total: 37
+ccmap_shrink               0.0/sec     0.183/sec        0.0033/sec   total: 12
+cmap_expand                3.6/sec     3.217/sec        0.1022/sec   total: 368
+cmap_shrink                2.4/sec     3.100/sec        0.0944/sec   total: 341
+dpif_destroy               0.0/sec     0.017/sec        0.0011/sec   total: 4
+dpif_port_add              0.0/sec     0.050/sec        0.0019/sec   total: 7
+dpif_port_del              0.0/sec     0.017/sec        0.0011/sec   total: 4
+dpif_flow_flush            0.0/sec     0.033/sec        0.0025/sec   total: 9
+dpif_flow_get              0.0/sec     0.400/sec        0.0333/sec   total: 120
+dpif_flow_put              1.0/sec     0.617/sec        0.0381/sec   total: 137
+dpif_flow_del              0.0/sec     0.400/sec        0.0333/sec   total: 121
+dpif_execute               1.0/sec     0.300/sec        0.0117/sec   total: 42
+flow_extract               1.0/sec     0.267/sec        0.0089/sec   total: 32
+miniflow_malloc            7.4/sec     7.650/sec        0.3297/sec   total: 1189
+hmap_pathological          0.0/sec     0.000/sec        0.0028/sec   total: 12
+hmap_expand               29.0/sec    20.467/sec        1.1889/sec   total: 4486
+mac_learning_learned       0.0/sec     0.050/sec        0.0008/sec   total: 3
+netdev_get_stats           0.6/sec     0.167/sec        0.0067/sec   total: 27
+txn_unchanged              0.4/sec     0.850/sec        0.0233/sec   total: 84
+txn_incomplete             0.2/sec     0.250/sec        0.0153/sec   total: 56
+txn_success                0.2/sec     0.167/sec        0.0069/sec   total: 26
+poll_create_node         168.8/sec    75.433/sec        4.7431/sec   total: 18144
+poll_zero_timeout          1.4/sec     0.667/sec        0.0169/sec   total: 61
+rconn_queued               0.0/sec     0.083/sec        0.0167/sec   total: 64
+rconn_sent                 0.0/sec     0.083/sec        0.0167/sec   total: 64
+seq_change               1072.4/sec   450.667/sec       20.2656/sec   total: 77161
+pstream_open               0.0/sec     0.033/sec        0.0031/sec   total: 11
+stream_open                0.0/sec     0.000/sec        0.0014/sec   total: 5
+unixctl_received           0.4/sec     0.033/sec        0.0022/sec   total: 12
+unixctl_replied            0.4/sec     0.033/sec        0.0022/sec   total: 12
+util_xalloc              591.4/sec   445.867/sec       21.8497/sec   total: 81872
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns1 ping -c 1 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.044 ms
+
+--- 10.0.0.2 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.044/0.044/0.044/0.000 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows
+[?2004lrecirc_id(0),in_port(1),eth(src=b2:41:ae:5a:58:4d,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:6.076s, actions:2,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=2e:65:29:51:d1:e7),eth_type(0x0800),ipv4(frag=no), packets:2, bytes:196, used:1.208s, actions:3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:7.356s, actions:1,3
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=2e:56:2c:85:7d:c1),eth_type(0x0800),ipv4(frag=no), packets:2, bytes:196, used:1.208s, actions:2
+recirc_id(0),in_port(1),eth(src=b2:41:ae:5a:58:4d,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:9.404s, actions:2,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=ff:ff:ff:ff:ff:ff),eth_type(0x0806),arp(sip=10.0.0.1,tip=10.0.0.2,op=1/0xff), packets:0, bytes:0, used:never, actions:1,3
+recirc_id(0),in_port(2),eth(src=2e:56:2c:85:7d:c1,dst=2e:65:29:51:d1:e7),eth_type(0x0806), packets:0, bytes:0, used:never, actions:3
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=2e:56:2c:85:7d:c1),eth_type(0x0806), packets:1, bytes:42, used:1.465s, actions:2
+recirc_id(0),in_port(3),eth(src=2e:65:29:51:d1:e7,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:7.101s, actions:1,2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 'in_port=br-ns1' --names
+[?2004l--names: unknown option
+ovs-appctl: ovs-vswitchd: server returned an error
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 br-ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 br-ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-ns1 2>/dev/null
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-ns2 2>/dev/null
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns list
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:34:53 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 04:34:54+00:00 [COMMAND_EXIT_CODE="0"]
