@@ -1,0 +1,189 @@
+Script started on 2026-04-30 04:18:40+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:18:42 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# hostname
+[?2004llab-openvswitch
+[?2004hroot@lab-openvswitch:~/network-onboard# uname -r
+[?2004l5.15.0-173-generic
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -1
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+[?2004hroot@lab-openvswitch:~/network-onboard# pgrep -a ovsdb-server
+[?2004l876647 ovsdb-server /usr/local/etc/openvswitch/conf.db -vconsole:emer -vsyslog:err -vfile:info --remote=punix:/usr/local/var/run/openvswitch/db.sock --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --no-chdir --log-file=/usr/local/var/log/openvswitch/ovsdb-server.log --pidfile=/usr/local/var/run/openvswitch/ovsdb-server.pid --detach --monitor
+[?2004hroot@lab-openvswitch:~/network-onboard# pgrep -a ovs-vswitchd
+[?2004l876666 ovs-vswitchd unix:/usr/local/var/run/openvswitch/db.sock -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir --log-file=/usr/local/var/log/openvswitch/ovs-vswitchd.log --pidfile=/usr/local/var/run/openvswitch/ovs-vswitchd.pid --detach --monitor
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . ovs_version
+[?2004l"2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . db_version
+[?2004l"8.3.0"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . datapath_types
+[?2004l[netdev, system]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . iface_types
+[?2004l[bareudp, erspan, geneve, gre, gtpu, internal, ip6erspan, ip6gre, lisp, patch, stt, system, tap, vxlan]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004lbr0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br0
+        Port br0
+            Interface br0
+                type: internal
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list Bridge br0
+[?2004l_uuid               : e1c96e9a-1eb8-41e0-8d94-729628e82981
+auto_attach         : []
+controller          : []
+datapath_id         : "00009a6ec9e1e041"
+datapath_type       : ""
+datapath_version    : "<unknown>"
+external_ids        : {}
+fail_mode           : []
+flood_vlans         : []
+flow_tables         : {}
+ipfix               : []
+mcast_snooping_enable: false
+mirrors             : []
+name                : br0
+netflow             : []
+other_config        : {}
+ports               : [a047c65c-fec2-496d-b186-57802e701d7a]
+protocols           : []
+rstp_enable         : false
+rstp_status         : {}
+sflow               : []
+status              : {}
+stp_enable          : false
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list Port br0
+[?2004l_uuid               : a047c65c-fec2-496d-b186-57802e701d7a
+bond_active_slave   : []
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+cvlans              : []
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [8e2e47ab-6163-42b6-aa7f-f4133cb4b988]
+lacp                : []
+mac                 : []
+name                : br0
+other_config        : {}
+protected           : false
+qos                 : []
+rstp_statistics     : {}
+rstp_status         : {}
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list Interface br0
+[?2004l_uuid               : 8e2e47ab-6163-42b6-aa7f-f4133cb4b988
+admin_state         : down
+bfd                 : {}
+bfd_status          : {}
+cfm_fault           : []
+cfm_fault_status    : []
+cfm_flap_count      : []
+cfm_health          : []
+cfm_mpid            : []
+cfm_remote_mpids    : []
+cfm_remote_opstate  : []
+duplex              : []
+error               : []
+external_ids        : {}
+ifindex             : 110
+ingress_policing_burst: 0
+ingress_policing_kpkts_burst: 0
+ingress_policing_kpkts_rate: 0
+ingress_policing_rate: 0
+lacp_current        : []
+link_resets         : 0
+link_speed          : []
+link_state          : down
+lldp                : {}
+mac                 : []
+mac_in_use          : "9a:6e:c9:e1:e0:41"
+mtu                 : 1500
+mtu_request         : []
+name                : br0
+ofport              : 65534
+ofport_request      : []
+options             : {}
+other_config        : {}
+statistics          : {collisions=0, rx_bytes=0, rx_crc_err=0, rx_dropped=0, rx_errors=0, rx_frame_err=0, rx_missed_errors=0, rx_multicast_packets=0, rx_over_err=0, rx_packets=0, tx_bytes=0, tx_dropped=0, tx_errors=0, tx_packets=0}
+status              : {driver_name=openvswitch}
+type                : internal
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use list Interface br0
+[?2004lname                : br0
+type                : internal
+ofport              : 65534
+mac_in_use          : "9a:6e:c9:e1:e0:41"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 _uuid
+[?2004le1c96e9a-1eb8-41e0-8d94-729628e82981
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 datapath_id
+[?2004l"00009a6ec9e1e041"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 datapath_type
+[?2004l""
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 protocols
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port br0 _uuid
+[?2004la047c65c-fec2-496d-b186-57802e701d7a
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port br0 tag
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Port br0 trunks
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface br0 _uuid
+[?2004l8e2e47ab-6163-42b6-aa7f-f4133cb4b988
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface br0 type
+[?2004linternal
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface br0 ofport
+[?2004l65534
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface br0 mac_in_use
+[?2004l"9a:6e:c9:e1:e0:41"
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show br0
+[?2004l110: br0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 9a:6e:c9:e1:e0:41 brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=12.070s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br0
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:00009a6ec9e1e041
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ LOCAL(br0): addr:9a:6e:c9:e1:e0:41
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:0 missed:0
+  br0:
+    br0 65534/1: (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/list
+[?2004lbr0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-dpctl show
+[?2004lsystem@ovs-system:
+  lookups: hit:0 missed:0 lost:0
+  flows: 0
+  masks: hit:0 total:0 hit/pkt:0.00
+  caches:
+    masks-cache: size:256
+  port 0: ovs-system (internal)
+  port 1: br0 (internal)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:19:05 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 04:19:06+00:00 [COMMAND_EXIT_CODE="0"]
