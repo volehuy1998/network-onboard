@@ -1,0 +1,153 @@
+Script started on 2026-04-30 08:20:31+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:20:32 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_client
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_dhcp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_client type veth peer name veth_client_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_dhcp type veth peer name veth_dhcp_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_client netns ns_client
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_dhcp netns ns_dhcp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_client_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_dhcp_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_client_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_dhcp_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client link set veth_client up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dhcp link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dhcp link set veth_dhcp up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dhcp addr add 10.0.0.1/24 dev veth_dhcp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get bridge br0 fail_mode
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=5.504s, table=0, n_packets=4, n_bytes=356, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client timeout 5 dhclient -v veth_client 2>&1 | head -20; echo dhclient_exit=$?
+[?2004lInternet Systems Consortium DHCP Client 4.4.1
+Copyright 2004-2018 Internet Systems Consortium.
+All rights reserved.
+For info, please visit https://www.isc.org/software/dhcp/
+
+Listening on LPF/veth_client/9e:b7:de:e6:1e:06
+Sending on   LPF/veth_client/9e:b7:de:e6:1e:06
+Sending on   Socket/fallback
+DHCPDISCOVER on veth_client to 255.255.255.255 port 67 interval 3 (xid=0xef9c686d)
+DHCPDISCOVER on veth_client to 255.255.255.255 port 67 interval 3 (xid=0xef9c686d)
+Terminated
+dhclient_exit=143
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client addr show veth_client
+[?2004l345: veth_client@if344: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 9e:b7:de:e6:1e:06 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::9cb7:deff:fee6:1e06/64 scope link 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_dhcp dnsmasq --no-daemon --pid-file=/tmp/r2.5.10-dnsmasq.pid --interface=veth_dhcp --bind-interfaces --dhcp-range=10.0.0.50,10.0.0.99,12h --dhcp-option=3,10.0.0.1 --dhcp-option=6,10.0.0.1 --log-dhcp --log-facility=/tmp/r2.5.10-dnsmasq.log >/tmp/r2.5.10-dnsmasq.stdout 2>&1 &
+[?2004l[1] 1339780
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client timeout 5 dhclient -v veth_client 2>&1 | head -20; echo dhclient_exit=$?
+[?2004lInternet Systems Consortium DHCP Client 4.4.1
+Copyright 2004-2018 Internet Systems Consortium.
+All rights reserved.
+For info, please visit https://www.isc.org/software/dhcp/
+
+Listening on LPF/veth_client/9e:b7:de:e6:1e:06
+Sending on   LPF/veth_client/9e:b7:de:e6:1e:06
+Sending on   Socket/fallback
+DHCPDISCOVER on veth_client to 255.255.255.255 port 67 interval 3 (xid=0xcb88452a)
+DHCPOFFER of 10.0.0.51 from 10.0.0.1
+DHCPREQUEST for 10.0.0.51 on veth_client to 255.255.255.255 port 67 (xid=0x2a4588cb)
+DHCPACK of 10.0.0.51 from 10.0.0.1 (xid=0xcb88452a)
+Failed to set LLMNR configuration: Link 345 not known
+Failed to set MulticastDNS configuration: Link 345 not known
+Failed to set domain configuration: Link 345 not known
+Failed to set DNS configuration: Link 345 not known
+bound to 10.0.0.51 -- renewal in 19551 seconds.
+dhclient_exit=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client addr show veth_client
+[?2004l345: veth_client@if344: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 9e:b7:de:e6:1e:06 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.0.0.51/24 brd 10.0.0.255 scope global dynamic veth_client
+       valid_lft 43200sec preferred_lft 43200sec
+    inet6 fe80::9cb7:deff:fee6:1e06/64 scope link 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client route show
+[?2004ldefault via 10.0.0.1 dev veth_client 
+10.0.0.0/24 dev veth_client proto kernel scope link src 10.0.0.51 
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.10-dnsmasq.log
+[?2004lApr 30 08:20:45 dnsmasq[1339780]: started, version 2.90 cachesize 150
+Apr 30 08:20:45 dnsmasq[1339780]: compile time options: IPv6 GNU-getopt DBus no-UBus i18n IDN2 DHCP DHCPv6 no-Lua TFTP conntrack ipset no-nftset auth cryptohash DNSSEC loop-detect inotify dumpfile
+Apr 30 08:20:45 dnsmasq-dhcp[1339780]: DHCP, IP range 10.0.0.50 -- 10.0.0.99, lease time 12h
+Apr 30 08:20:45 dnsmasq-dhcp[1339780]: DHCP, sockets bound exclusively to interface veth_dhcp
+Apr 30 08:20:45 dnsmasq[1339780]: reading /etc/resolv.conf
+Apr 30 08:20:45 dnsmasq[1339780]: using nameserver 127.0.0.53#53
+Apr 30 08:20:45 dnsmasq[1339780]: read /etc/hosts - 8 names
+Apr 30 08:20:47 dnsmasq-dhcp[1339780]: 3414705450 available DHCP range: 10.0.0.50 -- 10.0.0.99
+Apr 30 08:20:47 dnsmasq-dhcp[1339780]: 3414705450 client provides name: lab-openvswitch
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 DHCPDISCOVER(veth_dhcp) 9e:b7:de:e6:1e:06 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 tags: veth_dhcp
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 DHCPOFFER(veth_dhcp) 10.0.0.51 9e:b7:de:e6:1e:06 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 1:netmask, 28:broadcast, 2:time-offset, 3:router, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 15:domain-name, 6:dns-server, 119:domain-search, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 12:hostname, 44:netbios-ns, 47:netbios-scope, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 26:mtu, 121:classless-static-route, 42:ntp-server
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 next server: 10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  1 option: 53 message-type  2
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 54 server-identifier  10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 51 lease-time  12h
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 58 T1  6h
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 59 T2  10h30m
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  1 netmask  255.255.255.0
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 28 broadcast  10.0.0.255
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  6 dns-server  10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  3 router  10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 available DHCP range: 10.0.0.50 -- 10.0.0.99
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 client provides name: lab-openvswitch
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 DHCPREQUEST(veth_dhcp) 10.0.0.51 9e:b7:de:e6:1e:06 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 tags: veth_dhcp
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 DHCPACK(veth_dhcp) 10.0.0.51 9e:b7:de:e6:1e:06 lab-openvswitch
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 1:netmask, 28:broadcast, 2:time-offset, 3:router, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 15:domain-name, 6:dns-server, 119:domain-search, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 12:hostname, 44:netbios-ns, 47:netbios-scope, 
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 requested options: 26:mtu, 121:classless-static-route, 42:ntp-server
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 next server: 10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  1 option: 53 message-type  5
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 54 server-identifier  10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 51 lease-time  12h
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 58 T1  6h
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 59 T2  10h30m
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  1 netmask  255.255.255.0
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option: 28 broadcast  10.0.0.255
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size: 15 option: 12 hostname  lab-openvswitch
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  6 dns-server  10.0.0.1
+Apr 30 08:20:50 dnsmasq-dhcp[1339780]: 3414705450 sent size:  4 option:  3 router  10.0.0.1
+[?2004hroot@lab-openvswitch:~/network-onboard# kill $(cat /tmp/r2.5.10-dnsmasq.pid 2>/dev/null) 2>/dev/null; pkill dnsmasq; sleep 1; true
+[?2004l[1]+  Done                    ip netns exec ns_dhcp dnsmasq --no-daemon --pid-file=/tmp/r2.5.10-dnsmasq.pid --interface=veth_dhcp --bind-interfaces --dhcp-range=10.0.0.50,10.0.0.99,12h --dhcp-option=3,10.0.0.1 --dhcp-option=6,10.0.0.1 --log-dhcp --log-facility=/tmp/r2.5.10-dnsmasq.log > /tmp/r2.5.10-dnsmasq.stdout 2>&1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=200,arp,arp_op=1,arp_tpa=10.0.0.99,actions=load:0x2->NXM_OF_ARP_OP[],move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[],load:0x000abc999999->NXM_OF_ETH_SRC[],move:NXM_OF_ARP_SHA[]->NXM_OF_ARP_THA[],load:0x000abc999999->NXM_OF_ARP_SHA[],move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[],load:0xa000063->NXM_OF_ARP_SPA[],in_port'
+[?2004lovs-ofctl: NXM_OF_ARP_SHA[]->NXM_OF_ARP_THA[]: unknown field `NXM_OF_ARP_SHA'
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=100,actions=NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=19.796s, table=0, n_packets=26, n_bytes=3561, priority=0 actions=NORMAL
+ cookie=0x0, duration=0.302s, table=0, n_packets=0, n_bytes=0, priority=100 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_dhcp arping -c 2 -w 3 -I veth_dhcp 10.0.0.99 || true
+[?2004lexec of "arping" failed: No such file or directory
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_dhcp neigh show
+[?2004l10.0.0.51 dev veth_dhcp lladdr 9e:b7:de:e6:1e:06 DELAY
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0 | grep arp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# rm -f /tmp/r2.5.10-*
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:20:56 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 08:20:56+00:00 [COMMAND_EXIT_CODE="0"]
