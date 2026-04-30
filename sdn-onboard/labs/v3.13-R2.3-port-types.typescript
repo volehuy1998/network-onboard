@@ -1,0 +1,144 @@
+Script started on 2026-04-30 04:43:18+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:43:20 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Open_vSwitch . iface_types
+[?2004l[bareudp, erspan, geneve, gre, gtpu, internal, ip6erspan, ip6gre, lisp, patch, stt, system, tap, vxlan]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 int0 -- set Interface int0 type=internal
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use,admin_state list Interface int0
+[?2004lname                : int0
+type                : internal
+ofport              : 1
+mac_in_use          : "b2:fb:2c:fe:12:ac"
+admin_state         : down
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show int0
+[?2004l121: int0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether b2:fb:2c:fe:12:ac brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set int0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip addr add 10.10.10.1/24 dev int0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip addr show int0
+[?2004l121: int0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether b2:fb:2c:fe:12:ac brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.1/24 scope global int0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b0fb:2cff:fefe:12ac/64 scope link tentative 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,admin_state,link_state,mtu list Interface int0
+[?2004lname                : int0
+type                : internal
+ofport              : 1
+admin_state         : up
+link_state          : up
+mtu                 : 1500
+[?2004hroot@lab-openvswitch:~/network-onboard# which tunctl ip
+[?2004l/usr/sbin/ip
+[?2004hroot@lab-openvswitch:~/network-onboard# ip tuntap add mode tap dev tap0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 tap0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use list Interface tap0
+[?2004lname                : tap0
+type                : ""
+ofport              : 2
+mac_in_use          : "5a:4a:dd:48:3b:3d"
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show tap0
+[?2004l122: tap0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop master ovs-system state DOWN mode DEFAULT group default qlen 1000
+    link/ether 5a:4a:dd:48:3b:3d brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set tap0 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,admin_state,link_state list Interface tap0
+[?2004lname                : tap0
+type                : ""
+ofport              : 2
+admin_state         : up
+link_state          : down
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-a type veth peer name veth-b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use list Interface veth-a
+[?2004lname                : veth-a
+type                : ""
+ofport              : 3
+mac_in_use          : "ce:00:9b:26:62:e0"
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show veth-a
+[?2004l124: veth-a@veth-b: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master ovs-system state UP mode DEFAULT group default qlen 1000
+    link/ether ce:00:9b:26:62:e0 brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br0
+        Port veth-a
+            Interface veth-a
+        Port br0
+            Interface br0
+                type: internal
+        Port tap0
+            Interface tap0
+        Port int0
+            Interface int0
+                type: internal
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:5 missed:6
+  br0:
+    br0 65534/1: (internal)
+    int0 1/2: (internal)
+    tap0 2/3: (system)
+    veth-a 3/4: (system)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport list Interface
+[?2004lname                : tap0
+type                : ""
+ofport              : 2
+
+name                : veth-a
+type                : ""
+ofport              : 3
+
+name                : br0
+type                : internal
+ofport              : 65534
+
+name                : int0
+type                : internal
+ofport              : 1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface int0 type
+[?2004linternal
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface tap0 type
+[?2004l""
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface veth-a type
+[?2004l""
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Interface br0 type
+[?2004linternal
+[?2004hroot@lab-openvswitch:~/network-onboard# ls -la /sys/class/net/int0/ /sys/class/net/tap0/ 2>&1 | grep -E '(int0|tap0)' | head -10
+[?2004l/sys/class/net/int0/:
+/sys/class/net/tap0/:
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /sys/class/net/int0/type
+[?2004l1
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /sys/class/net/tap0/tun_flags 2>&1 || echo 'no tun_flags'
+[?2004l0x1802
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /sys/class/net/veth-a/type
+[?2004l1
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /sys/class/net/br0/type
+[?2004l1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 int0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link show int0 2>&1 || echo '(int0 gone)'
+[?2004lDevice "int0" does not exist.
+(int0 gone)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 tap0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link show tap0 2>&1 || echo '(tap0 gone)'
+[?2004l122: tap0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+    link/ether 5a:4a:dd:48:3b:3d brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 veth-a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link show veth-a
+[?2004l124: veth-a@veth-b: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether ce:00:9b:26:62:e0 brd ff:ff:ff:ff:ff:ff
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth-a 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del tap0 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:43:48 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 04:43:48+00:00 [COMMAND_EXIT_CODE="0"]
