@@ -1,0 +1,239 @@
+Script started on 2026-04-30 04:48:05+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:48:07 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004lbr-int
+br-tun
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-int patch-int-tun -- set Interface patch-int-tun type=patch options:peer=patch-tun-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-tun patch-tun-int -- set Interface patch-tun-int type=patch options:peer=patch-int-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br-tun
+        Port br-tun
+            Interface br-tun
+                type: internal
+        Port patch-tun-int
+            Interface patch-tun-int
+                type: patch
+                options: {peer=patch-int-tun}
+    Bridge br-int
+        Port br-int
+            Interface br-int
+                type: internal
+        Port patch-int-tun
+            Interface patch-int-tun
+                type: patch
+                options: {peer=patch-tun-int}
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,options list Interface patch-int-tun patch-tun-int
+[?2004lname                : patch-int-tun
+type                : patch
+ofport              : 1
+options             : {peer=patch-tun-int}
+
+name                : patch-tun-int
+type                : patch
+ofport              : 1
+options             : {peer=patch-int-tun}
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show patch-int-tun 2>&1 || echo '(patch-int-tun has no kernel netdev)'
+[?2004lDevice "patch-int-tun" does not exist.
+(patch-int-tun has no kernel netdev)
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link show patch-tun-int 2>&1 || echo '(patch-tun-int has no kernel netdev)'
+[?2004lDevice "patch-tun-int" does not exist.
+(patch-tun-int has no kernel netdev)
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -br link | grep -E 'patch|br-int|br-tun'
+[?2004l[01;31m[Kbr-int[m[K           DOWN           c2:63:c2:43:85:4d <BROADCAST,MULTICAST> 
+[01;31m[Kbr-tun[m[K           DOWN           66:f8:85:06:b3:4e <BROADCAST,MULTICAST> 
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:0 missed:0
+  br-int:
+    br-int 65534/1: (internal)
+    patch-int-tun 1/none: (patch: peer=patch-tun-int)
+  br-tun:
+    br-tun 65534/2: (internal)
+    patch-tun-int 1/none: (patch: peer=patch-int-tun)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,ofport,mac_in_use,admin_state,link_state list Interface patch-int-tun
+[?2004lname                : patch-int-tun
+type                : patch
+ofport              : 1
+mac_in_use          : "e6:d9:34:62:03:e9"
+admin_state         : up
+link_state          : up
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-int 'in_port=br-int,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=LOCAL,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-int")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+bridge("br-tun")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=LOCAL,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 2
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-int 'in_port=patch-int-tun,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-int")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=1,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-int type veth peer name br-int-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth-tun type veth peer name br-tun-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-int netns ns-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth-tun netns ns-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-int ip addr add 10.20.0.1/24 dev veth-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-tun ip addr add 10.20.0.2/24 dev veth-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-int ip link set veth-int up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-tun ip link set veth-tun up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-int ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-tun ip link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-int br-int-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-tun br-tun-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-int-veth up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set br-tun-veth up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    Bridge br-tun
+        Port br-tun
+            Interface br-tun
+                type: internal
+        Port br-tun-veth
+            Interface br-tun-veth
+        Port patch-tun-int
+            Interface patch-tun-int
+                type: patch
+                options: {peer=patch-int-tun}
+    Bridge br-int
+        Port br-int
+            Interface br-int
+                type: internal
+        Port br-int-veth
+            Interface br-int-veth
+        Port patch-int-tun
+            Interface patch-int-tun
+                type: patch
+                options: {peer=patch-tun-int}
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpif/show
+[?2004lsystem@ovs-system: hit:4 missed:6
+  br-int:
+    br-int 65534/1: (internal)
+    br-int-veth 2/3: (system)
+    patch-int-tun 1/none: (patch: peer=patch-tun-int)
+  br-tun:
+    br-tun 65534/2: (internal)
+    br-tun-veth 2/4: (system)
+    patch-tun-int 1/none: (patch: peer=patch-int-tun)
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-int ping -c 2 -W 2 10.20.0.2
+[?2004lPING 10.20.0.2 (10.20.0.2) 56(84) bytes of data.
+64 bytes from 10.20.0.2: icmp_seq=1 ttl=64 time=0.447 ms
+ovs-appctl fdb/show br-int
+64 bytes from 10.20.0.2: icmp_seq=2 ttl=64 time=0.050 ms
+
+--- 10.20.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1023ms
+rtt min/avg/max/mdev = 0.050/0.248/0.447/0.198 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br-int
+[?2004l port  VLAN  MAC                Age
+    1     0  9e:f1:43:47:bc:52    1
+    2     0  c2:cb:45:81:01:8b    0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br-tun
+[?2004l port  VLAN  MAC                Age
+    1     0  c2:cb:45:81:01:8b    0
+    2     0  9e:f1:43:47:bc:52    0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows
+[?2004lrecirc_id(0),in_port(4),eth(src=9e:f1:43:47:bc:52,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:2,1,3
+recirc_id(0),in_port(4),eth(src=9e:f1:43:47:bc:52,dst=33:33:ff:47:bc:52),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:2,1,3
+recirc_id(0),in_port(3),eth(src=c2:cb:45:81:01:8b,dst=33:33:ff:81:01:8b),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:1,2,4
+recirc_id(0),in_port(3),eth(src=c2:cb:45:81:01:8b,dst=9e:f1:43:47:bc:52),eth_type(0x0800),ipv4(frag=no), packets:1, bytes:98, used:1.184s, actions:4
+recirc_id(0),in_port(3),eth(src=c2:cb:45:81:01:8b,dst=ff:ff:ff:ff:ff:ff),eth_type(0x0806),arp(sip=10.20.0.1,tip=10.20.0.2,op=1/0xff), packets:0, bytes:0, used:never, actions:1,2,4
+recirc_id(0),in_port(4),eth(src=9e:f1:43:47:bc:52,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:2.704s, actions:2,1,3
+recirc_id(0),in_port(4),eth(src=9e:f1:43:47:bc:52,dst=c2:cb:45:81:01:8b),eth_type(0x0806), packets:0, bytes:0, used:never, actions:3
+recirc_id(0),in_port(4),eth(src=9e:f1:43:47:bc:52,dst=c2:cb:45:81:01:8b),eth_type(0x0800),ipv4(frag=no), packets:1, bytes:98, used:1.184s, actions:3
+recirc_id(0),in_port(3),eth(src=c2:cb:45:81:01:8b,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:1,2,4
+recirc_id(0),in_port(3),eth(src=c2:cb:45:81:01:8b,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:2.304s, actions:1,2,4
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-int 'in_port=br-int-veth,dl_src=02:00:00:00:00:99,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=2,vlan_tci=0x0000,dl_src=02:00:00:00:00:99,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-int")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+bridge("br-tun")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=2,dl_src=02:00:00:00:00:99,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 1,2,4
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br-int patch-int-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,options list Interface patch-tun-int
+[?2004lname                : patch-tun-int
+type                : patch
+options             : {peer=patch-int-tun}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br-tun 'in_port=patch-tun-int,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,dl_type=0x0806'
+[?2004lFlow: arp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=0.0.0.0,arp_tpa=0.0.0.0,arp_op=0,arp_sha=00:00:00:00:00:00,arp_tha=00:00:00:00:00:00
+
+bridge("br-tun")
+----------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=1,dl_src=02:00:00:00:00:01,dl_dst=ff:ff:ff:ff:ff:ff,arp_op=0
+Datapath actions: 2,4
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br-int patch-int-tun -- set Interface patch-int-tun type=patch options:peer=patch-tun-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,type,options list Interface patch-int-tun patch-tun-int
+[?2004lname                : patch-int-tun
+type                : patch
+options             : {peer=patch-tun-int}
+
+name                : patch-tun-int
+type                : patch
+options             : {peer=patch-int-tun}
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns-int ping -c 1 -W 2 10.20.0.2
+[?2004lPING 10.20.0.2 (10.20.0.2) 56(84) bytes of data.
+64 bytes from 10.20.0.2: icmp_seq=1 ttl=64 time=0.038 ms
+
+--- 10.20.0.2 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.038/0.038/0.038/0.000 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br-int br-int-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br-tun br-tun-veth
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-int-veth 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del br-tun-veth 2>/dev/null || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns del ns-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br-int
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br-tun
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:48:43 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 04:48:43+00:00 [COMMAND_EXIT_CODE="0"]
