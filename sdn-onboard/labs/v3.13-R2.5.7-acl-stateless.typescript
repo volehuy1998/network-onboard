@@ -1,0 +1,171 @@
+Script started on 2026-04-30 08:01:45+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:01:46 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_c
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_a type veth peer name veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_b type veth peer name veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_c type veth peer name veth_c_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a netns ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b netns ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_c netns ns_c
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_c_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_c_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set veth_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a addr add 10.0.0.1/24 dev veth_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set veth_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b addr add 10.0.0.2/24 dev veth_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_c link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_c link set veth_c up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_c addr add 10.0.0.3/24 dev veth_c
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br0
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000665828e2cd4a
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(veth_a_br): addr:ae:1c:e2:64:d3:d9
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(veth_b_br): addr:fa:2b:ff:34:05:ed
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 3(veth_c_br): addr:2e:c3:84:b1:c8:b7
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br0): addr:66:58:28:e2:cd:4a
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=8.261s, table=0, n_packets=13, n_bytes=1118, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.844 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.040 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.040/0.442/0.844/0.402 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.3
+[?2004lPING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=1.31 ms
+64 bytes from 10.0.0.3: icmp_seq=2 ttl=64 time=0.123 ms
+
+--- 10.0.0.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.123/0.714/1.306/0.591 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b ping -c 2 -W 2 10.0.0.1
+[?2004lPING 10.0.0.1 (10.0.0.1) 56(84) bytes of data.
+64 bytes from 10.0.0.1: icmp_seq=1 ttl=64 time=0.033 ms
+64 bytes from 10.0.0.1: icmp_seq=2 ttl=64 time=0.038 ms
+
+--- 10.0.0.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1004ms
+rtt min/avg/max/mdev = 0.033/0.035/0.038/0.002 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=200,icmp,nw_src=10.0.0.1,nw_dst=10.0.0.2,actions=drop'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=200,icmp,nw_src=10.0.0.2,nw_dst=10.0.0.1,actions=drop'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=0.605s, table=0, n_packets=1, n_bytes=98, priority=200,icmp,nw_src=10.0.0.1,nw_dst=10.0.0.2 actions=drop
+ cookie=0x0, duration=0.302s, table=0, n_packets=0, n_bytes=0, priority=200,icmp,nw_src=10.0.0.2,nw_dst=10.0.0.1 actions=drop
+ cookie=0x0, duration=12.830s, table=0, n_packets=35, n_bytes=2934, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.2; echo ping_exit=$?
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1015ms
+
+ping_exit=1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.3
+[?2004lPING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=0.320 ms
+64 bytes from 10.0.0.3: icmp_seq=2 ttl=64 time=0.051 ms
+
+--- 10.0.0.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1015ms
+rtt min/avg/max/mdev = 0.051/0.185/0.320/0.134 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b ping -c 2 -W 2 10.0.0.3
+[?2004lPING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=0.257 ms
+64 bytes from 10.0.0.3: icmp_seq=2 ttl=64 time=0.056 ms
+
+--- 10.0.0.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1020ms
+rtt min/avg/max/mdev = 0.056/0.156/0.257/0.100 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=6.378s, table=0, n_packets=3, n_bytes=294, priority=200,icmp,nw_src=10.0.0.1,nw_dst=10.0.0.2 actions=drop
+ cookie=0x0, duration=6.075s, table=0, n_packets=0, n_bytes=0, priority=200,icmp,nw_src=10.0.0.2,nw_dst=10.0.0.1 actions=drop
+ cookie=0x0, duration=18.603s, table=0, n_packets=50, n_bytes=4040, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows --names | head -10
+[?2004lrecirc_id(0),in_port(veth_c_br),eth(src=f6:09:b7:61:62:82,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:9.372s, actions:br0,veth_a_br,veth_b_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:6.908s, actions:br0,veth_a_br,veth_c_br
+recirc_id(0),in_port(veth_a_br),eth(src=52:e9:ed:12:02:c4,dst=ff:ff:ff:ff:ff:ff),eth_type(0x0806),arp(sip=10.0.0.1,tip=10.0.0.3,op=1/0xff), packets:0, bytes:0, used:never, actions:br0,veth_b_br,veth_c_br
+recirc_id(0),in_port(veth_a_br),eth(src=52:e9:ed:12:02:c4,dst=6a:9b:f6:b2:d8:1d),eth_type(0x0806), packets:0, bytes:0, used:never, actions:veth_b_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=52:e9:ed:12:02:c4),eth_type(0x0806), packets:1, bytes:42, used:5.116s, actions:veth_a_br
+recirc_id(0),in_port(veth_c_br),eth(src=f6:09:b7:61:62:82,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:6.140s, actions:br0,veth_a_br,veth_b_br
+recirc_id(0),in_port(veth_c_br),eth(src=f6:09:b7:61:62:82,dst=6a:9b:f6:b2:d8:1d),eth_type(0x0806), packets:0, bytes:0, used:never, actions:veth_b_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=f6:09:b7:61:62:82),eth_type(0x0800),ipv4(dst=10.0.0.3,frag=no), packets:1, bytes:98, used:0.508s, actions:veth_c_br
+recirc_id(0),in_port(veth_a_br),eth(src=52:e9:ed:12:02:c4,dst=f6:09:b7:61:62:82),eth_type(0x0806), packets:0, bytes:0, used:never, actions:veth_c_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:10.332s, actions:br0,veth_a_br,veth_c_br
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 in_port=veth_a_br,dl_src=02:00:00:00:00:01,dl_dst=02:00:00:00:00:02,dl_type=0x0800,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_proto=1,nw_ttl=64 2>&1 | head -20
+[?2004lFlow: icmp,in_port=1,vlan_tci=0x0000,dl_src=02:00:00:00:00:01,dl_dst=02:00:00:00:00:02,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_tos=0,nw_ecn=0,nw_ttl=64,nw_frag=no,icmp_type=0,icmp_code=0
+
+bridge("br0")
+-------------
+ 0. icmp,nw_src=10.0.0.1,nw_dst=10.0.0.2, priority 200
+    drop
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,icmp,in_port=1,nw_src=10.0.0.1,nw_dst=10.0.0.2,nw_frag=no
+Datapath actions: drop
+[?2004hroot@lab-openvswitch:~/network-onboard# iptables -N r2_5_7_test 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# iptables -I FORWARD -m physdev --physdev-in veth_a_br -d 10.0.0.2 -p icmp -j DROP
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# iptables -L FORWARD -n -v --line-numbers | head -10
+[?2004lChain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1        0     0 DROP       icmp --  *      *       0.0.0.0/0            10.0.0.2             PHYSDEV match --physdev-in veth_a_br
+[?2004hroot@lab-openvswitch:~/network-onboard# iptables -D FORWARD -m physdev --physdev-in veth_a_br -d 10.0.0.2 -p icmp -j DROP
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0 'icmp,nw_src=10.0.0.1,nw_dst=10.0.0.2'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0 'icmp,nw_src=10.0.0.2,nw_dst=10.0.0.1'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=21.353s, table=0, n_packets=53, n_bytes=4250, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=1.07 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.033 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.033/0.553/1.073/0.520 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:02:11 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 08:02:11+00:00 [COMMAND_EXIT_CODE="0"]
