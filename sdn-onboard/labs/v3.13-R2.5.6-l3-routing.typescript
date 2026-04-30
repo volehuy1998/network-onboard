@@ -1,0 +1,157 @@
+Script started on 2026-04-30 07:54:51+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:54:52 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_router
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_a type veth peer name veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_b type veth peer name veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_r10 type veth peer name veth_r10_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_r20 type veth peer name veth_r20_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a netns ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b netns ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_r10 netns ns_router
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_r20 netns ns_router
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_a_br tag=10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_b_br tag=20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_r10_br tag=10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_r20_br tag=20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_r10_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_r20_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set veth_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a addr add 10.0.10.10/24 dev veth_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a route add default via 10.0.10.1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set veth_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b addr add 10.0.20.10/24 dev veth_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b route add default via 10.0.20.1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router link set veth_r10 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router link set veth_r20 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router addr add 10.0.10.1/24 dev veth_r10
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router addr add 10.0.20.1/24 dev veth_r20
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_router sysctl -w net.ipv4.ip_forward=1
+[?2004lnet.ipv4.ip_forward = 1
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router route show
+[?2004l10.0.10.0/24 dev veth_r10 proto kernel scope link src 10.0.10.1 
+10.0.20.0/24 dev veth_r20 proto kernel scope link src 10.0.20.1 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router addr show
+[?2004l1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+313: veth_r10@if312: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 66:6b:77:6f:cd:d9 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.0.10.1/24 scope global veth_r10
+       valid_lft forever preferred_lft forever
+    inet6 fe80::646b:77ff:fe6f:cdd9/64 scope link 
+       valid_lft forever preferred_lft forever
+315: veth_r20@if314: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether c2:8b:2d:84:fc:32 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.0.20.1/24 scope global veth_r20
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c08b:2dff:fe84:fc32/64 scope link tentative 
+       valid_lft forever preferred_lft forever
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.10.1
+[?2004lPING 10.0.10.1 (10.0.10.1) 56(84) bytes of data.
+64 bytes from 10.0.10.1: icmp_seq=1 ttl=64 time=0.537 ms
+64 bytes from 10.0.10.1: icmp_seq=2 ttl=64 time=0.091 ms
+
+--- 10.0.10.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1020ms
+rtt min/avg/max/mdev = 0.091/0.314/0.537/0.223 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.20.10
+[?2004lPING 10.0.20.10 (10.0.20.10) 56(84) bytes of data.
+64 bytes from 10.0.20.10: icmp_seq=1 ttl=63 time=0.425 ms
+64 bytes from 10.0.20.10: icmp_seq=2 ttl=63 time=0.055 ms
+
+--- 10.0.20.10 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1024ms
+rtt min/avg/max/mdev = 0.055/0.240/0.425/0.185 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b ping -c 2 -W 2 10.0.20.1
+[?2004lPING 10.0.20.1 (10.0.20.1) 56(84) bytes of data.
+64 bytes from 10.0.20.1: icmp_seq=1 ttl=64 time=0.036 ms
+64 bytes from 10.0.20.1: icmp_seq=2 ttl=64 time=0.072 ms
+
+--- 10.0.20.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1022ms
+rtt min/avg/max/mdev = 0.036/0.054/0.072/0.018 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a neigh show
+[?2004l10.0.10.1 dev veth_a lladdr 66:6b:77:6f:cd:d9 REACHABLE
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_router neigh show
+[?2004l10.0.20.10 dev veth_r20 lladdr 6a:9b:f6:b2:d8:1d REACHABLE
+10.0.10.10 dev veth_r10 lladdr 52:e9:ed:12:02:c4 DELAY
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl ofproto/trace br0 in_port=veth_a_br,dl_src=fe:00:00:00:00:0a,dl_dst=fe:00:00:00:00:0b,dl_type=0x0800,nw_src=10.0.10.10,nw_dst=10.0.20.10 2>&1 | head -30
+[?2004lFlow: ip,in_port=1,vlan_tci=0x0000,dl_src=fe:00:00:00:00:0a,dl_dst=fe:00:00:00:00:0b,nw_src=10.0.10.10,nw_dst=10.0.20.10,nw_proto=0,nw_tos=0,nw_ecn=0,nw_ttl=0,nw_frag=no
+
+bridge("br0")
+-------------
+ 0. priority 0
+    NORMAL
+     -> no learned MAC for destination, flooding
+
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,ip,in_port=1,dl_src=fe:00:00:00:00:0a,dl_dst=fe:00:00:00:00:0b,nw_frag=no
+Datapath actions: push_vlan(vid=10,pcp=0),1,pop_vlan,4
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows --names | grep -E 'in_port|10.0' | head -8
+[?2004lrecirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=33:33:00:00:00:16),eth_type(0x86dd),ipv6(frag=no), packets:3, bytes:270, used:5.360s, actions:push_vlan(vid=20,pcp=0),br0,pop_vlan,veth_r20_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:1.616s, actions:push_vlan(vid=20,pcp=0),br0,pop_vlan,veth_r20_br
+recirc_id(0),in_port(veth_r20_br),eth(src=c2:8b:2d:84:fc:32,dst=ff:ff:ff:ff:ff:ff),eth_type(0x0806),arp(sip=10.0.20.1,tip=10.0.20.10,op=1/0xff), packets:0, bytes:0, used:never, actions:push_vlan(vid=20,pcp=0),br0,pop_vlan,veth_b_br
+recirc_id(0),in_port(veth_b_br),eth(src=6a:9b:f6:b2:d8:1d,dst=c2:8b:2d:84:fc:32),eth_type(0x0800),ipv4(frag=no), packets:3, bytes:294, used:1.104s, actions:veth_r20_br
+recirc_id(0),in_port(veth_r20_br),eth(src=c2:8b:2d:84:fc:32,dst=6a:9b:f6:b2:d8:1d),eth_type(0x0800),ipv4(frag=no), packets:3, bytes:294, used:1.104s, actions:veth_b_br
+recirc_id(0),in_port(veth_r10_br),eth(src=66:6b:77:6f:cd:d9,dst=33:33:ff:6f:cd:d9),eth_type(0x86dd),ipv6(frag=no), packets:0, bytes:0, used:never, actions:push_vlan(vid=10,pcp=0),br0,pop_vlan,veth_a_br
+recirc_id(0),in_port(veth_a_br),eth(src=52:e9:ed:12:02:c4,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:3.408s, actions:push_vlan(vid=10,pcp=0),br0,pop_vlan,veth_r10_br
+recirc_id(0),in_port(veth_r10_br),eth(src=66:6b:77:6f:cd:d9,dst=33:33:00:00:00:02),eth_type(0x86dd),ipv6(frag=no), packets:1, bytes:70, used:1.872s, actions:push_vlan(vid=10,pcp=0),br0,pop_vlan,veth_a_br
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl fdb/show br0
+[?2004l port  VLAN  MAC                Age
+    1    10  52:e9:ed:12:02:c4    3
+    3    10  66:6b:77:6f:cd:d9    2
+    2    20  6a:9b:f6:b2:d8:1d    1
+    4    20  c2:8b:2d:84:fc:32    1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 veth_r10_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-port br0 veth_r20_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link show veth_a | grep ether
+[?2004l    link/[01;31m[Kether[m[K 52:e9:ed:12:02:c4 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link show veth_b | grep ether
+[?2004l    link/[01;31m[Kether[m[K 6a:9b:f6:b2:d8:1d brd ff:ff:ff:ff:ff:ff link-netnsid 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a neigh add 10.0.10.1 lladdr 02:00:00:00:00:01 dev veth_a
+[?2004lRTNETLINK answers: File exists
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b neigh add 10.0.20.1 lladdr 02:00:00:00:00:02 dev veth_b
+[?2004lRTNETLINK answers: File exists
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link show veth_a | awk '/ether/ {print $2}'
+[?2004l52:e9:ed:12:02:c4
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link show veth_b | awk '/ether/ {print $2}'
+[?2004l6a:9b:f6:b2:d8:1d
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0 | head -5
+[?2004lNXST_FLOW reply (xid=0x4):
+ cookie=0x0, duration=18.911s, table=0, n_packets=50, n_bytes=4164, idle_age=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# echo CONCEPTUAL: ovs-ofctl add-flow br0 'table=0,priority=100,ip,in_port=1,nw_dst=10.0.20.10,actions=mod_dl_src:02:00:00:00:00:02,mod_dl_dst:<ns_b_veth_mac>,dec_ttl,output:2'
+[?2004lCONCEPTUAL: ovs-ofctl add-flow br0 table=0,priority=100,ip,in_port=1,nw_dst=10.0.20.10,actions=mod_dl_src:02:00:00:00:00:02,mod_dl_dst:<ns_b_veth_mac>,dec_ttl,output:2
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_b 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_r10 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del veth_r20 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:55:15 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 07:55:15+00:00 [COMMAND_EXIT_CODE="0"]
