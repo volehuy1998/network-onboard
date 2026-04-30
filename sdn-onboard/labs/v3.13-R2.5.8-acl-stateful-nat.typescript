@@ -1,0 +1,209 @@
+Script started on 2026-04-30 08:08:23+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:08:24 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_client
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_server
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_client type veth peer name veth_client_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_server type veth peer name veth_server_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_client netns ns_client
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_server netns ns_server
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_client_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_server_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_client_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_server_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client link set veth_client up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client addr add 10.0.0.1/24 dev veth_client
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_server link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_server link set veth_server up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_server addr add 10.0.0.2/24 dev veth_server
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl show br0
+[?2004lOFPT_FEATURES_REPLY (xid=0x2): dpid:0000c2754be2ec4e
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(veth_client_br): addr:a6:12:74:aa:b8:e4
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(veth_server_br): addr:e6:1e:18:ea:7c:db
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(br0): addr:c2:75:4b:e2:ec:4e
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=200,arp,actions=NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=300,ip,ct_state=-trk,actions=ct(table=1)'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=300,ip,ct_state=+new+trk,tcp,tp_dst=8080,actions=ct(commit),NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=300,ip,ct_state=+new+trk,icmp,actions=ct(commit),NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=200,ip,ct_state=+est+trk,actions=NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=100,ip,actions=drop'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=1.530s, table=0, n_packets=0, n_bytes=0, priority=300,ct_state=-trk,ip actions=ct(table=1)
+ cookie=0x0, duration=1.834s, table=0, n_packets=0, n_bytes=0, priority=200,arp actions=NORMAL
+ cookie=0x0, duration=1.215s, table=1, n_packets=0, n_bytes=0, priority=300,ct_state=+new+trk,tcp,tp_dst=8080 actions=ct(commit),NORMAL
+ cookie=0x0, duration=0.915s, table=1, n_packets=0, n_bytes=0, priority=300,ct_state=+new+trk,icmp actions=ct(commit),NORMAL
+ cookie=0x0, duration=0.612s, table=1, n_packets=0, n_bytes=0, priority=200,ct_state=+est+trk,ip actions=NORMAL
+ cookie=0x0, duration=0.299s, table=1, n_packets=0, n_bytes=0, priority=100,ip actions=drop
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_server nc -l 8080 >/tmp/r2.5.8-nc-server.log &
+[?2004l[1] 1317442
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.520 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.529 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1013ms
+rtt min/avg/max/mdev = 0.520/0.524/0.529/0.004 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client bash -c 'echo HELLO_FROM_CLIENT | timeout 3 nc -w 2 10.0.0.2 8080'
+[?2004l[1]+  Done                    ip netns exec ns_server nc -l 8080 > /tmp/r2.5.8-nc-server.log
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /tmp/r2.5.8-nc-server.log
+[?2004lHELLO_FROM_CLIENT
+[?2004hroot@lab-openvswitch:~/network-onboard# conntrack -L 2>/dev/null | head -20
+[?2004ltcp      6 4 TIME_WAIT src=192.168.1.250 dst=104.16.1.34 sport=37762 dport=443 src=104.16.1.34 dst=192.168.1.250 sport=443 dport=37762 [ASSURED] mark=0 use=1
+tcp      6 115 TIME_WAIT src=192.168.1.250 dst=104.16.3.34 sport=47114 dport=443 src=104.16.3.34 dst=192.168.1.250 sport=443 dport=47114 [ASSURED] mark=0 use=1
+icmp     1 22 src=192.168.1.1 dst=192.168.1.250 type=8 code=0 id=36 src=192.168.1.250 dst=192.168.1.1 type=0 code=0 id=36 mark=0 use=1
+tcp      6 28 TIME_WAIT src=192.168.1.250 dst=104.16.6.34 sport=51260 dport=443 src=104.16.6.34 dst=192.168.1.250 sport=443 dport=51260 [ASSURED] mark=0 use=1
+tcp      6 35 TIME_WAIT src=192.168.1.250 dst=104.16.0.34 sport=55460 dport=443 src=104.16.0.34 dst=192.168.1.250 sport=443 dport=55460 [ASSURED] mark=0 use=1
+tcp      6 45 TIME_WAIT src=192.168.1.250 dst=104.16.3.34 sport=56738 dport=443 src=104.16.3.34 dst=192.168.1.250 sport=443 dport=56738 [ASSURED] mark=0 use=1
+udp      17 13 src=127.0.0.1 dst=127.0.0.53 sport=49647 dport=53 src=127.0.0.53 dst=127.0.0.1 sport=53 dport=49647 mark=0 use=1
+tcp      6 57 TIME_WAIT src=192.168.1.250 dst=115.165.161.155 sport=41972 dport=80 src=115.165.161.155 dst=192.168.1.250 sport=80 dport=41972 [ASSURED] mark=0 use=1
+icmp     1 26 src=10.0.0.1 dst=10.0.0.2 type=8 code=0 id=38939 src=10.0.0.2 dst=10.0.0.1 type=0 code=0 id=38939 mark=0 use=1
+tcp      6 298 ESTABLISHED src=192.168.1.250 dst=192.168.1.251 sport=22 dport=53308 src=192.168.1.251 dst=192.168.1.250 sport=53308 dport=22 [ASSURED] mark=0 use=1
+tcp      6 431998 ESTABLISHED src=192.168.1.250 dst=34.149.66.137 sport=40142 dport=443 src=34.149.66.137 dst=192.168.1.250 sport=443 dport=40142 [ASSURED] mark=0 use=1
+tcp      6 105 TIME_WAIT src=192.168.1.250 dst=104.16.9.34 sport=57094 dport=443 src=104.16.9.34 dst=192.168.1.250 sport=443 dport=57094 [ASSURED] mark=0 use=1
+tcp      6 431983 ESTABLISHED src=192.168.1.250 dst=160.79.104.10 sport=42964 dport=443 src=160.79.104.10 dst=192.168.1.250 sport=443 dport=42964 [ASSURED] mark=0 use=1
+tcp      6 25 TIME_WAIT src=192.168.1.250 dst=104.16.11.34 sport=44672 dport=443 src=104.16.11.34 dst=192.168.1.250 sport=443 dport=44672 [ASSURED] mark=0 use=1
+tcp      6 29 TIME_WAIT src=192.168.1.250 dst=104.16.6.34 sport=51276 dport=443 src=104.16.6.34 dst=192.168.1.250 sport=443 dport=51276 [ASSURED] mark=0 use=1
+udp      17 13 src=127.0.0.1 dst=127.0.0.53 sport=52032 dport=53 src=127.0.0.53 dst=127.0.0.1 sport=53 dport=52032 mark=0 use=1
+udp      17 24 src=127.0.0.1 dst=127.0.0.53 sport=54031 dport=53 src=127.0.0.53 dst=127.0.0.1 sport=53 dport=54031 mark=0 use=1
+tcp      6 428772 ESTABLISHED src=192.168.1.251 dst=192.168.1.250 sport=60704 dport=22 src=192.168.1.250 dst=192.168.1.251 sport=22 dport=60704 [ASSURED] mark=0 use=1
+tcp      6 41 TIME_WAIT src=192.168.1.250 dst=104.16.10.34 sport=47294 dport=443 src=104.16.10.34 dst=192.168.1.250 sport=443 dport=47294 [ASSURED] mark=0 use=1
+tcp      6 55 TIME_WAIT src=192.168.1.250 dst=104.16.4.34 sport=52106 dport=443 src=104.16.4.34 dst=192.168.1.250 sport=443 dport=52106 [ASSURED] mark=0 use=1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-conntrack
+[?2004ltcp,orig=(src=192.168.1.250,dst=104.16.1.34,sport=37762,dport=443),reply=(src=104.16.1.34,dst=192.168.1.250,sport=443,dport=37762),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.3.34,sport=47114,dport=443),reply=(src=104.16.3.34,dst=192.168.1.250,sport=443,dport=47114),protoinfo=(state=TIME_WAIT)
+icmp,orig=(src=192.168.1.1,dst=192.168.1.250,id=36,type=8,code=0),reply=(src=192.168.1.250,dst=192.168.1.1,id=36,type=0,code=0)
+tcp,orig=(src=192.168.1.250,dst=104.16.6.34,sport=51260,dport=443),reply=(src=104.16.6.34,dst=192.168.1.250,sport=443,dport=51260),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.0.34,sport=55460,dport=443),reply=(src=104.16.0.34,dst=192.168.1.250,sport=443,dport=55460),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.3.34,sport=56738,dport=443),reply=(src=104.16.3.34,dst=192.168.1.250,sport=443,dport=56738),protoinfo=(state=TIME_WAIT)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=49647,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=49647)
+tcp,orig=(src=192.168.1.250,dst=115.165.161.155,sport=41972,dport=80),reply=(src=115.165.161.155,dst=192.168.1.250,sport=80,dport=41972),protoinfo=(state=TIME_WAIT)
+icmp,orig=(src=10.0.0.1,dst=10.0.0.2,id=38939,type=8,code=0),reply=(src=10.0.0.2,dst=10.0.0.1,id=38939,type=0,code=0)
+tcp,orig=(src=192.168.1.250,dst=192.168.1.251,sport=22,dport=53308),reply=(src=192.168.1.251,dst=192.168.1.250,sport=53308,dport=22),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=34.149.66.137,sport=40142,dport=443),reply=(src=34.149.66.137,dst=192.168.1.250,sport=443,dport=40142),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=104.16.9.34,sport=57094,dport=443),reply=(src=104.16.9.34,dst=192.168.1.250,sport=443,dport=57094),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=160.79.104.10,sport=42964,dport=443),reply=(src=160.79.104.10,dst=192.168.1.250,sport=443,dport=42964),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=104.16.11.34,sport=44672,dport=443),reply=(src=104.16.11.34,dst=192.168.1.250,sport=443,dport=44672),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.6.34,sport=51276,dport=443),reply=(src=104.16.6.34,dst=192.168.1.250,sport=443,dport=51276),protoinfo=(state=TIME_WAIT)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=52032,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=52032)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=54031,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=54031)
+tcp,orig=(src=192.168.1.251,dst=192.168.1.250,sport=60704,dport=22),reply=(src=192.168.1.250,dst=192.168.1.251,sport=22,dport=60704),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=104.16.10.34,sport=47294,dport=443),reply=(src=104.16.10.34,dst=192.168.1.250,sport=443,dport=47294),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=52106,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=52106),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=41350,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=41350),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=160.79.104.10,sport=43896,dport=443),reply=(src=160.79.104.10,dst=192.168.1.250,sport=443,dport=43896),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=104.16.0.34,sport=58900,dport=443),reply=(src=104.16.0.34,dst=192.168.1.250,sport=443,dport=58900),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.11.34,sport=55542,dport=443),reply=(src=104.16.11.34,dst=192.168.1.250,sport=443,dport=55542),protoinfo=(state=TIME_WAIT)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=51058,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=51058)
+tcp,orig=(src=192.168.1.250,dst=104.16.10.34,sport=49774,dport=443),reply=(src=104.16.10.34,dst=192.168.1.250,sport=443,dport=49774),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.5.34,sport=37846,dport=443),reply=(src=104.16.5.34,dst=192.168.1.250,sport=443,dport=37846),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=34614,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=34614),protoinfo=(state=TIME_WAIT)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=33537,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=33537)
+tcp,orig=(src=192.168.1.250,dst=104.16.3.34,sport=60934,dport=443),reply=(src=104.16.3.34,dst=192.168.1.250,sport=443,dport=60934),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.5.34,sport=37858,dport=443),reply=(src=104.16.5.34,dst=192.168.1.250,sport=443,dport=37858),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.7.34,sport=37022,dport=443),reply=(src=104.16.7.34,dst=192.168.1.250,sport=443,dport=37022),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.0.34,sport=49982,dport=443),reply=(src=104.16.0.34,dst=192.168.1.250,sport=443,dport=49982),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.2.34,sport=34762,dport=443),reply=(src=104.16.2.34,dst=192.168.1.250,sport=443,dport=34762),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=52116,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=52116),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=52090,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=52090),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=192.168.1.251,sport=22,dport=53016),reply=(src=192.168.1.251,dst=192.168.1.250,sport=53016,dport=22),protoinfo=(state=ESTABLISHED)
+tcp,orig=(src=192.168.1.250,dst=104.16.10.34,sport=49772,dport=443),reply=(src=104.16.10.34,dst=192.168.1.250,sport=443,dport=49772),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=10.0.0.1,dst=10.0.0.2,sport=55124,dport=8080),reply=(src=10.0.0.2,dst=10.0.0.1,sport=8080,dport=55124),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=52104,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=52104),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.6.34,sport=36574,dport=443),reply=(src=104.16.6.34,dst=192.168.1.250,sport=443,dport=36574),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.0.34,sport=44786,dport=443),reply=(src=104.16.0.34,dst=192.168.1.250,sport=443,dport=44786),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.4.34,sport=41352,dport=443),reply=(src=104.16.4.34,dst=192.168.1.250,sport=443,dport=41352),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=127.0.0.1,dst=127.0.0.1,sport=34747,dport=44086),reply=(src=127.0.0.1,dst=127.0.0.1,sport=44086,dport=34747),protoinfo=(state=ESTABLISHED)
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-flows --names | grep -E 'ct\(|tcp' | head -10
+[?2004lrecirc_id(0x4),in_port(veth_client_br),ct_state(+new+trk),eth(src=9e:b7:de:e6:1e:06,dst=72:9f:84:62:89:8f),eth_type(0x0800),ipv4(proto=6,frag=no),tcp(dst=8080), packets:0, bytes:0, used:never, actions:ct(commit),veth_server_br
+recirc_id(0x4),in_port(veth_client_br),ct_state(+new+trk),eth(src=9e:b7:de:e6:1e:06,dst=72:9f:84:62:89:8f),eth_type(0x0800),ipv4(proto=1,frag=no), packets:0, bytes:0, used:never, actions:ct(commit),veth_server_br
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client bash -c 'timeout 2 nc -w 1 10.0.0.2 9999; echo nc_exit=$?'
+[?2004lnc_exit=1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0 | grep -E 'priority=100|drop'
+[?2004l cookie=0x0, duration=9.132s, table=1, n_packets=1, n_bytes=74, idle_age=1, [01;31m[Kpriority=100[m[K,ip actions=[01;31m[Kdrop[m[K
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=200,arp,actions=NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=0,priority=300,ip,ct_state=-trk,actions=ct(table=1)'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=300,ip,ct_state=+new+trk,actions=ct(commit,nat(src=192.168.99.99)),NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'table=1,priority=200,ip,ct_state=+est+trk,actions=ct(nat),NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=0.911s, table=0, n_packets=0, n_bytes=0, priority=300,ct_state=-trk,ip actions=ct(table=1)
+ cookie=0x0, duration=1.217s, table=0, n_packets=0, n_bytes=0, priority=200,arp actions=NORMAL
+ cookie=0x0, duration=0.605s, table=1, n_packets=0, n_bytes=0, priority=300,ct_state=+new+trk,ip actions=ct(commit,nat(src=192.168.99.99)),NORMAL
+ cookie=0x0, duration=0.303s, table=1, n_packets=0, n_bytes=0, priority=200,ct_state=+est+trk,ip actions=ct(nat),NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_client link show veth_client | awk '/ether/ {print $2}'
+[?2004l9e:b7:de:e6:1e:06
+[?2004hroot@lab-openvswitch:~/network-onboard# VETH_CLIENT_MAC=$(ip -n ns_client link show veth_client | awk '/ether/ {print $2}'); ip -n ns_server route add 192.168.99.99 via 10.0.0.1; ip -n ns_server neigh add 10.0.0.1 lladdr $VETH_CLIENT_MAC dev veth_server
+[?2004lRTNETLINK answers: File exists
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_server route show
+[?2004l10.0.0.0/24 dev veth_server proto kernel scope link src 10.0.0.2 
+192.168.99.99 via 10.0.0.1 dev veth_server 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_client ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.153 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.045 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1032ms
+rtt min/avg/max/mdev = 0.045/0.099/0.153/0.054 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# conntrack -L 2>/dev/null | grep -E 'icmp|192\.168' | head -10
+[?2004ltcp      6 108 TIME_WAIT src=192.168.1.250 dst=104.16.3.34 sport=47114 dport=443 src=104.16.3.34 dst=192.168.1.250 sport=443 dport=47114 [ASSURED] mark=0 use=1
+icmp     1 16 src=192.168.1.1 dst=192.168.1.250 type=8 code=0 id=36 src=192.168.1.250 dst=192.168.1.1 type=0 code=0 id=36 mark=0 use=1
+tcp      6 22 TIME_WAIT src=192.168.1.250 dst=104.16.6.34 sport=51260 dport=443 src=104.16.6.34 dst=192.168.1.250 sport=443 dport=51260 [ASSURED] mark=0 use=1
+tcp      6 29 TIME_WAIT src=192.168.1.250 dst=104.16.0.34 sport=55460 dport=443 src=104.16.0.34 dst=192.168.1.250 sport=443 dport=55460 [ASSURED] mark=0 use=1
+tcp      6 38 TIME_WAIT src=192.168.1.250 dst=104.16.3.34 sport=56738 dport=443 src=104.16.3.34 dst=192.168.1.250 sport=443 dport=56738 [ASSURED] mark=0 use=1
+tcp      6 51 TIME_WAIT src=192.168.1.250 dst=115.165.161.155 sport=41972 dport=80 src=115.165.161.155 dst=192.168.1.250 sport=80 dport=41972 [ASSURED] mark=0 use=1
+icmp     1 19 src=10.0.0.1 dst=10.0.0.2 type=8 code=0 id=38939 src=10.0.0.2 dst=10.0.0.1 type=0 code=0 id=38939 mark=0 use=1
+tcp      6 297 ESTABLISHED src=192.168.1.250 dst=192.168.1.251 sport=22 dport=53308 src=192.168.1.251 dst=192.168.1.250 sport=53308 dport=22 [ASSURED] mark=0 use=1
+tcp      6 431991 ESTABLISHED src=192.168.1.250 dst=34.149.66.137 sport=40142 dport=443 src=34.149.66.137 dst=192.168.1.250 sport=443 dport=40142 [ASSURED] mark=0 use=1
+tcp      6 98 TIME_WAIT src=192.168.1.250 dst=104.16.9.34 sport=57094 dport=443 src=104.16.9.34 dst=192.168.1.250 sport=443 dport=57094 [ASSURED] mark=0 use=1
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl dpctl/dump-conntrack | head -10
+[?2004ltcp,orig=(src=192.168.1.250,dst=104.16.3.34,sport=47114,dport=443),reply=(src=104.16.3.34,dst=192.168.1.250,sport=443,dport=47114),protoinfo=(state=TIME_WAIT)
+icmp,orig=(src=192.168.1.1,dst=192.168.1.250,id=36,type=8,code=0),reply=(src=192.168.1.250,dst=192.168.1.1,id=36,type=0,code=0)
+tcp,orig=(src=192.168.1.250,dst=104.16.6.34,sport=51260,dport=443),reply=(src=104.16.6.34,dst=192.168.1.250,sport=443,dport=51260),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.0.34,sport=55460,dport=443),reply=(src=104.16.0.34,dst=192.168.1.250,sport=443,dport=55460),protoinfo=(state=TIME_WAIT)
+tcp,orig=(src=192.168.1.250,dst=104.16.3.34,sport=56738,dport=443),reply=(src=104.16.3.34,dst=192.168.1.250,sport=443,dport=56738),protoinfo=(state=TIME_WAIT)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=49647,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=49647)
+tcp,orig=(src=192.168.1.250,dst=115.165.161.155,sport=41972,dport=80),reply=(src=115.165.161.155,dst=192.168.1.250,sport=80,dport=41972),protoinfo=(state=TIME_WAIT)
+icmp,orig=(src=10.0.0.1,dst=10.0.0.2,id=38939,type=8,code=0),reply=(src=10.0.0.2,dst=10.0.0.1,id=38939,type=0,code=0)
+tcp,orig=(src=192.168.1.250,dst=192.168.1.251,sport=22,dport=53308),reply=(src=192.168.1.251,dst=192.168.1.250,sport=53308,dport=22),protoinfo=(state=ESTABLISHED)
+udp,orig=(src=127.0.0.1,dst=127.0.0.53,sport=32802,dport=53),reply=(src=127.0.0.53,dst=127.0.0.1,sport=53,dport=32802)
+[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# rm -f /tmp/r2.5.8-*.log
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:08:48 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 08:08:48+00:00 [COMMAND_EXIT_CODE="0"]
