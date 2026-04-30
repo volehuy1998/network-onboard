@@ -1,0 +1,110 @@
+Script started on 2026-04-30 08:15:50+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:15:51 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set bridge br0 datapath_type=system
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns add ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_a type veth peer name veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add veth_b type veth peer name veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a netns ns_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b netns ns_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_a_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-port br0 veth_b_br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_a_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set veth_b_br up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a link set veth_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_a addr add 10.0.0.1/24 dev veth_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set lo up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b link set veth_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -n ns_b addr add 10.0.0.2/24 dev veth_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a ping -c 2 -W 2 10.0.0.2
+[?2004lPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
+64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.491 ms
+64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.036 ms
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1009ms
+rtt min/avg/max/mdev = 0.036/0.263/0.491/0.227 ms
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- set port veth_b_br qos=@newqos -- --id=@newqos create qos type=linux-htb other-config:max-rate=10000000 queues:0=@q0 queues:1=@q1 -- --id=@q0 create queue other-config:max-rate=8000000 -- --id=@q1 create queue other-config:max-rate=2000000
+[?2004lc392369a-1ae6-4ad9-863c-4ee2ac44ff88
+67f1598a-7536-4451-962a-04cafa4f8521
+04efb93a-a8e6-4a6c-8d1b-a074a853bfc7
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,qos list port veth_b_br
+[?2004lname                : veth_b_br
+qos                 : c392369a-1ae6-4ad9-863c-4ee2ac44ff88
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=type,other_config,queues list qos
+[?2004ltype                : linux-htb
+other_config        : {max-rate="10000000"}
+queues              : {0=67f1598a-7536-4451-962a-04cafa4f8521, 1=04efb93a-a8e6-4a6c-8d1b-a074a853bfc7}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=other_config list queue
+[?2004lother_config        : {max-rate="2000000"}
+
+other_config        : {max-rate="8000000"}
+[?2004hroot@lab-openvswitch:~/network-onboard# tc qdisc show dev veth_b_br
+[?2004lqdisc htb 1: root refcnt 129 r2q 10 default 0x1 direct_packets_stat 0 direct_qlen 1000
+[?2004hroot@lab-openvswitch:~/network-onboard# tc class show dev veth_b_br
+[?2004lclass htb 1:1 parent 1:fffe prio 0 rate 12Kbit ceil 8Mbit burst 1563b cburst 1563b 
+class htb 1:fffe root rate 10Mbit ceil 10Mbit burst 1500b cburst 1500b 
+class htb 1:2 parent 1:fffe prio 0 rate 12Kbit ceil 2Mbit burst 1563b cburst 1564b 
+[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b iperf3 -s -1 -D >/tmp/r2.5.9-iperf-server.log 2>&1; sleep 0.5; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a iperf3 -c 10.0.0.2 -t 3 -O 1 -f m | tail -10
+[?2004l[  5]   0.00-1.00   sec  1.39 MBytes  11.6 Mbits/sec    0   90.5 KBytes       (omitted)
+[  5]   0.00-1.00   sec   954 KBytes  7.82 Mbits/sec    0   90.5 KBytes       
+[  5]   1.00-2.00   sec   954 KBytes  7.82 Mbits/sec    0   90.5 KBytes       
+[  5]   2.00-3.00   sec   764 KBytes  6.26 Mbits/sec    0   90.5 KBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-3.00   sec  2.61 MBytes  7.30 Mbits/sec    0             sender
+[  5]   0.00-2.88   sec  2.62 MBytes  7.66 Mbits/sec                  receiver
+
+iperf Done.
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl -- destroy qos veth_b_br 2>&1 | head -3 || true
+[?2004l2026-04-30T08:16:05Z|00002|ovsdb_idl|WARN|transaction error: {"details":"cannot delete QoS row c392369a-1ae6-4ad9-863c-4ee2ac44ff88 because of 1 remaining reference(s)","error":"referential integrity violation"}
+ovs-vsctl: transaction error: {"details":"cannot delete QoS row c392369a-1ae6-4ad9-863c-4ee2ac44ff88 because of 1 remaining reference(s)","error":"referential integrity violation"}
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear port veth_b_br qos
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,qos list port veth_b_br
+[?2004lname                : veth_b_br
+qos                 : []
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Interface veth_a_br ingress_policing_rate=5000 ingress_policing_burst=500
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,ingress_policing_rate,ingress_policing_burst list interface veth_a_br
+[?2004lname                : veth_a_br
+ingress_policing_rate: 5000
+ingress_policing_burst: 500
+[?2004hroot@lab-openvswitch:~/network-onboard# tc qdisc show dev veth_a_br | head
+[?2004lqdisc noqueue 0: root refcnt 2 
+qdisc ingress ffff: parent ffff:fff1 ---------------- 
+[?2004hroot@lab-openvswitch:~/network-onboard# tc filter show dev veth_a_br | head
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_b iperf3 -s -1 -D >/tmp/r2.5.9-iperf-server2.log 2>&1; sleep 0.5; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip netns exec ns_a iperf3 -c 10.0.0.2 -t 3 -O 1 -f m | tail -10
+[?2004l[  5]   0.00-1.00   sec   524 KBytes  4.29 Mbits/sec   96   9.90 KBytes       (omitted)
+[  5]   0.00-1.00   sec   318 KBytes  2.61 Mbits/sec   50   2.83 KBytes       
+[  5]   1.00-2.00   sec   255 KBytes  2.08 Mbits/sec   48   2.83 KBytes       
+[  5]   2.00-3.00   sec   255 KBytes  2.09 Mbits/sec   40   2.83 KBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-3.00   sec   827 KBytes  2.26 Mbits/sec  138             sender
+[  5]   0.00-2.53   sec   768 KBytes  2.49 Mbits/sec                  receiver
+
+iperf Done.
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Interface veth_a_br ingress_policing_rate=0 ingress_policing_burst=0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip -all netns delete
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --no-wait -- --all destroy qos -- --all destroy queue
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# rm -f /tmp/r2.5.9-*.log
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 08:16:15 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 08:16:15+00:00 [COMMAND_EXIT_CODE="0"]
