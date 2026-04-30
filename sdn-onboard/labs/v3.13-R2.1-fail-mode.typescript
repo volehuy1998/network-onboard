@@ -1,0 +1,60 @@
+Script started on 2026-04-30 04:30:05+00:00 [TERM="screen-256color" TTY="/dev/pts/3" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# export TERM=xterm-256color PS1='\u@\h:\w# '
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# clear
+[?2004l[H[2J[3J[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:30:07 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --may-exist add-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 controller
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=1.814s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0 --no-stats
+[?2004l priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Bridge br0 fail_mode=secure
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
+[?2004lsecure
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0 --no-stats
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Bridge br0 fail_mode=standalone
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
+[?2004lstandalone
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=1.208s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl clear Bridge br0 fail_mode
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 fail_mode
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=3.017s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl add-flow br0 'priority=100,dl_type=0x0806,actions=NORMAL'
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l cookie=0x0, duration=0.612s, table=0, n_packets=0, n_bytes=0, priority=100,arp actions=NORMAL
+ cookie=0x0, duration=4.233s, table=0, n_packets=0, n_bytes=0, priority=0 actions=NORMAL
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set Bridge br0 fail_mode=secure
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set-controller br0 tcp:127.0.0.1:6653
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 controller
+[?2004l[eded922c-b785-4377-902e-813ebce46c8e]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=target,is_connected list Controller
+[?2004ltarget              : "tcp:127.0.0.1:6653"
+is_connected        : false
+[?2004hroot@lab-openvswitch:~/network-onboard# sleep 5
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=target,is_connected list Controller
+[?2004ltarget              : "tcp:127.0.0.1:6653"
+is_connected        : false
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-controller br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl get Bridge br0 controller
+[?2004l[]
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl del-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-ofctl dump-flows br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --if-exists del-br br0
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl list-br
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 04:30:32 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 04:30:33+00:00 [COMMAND_EXIT_CODE="0"]
