@@ -1,0 +1,636 @@
+Script started on 2026-04-30 07:30:44+00:00 [TERM="screen-256color" TTY="/dev/pts/5" COLUMNS="143" LINES="35"]
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:30:45 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --version | head -2
+[?2004lovs-vsctl (Open vSwitch) 2.17.9
+DB Schema 8.3.0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-br br2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v_p1a type veth peer name v_p1b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v_p2a type veth peer name v_p2b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p1a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p1b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p2a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p2b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-bond br1 bond1 v_p1a v_p2a bond_mode=active-backup
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl add-bond br2 bond2 v_p1b v_p2b bond_mode=active-backup
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,bond_mode,lacp,bond_active_slave list port bond1 bond2
+[?2004lname                : bond1
+bond_mode           : active-backup
+lacp                : []
+bond_active_slave   : "e2:48:5c:f2:1c:bf"
+
+name                : bond2
+bond_mode           : active-backup
+lacp                : []
+bond_active_slave   : "da:12:ef:8c:61:07"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1
+[?2004l---- bond1 ----
+bond_mode: active-backup
+bond may use recirculation: no, Recirc-ID : -1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+lacp_status: off
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: e2:48:5c:f2:1c:bf(v_p1a)
+
+member v_p1a: enabled
+  active member
+  may_enable: true
+
+member v_p2a: enabled
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond2
+[?2004l---- bond2 ----
+bond_mode: active-backup
+bond may use recirculation: no, Recirc-ID : -1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+lacp_status: off
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: da:12:ef:8c:61:07(v_p2b)
+
+member v_p1b: enabled
+  may_enable: true
+
+member v_p2b: enabled
+  active member
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1 | grep 'active slave mac' || true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p1a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1
+[?2004l---- bond1 ----
+bond_mode: active-backup
+bond may use recirculation: no, Recirc-ID : -1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+lacp_status: off
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: 12:73:df:2d:08:c3(v_p2a)
+
+member v_p1a: disabled
+  may_enable: false
+
+member v_p2a: enabled
+  active member
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_p1a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1
+[?2004l---- bond1 ----
+bond_mode: active-backup
+bond may use recirculation: no, Recirc-ID : -1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+lacp_status: off
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: 12:73:df:2d:08:c3(v_p2a)
+
+member v_p1a: enabled
+  may_enable: true
+
+member v_p2a: enabled
+  active member
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port bond1 bond_mode=balance-tcp lacp=active
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port bond2 bond_mode=balance-tcp lacp=active
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 5
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl --columns=name,bond_mode,lacp,bond_active_slave list port bond1 bond2
+[?2004lname                : bond1
+bond_mode           : balance-tcp
+lacp                : active
+bond_active_slave   : "12:73:df:2d:08:c3"
+
+name                : bond2
+bond_mode           : balance-tcp
+lacp                : active
+bond_active_slave   : "da:12:ef:8c:61:07"
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1
+[?2004l---- bond1 ----
+bond_mode: balance-tcp
+bond may use recirculation: yes, Recirc-ID : 1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+next rebalance: 3928 ms
+lacp_status: negotiated
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: 12:73:df:2d:08:c3(v_p2a)
+
+member v_p1a: enabled
+  may_enable: true
+
+member v_p2a: enabled
+  active member
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl lacp/show bond1
+[?2004l---- bond1 ----
+  status: active negotiated
+  sys_id: c6:25:8e:7e:f1:4b
+  sys_priority: 65534
+  aggregation key: 1
+  lacp_time: slow
+
+member: v_p1a: current attached
+  port_id: 2
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: c6:25:8e:7e:f1:4b
+  actor sys_priority: 65534
+  actor port_id: 2
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: 8e:ec:9e:1a:ef:41
+  partner sys_priority: 65534
+  partner port_id: 1
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+
+member: v_p2a: current attached
+  port_id: 1
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: c6:25:8e:7e:f1:4b
+  actor sys_priority: 65534
+  actor port_id: 1
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: 8e:ec:9e:1a:ef:41
+  partner sys_priority: 65534
+  partner port_id: 2
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl lacp/show bond2
+[?2004l---- bond2 ----
+  status: active negotiated
+  sys_id: 8e:ec:9e:1a:ef:41
+  sys_priority: 65534
+  aggregation key: 1
+  lacp_time: slow
+
+member: v_p1b: current attached
+  port_id: 1
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: 8e:ec:9e:1a:ef:41
+  actor sys_priority: 65534
+  actor port_id: 1
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: c6:25:8e:7e:f1:4b
+  partner sys_priority: 65534
+  partner port_id: 2
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+
+member: v_p2b: current attached
+  port_id: 2
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: 8e:ec:9e:1a:ef:41
+  actor sys_priority: 65534
+  actor port_id: 2
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: c6:25:8e:7e:f1:4b
+  partner sys_priority: 65534
+  partner port_id: 1
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl lacp/show-stats bond1
+[?2004l---- bond1 statistics ----
+
+member: v_p1a:
+  TX PDUs: 3
+  RX PDUs: 2
+  RX Bad PDUs: 0
+  RX Marker Request PDUs: 0
+  Link Expired: 0
+  Link Defaulted: 0
+  Carrier Status Changed: 0
+
+member: v_p2a:
+  TX PDUs: 2
+  RX PDUs: 2
+  RX Bad PDUs: 0
+  RX Marker Request PDUs: 0
+  Link Expired: 0
+  Link Defaulted: 0
+  Carrier Status Changed: 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/hash 02:00:00:00:00:01 0
+[?2004l38
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/hash 02:00:00:00:00:02 0
+[?2004l235
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/hash 02:00:00:00:00:03 0
+[?2004l230
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port bond1 bond_mode=active-backup
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 3
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl bond/show bond1
+[?2004l---- bond1 ----
+bond_mode: active-backup
+bond may use recirculation: no, Recirc-ID : -1
+bond-hash-basis: 0
+lb_output action: disabled, bond-id: -1
+updelay: 0 ms
+downdelay: 0 ms
+lacp_status: negotiated
+lacp_fallback_ab: false
+active-backup primary: <none>
+active member mac: 12:73:df:2d:08:c3(v_p2a)
+
+member v_p1a: enabled
+  may_enable: true
+
+member v_p2a: enabled
+  active member
+  may_enable: true
+
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-appctl lacp/show bond1
+[?2004l---- bond1 ----
+  status: active negotiated
+  sys_id: c6:25:8e:7e:f1:4b
+  sys_priority: 65534
+  aggregation key: 1
+  lacp_time: slow
+
+member: v_p1a: current attached
+  port_id: 2
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: c6:25:8e:7e:f1:4b
+  actor sys_priority: 65534
+  actor port_id: 2
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: 8e:ec:9e:1a:ef:41
+  partner sys_priority: 65534
+  partner port_id: 1
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+
+member: v_p2a: current attached
+  port_id: 1
+  port_priority: 65535
+  may_enable: true
+
+  actor sys_id: c6:25:8e:7e:f1:4b
+  actor sys_priority: 65534
+  actor port_id: 1
+  actor port_priority: 65535
+  actor key: 1
+  actor state: activity aggregation synchronized collecting distributing
+
+  partner sys_id: 8e:ec:9e:1a:ef:41
+  partner sys_priority: 65534
+  partner port_id: 2
+  partner port_priority: 65535
+  partner key: 1
+  partner state: activity aggregation synchronized collecting distributing
+[?2004hroot@lab-openvswitch:~/network-onboard# tail -8 /usr/local/var/log/openvswitch/ovs-vswitchd.log | grep -iE 'bond|lacp' | tail -5 || true
+[?2004l2026-04-30T07:30:58.902Z|00956|bond|INFO|bond bond2: active member is now v_p2b
+2026-04-30T07:30:58.903Z|00957|bond|INFO|member v_p1b: link state up
+2026-04-30T07:30:58.903Z|00958|bond|INFO|member v_p1b: enabled
+2026-04-30T07:30:58.903Z|00959|bond|INFO|member v_p1a: link state up
+2026-04-30T07:30:58.903Z|00960|bond|INFO|member v_p1a: enabled
+[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl set port bond1 bond_mode=balance-tcp
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl del-br br2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v_p1a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link del v_p2a 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# modprobe bonding 2>/dev/null; true
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add bond_a type bond mode active-backup miimon 100
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add bond_b type bond mode active-backup miimon 100
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v_la1 type veth peer name v_lb1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add v_la2 type veth peer name v_lb2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 master bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 master bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 master bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 master bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /proc/net/bonding/bond_a
+[?2004lEthernet Channel Bonding Driver: v5.15.0-173-generic
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: None
+Currently Active Slave: v_la1
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: v_la1
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 2a:ac:fb:52:a3:15
+Slave queue ID: 0
+
+Slave Interface: v_la2
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: d6:5d:01:d6:14:b9
+Slave queue ID: 0
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /proc/net/bonding/bond_b
+[?2004lEthernet Channel Bonding Driver: v5.15.0-173-generic
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: None
+Currently Active Slave: v_lb1
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: v_lb1
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 32:9f:ff:30:65:ef
+Slave queue ID: 0
+
+Slave Interface: v_lb2
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 42:63:7c:b2:ff:cf
+Slave queue ID: 0
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /proc/net/bonding/bond_a | head -20
+[?2004lEthernet Channel Bonding Driver: v5.15.0-173-generic
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: None
+Currently Active Slave: v_la2
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: v_la1
+MII Status: down
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 1
+Permanent HW addr: 2a:ac:fb:52:a3:15
+Slave queue ID: 0
+
+Slave Interface: v_la2
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_b down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 nomaster
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 nomaster
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 nomaster
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 nomaster
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add bond_a type bond mode 802.3ad miimon 100 lacp_rate fast
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link add bond_b type bond mode 802.3ad miimon 100 lacp_rate fast
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 master bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 master bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 master bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 master bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_la2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb1 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set v_lb2 up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_a up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_b up
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# sleep 8
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# cat /proc/net/bonding/bond_a
+[?2004lEthernet Channel Bonding Driver: v5.15.0-173-generic
+
+Bonding Mode: IEEE 802.3ad Dynamic link aggregation
+Transmit Hash Policy: layer2 (0)
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+802.3ad info
+LACP active: on
+LACP rate: fast
+Min links: 0
+Aggregator selection policy (ad_select): stable
+System priority: 65535
+System MAC address: 66:5f:90:2f:98:5c
+Active Aggregator Info:
+	Aggregator ID: 1
+	Number of ports: 2
+	Actor Key: 15
+	Partner Key: 15
+	Partner Mac Address: 4e:06:f0:38:06:15
+
+Slave Interface: v_la1
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 2a:ac:fb:52:a3:15
+Slave queue ID: 0
+Aggregator ID: 1
+Actor Churn State: monitoring
+Partner Churn State: monitoring
+Actor Churned Count: 0
+Partner Churned Count: 0
+details actor lacp pdu:
+    system priority: 65535
+    system mac address: 66:5f:90:2f:98:5c
+    port key: 15
+    port priority: 255
+    port number: 1
+    port state: 63
+details partner lacp pdu:
+    system priority: 65535
+    system mac address: 4e:06:f0:38:06:15
+    oper key: 15
+    port priority: 255
+    port number: 1
+    port state: 63
+
+Slave Interface: v_la2
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: d6:5d:01:d6:14:b9
+Slave queue ID: 0
+Aggregator ID: 1
+Actor Churn State: monitoring
+Partner Churn State: monitoring
+Actor Churned Count: 0
+Partner Churned Count: 0
+details actor lacp pdu:
+    system priority: 65535
+    system mac address: 66:5f:90:2f:98:5c
+    port key: 15
+    port priority: 255
+    port number: 2
+    port state: 63
+details partner lacp pdu:
+    system priority: 65535
+    system mac address: 4e:06:f0:38:06:15
+    oper key: 15
+    port priority: 255
+    port number: 2
+    port state: 63
+[?2004hroot@lab-openvswitch:~/network-onboard# cat /proc/net/bonding/bond_b
+[?2004lEthernet Channel Bonding Driver: v5.15.0-173-generic
+
+Bonding Mode: IEEE 802.3ad Dynamic link aggregation
+Transmit Hash Policy: layer2 (0)
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+802.3ad info
+LACP active: on
+LACP rate: fast
+Min links: 0
+Aggregator selection policy (ad_select): stable
+System priority: 65535
+System MAC address: 4e:06:f0:38:06:15
+Active Aggregator Info:
+	Aggregator ID: 1
+	Number of ports: 2
+	Actor Key: 15
+	Partner Key: 15
+	Partner Mac Address: 66:5f:90:2f:98:5c
+
+Slave Interface: v_lb1
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 32:9f:ff:30:65:ef
+Slave queue ID: 0
+Aggregator ID: 1
+Actor Churn State: monitoring
+Partner Churn State: monitoring
+Actor Churned Count: 0
+Partner Churned Count: 0
+details actor lacp pdu:
+    system priority: 65535
+    system mac address: 4e:06:f0:38:06:15
+    port key: 15
+    port priority: 255
+    port number: 1
+    port state: 63
+details partner lacp pdu:
+    system priority: 65535
+    system mac address: 66:5f:90:2f:98:5c
+    oper key: 15
+    port priority: 255
+    port number: 1
+    port state: 63
+
+Slave Interface: v_lb2
+MII Status: up
+Speed: 10000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 42:63:7c:b2:ff:cf
+Slave queue ID: 0
+Aggregator ID: 1
+Actor Churn State: monitoring
+Partner Churn State: monitoring
+Actor Churned Count: 0
+Partner Churned Count: 0
+details actor lacp pdu:
+    system priority: 65535
+    system mac address: 4e:06:f0:38:06:15
+    port key: 15
+    port priority: 255
+    port number: 2
+    port state: 63
+details partner lacp pdu:
+    system priority: 65535
+    system mac address: 66:5f:90:2f:98:5c
+    oper key: 15
+    port priority: 255
+    port number: 2
+    port state: 63
+[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_a down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link set bond_b down
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete bond_a
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete bond_b
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete v_la1
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ip link delete v_la2
+[?2004l[?2004hroot@lab-openvswitch:~/network-onboard# ovs-vsctl show
+[?2004l15b3fd6f-e30f-4ae3-b8ca-4531189afee5
+    ovs_version: "2.17.9"
+[?2004hroot@lab-openvswitch:~/network-onboard# date -u
+[?2004lThu Apr 30 07:31:46 AM UTC 2026
+[?2004hroot@lab-openvswitch:~/network-onboard# exit
+[?2004lexit
+
+Script done on 2026-04-30 07:31:47+00:00 [COMMAND_EXIT_CODE="0"]
